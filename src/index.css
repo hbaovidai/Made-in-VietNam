@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-viet-red: #C8102E;
+  --color-viet-gold: #FFCD00;
+  --color-viet-gold-dark: #D4AF37;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-viet-red text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-white text-viet-red border border-viet-red px-6 py-2 rounded-lg font-medium hover:bg-red-50 transition-colors;
+  }
+  .btn-gold {
+    @apply bg-viet-gold text-red-900 px-6 py-2 rounded-lg font-medium hover:bg-yellow-400 transition-colors;
+  }
+}

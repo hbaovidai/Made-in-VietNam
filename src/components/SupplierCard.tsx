@@ -1,0 +1,87 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ShieldCheck, MapPin, Award, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Supplier } from '../data/mockData';
+
+interface SupplierCardProps {
+  key?: string;
+  supplier: Supplier;
+}
+
+export function SupplierCard({ supplier }: SupplierCardProps) {
+  const { t } = useTranslation();
+
+  return (
+    <Link
+      to={`/suppliers/${supplier.id}`}
+      className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 hover:-translate-y-1"
+    >
+      <div className="relative h-32 bg-slate-100">
+        <img
+          src={supplier.banner}
+          alt={supplier.name}
+          className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+        <div className="absolute -bottom-8 left-6 w-20 h-20 rounded-2xl bg-white border-2 border-white p-1.5 shadow-xl overflow-hidden group-hover:scale-105 transition-transform">
+          <img
+            src={supplier.logo}
+            alt={supplier.name}
+            className="w-full h-full object-contain"
+            referrerPolicy="no-referrer"
+          />
+        </div>
+      </div>
+      <div className="pt-12 p-6 space-y-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-black text-slate-900 group-hover:text-viet-red transition-colors tracking-tight">
+              {supplier.name}
+            </h3>
+            {supplier.isVerified && (
+              <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter border border-emerald-100">
+                <ShieldCheck size={12} />
+                {t('verified')}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <MapPin size={12} className="text-viet-red" />
+            <span>{supplier.location}</span>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          {supplier.industry.map((ind) => (
+            <span key={ind} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-100">
+              {ind}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50">
+          <div className="flex flex-col">
+            <span className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">{t('main_markets')}</span>
+            <span className="font-black text-slate-800 text-xs truncate">{supplier.markets.join(', ')}</span>
+          </div>
+          <div className="flex flex-col text-right">
+            <span className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">{t('experience')}</span>
+            <span className="font-black text-slate-800 text-xs">{new Date().getFullYear() - supplier.yearEstablished} {t('years')}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center gap-2 text-xs font-black text-slate-700 uppercase tracking-tighter">
+            <Award size={16} className="text-viet-gold" />
+            <span>{supplier.certifications[0]}</span>
+          </div>
+          <div className="bg-slate-900 text-white p-2 rounded-lg group-hover:bg-viet-red transition-colors">
+            <ChevronRight size={16} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}

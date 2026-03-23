@@ -1,0 +1,146 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, Award, Globe } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
+import { suppliers, categories } from '../data/mockData';
+import { SupplierCard } from '../components/SupplierCard';
+import { cn } from '../utils/cn';
+
+export function SupplierList() {
+  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [selectedIndustry, setSelectedIndustry] = React.useState<string | null>(null);
+
+  const filteredSuppliers = suppliers.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesIndustry = !selectedIndustry || s.industry.includes(selectedIndustry);
+    return matchesSearch && matchesIndustry;
+  });
+
+  return (
+    <div className="bg-slate-50 min-h-screen pb-20">
+      {/* Header Section */}
+      <div className="bg-slate-900 text-white py-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-viet-red/10 skew-x-12 transform translate-x-32" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <nav className="flex items-center gap-2 text-xs text-slate-400 mb-6">
+            <Link to="/" className="hover:text-white">{t('home')}</Link>
+            <ChevronRight size={12} />
+            <span className="text-white font-medium">{t('suppliers')}</span>
+          </nav>
+          <div className="max-w-2xl space-y-6">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              <Trans i18nKey="find_verified_manufacturers">
+                Find <span className="text-viet-red">Verified</span> Vietnamese Manufacturers
+              </Trans>
+            </h1>
+            <p className="text-slate-400 text-lg leading-relaxed">
+              {t('suppliers_desc')}
+            </p>
+            <div className="relative max-w-xl group">
+              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-viet-red transition-colors" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t('search_suppliers_placeholder')}
+                className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-500 outline-none focus:bg-white/20 focus:border-viet-red transition-all"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Filters */}
+          <aside className="lg:w-72 shrink-0">
+            <div className="sticky top-28 space-y-10">
+              <div>
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <div className="w-4 h-[2px] bg-viet-red" />
+                  {t('industries')}
+                </h3>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setSelectedIndustry(null)}
+                    className={cn(
+                      "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
+                      !selectedIndustry
+                        ? "bg-viet-red text-white border-viet-red shadow-lg shadow-red-600/20"
+                        : "bg-white text-slate-600 border-slate-100 hover:border-viet-red/30 hover:bg-slate-50"
+                    )}
+                  >
+                    {t('all_industries')}
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedIndustry(cat)}
+                      className={cn(
+                        "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
+                        selectedIndustry === cat
+                          ? "bg-viet-red text-white border-viet-red shadow-lg shadow-red-600/20"
+                          : "bg-white text-slate-600 border-slate-100 hover:border-viet-red/30 hover:bg-slate-50"
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-viet-gold/20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
+                <h4 className="text-sm font-black uppercase tracking-widest mb-2 relative z-10">{t('verified_status')}</h4>
+                <p className="text-xs text-slate-400 font-medium mb-4 relative z-10 leading-relaxed">{t('verified_status_desc')}</p>
+                <div className="flex items-center gap-2 text-viet-gold font-black uppercase tracking-widest text-[10px]">
+                  <ShieldCheck size={14} />
+                  {t('trust_guaranteed')}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Supplier Grid */}
+          <div className="flex-1 space-y-8">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                  <Globe size={20} className="text-slate-400" />
+                </div>
+                <span className="text-sm font-bold text-slate-500">
+                  {t('showing')} <span className="text-slate-900">{filteredSuppliers.length}</span> {t('verified_suppliers')}
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('sort_by')}</span>
+                <select className="bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 outline-none focus:border-viet-red transition-colors">
+                  <option>{t('most_relevant')}</option>
+                  <option>{t('years_experience')}</option>
+                  <option>{t('recently_verified')}</option>
+                </select>
+              </div>
+            </div>
+
+            {filteredSuppliers.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {filteredSuppliers.map((supplier) => (
+                  <SupplierCard key={supplier.id} supplier={supplier} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-slate-200">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search size={32} className="text-slate-300" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 mb-2">{t('no_suppliers_found')}</h3>
+                <p className="text-slate-500 font-medium max-w-xs mx-auto">{t('no_suppliers_desc')}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
