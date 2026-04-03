@@ -23,6 +23,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           alt={supplier.name}
           className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
           referrerPolicy="no-referrer"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
         <div className="absolute -bottom-8 left-6 w-20 h-20 rounded-2xl bg-white border-2 border-white p-1.5 shadow-xl overflow-hidden group-hover:scale-105 transition-transform">
@@ -31,6 +32,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             alt={supplier.name}
             className="w-full h-full object-contain"
             referrerPolicy="no-referrer"
+            loading="lazy"
           />
         </div>
       </div>

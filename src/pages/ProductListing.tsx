@@ -25,7 +25,7 @@ export function ProductListing() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Breadcrumbs & Header */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">
             <Link to="/" className="hover:text-viet-red">{t('home')}</Link>
             <span>/</span>
@@ -55,7 +55,7 @@ export function ProductListing() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Sidebar Filters - Desktop */}
           <aside className="hidden lg:block w-72 shrink-0 space-y-10">

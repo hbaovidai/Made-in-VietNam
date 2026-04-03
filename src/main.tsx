@@ -1,11 +1,17 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
+import { ToastProvider } from './components/ui/Toast';
 import App from './App.tsx';
 import './index.css';
-import './i18n';
+// import './i18n';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <HelmetProvider>
+      <ToastProvider>
+        <App />
+      </ToastProvider>
+    </HelmetProvider>
   </StrictMode>,
 );

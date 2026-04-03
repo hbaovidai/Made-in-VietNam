@@ -20,7 +20,7 @@ export function CategoryDetailPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200 py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-xs text-slate-500">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-xs text-slate-500">
           <Link to="/" className="hover:text-viet-red flex items-center gap-1">
             <Home size={12} /> {t('home')}
           </Link>
@@ -33,7 +33,7 @@ export function CategoryDetailPage() {
 
       {/* Hero Section */}
       <div className="bg-white py-12 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-4 max-w-2xl">
               <h1 className="text-4xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
@@ -68,7 +68,7 @@ export function CategoryDetailPage() {
       <CategoryGroupTabs activeSlug={group.slug} />
 
       {/* Main Content Sections */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         {group.sections.map((section, idx) => (
           <div key={section.title} className="space-y-6">
             <div className="flex items-center gap-4">

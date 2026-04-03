@@ -40,7 +40,7 @@ export function RFQ() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Header */}
       <div className="bg-slate-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{t('rfq_title')}</h1>
             <p className="text-slate-400 text-lg leading-relaxed">
@@ -50,7 +50,7 @@ export function RFQ() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Form */}
           <div className="lg:col-span-8">

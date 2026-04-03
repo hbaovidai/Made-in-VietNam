@@ -24,7 +24,7 @@ export function InquiryBasket() {
 
   if (basketItems.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <ShoppingCart size={48} className="text-slate-300" />
         </div>
@@ -39,7 +39,7 @@ export function InquiryBasket() {
 
   return (
     <div className="bg-slate-50 min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
           <Link to="/" className="hover:text-viet-red">{t('home')}</Link>
           <ChevronRight size={14} />

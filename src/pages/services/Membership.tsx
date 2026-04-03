@@ -44,7 +44,7 @@ export function Membership() {
         image="https://picsum.photos/seed/membership/1920/600"
       />
       
-      <div className="max-w-7xl mx-auto px-4 py-20">
+      <div className="max-w-[1600px] mx-auto px-4 py-20">
         <div className="text-center space-y-4 mb-20">
           <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tight leading-none">
             {t('unlock_full')} <span className="text-viet-red">{t('potential')}</span>

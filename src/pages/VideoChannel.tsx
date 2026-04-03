@@ -23,7 +23,7 @@ export function VideoChannel() {
         image="https://picsum.photos/seed/video/400/600"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Search & Categories */}
         <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
           <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto">

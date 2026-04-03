@@ -3,17 +3,19 @@ import { DashboardSection } from '../../../components/DashboardSection';
 import { Heart, ChevronRight, Star, ShoppingCart, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '../../../data/mockData';
+import { useTranslation } from 'react-i18next';
 
 export function BuyerSaved() {
+  const { t } = useTranslation();
   const savedProducts = products.slice(0, 4);
 
   return (
     <DashboardSection 
-      title="Saved Products" 
-      subtitle="Products you've bookmarked for later review."
+      title={t('saved_products_title')} 
+      subtitle={t('saved_products_subtitle')}
       actions={
         <button className="bg-white text-slate-900 border border-slate-200 px-6 py-2 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs">
-          Clear All
+          {t('clear_all')}
         </button>
       }
     >
@@ -41,7 +43,7 @@ export function BuyerSaved() {
                 <Trash2 size={18} />
               </button>
               <Link to={`/products/${product.id}`} className="bg-viet-red text-white px-6 py-2 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-[10px] shadow-lg shadow-red-500/20 flex items-center gap-2">
-                <ShoppingCart size={14} /> View Product
+                <ShoppingCart size={14} /> {t('view_product')}
               </Link>
               <ChevronRight size={16} className="text-slate-300 group-hover:text-viet-red" />
             </div>
@@ -53,10 +55,10 @@ export function BuyerSaved() {
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
             <Heart size={40} className="text-slate-200" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">No Saved Products</h3>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto">You haven't saved any products yet. Start browsing and bookmark products you like.</p>
+          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('no_saved_title')}</h3>
+          <p className="text-slate-500 text-sm max-w-xs mx-auto">{t('no_saved_desc')}</p>
           <Link to="/products" className="inline-block bg-viet-red text-white px-8 py-3 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs">
-            Browse Products
+            {t('browse_products')}
           </Link>
         </div>
       )}

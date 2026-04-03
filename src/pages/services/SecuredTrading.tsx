@@ -40,7 +40,7 @@ export function SecuredTrading() {
         image="https://picsum.photos/seed/security/1920/600"
       />
       
-      <div className="max-w-7xl mx-auto px-4 py-20">
+      <div className="max-w-[1600px] mx-auto px-4 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-32">
           <div className="space-y-6">
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tight leading-none">
@@ -86,7 +86,7 @@ export function SecuredTrading() {
       </div>
 
       <div className="bg-slate-900 py-24 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center space-y-8">
+        <div className="max-w-[1600px] mx-auto px-4 text-center space-y-8">
           <h2 className="text-3xl font-black uppercase tracking-tight">{t('ready_to_trade_securely')}</h2>
           <p className="text-slate-400 max-w-2xl mx-auto">{t('ready_to_trade_securely_desc')}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -19,7 +19,7 @@ export function PageHeader({ title, description, breadcrumbs, image, className }
   return (
     <div className={`bg-white border-b border-slate-200 ${className}`}>
       {/* Breadcrumbs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 text-xs text-slate-500">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 text-xs text-slate-500">
         <Link to="/" className="hover:text-viet-red flex items-center gap-1">
           <Home size={12} /> Home
         </Link>
@@ -40,7 +40,7 @@ export function PageHeader({ title, description, breadcrumbs, image, className }
       </div>
 
       {/* Hero Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-4 max-w-2xl">
             <h1 className="text-4xl font-black text-slate-900 leading-tight uppercase tracking-tighter">

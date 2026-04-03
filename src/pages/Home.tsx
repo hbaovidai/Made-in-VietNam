@@ -9,14 +9,19 @@ import { SupplierCard } from '../components/SupplierCard';
 import { CategorySidebar } from '../components/CategorySidebar';
 import { CATEGORY_GROUPS } from '../data/categories';
 import { CategoryCard } from '../components/categories/CategoryCard';
+import { SEOHead } from '../components/SEOHead';
 
 export function Home() {
   const { t } = useTranslation();
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEOHead
+        title="Trang chủ"
+        description="Made in VietNam - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế."
+      />
       {/* Top Section: Categories + Banner + Recommendations */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="flex gap-6 h-[450px]">
           {/* Left Column: Categories Sidebar */}
           <CategorySidebar />
@@ -59,7 +64,7 @@ export function Home() {
               {products.slice(0, 3).map((product) => (
                 <Link key={product.id} to={`/product/${product.id}`} className="flex gap-3 group">
                   <div className="w-16 h-16 bg-slate-100 shrink-0 border border-slate-100 overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                   <div className="flex flex-col justify-center">
                     <span className="text-xs font-medium text-slate-800 line-clamp-2 group-hover:text-viet-red">{product.name}</span>
@@ -78,7 +83,7 @@ export function Home() {
       </section>
 
       {/* Feature Cards Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Star className="text-orange-500" />, title: t('smart_expo'), desc: t('digital_trade_fair') },
@@ -100,7 +105,7 @@ export function Home() {
       </section>
 
       {/* Featured Products - Marketplace Style */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="bg-white border border-slate-200">
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <h2 className="text-xl font-bold text-slate-900">{t('featured_products')}</h2>
@@ -112,7 +117,7 @@ export function Home() {
             {products.slice(0, 10).map((product) => (
               <div key={product.id} className="bg-white p-4 hover:shadow-lg transition-shadow group cursor-pointer">
                 <div className="aspect-square bg-slate-50 mb-4 overflow-hidden">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                 </div>
                 <h3 className="text-sm font-medium text-slate-800 line-clamp-2 mb-2 group-hover:text-viet-red h-10">{product.name}</h3>
                 <div className="flex flex-col">
@@ -126,7 +131,7 @@ export function Home() {
       </section>
 
       {/* Verified Suppliers Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="bg-white border border-slate-200">
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <h2 className="text-xl font-bold text-slate-900">{t('verified_manufacturers')}</h2>
@@ -143,7 +148,7 @@ export function Home() {
       </section>
 
       {/* Browse by Category */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t('browse_by')} <span className="text-viet-red">{t('category')}</span></h2>
@@ -160,7 +165,7 @@ export function Home() {
       </section>
 
       {/* RFQ Section - Compact */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="bg-slate-900 text-white p-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold">{t('easy_sourcing_rfq')}</h2>

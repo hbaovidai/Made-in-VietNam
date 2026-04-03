@@ -32,7 +32,7 @@ export function SupplierProfile() {
         <img src={supplier.banner} alt={supplier.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full p-8 md:p-12">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-end gap-8">
+          <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-end gap-8">
             <div className="relative shrink-0">
               <div className="w-32 h-32 md:w-48 md:h-48 rounded-[2rem] bg-white border-4 border-white shadow-2xl p-4 overflow-hidden">
                 <img src={supplier.logo} alt={supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
@@ -83,7 +83,7 @@ export function SupplierProfile() {
 
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-slate-200 sticky top-20 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
             {[
               { id: 'Home', label: t('home') },
@@ -113,7 +113,7 @@ export function SupplierProfile() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-12">

@@ -30,7 +30,7 @@ export function ProductDetail() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Breadcrumbs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <nav className="flex items-center gap-2 text-xs text-slate-500">
           <Link to="/" className="hover:text-viet-red">{t('home')}</Link>
           <ChevronRight size={12} />
@@ -42,7 +42,7 @@ export function ProductDetail() {
         </nav>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Images */}
           <div className="lg:col-span-5 space-y-4">

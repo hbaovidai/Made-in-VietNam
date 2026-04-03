@@ -1,12 +1,36 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Globe, Mail, Lock, User, ShieldCheck, Facebook, Chrome } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
+import { useToast } from '../components/ui/Toast';
 
 export function LoginRegister() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { addToast } = useToast();
   const [activeTab, setActiveTab] = React.useState<'login' | 'register'>('login');
+  const [role, setRole] = React.useState<'buyer' | 'supplier'>('supplier');
+
+  const handleMockLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Tạo token giả để lướt qua ProtectedRoute
+    localStorage.setItem('auth_token', 'mock_token_123');
+    localStorage.setItem('user_role', role);
+    const mappedRole = role === 'buyer' ? t('login_as_buyer') : t('login_as_supplier');
+    addToast({ type: 'success', title: t('success') || 'Thành công', message: mappedRole });
+    
+    // Redirect về trang user vừa định vào hoặc dashboard tương ứng
+    let from = (location.state as any)?.from?.pathname;
+    
+    // Validate redirect path with role
+    if (!from || (role === 'supplier' && from.startsWith('/dashboard/buyer')) || (role === 'buyer' && from.startsWith('/dashboard/supplier'))) {
+      from = `/dashboard/${role}`;
+    }
+    
+    navigate(from);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 py-20">
@@ -21,9 +45,9 @@ export function LoginRegister() {
               <div className="w-10 h-10 bg-viet-red rounded-lg flex items-center justify-center text-viet-gold">
                 <Globe size={24} />
               </div>
-              <div className="flex flex-col">
-              <span className="text-xl font-bold text-white leading-none tracking-tight">MADE IN</span>
-              <span className="text-xl font-bold text-viet-red leading-none tracking-tight">VIETNAM</span>
+              <div className="flex flex-row items-center">
+              <span className="text-xl font-bold text-white leading-none tracking-tight">VIE</span>
+              <span className="text-xl font-bold text-viet-red leading-none tracking-tight">product</span>
               </div>
             </Link>
             <div className="space-y-6">
@@ -83,7 +107,7 @@ export function LoginRegister() {
             </button>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleMockLogin}>
             {activeTab === 'register' && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -121,21 +145,25 @@ export function LoginRegister() {
               </div>
             </div>
 
-            {activeTab === 'register' && (
-              <div className="space-y-4">
-                <label className="text-sm font-bold text-slate-700 block">{t('i_am_a')}</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                    <input type="radio" name="role" className="w-4 h-4 text-viet-red" />
-                    <span className="text-sm font-bold text-slate-700">{t('buyer')}</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                    <input type="radio" name="role" className="w-4 h-4 text-viet-red" />
-                    <span className="text-sm font-bold text-slate-700">{t('supplier')}</span>
-                  </label>
-                </div>
+            <div className="space-y-4">
+              <label className="text-sm font-bold text-slate-700 block text-center border-t border-slate-100 mt-6 pt-6">{t('choose_role')}</label>
+              <div className="grid grid-cols-2 gap-4">
+                <button 
+                  type="button"
+                  onClick={() => setRole('buyer')}
+                  className={cn("p-3 border rounded-xl font-bold transition-all", role === 'buyer' ? "border-viet-red bg-red-50 text-viet-red ring-2 ring-red-100" : "border-slate-200 text-slate-500 hover:bg-slate-50")}
+                >
+                  {t('login_as_buyer')}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setRole('supplier')}
+                  className={cn("p-3 border rounded-xl font-bold transition-all", role === 'supplier' ? "border-viet-red bg-red-50 text-viet-red ring-2 ring-red-100" : "border-slate-200 text-slate-500 hover:bg-slate-50")}
+                >
+                  {t('login_as_supplier')}
+                </button>
               </div>
-            )}
+            </div>
 
             <button className="w-full py-4 bg-viet-red text-white rounded-xl font-bold text-lg hover:bg-red-700 transition-all shadow-xl hover:shadow-red-900/20">
               {activeTab === 'login' ? t('login') : t('create_account')}

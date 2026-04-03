@@ -1,13 +1,16 @@
 import React from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { TrendingUp, TrendingDown, Eye, Users, MessageSquare, Package, ChevronRight, Calendar, ArrowUpRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function SupplierAnalytics() {
+  const { t } = useTranslation();
+
   const stats = [
-    { label: "Profile Views", value: "1,240", change: "+12%", trend: "up", icon: <Eye className="text-blue-500" /> },
-    { label: "Product Clicks", value: "850", change: "+5%", trend: "up", icon: <Package className="text-orange-500" /> },
-    { label: "Inquiries", value: "15", change: "-2%", trend: "down", icon: <MessageSquare className="text-red-500" /> },
-    { label: "New Leads", value: "8", change: "+15%", trend: "up", icon: <Users className="text-green-500" /> },
+    { label: t('profile_views'), value: "1,240", change: "+12%", trend: "up", icon: <Eye className="text-blue-500" /> },
+    { label: t('product_clicks'), value: "850", change: "+5%", trend: "up", icon: <Package className="text-orange-500" /> },
+    { label: t('inquiries_stat'), value: "15", change: "-2%", trend: "down", icon: <MessageSquare className="text-red-500" /> },
+    { label: t('new_leads'), value: "8", change: "+15%", trend: "up", icon: <Users className="text-green-500" /> },
   ];
 
   const topProducts = [
@@ -19,15 +22,15 @@ export function SupplierAnalytics() {
 
   return (
     <DashboardSection 
-      title="Business Analytics" 
-      subtitle="Track your performance, visitor trends, and product engagement."
+      title={t('biz_analytics_title')} 
+      subtitle={t('biz_analytics_subtitle')}
       actions={
         <div className="flex gap-2">
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-            <Calendar size={14} /> Last 30 Days
+            <Calendar size={14} /> {t('last_30_days')}
           </button>
           <button className="bg-slate-900 text-white px-6 py-2 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
-            Export Data
+            {t('export_data')}
           </button>
         </div>
       }
@@ -57,7 +60,7 @@ export function SupplierAnalytics() {
           {/* Visitor Trend */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Eye size={20} className="text-viet-red" /> Visitor Trend
+              <Eye size={20} className="text-viet-red" /> {t('visitor_trend')}
             </h3>
             <div className="h-64 flex items-end gap-2">
               {[30, 50, 40, 70, 60, 90, 80, 100, 85, 95, 75, 110].map((h, i) => (
@@ -70,17 +73,14 @@ export function SupplierAnalytics() {
               ))}
             </div>
             <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              <span>Week 1</span>
-              <span>Week 2</span>
-              <span>Week 3</span>
-              <span>Week 4</span>
+              <span>{t('week_1')}</span><span>{t('week_2')}</span><span>{t('week_3')}</span><span>{t('week_4')}</span>
             </div>
           </div>
 
           {/* Inquiry Trend */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <MessageSquare size={20} className="text-viet-red" /> Inquiry Trend
+              <MessageSquare size={20} className="text-viet-red" /> {t('inquiry_trend')}
             </h3>
             <div className="h-64 flex items-end gap-2">
               {[20, 40, 30, 50, 45, 60, 55, 70, 65, 80, 75, 90].map((h, i) => (
@@ -93,10 +93,7 @@ export function SupplierAnalytics() {
               ))}
             </div>
             <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              <span>Week 1</span>
-              <span>Week 2</span>
-              <span>Week 3</span>
-              <span>Week 4</span>
+              <span>{t('week_1')}</span><span>{t('week_2')}</span><span>{t('week_3')}</span><span>{t('week_4')}</span>
             </div>
           </div>
         </div>
@@ -104,17 +101,17 @@ export function SupplierAnalytics() {
         {/* Top Products Table */}
         <div className="space-y-6">
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-            <TrendingUp size={20} className="text-viet-red" /> Top Performing Products
+            <TrendingUp size={20} className="text-viet-red" /> {t('top_performing_products')}
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Product Name</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Views</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Clicks</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Conversion</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Trend</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_product_name')}</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_views')}</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_clicks')}</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_conversion')}</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('table_trend')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">

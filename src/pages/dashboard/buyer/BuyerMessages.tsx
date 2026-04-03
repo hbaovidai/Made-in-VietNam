@@ -1,8 +1,11 @@
 import React from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { MessageSquare, ChevronRight, Search, Filter, MoreVertical, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function BuyerMessages() {
+  const { t } = useTranslation();
+
   const messages = [
     { id: 1, sender: "Hanoi Textile Co.", lastMessage: "Yes, we can provide samples for your review. When would you like us to ship them?", time: "2 hours ago", unread: true, avatar: "HT" },
     { id: 2, sender: "Vietnam Global Trade", lastMessage: "The quote for your RFQ #RFQ-002 has been updated. Please check the new pricing.", time: "5 hours ago", unread: false, avatar: "VG" },
@@ -12,12 +15,12 @@ export function BuyerMessages() {
 
   return (
     <DashboardSection 
-      title="Messages" 
-      subtitle="Communicate directly with suppliers and manage your inquiries."
+      title={t('messages_title')} 
+      subtitle={t('messages_subtitle')}
       actions={
         <div className="flex gap-2">
           <div className="relative">
-            <input type="text" placeholder="Search messages..." className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-viet-red" />
+            <input type="text" placeholder={t('search_messages')} className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-viet-red" />
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           </div>
           <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-viet-red transition-colors">
@@ -59,7 +62,7 @@ export function BuyerMessages() {
               </div>
               <div>
                 <div className="text-sm font-bold text-slate-900">Hanoi Textile Co.</div>
-                <div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Online Now</div>
+                <div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">{t('online_now')}</div>
               </div>
             </div>
             <button className="p-2 text-slate-400 hover:text-viet-red">
@@ -69,7 +72,7 @@ export function BuyerMessages() {
           
           <div className="flex-1 p-6 overflow-y-auto space-y-6">
             <div className="flex justify-center">
-              <span className="bg-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Today</span>
+              <span className="bg-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{t('today_label')}</span>
             </div>
             
             <div className="flex items-start gap-3 max-w-[80%]">
@@ -99,7 +102,7 @@ export function BuyerMessages() {
 
           <div className="p-4 bg-white border-t border-slate-100">
             <div className="relative">
-              <input type="text" placeholder="Type your message..." className="w-full pl-6 pr-16 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-viet-red transition-colors" />
+              <input type="text" placeholder={t('type_message')} className="w-full pl-6 pr-16 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-viet-red transition-colors" />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-viet-red text-white p-3 rounded-lg hover:bg-red-700 transition-colors">
                 <Send size={18} />
               </button>

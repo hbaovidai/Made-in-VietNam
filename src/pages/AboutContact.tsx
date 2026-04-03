@@ -10,7 +10,7 @@ export function AboutContact() {
       {/* Hero Section */}
       <section className="bg-slate-900 text-white py-24 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-viet-red/10 skew-x-12 transform translate-x-32" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-6">
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
               <Trans i18nKey="about_hero_title">
@@ -25,7 +25,7 @@ export function AboutContact() {
       </section>
 
       {/* Stats Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { label: t('verified_suppliers'), value: "5,000+", icon: <ShieldCheck className="text-viet-red" /> },
@@ -47,7 +47,7 @@ export function AboutContact() {
       </section>
 
       {/* Mission Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl font-bold text-slate-900">{t('our_mission')}</h2>
@@ -80,7 +80,7 @@ export function AboutContact() {
       </section>
 
       {/* Contact Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col lg:flex-row">
           <div className="lg:w-1/3 bg-slate-900 p-12 text-white space-y-12">
             <div className="space-y-4">

@@ -11,7 +11,7 @@ export function CategoryMegaMenu() {
   const [activeGroup, setActiveGroup] = React.useState<string | null>(null);
 
   return (
-    <div className="relative flex bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-7xl mx-auto">
+    <div className="relative flex bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-[1600px] mx-auto">
       {/* Sidebar List */}
       <div className="w-72 border-r border-slate-100 py-2 shrink-0 overflow-y-auto max-h-[600px]">
         {ALL_CATEGORIES_LIST.map((cat) => {
