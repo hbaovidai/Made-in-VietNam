@@ -63,42 +63,42 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
   }, [location.pathname]);
 
   const buyerLinks = [
-    { icon: <LayoutDashboard size={20} />, label: /* t('overview') */ "Tổng quan", path: '/dashboard/buyer' },
-    { icon: <FileText size={20} />, label: /* t('rfqs') */ "Yêu cầu báo giá", path: '/dashboard/buyer/rfqs' },
-    { icon: <Heart size={20} />, label: /* t('saved') */ "Đã lưu", path: '/dashboard/buyer/saved' },
-    { icon: <MessageSquare size={20} />, label: /* t('messages') */ "Tin nhắn", path: '/dashboard/buyer/messages' },
-    { icon: <Settings size={20} />, label: /* t('settings') */ "Cài đặt", path: '/dashboard/buyer/settings' },
+    { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
+    { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
+    { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
+    { icon: <MessageSquare size={20} />, label: t('messages'), path: '/dashboard/buyer/messages' },
+    { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
   const supplierLinks = [
-    { icon: <LayoutDashboard size={20} />, label: /* t('overview') */ "Tổng quan", path: '/dashboard/supplier' },
-    { icon: <Package size={20} />, label: /* t('products') */ "Sản phẩm", path: '/dashboard/supplier/products' },
-    /* { icon: <Archive size={20} />, label: t('batch_management'), path: '/dashboard/supplier/batches' }, */
-    /* { icon: <QrCode size={20} />, label: t('qr_management'), path: '/dashboard/supplier/qr-management' }, */
-    /* { icon: <ShieldAlert size={20} />, label: t('anti_counterfeit'), path: '/dashboard/supplier/anti-counterfeit' }, */
-    { icon: <FileText size={20} />, label: /* t('rfqs') */ "Yêu cầu báo giá", path: '/dashboard/supplier/rfqs' },
-    { icon: <BarChart3 size={20} />, label: /* t('analytics') */ "Phân tích", path: '/dashboard/supplier/analytics' },
-    { icon: <User size={20} />, label: /* t('profile') */ "Hồ sơ", path: '/dashboard/supplier/profile' },
-    { icon: <Settings size={20} />, label: /* t('settings') */ "Cài đặt", path: '/dashboard/supplier/settings' },
+    { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/supplier' },
+    { icon: <Package size={20} />, label: t('products'), path: '/dashboard/supplier/products' },
+    { icon: <Archive size={20} />, label: t('batch_management'), path: '/dashboard/supplier/batches' },
+    { icon: <QrCode size={20} />, label: t('qr_management'), path: '/dashboard/supplier/qr-management' },
+    { icon: <ShieldAlert size={20} />, label: t('anti_counterfeit'), path: '/dashboard/supplier/anti-counterfeit' },
+    { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/supplier/rfqs' },
+    { icon: <BarChart3 size={20} />, label: t('analytics'), path: '/dashboard/supplier/analytics' },
+    { icon: <User size={20} />, label: t('profile'), path: '/dashboard/supplier/profile' },
+    { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/supplier/settings' },
   ];
 
   const links = type === 'buyer' ? buyerLinks : supplierLinks;
 
   // Bottom nav: show only the most important 5 items
   const buyerBottomNav = [
-    { icon: <LayoutDashboard size={20} />, label: /* t('overview') */ "Tổng quan", path: '/dashboard/buyer' },
-    { icon: <FileText size={20} />, label: /* t('rfqs') */ "RFQ", path: '/dashboard/buyer/rfqs' },
-    { icon: <Heart size={20} />, label: /* t('saved') */ "Đã lưu", path: '/dashboard/buyer/saved' },
-    { icon: <MessageSquare size={20} />, label: /* t('messages') */ "Tin nhắn", path: '/dashboard/buyer/messages' },
-    { icon: <Settings size={20} />, label: /* t('settings') */ "Cài đặt", path: '/dashboard/buyer/settings' },
+    { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
+    { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
+    { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
+    { icon: <MessageSquare size={20} />, label: t('messages'), path: '/dashboard/buyer/messages' },
+    { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
   const supplierBottomNav = [
-    { icon: <LayoutDashboard size={20} />, label: /* t('overview') */ "Tổng quan", path: '/dashboard/supplier' },
-    { icon: <Package size={20} />, label: /* t('products') */ "Sản phẩm", path: '/dashboard/supplier/products' },
-    /* { icon: <QrCode size={20} />, label: 'QR', path: '/dashboard/supplier/qr-management' }, */
-    { icon: <BarChart3 size={20} />, label: /* t('analytics') */ "Phân tích", path: '/dashboard/supplier/analytics' },
-    { icon: <User size={20} />, label: /* t('profile') */ "Hồ sơ", path: '/dashboard/supplier/profile' },
+    { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/supplier' },
+    { icon: <Package size={20} />, label: t('products'), path: '/dashboard/supplier/products' },
+    { icon: <QrCode size={20} />, label: 'QR', path: '/dashboard/supplier/qr-management' },
+    { icon: <BarChart3 size={20} />, label: t('analytics'), path: '/dashboard/supplier/analytics' },
+    { icon: <User size={20} />, label: t('profile'), path: '/dashboard/supplier/profile' },
   ];
 
   const bottomNavItems = type === 'buyer' ? buyerBottomNav : supplierBottomNav;
@@ -124,7 +124,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
 
       <div className="flex-1 p-4 lg:p-6 space-y-2 overflow-y-auto">
         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-4">
-          {type === 'buyer' ? (/* t('buyer') */ "Người mua") : (/* t('supplier') */ "Nhà cung cấp")} {/* t('dashboard') */} Bảng điều khiển
+          {type === 'buyer' ? t('buyer') : t('supplier')} {t('dashboard')}
         </div>
         {links.map((link) => (
           <SidebarItem
@@ -146,8 +146,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
               <ShieldCheck size={18} />
             </div>
             <div>
-              <div className="text-xs font-bold text-white">{/* t('go_premium') */} Nâng cấp Premium</div>
-              <div className="text-[10px] text-slate-400">{/* t('unlock_all_features') */} Mở khóa tất cả tính năng</div>
+              <div className="text-xs font-bold text-white">{t('go_premium')}</div>
+              <div className="text-[10px] text-slate-400">{t('unlock_all_features')}</div>
             </div>
           </div>
         </div>
@@ -160,7 +160,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-red-50 hover:text-viet-red transition-all"
         >
           <LogOut size={20} />
-          <span>{/* {t('sign_out')} */} Đăng xuất</span>
+          <span>{t('sign_out')}</span>
         </button>
       </div>
     </>
@@ -204,14 +204,14 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
               <Menu size={22} />
             </button>
             <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">
-              {links.find(l => l.path === location.pathname)?.label || (/* t('dashboard') */ "Bảng điều khiển")}
+              {links.find(l => l.path === location.pathname)?.label || t('dashboard')}
             </h2>
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <div className="text-sm font-bold text-slate-900">Hoai Bao</div>
-                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'buyer' ? (/* t('buyer') */ "Người mua") : (/* t('supplier') */ "Nhà cung cấp")} {/* t('account') */} Tài khoản</div>
+                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'buyer' ? t('buyer') : t('supplier')} {t('account')}</div>
               </div>
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm">
                 HB

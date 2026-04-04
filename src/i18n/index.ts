@@ -17,7 +17,6 @@ i18n
         translation: viTranslations,
       },
     },
-    lng: 'vi',
     fallbackLng: 'vi',
     interpolation: {
       escapeValue: false, // react already safes from xss

@@ -23,7 +23,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-sm leading-relaxed">
-              {/* {t('footer_description')} */} Chợ B2B hàng đầu Việt Nam kết nối người mua toàn cầu với các nhà sản xuất và xuất khẩu địa phương đáng tin cậy. Chúng tôi trao quyền cho các doanh nghiệp Việt Nam vươn ra thế giới.
+              {t('footer_description')}
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-viet-red hover:text-white transition-all">
@@ -43,35 +43,35 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{/* {t('marketplace')} */} Thị trường</h3>
+            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('marketplace')}</h3>
             <ul className="space-y-4 text-sm">
-              <li><Link to="/products" className="hover:text-viet-red transition-colors">{/* {t('browse_products')} */} Duyệt sản phẩm</Link></li>
-              <li><Link to="/suppliers" className="hover:text-viet-red transition-colors">{/* {t('verified_suppliers')} */} Nhà cung cấp đã xác minh</Link></li>
-              <li><Link to="/rfq" className="hover:text-viet-red transition-colors">{/* {t('request_for_quotation')} */} Yêu cầu báo giá</Link></li>
-              <li><Link to="/categories" className="hover:text-viet-red transition-colors">{/* {t('all_categories_footer')} */} Tất cả danh mục</Link></li>
-              <li><Link to="/premium" className="hover:text-viet-red transition-colors">{/* {t('premium_membership')} */} Thành viên cao cấp</Link></li>
+              <li><Link to="/products" className="hover:text-viet-red transition-colors">{t('browse_products')}</Link></li>
+              <li><Link to="/suppliers" className="hover:text-viet-red transition-colors">{t('verified_suppliers')}</Link></li>
+              <li><Link to="/rfq" className="hover:text-viet-red transition-colors">{t('request_for_quotation')}</Link></li>
+              <li><Link to="/categories" className="hover:text-viet-red transition-colors">{t('all_categories_footer')}</Link></li>
+              <li><Link to="/premium" className="hover:text-viet-red transition-colors">{t('premium_membership')}</Link></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{/* {t('support_info')} */} Hỗ trợ</h3>
+            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('support_info')}</h3>
             <ul className="space-y-4 text-sm">
-              <li><Link to="/about" className="hover:text-viet-red transition-colors">{/* {t('about_us')} */} Về chúng tôi</Link></li>
-              <li><Link to="/contact" className="hover:text-viet-red transition-colors">{/* {t('contact_support')} */} Liên hệ hỗ trợ</Link></li>
-              <li><Link to="/help" className="hover:text-viet-red transition-colors">{/* {t('help_center')} */} Trung tâm trợ giúp</Link></li>
-              <li><Link to="/terms" className="hover:text-viet-red transition-colors">{/* {t('terms_of_service')} */} Điều khoản dịch vụ</Link></li>
-              <li><Link to="/privacy" className="hover:text-viet-red transition-colors">{/* {t('privacy_policy')} */} Chính sách bảo mật</Link></li>
+              <li><Link to="/about" className="hover:text-viet-red transition-colors">{t('about_us')}</Link></li>
+              <li><Link to="/contact" className="hover:text-viet-red transition-colors">{t('contact_support')}</Link></li>
+              <li><Link to="/help" className="hover:text-viet-red transition-colors">{t('help_center')}</Link></li>
+              <li><Link to="/terms" className="hover:text-viet-red transition-colors">{t('terms_of_service')}</Link></li>
+              <li><Link to="/privacy" className="hover:text-viet-red transition-colors">{t('privacy_policy')}</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{/* {t('contact_us')} */} Liên hệ chúng tôi</h3>
+            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('contact_us')}</h3>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-viet-red shrink-0" />
-                <span>{/* {t('footer_address')} */} 123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam</span>
+                <span>{t('footer_address')}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-viet-red shrink-0" />
@@ -86,10 +86,10 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-        <p>© {currentYear} VIEproduct {/* {t('all_rights_reserved_text')} */} Bảo lưu mọi quyền.</p>
+        <p>© {currentYear} VIEproduct {t('all_rights_reserved_text')}</p>
           <div className="flex items-center gap-6">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/320px-Flag_of_Vietnam.svg.png" alt="Vietnam Flag" className="h-4 rounded-sm" />
-            <span>{/* {t('proudly_vietnamese')} */} Tự hào Việt Nam</span>
+            <span>{t('proudly_vietnamese')}</span>
           </div>
         </div>
       </div>

@@ -14,8 +14,8 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 // Main Public Pages
 const Home = React.lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const UITest = React.lazy(() => import('./pages/UITest').then(m => ({ default: m.UITest })));
-// const VerifyProduct = React.lazy(() => import('./pages/public/VerifyProduct').then(m => ({ default: m.VerifyProduct })));
-// const ProductTrace = React.lazy(() => import('./pages/public/ProductTrace').then(m => ({ default: m.ProductTrace })));
+const VerifyProduct = React.lazy(() => import('./pages/public/VerifyProduct').then(m => ({ default: m.VerifyProduct })));
+const ProductTrace = React.lazy(() => import('./pages/public/ProductTrace').then(m => ({ default: m.ProductTrace })));
 const ProductListing = React.lazy(() => import('./pages/ProductListing').then(m => ({ default: m.ProductListing })));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const SupplierList = React.lazy(() => import('./pages/SupplierList').then(m => ({ default: m.SupplierList })));
@@ -51,15 +51,15 @@ const BuyerOverview = React.lazy(() => import('./pages/dashboard/buyer/BuyerOver
 const BuyerRFQs = React.lazy(() => import('./pages/dashboard/buyer/BuyerRFQs').then(m => ({ default: m.BuyerRFQs })));
 const BuyerSaved = React.lazy(() => import('./pages/dashboard/buyer/BuyerSaved').then(m => ({ default: m.BuyerSaved })));
 const BuyerMessages = React.lazy(() => import('./pages/dashboard/buyer/BuyerMessages').then(m => ({ default: m.BuyerMessages })));
-// const BuyerHistory = React.lazy(() => import('./pages/dashboard/buyer/BuyerHistory').then(m => ({ default: m.BuyerHistory })));
+const BuyerHistory = React.lazy(() => import('./pages/dashboard/buyer/BuyerHistory').then(m => ({ default: m.BuyerHistory })));
 const BuyerSettings = React.lazy(() => import('./pages/dashboard/buyer/BuyerSettings').then(m => ({ default: m.BuyerSettings })));
 
 // Dashboard Pages - Supplier
 const SupplierOverview = React.lazy(() => import('./pages/dashboard/supplier/SupplierOverview').then(m => ({ default: m.SupplierOverview })));
 const SupplierProducts = React.lazy(() => import('./pages/dashboard/supplier/SupplierProducts').then(m => ({ default: m.SupplierProducts })));
-// const BatchManagement = React.lazy(() => import('./pages/dashboard/supplier/BatchManagement').then(m => ({ default: m.BatchManagement })));
-// const QRManagement = React.lazy(() => import('./pages/dashboard/supplier/QRManagement').then(m => ({ default: m.QRManagement })));
-// const AntiCounterfeit = React.lazy(() => import('./pages/dashboard/supplier/AntiCounterfeit').then(m => ({ default: m.AntiCounterfeit })));
+const BatchManagement = React.lazy(() => import('./pages/dashboard/supplier/BatchManagement').then(m => ({ default: m.BatchManagement })));
+const QRManagement = React.lazy(() => import('./pages/dashboard/supplier/QRManagement').then(m => ({ default: m.QRManagement })));
+const AntiCounterfeit = React.lazy(() => import('./pages/dashboard/supplier/AntiCounterfeit').then(m => ({ default: m.AntiCounterfeit })));
 const SupplierRFQs = React.lazy(() => import('./pages/dashboard/supplier/SupplierRFQs').then(m => ({ default: m.SupplierRFQs })));
 const SupplierAnalytics = React.lazy(() => import('./pages/dashboard/supplier/SupplierAnalytics').then(m => ({ default: m.SupplierAnalytics })));
 const SupplierProfileDashboard = React.lazy(() => import('./pages/dashboard/supplier/SupplierProfile').then(m => ({ default: m.SupplierProfile })));
@@ -99,8 +99,8 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/ui-test" element={<UITest />} />
-              {/* <Route path="/verify" element={<VerifyProduct />} /> */}
-              {/* <Route path="/trace/:code" element={<ProductTrace />} /> */}
+              <Route path="/verify" element={<VerifyProduct />} />
+              <Route path="/trace/:code" element={<ProductTrace />} />
               <Route path="/products" element={<ProductListing />} />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/suppliers" element={<SupplierList />} />
@@ -145,7 +145,7 @@ export default function App() {
               <Route path="rfqs" element={<BuyerRFQs />} />
               <Route path="saved" element={<BuyerSaved />} />
               <Route path="messages" element={<BuyerMessages />} />
-              {/* <Route path="history" element={<BuyerHistory />} /> */}
+              <Route path="history" element={<BuyerHistory />} />
               <Route path="settings" element={<BuyerSettings />} />
             </Route>
 
@@ -156,9 +156,9 @@ export default function App() {
             }>
               <Route index element={<SupplierOverview />} />
               <Route path="products" element={<SupplierProducts />} />
-              {/* <Route path="batches" element={<BatchManagement />} /> */}
-              {/* <Route path="qr-management" element={<QRManagement />} /> */}
-              {/* <Route path="anti-counterfeit" element={<AntiCounterfeit />} /> */}
+              <Route path="batches" element={<BatchManagement />} />
+              <Route path="qr-management" element={<QRManagement />} />
+              <Route path="anti-counterfeit" element={<AntiCounterfeit />} />
               <Route path="rfqs" element={<SupplierRFQs />} />
               <Route path="analytics" element={<SupplierAnalytics />} />
               <Route path="profile" element={<SupplierProfileDashboard />} />

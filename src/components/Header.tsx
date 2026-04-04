@@ -156,7 +156,7 @@ export function Header() {
                 <span className="text-lg sm:text-2xl font-black text-viet-red tracking-tighter">product</span>
               </div>
               <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                {/* {t('b2b_global_trade')} */} Thương mại toàn cầu B2B
+                {t('b2b_global_trade')}
               </span>
             </div>
           </Link>
@@ -198,17 +198,16 @@ export function Header() {
               <input
                 type="text"
                 className="flex-1 px-4 h-full text-sm outline-none w-full min-w-0"
-                placeholder={/* t('search_placeholder', { type: searchType.toLowerCase() }) */ `Tìm kiếm ${searchType.toLowerCase()}...`}
+                placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
               />
               <button className="bg-viet-red text-white px-6 h-full font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
                 <Search size={18} />
-                <span>{/* {t('search')} */} Tìm kiếm</span>
+                <span>{t('search')}</span>
               </button>
             </div>
           </div>
 
           <div className="hidden lg:flex items-center gap-4 shrink-0">
-            {/* Language Switcher - Commented out for push
             <div className="relative">
               <button
                 onClick={(e) => {
@@ -228,14 +227,11 @@ export function Header() {
                 </div>
               )}
             </div>
-            */}
 
-            {/* Anti-counterfeit link - Commented out for push
             <Link to="/verify" className="flex flex-col items-center gap-1 text-viet-red hover:text-red-700 group px-2">
               <ShieldCheck size={20} className="group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-bold whitespace-nowrap">{t('verify_qr_short', 'Xác nhận Hàng giả')}</span>
             </Link>
-            */}
 
             <div className="flex items-center gap-1">
               <Link to="/rfq" className="p-2 text-slate-600 hover:text-viet-red hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
@@ -259,10 +255,10 @@ export function Header() {
               </div>
               <div className="flex flex-col items-start justify-center">
                 <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-viet-red">
-                  {/* {t('sign_in')} */} Đăng nhập
+                  {t('sign_in')}
                 </Link>
                 <Link to="/register" className="text-[10px] font-bold text-viet-red hover:underline uppercase tracking-wider">
-                  {/* {t('join_free')} */} Tham gia miễn phí
+                  {t('join_free')}
                 </Link>
               </div>
             </div>
@@ -321,7 +317,7 @@ export function Header() {
             >
               <Link to="/categories" className="flex items-center gap-2 bg-viet-red text-white px-6 h-full font-bold text-sm">
                 <Menu size={18} />
-                {/* {t('all_categories')} */} Tất cả danh mục
+                {t('all_categories')}
               </Link>
 
               {isCategoriesOpen && (
@@ -331,21 +327,21 @@ export function Header() {
               )}
             </div>
             <nav className="flex items-center gap-8 ml-8">
-              <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-viet-red">{/* {t('top_ranking_products')} */} Sản phẩm xếp hạng hàng đầu</Link>
-              <Link to="/video" className="text-sm font-bold text-slate-700 hover:text-viet-red">{/* {t('video_channel')} */} Kênh video</Link>
-              <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-viet-red">{/* {t('secured_trading_service')} */} Dịch vụ giao dịch an toàn</Link>
+              <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('top_ranking_products')}</Link>
+              <Link to="/video" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('video_channel')}</Link>
+              <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('secured_trading_service')}</Link>
             </nav>
           </div>
           <div className="flex items-center h-full gap-6">
             <div className="flex items-center h-full gap-5 text-xs font-medium text-slate-500">
-              <NavDropdown label={/* t('supplier') */ "Nhà cung cấp"} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
+              <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
                 <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
               </NavDropdown>
-              <NavDropdown label={/* t('buyer') */ "Người mua"} to="/dashboard/buyer" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
+              <NavDropdown label={t('buyer')} to="/dashboard/buyer" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
                 <MegaMenu sections={buyerMenuSections} columns={3} className="w-[720px]" />
               </NavDropdown>
-              <Link to="/help" className="hover:text-viet-red">{/* {t('help')} */} Trợ giúp</Link>
-              <Link to="/apps" className="hover:text-viet-red flex items-center gap-1"><Smartphone size={12} /> {/* {t('apps')} */} Ứng dụng</Link>
+              <Link to="/help" className="hover:text-viet-red">{t('help')}</Link>
+              <Link to="/apps" className="hover:text-viet-red flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>
             </div>
           </div>
         </div>
@@ -370,11 +366,11 @@ export function Header() {
                 </div>
                 <div>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-viet-red">
-                    {/* {t('sign_in')} */} Đăng nhập
+                    {t('sign_in')}
                   </Link>
                   <span className="mx-1.5 text-slate-300">|</span>
                   <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-viet-red">
-                    {/* {t('join_free')} */} Tham gia miễn phí
+                    {t('join_free')}
                   </Link>
                 </div>
               </div>
@@ -406,7 +402,6 @@ export function Header() {
 
             {/* Menu Footer — Language + Verify */}
             <div className="border-t border-slate-100 p-4 space-y-3">
-              {/* Language Switcher - Commented
               <div className="flex items-center gap-2">
                 <Globe size={16} className="text-slate-400" />
                 <button
@@ -422,8 +417,6 @@ export function Header() {
                   🇬🇧 EN
                 </button>
               </div>
-              */}
-              {/* CTA Verify - Commented
               <Link
                 to="/verify"
                 onClick={() => setIsMenuOpen(false)}
@@ -432,7 +425,6 @@ export function Header() {
                 <ShieldCheck size={16} />
                 {t('verify_qr_short', 'Xác nhận hàng giả')}
               </Link>
-              */}
             </div>
           </div>
         </div>
