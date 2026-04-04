@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-viet-red: #C8102E;
+  --color-primary: #003366;
+  --color-primary-light: #004080;
+  --color-primary-dark: #002244;
   --color-viet-gold: #FFCD00;
   --color-viet-gold-dark: #D4AF37;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -12,7 +14,7 @@
    ============================================================ */
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-white text-slate-900 antialiased;
   }
 
   /* Smooth scrolling */
@@ -22,12 +24,12 @@
 
   /* Better focus visible */
   *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-viet-red;
+    @apply outline-2 outline-offset-2 outline-primary;
   }
 
   /* Selection color */
   ::selection {
-    @apply bg-viet-red/20 text-viet-red;
+    @apply bg-primary/20 text-primary;
   }
 }
 
@@ -37,20 +39,20 @@
 @layer components {
   /* Primary Button — Main CTA */
   .btn-primary {
-    @apply bg-viet-red text-white px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-red-700 hover:shadow-lg hover:shadow-red-500/25
+    @apply bg-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm
+           hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/25
            active:scale-[0.97] active:shadow-none
-           focus-visible:ring-2 focus-visible:ring-viet-red/50 focus-visible:ring-offset-2
+           focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
            transition-all duration-200 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100;
   }
 
   /* Secondary Button — Outlined */
   .btn-secondary {
-    @apply bg-white text-viet-red border-2 border-viet-red px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-red-50 hover:shadow-md hover:shadow-red-500/10
-           active:scale-[0.97] active:bg-red-100
-           focus-visible:ring-2 focus-visible:ring-viet-red/50 focus-visible:ring-offset-2
+    @apply bg-white text-primary border-2 border-primary px-6 py-2.5 rounded-lg font-bold text-sm
+           hover:bg-blue-50 hover:shadow-md hover:shadow-primary/10
+           active:scale-[0.97] active:bg-blue-100
+           focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
            transition-all duration-200 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -77,7 +79,7 @@
 
   /* Gold Button — Premium CTA */
   .btn-gold {
-    @apply bg-viet-gold text-red-900 px-6 py-2.5 rounded-lg font-bold text-sm
+    @apply bg-viet-gold text-primary-dark px-6 py-2.5 rounded-lg font-bold text-sm
            hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/25
            active:scale-[0.97] active:shadow-none
            focus-visible:ring-2 focus-visible:ring-yellow-400/50 focus-visible:ring-offset-2
@@ -95,7 +97,7 @@
 
   .btn-icon-danger {
     @apply p-2 rounded-lg text-slate-400
-           hover:bg-red-50 hover:text-viet-red
+           hover:bg-red-50 hover:text-red-600
            active:scale-[0.90] active:bg-red-100
            transition-all duration-150 ease-out;
   }
@@ -131,7 +133,7 @@
     @apply w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg
            text-sm text-slate-900 placeholder:text-slate-400
            hover:border-slate-300
-           focus:border-viet-red focus:ring-2 focus:ring-viet-red/10 focus:bg-white
+           focus:border-primary focus:ring-2 focus:ring-primary/10 focus:bg-white
            outline-none transition-all duration-200;
   }
 
@@ -167,7 +169,7 @@
   }
 
   .table-row-selected {
-    @apply bg-red-50/50 border-l-2 border-l-viet-red;
+    @apply bg-blue-50/50 border-l-2 border-l-primary;
   }
 
   .table-cell {

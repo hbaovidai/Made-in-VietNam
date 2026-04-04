@@ -134,7 +134,7 @@ export function BatchManagement() {
                     ) : (
                       <button 
                         onClick={() => generateQRMock(batch)}
-                        className="text-[10px] font-bold uppercase text-viet-red border border-viet-red px-2 py-1 rounded hover:bg-viet-red hover:text-white transition-colors"
+                        className="text-[10px] font-bold uppercase text-primary border border-primary px-2 py-1 rounded hover:bg-primary hover:text-white transition-colors"
                       >
                         {t('generate_qr')}
                       </button>

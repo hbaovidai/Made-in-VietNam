@@ -27,7 +27,7 @@ export function Events() {
         {/* Search & Filter */}
         <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
           <div className="relative w-full md:w-96">
-            <input type="text" placeholder={t('search_events_placeholder')} className="w-full px-4 py-3 bg-white border border-slate-200 outline-none focus:border-viet-red shadow-sm" />
+            <input type="text" placeholder={t('search_events_placeholder')} className="w-full px-4 py-3 bg-white border border-slate-200 outline-none focus:border-primary shadow-sm" />
             <Search size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
           </div>
           <div className="flex gap-4 w-full md:w-auto">
@@ -50,15 +50,15 @@ export function Events() {
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 flex flex-col justify-center p-12 bg-gradient-to-r from-black/80 via-black/40 to-transparent">
-              <span className="bg-viet-red text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 inline-block w-fit">{t('featured_event')}</span>
+              <span className="bg-primary text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 inline-block w-fit">{t('featured_event')}</span>
               <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 max-w-2xl leading-tight">Vietnam International Trade Fair (VIETNAM EXPO) 2026</h2>
               <div className="flex flex-wrap items-center gap-8 text-slate-300 text-sm font-bold uppercase tracking-widest">
-                <span className="flex items-center gap-2"><Calendar size={18} className="text-viet-red" /> Apr 15-18, 2026</span>
-                <span className="flex items-center gap-2"><MapPin size={18} className="text-viet-red" /> {t('hanoi_vietnam')}</span>
-                <span className="flex items-center gap-2"><Users size={18} className="text-viet-red" /> {t('visitors_count', { count: '25,000+' })}</span>
+                <span className="flex items-center gap-2"><Calendar size={18} className="text-primary" /> Apr 15-18, 2026</span>
+                <span className="flex items-center gap-2"><MapPin size={18} className="text-primary" /> {t('hanoi_vietnam')}</span>
+                <span className="flex items-center gap-2"><Users size={18} className="text-primary" /> {t('visitors_count', { count: '25,000+' })}</span>
               </div>
               <div className="pt-8 flex gap-4">
-                <button className="bg-viet-red text-white px-10 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+                <button className="bg-primary text-white px-10 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
                   {t('register_to_visit')}
                 </button>
                 <button className="bg-white text-slate-900 px-10 py-4 font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm">
@@ -85,24 +85,24 @@ export function Events() {
                 </div>
               </div>
               <div className="p-6 space-y-4">
-                <h3 className="text-lg font-bold text-slate-900 group-hover:text-viet-red transition-colors line-clamp-2 leading-tight">{event.title}</h3>
+                <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">{event.title}</h3>
                 <div className="space-y-2 text-sm text-slate-500">
                   <div className="flex items-center gap-2">
-                    <Calendar size={14} className="text-viet-red" />
+                    <Calendar size={14} className="text-primary" />
                     <span>{event.date}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-viet-red" />
+                    <MapPin size={14} className="text-primary" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users size={14} className="text-viet-red" />
+                    <Users size={14} className="text-primary" />
                     <span>{event.attendees} {t('attendees')}</span>
                   </div>
                 </div>
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs font-bold text-viet-red uppercase tracking-widest">{t('view_details')}</span>
-                  <ChevronRight size={16} className="text-slate-300 group-hover:text-viet-red" />
+                  <span className="text-xs font-bold text-primary uppercase tracking-widest">{t('view_details')}</span>
+                  <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
                 </div>
               </div>
             </div>

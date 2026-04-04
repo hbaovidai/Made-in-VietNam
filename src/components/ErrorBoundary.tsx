@@ -27,7 +27,7 @@ export class ErrorBoundary extends React.Component<
         <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
           <div className="max-w-lg w-full text-center space-y-6">
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-              <AlertTriangle size={40} className="text-viet-red" />
+              <AlertTriangle size={40} className="text-primary" />
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-slate-900">Đã xảy ra lỗi</h1>
@@ -45,7 +45,7 @@ export class ErrorBoundary extends React.Component<
             <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => window.location.reload()}
-                className="flex items-center gap-2 bg-viet-red text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
               >
                 <RefreshCw size={18} />
                 Tải lại trang

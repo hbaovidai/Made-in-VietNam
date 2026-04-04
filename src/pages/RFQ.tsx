@@ -24,10 +24,10 @@ export function RFQ() {
             {t('rfq_submitted_desc')}
           </p>
           <div className="pt-6 flex flex-col gap-3">
-            <Link to="/dashboard/buyer" className="w-full bg-viet-red text-white py-3 rounded-xl font-bold hover:bg-red-700 transition-all">
+            <Link to="/dashboard/buyer" className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary-dark transition-all">
               {t('go_to_dashboard')}
             </Link>
-            <Link to="/" className="w-full text-slate-600 font-bold py-3 hover:text-viet-red transition-colors">
+            <Link to="/" className="w-full text-slate-600 font-bold py-3 hover:text-primary transition-colors">
               {t('back_to_home')}
             </Link>
           </div>
@@ -59,7 +59,7 @@ export function RFQ() {
                 {/* Basic Info */}
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-                    <div className="w-8 h-8 bg-viet-red/10 text-viet-red rounded-lg flex items-center justify-center font-bold">1</div>
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">1</div>
                     <h2 className="text-xl font-bold text-slate-900">{t('product_information')}</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,12 +69,12 @@ export function RFQ() {
                         required
                         type="text"
                         placeholder={t('product_name_placeholder')}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700">{t('category_label')}</label>
-                      <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all">
+                      <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                         <option>{t('select_category_placeholder')}</option>
                         <option>{t('agriculture')}</option>
                         <option>{t('textiles_garments')}</option>
@@ -88,9 +88,9 @@ export function RFQ() {
                           required
                           type="number"
                           placeholder={t('quantity_placeholder')}
-                          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all"
+                          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                         />
-                        <select className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all">
+                        <select className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                           <option>kg</option>
                           <option>pieces</option>
                           <option>tons</option>
@@ -103,7 +103,7 @@ export function RFQ() {
                 {/* Details */}
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-                    <div className="w-8 h-8 bg-viet-red/10 text-viet-red rounded-lg flex items-center justify-center font-bold">2</div>
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">2</div>
                     <h2 className="text-xl font-bold text-slate-900">{t('detailed_requirements')}</h2>
                   </div>
                   <div className="space-y-2">
@@ -112,7 +112,7 @@ export function RFQ() {
                       required
                       rows={5}
                       placeholder={t('description_placeholder')}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all resize-none"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -121,7 +121,7 @@ export function RFQ() {
                       <input
                         type="text"
                         placeholder={t('budget_placeholder')}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -130,7 +130,7 @@ export function RFQ() {
                         required
                         type="text"
                         placeholder={t('country_placeholder')}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -140,7 +140,7 @@ export function RFQ() {
                 <div className="pt-6">
                   <button
                     type="submit"
-                    className="w-full bg-viet-red text-white py-5 rounded-2xl font-bold text-xl hover:bg-red-700 transition-all shadow-xl hover:shadow-red-900/20 flex items-center justify-center gap-3 group"
+                    className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-xl hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3 group"
                   >
                     {t('submit_request')}
                     <Send size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -175,7 +175,7 @@ export function RFQ() {
                     desc: t('set_deadline_desc')
                   },
                   {
-                    icon: <MessageSquare size={20} className="text-viet-red" />,
+                    icon: <MessageSquare size={20} className="text-primary" />,
                     title: t('communication'),
                     desc: t('communication_desc')
                   }

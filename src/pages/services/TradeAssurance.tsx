@@ -35,7 +35,7 @@ export function TradeAssurance() {
         {/* How it Works */}
         <div className="space-y-12 mb-32">
           <div className="flex items-center gap-4">
-            <div className="h-8 w-1.5 bg-viet-red" />
+            <div className="h-8 w-1.5 bg-primary" />
             <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">
               {t('how_trade_assurance_protects')}
             </h2>
@@ -46,7 +46,7 @@ export function TradeAssurance() {
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   {prot.icon}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-viet-red transition-colors">{prot.title}</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">{prot.title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{prot.desc}</p>
               </div>
             ))}
@@ -57,7 +57,7 @@ export function TradeAssurance() {
         <div className="flex flex-col lg:flex-row gap-20 mb-32 items-center">
           <div className="flex-1 space-y-8">
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-tight">
-              {t('ultimate')} <span className="text-viet-red">{t('order_protection')}</span>
+              {t('ultimate')} <span className="text-primary">{t('order_protection')}</span>
             </h2>
             <p className="text-slate-600 text-lg leading-relaxed">
               {t('trade_assurance_intro')}
@@ -65,13 +65,13 @@ export function TradeAssurance() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {benefits.map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle2 size={20} className="text-viet-red shrink-0" />
+                  <CheckCircle2 size={20} className="text-primary shrink-0" />
                   <span className="text-slate-700 font-medium">{benefit}</span>
                 </div>
               ))}
             </div>
             <div className="pt-8">
-              <Link to="/register" className="bg-viet-red text-white px-12 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+              <Link to="/register" className="bg-primary text-white px-12 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
                 {t('start_protected_sourcing')}
               </Link>
             </div>
@@ -103,7 +103,7 @@ export function TradeAssurance() {
             <h2 className="text-3xl font-black uppercase tracking-tight">{t('need_help_order')}</h2>
             <p className="text-slate-400 text-lg">{t('dispute_resolution_desc')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-              <Link to="/help" className="bg-viet-red text-white px-12 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+              <Link to="/help" className="bg-primary text-white px-12 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
                 {t('open_dispute')}
               </Link>
               <Link to="/help" className="bg-white text-slate-900 px-12 py-4 font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm">

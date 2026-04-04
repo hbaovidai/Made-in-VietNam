@@ -40,7 +40,7 @@ export function VerifyProduct() {
     <div className="bg-slate-50 min-h-screen py-20 px-4">
       <div className="max-w-xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-viet-red text-white flex items-center justify-center rounded-2xl mx-auto shadow-lg shadow-red-900/20">
+          <div className="w-16 h-16 bg-primary text-white flex items-center justify-center rounded-2xl mx-auto shadow-lg shadow-primary-dark/20">
             <ShieldCheck size={32} />
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t('verify_title')}</h1>
@@ -67,7 +67,7 @@ export function VerifyProduct() {
             <div className="space-y-6">
               <div className="aspect-square bg-slate-900 rounded-2xl overflow-hidden relative flex flex-col items-center justify-center border-4 border-slate-200">
                 {isScanning ? (
-                  <div className="absolute inset-0 border-4 border-viet-red rounded-xl opacity-50 m-12 animate-pulse" />
+                  <div className="absolute inset-0 border-4 border-primary rounded-xl opacity-50 m-12 animate-pulse" />
                 ) : (
                   <>
                     <Camera size={48} className="text-slate-600 mb-4" />
@@ -77,11 +77,11 @@ export function VerifyProduct() {
                 
                 {/* Scanner laser overlay mock */}
                 {isScanning && (
-                  <div className="absolute top-0 left-0 w-full h-1 bg-viet-red shadow-[0_0_15px_#ff0000] animate-[scanner_2s_ease-in-out_infinite]" />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-primary shadow-[0_0_15px_#ff0000] animate-[scanner_2s_ease-in-out_infinite]" />
                 )}
               </div>
               <button 
-                className="btn-primary w-full justify-center text-lg py-4 shadow-xl shadow-red-900/20"
+                className="btn-primary w-full justify-center text-lg py-4 shadow-xl shadow-primary-dark/20"
                 onClick={mockScan}
                 disabled={isScanning}
               >

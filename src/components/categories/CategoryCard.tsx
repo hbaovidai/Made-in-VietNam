@@ -27,13 +27,13 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ group, className }) 
           referrerPolicy="no-referrer"
         />
       </div>
-      <h3 className="text-sm font-bold text-slate-900 group-hover:text-viet-red transition-colors uppercase tracking-wider">
+      <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors uppercase tracking-wider">
         {t(group.name)}
       </h3>
       <p className="text-xs text-slate-500 mt-2">
         {group.sections.length} {t('major_sections')}
       </p>
-      <div className="mt-4 text-xs font-bold text-viet-red uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="mt-4 text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
         {t('explore_directory')} »
       </div>
     </Link>

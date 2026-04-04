@@ -24,9 +24,9 @@ export function CategoriesOverview() {
             <input 
               type="text" 
               placeholder={t('search_category_placeholder')} 
-              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-sm outline-none focus:border-viet-red transition-colors shadow-xl shadow-slate-200/50 text-lg"
+              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-sm outline-none focus:border-primary transition-colors shadow-xl shadow-slate-200/50 text-lg"
             />
-            <button className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-viet-red">
+            <button className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
               <Search size={24} />
             </button>
           </div>
@@ -35,7 +35,7 @@ export function CategoriesOverview() {
         {/* Major Groups */}
         <div className="space-y-12">
           <div className="flex items-center gap-4">
-            <div className="h-8 w-1.5 bg-viet-red" />
+            <div className="h-8 w-1.5 bg-primary" />
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
               {t('major_industry_groups')}
             </h2>
@@ -50,7 +50,7 @@ export function CategoriesOverview() {
         {/* Full List */}
         <div className="mt-24 space-y-12">
           <div className="flex items-center gap-4">
-            <div className="h-8 w-1.5 bg-viet-red" />
+            <div className="h-8 w-1.5 bg-primary" />
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
               {t('all_categories')}
             </h2>
@@ -63,10 +63,10 @@ export function CategoriesOverview() {
                 <Link
                   key={cat.slug}
                   to={group ? `/categories/${group.slug}` : `/products?cat=${cat.slug}`}
-                  className="bg-white p-4 border border-slate-200 hover:border-viet-red hover:text-viet-red transition-all flex items-center justify-between group"
+                  className="bg-white p-4 border border-slate-200 hover:border-primary hover:text-primary transition-all flex items-center justify-between group"
                 >
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-viet-red">{t(cat.name)}</span>
-                  <ChevronRight size={14} className="text-slate-300 group-hover:text-viet-red" />
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-primary">{t(cat.name)}</span>
+                  <ChevronRight size={14} className="text-slate-300 group-hover:text-primary" />
                 </Link>
               );
             })}
@@ -90,7 +90,7 @@ export function CategoriesOverview() {
             <p className="text-slate-400 text-lg">
               {t('sourcing_requirements_desc')}
             </p>
-            <Link to="/rfq" className="inline-block bg-viet-red text-white px-12 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-lg shadow-2xl shadow-red-500/40">
+            <Link to="/rfq" className="inline-block bg-primary text-white px-12 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-lg shadow-2xl shadow-primary/40">
               {t('post_your_rfq_now')}
             </Link>
           </div>

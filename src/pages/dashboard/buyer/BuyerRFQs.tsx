@@ -19,7 +19,7 @@ export function BuyerRFQs() {
       title={t('my_rfqs_title')} 
       subtitle={t('my_rfqs_subtitle')}
       actions={
-        <Link to="/rfq" className="bg-viet-red text-white px-6 py-2 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs shadow-lg shadow-red-500/20">
+        <Link to="/rfq" className="bg-primary text-white px-6 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20">
           {t('post_new_rfq')}
         </Link>
       }
@@ -29,10 +29,10 @@ export function BuyerRFQs() {
           <div key={rfq.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
-                <FileText size={24} className="text-slate-400 group-hover:text-viet-red transition-colors" />
+                <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
               </div>
               <div className="space-y-1">
-                <div className="text-sm font-bold text-slate-900 group-hover:text-viet-red transition-colors">{rfq.title}</div>
+                <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{rfq.title}</div>
                 <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   <span>ID: {rfq.id}</span>
                   <span>{t('posted_label')} {rfq.date}</span>
@@ -58,7 +58,7 @@ export function BuyerRFQs() {
                     <AlertCircle size={12} /> {t('status_expired')}
                   </span>
                 )}
-                <ChevronRight size={16} className="text-slate-300 group-hover:text-viet-red" />
+                <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@ export function BuyerRFQs() {
           </div>
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('no_rfqs_title')}</h3>
           <p className="text-slate-500 text-sm max-w-xs mx-auto">{t('no_rfqs_buyer_desc')}</p>
-          <Link to="/rfq" className="inline-block bg-viet-red text-white px-8 py-3 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs">
+          <Link to="/rfq" className="inline-block bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs">
             {t('post_rfq_now')}
           </Link>
         </div>

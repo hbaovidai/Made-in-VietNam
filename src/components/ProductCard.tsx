@@ -28,18 +28,18 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg text-[10px] font-black text-slate-700 uppercase tracking-widest shadow-sm">
           {product.category}
         </div>
-        <div className="absolute bottom-3 right-3 bg-viet-red text-white px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter shadow-lg">
+        <div className="absolute bottom-3 right-3 bg-primary text-white px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter shadow-lg">
           {t('export_ready')}
         </div>
       </div>
       <div className="p-6 flex flex-col flex-1 space-y-4">
-        <h3 className="text-base font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-viet-red transition-colors">
+        <h3 className="text-base font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
           {product.name}
         </h3>
         <div className="mt-auto space-y-3">
           <div className="flex flex-col">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('wholesale_price')}</span>
-            <div className="text-xl font-black text-viet-red tracking-tight">
+            <div className="text-xl font-black text-primary tracking-tight">
               {product.priceRange}
             </div>
           </div>

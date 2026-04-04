@@ -30,7 +30,7 @@ export function InquiryBasket() {
         </div>
         <h2 className="text-2xl font-bold text-slate-900 mb-2">{t('basket_empty_title')}</h2>
         <p className="text-slate-500 mb-8">{t('basket_empty_desc')}</p>
-        <Link to="/products" className="inline-block bg-viet-red text-white px-8 py-3 font-bold hover:bg-red-700 transition-all">
+        <Link to="/products" className="inline-block bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-all">
           {t('browse_products')}
         </Link>
       </div>
@@ -41,7 +41,7 @@ export function InquiryBasket() {
     <div className="bg-slate-50 min-h-screen py-8">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link to="/" className="hover:text-viet-red">{t('home')}</Link>
+          <Link to="/" className="hover:text-primary">{t('home')}</Link>
           <ChevronRight size={14} />
           <span className="text-slate-900 font-medium">{t('inquiry_basket')}</span>
         </div>
@@ -52,7 +52,7 @@ export function InquiryBasket() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-sm">
               <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
                 <h1 className="text-xl font-bold text-slate-900">{t('inquiry_basket')} ({basketItems.length})</h1>
-                <button className="text-sm text-slate-500 hover:text-viet-red font-medium">{t('clear_all')}</button>
+                <button className="text-sm text-slate-500 hover:text-primary font-medium">{t('clear_all')}</button>
               </div>
 
               <div className="divide-y divide-slate-100">
@@ -68,14 +68,14 @@ export function InquiryBasket() {
                     </div>
                     
                     <div className="flex-1 space-y-2">
-                      <Link to={`/products/${item.id}`} className="text-lg font-bold text-slate-900 hover:text-viet-red line-clamp-2">
+                      <Link to={`/products/${item.id}`} className="text-lg font-bold text-slate-900 hover:text-primary line-clamp-2">
                         {item.name}
                       </Link>
                       
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                           <Store size={14} className="text-slate-400" />
-                          <Link to={`/suppliers/${item.supplier?.id}`} className="hover:text-viet-red font-medium">
+                          <Link to={`/suppliers/${item.supplier?.id}`} className="hover:text-primary font-medium">
                             {item.supplier?.name}
                           </Link>
                           {item.supplier?.isVerified && (
@@ -99,7 +99,7 @@ export function InquiryBasket() {
                           <span>{t('remove')}</span>
                         </button>
                         <div className="h-4 w-px bg-slate-200" />
-                        <button className="flex items-center gap-1.5 text-sm text-viet-red font-bold hover:text-red-700 transition-colors">
+                        <button className="flex items-center gap-1.5 text-sm text-primary font-bold hover:text-red-700 transition-colors">
                           <Send size={16} />
                           <span>{t('send_inquiry')}</span>
                         </button>
@@ -108,7 +108,7 @@ export function InquiryBasket() {
 
                     <div className="sm:w-40 flex flex-col justify-between items-end">
                       <div className="text-right">
-                        <div className="text-lg font-bold text-viet-red">{item.priceRange}</div>
+                        <div className="text-lg font-bold text-primary">{item.priceRange}</div>
                         <div className="text-xs text-slate-400 mt-1">{t('fob_price')}</div>
                       </div>
                     </div>
@@ -139,7 +139,7 @@ export function InquiryBasket() {
                 </p>
               </div>
 
-              <button className="w-full bg-viet-red text-white py-3 font-bold hover:bg-red-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+              <button className="w-full bg-primary text-white py-3 font-bold hover:bg-primary-dark transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                 <Send size={18} />
                 {t('send_all_inquiries')}
               </button>
@@ -148,7 +148,7 @@ export function InquiryBasket() {
             <div className="bg-slate-100 p-6 rounded-sm border border-slate-200">
               <h4 className="font-bold text-slate-800 text-sm mb-2">{t('need_help')}</h4>
               <p className="text-xs text-slate-500 mb-4">{t('sourcing_experts_desc')}</p>
-              <Link to="/contact" className="text-xs font-bold text-viet-red hover:underline">{t('contact_sourcing_support')}</Link>
+              <Link to="/contact" className="text-xs font-bold text-primary hover:underline">{t('contact_sourcing_support')}</Link>
             </div>
           </div>
         </div>

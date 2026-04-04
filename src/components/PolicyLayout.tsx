@@ -21,7 +21,7 @@ export function PolicyLayout({ title, lastUpdated, children, breadcrumbs }: Poli
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="bg-white border border-slate-200 p-8 md:p-16 shadow-sm">
-          <div className="prose prose-slate max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-viet-red hover:prose-a:text-red-700">
+          <div className="prose prose-slate max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-primary hover:prose-a:text-red-700">
             {children}
           </div>
         </div>

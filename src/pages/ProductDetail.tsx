@@ -19,7 +19,7 @@ export function ProductDetail() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold text-slate-900">{t('product_not_found')}</h2>
-          <Link to="/products" className="text-viet-red font-bold underline">{t('back_to_products')}</Link>
+          <Link to="/products" className="text-primary font-bold underline">{t('back_to_products')}</Link>
         </div>
       </div>
     );
@@ -31,18 +31,18 @@ export function ProductDetail() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Breadcrumbs */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link to="/" className="hover:text-viet-red">{t('home')}</Link>
-          <ChevronRight size={12} />
-          <Link to="/products" className="hover:text-viet-red">{t('products_breadcrumb')}</Link>
-          <ChevronRight size={12} />
-          <Link to={`/products?category=${product.category}`} className="hover:text-viet-red">{t(product.category)}</Link>
-          <ChevronRight size={12} />
-          <span className="text-slate-900 font-medium truncate">{product.name}</span>
+        <nav className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500 overflow-x-auto no-scrollbar">
+          <Link to="/" className="hover:text-primary shrink-0">{t('home')}</Link>
+          <ChevronRight size={10} className="shrink-0" />
+          <Link to="/products" className="hover:text-primary shrink-0">{t('products_breadcrumb')}</Link>
+          <ChevronRight size={10} className="shrink-0 hidden sm:block" />
+          <Link to={`/products?category=${product.category}`} className="hover:text-primary shrink-0 hidden sm:block">{t(product.category)}</Link>
+          <ChevronRight size={10} className="shrink-0" />
+          <span className="text-slate-900 font-medium truncate max-w-[120px] sm:max-w-none">{product.name}</span>
         </nav>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Images */}
           <div className="lg:col-span-5 space-y-4">
@@ -57,7 +57,7 @@ export function ProductDetail() {
                 onClick={() => setIsFavorite(!isFavorite)}
                 className={cn(
                   "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all",
-                  isFavorite ? "bg-viet-red text-white" : "bg-white text-slate-400 hover:text-viet-red"
+                  isFavorite ? "bg-primary text-white" : "bg-white text-slate-400 hover:text-primary"
                 )}
               >
                 <Heart size={20} className={isFavorite ? "fill-white" : ""} />
@@ -70,7 +70,7 @@ export function ProductDetail() {
                   onClick={() => setActiveImage(idx)}
                   className={cn(
                     "aspect-square rounded-lg border-2 overflow-hidden transition-all",
-                    activeImage === idx ? "border-viet-red" : "border-transparent hover:border-slate-300"
+                    activeImage === idx ? "border-primary" : "border-transparent hover:border-slate-300"
                   )}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -92,14 +92,14 @@ export function ProductDetail() {
                   <span className="text-xs text-slate-400">{t('reviews_count', { count: product.reviews })}</span>
                 </div>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
                 {product.name}
               </h1>
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-viet-red">{product.priceRange}</span>
+                <span className="text-xl sm:text-3xl font-bold text-primary">{product.priceRange}</span>
                 <span className="text-slate-400 text-sm">{t('per_unit')}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
@@ -131,13 +131,13 @@ export function ProductDetail() {
               </ul>
             </div>
 
-            <div className="flex gap-4">
-              <button className="flex-1 bg-viet-red text-white py-4 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/20 flex items-center justify-center gap-2">
-                <MessageSquare size={20} />
+            <div className="flex gap-3 sm:gap-4">
+              <button className="flex-1 bg-primary text-white py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base hover:bg-primary-dark transition-all shadow-lg hover:shadow-primary-dark/20 flex items-center justify-center gap-2">
+                <MessageSquare size={18} />
                 {t('send_inquiry')}
               </button>
-              <button className="p-4 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-viet-red hover:border-viet-red transition-all">
-                <Share2 size={20} />
+              <button className="p-3 sm:p-4 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary transition-all">
+                <Share2 size={18} />
               </button>
             </div>
           </div>
@@ -152,7 +152,7 @@ export function ProductDetail() {
                     <img src={supplier.logo} alt={supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                   </div>
                   <div>
-                    <Link to={`/suppliers/${supplier.id}`} className="font-bold text-slate-900 hover:text-viet-red transition-colors block">
+                    <Link to={`/suppliers/${supplier.id}`} className="font-bold text-slate-900 hover:text-primary transition-colors block">
                       {supplier.name}
                     </Link>
                     <div className="flex items-center gap-1 text-xs text-emerald-600 font-bold mt-1">
@@ -175,7 +175,7 @@ export function ProductDetail() {
                   <Globe size={16} className="text-slate-400" />
                   <span>{t('exports_to', { markets: supplier.markets.join(', ') })}</span>
                 </div>
-                <Link to={`/suppliers/${supplier.id}`} className="block w-full text-center py-2 text-sm font-bold text-viet-red border border-viet-red rounded-lg hover:bg-red-50 transition-colors">
+                <Link to={`/suppliers/${supplier.id}`} className="block w-full text-center py-2 text-sm font-bold text-primary border border-primary rounded-lg hover:bg-blue-50 transition-colors">
                   {t('view_profile')}
                 </Link>
               </div>
@@ -193,9 +193,9 @@ export function ProductDetail() {
         </div>
 
         {/* Product Tabs */}
-        <div className="mt-16 space-y-8">
+        <div className="mt-8 sm:mt-16 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-200">
-            <div className="flex gap-8">
+            <div className="flex gap-4 sm:gap-8 overflow-x-auto no-scrollbar">
               {[
                 { key: 'description_tab', label: t('description_tab') },
                 { key: 'specifications_tab', label: t('specifications_tab') },
@@ -205,12 +205,12 @@ export function ProductDetail() {
                 <button
                   key={tab.key}
                   className={cn(
-                    "pb-4 text-sm font-bold transition-all relative",
-                    idx === 0 ? "text-viet-red" : "text-slate-500 hover:text-slate-700"
+                    "pb-3 sm:pb-4 text-xs sm:text-sm font-bold transition-all relative whitespace-nowrap shrink-0",
+                    idx === 0 ? "text-primary" : "text-slate-500 hover:text-slate-700"
                   )}
                 >
                   {tab.label}
-                  {idx === 0 && <div className="absolute bottom-0 left-0 w-full h-1 bg-viet-red rounded-full" />}
+                  {idx === 0 && <div className="absolute bottom-0 left-0 w-full h-0.5 sm:h-1 bg-primary rounded-full" />}
                 </button>
               ))}
             </div>
@@ -221,7 +221,7 @@ export function ProductDetail() {
               <p className="text-slate-600 leading-relaxed">
                 {product.description}
               </p>
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                 <div className="space-y-4">
                   <h4 className="font-bold text-slate-800">{t('specifications_tab')}</h4>
                   <table className="w-full text-sm">
@@ -270,8 +270,8 @@ export function ProductDetail() {
                       <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-viet-red transition-colors">{p.name}</h4>
-                      <div className="text-viet-red font-bold text-sm mt-1">{p.priceRange}</div>
+                      <h4 className="text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-primary transition-colors">{p.name}</h4>
+                      <div className="text-primary font-bold text-sm mt-1">{p.priceRange}</div>
                       <div className="text-[10px] text-slate-400 mt-1">{t('moq_label')} {p.moq}</div>
                     </div>
                   </Link>

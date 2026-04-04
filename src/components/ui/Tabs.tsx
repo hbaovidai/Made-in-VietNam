@@ -33,12 +33,12 @@ export function Tabs({ tabs, defaultTab, className, onChange }: TabsProps) {
             className={cn(
               'flex items-center gap-2 px-6 py-4 text-sm font-bold border-b-2 transition-all duration-200 whitespace-nowrap outline-none',
               activeTab === tab.id
-                ? 'border-viet-red text-viet-red'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
             )}
           >
             {tab.icon && (
-              <span className={cn('transition-colors', activeTab === tab.id ? 'text-viet-red' : 'text-slate-400')}>
+              <span className={cn('transition-colors', activeTab === tab.id ? 'text-primary' : 'text-slate-400')}>
                 {tab.icon}
               </span>
             )}

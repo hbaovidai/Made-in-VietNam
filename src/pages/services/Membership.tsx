@@ -47,7 +47,7 @@ export function Membership() {
       <div className="max-w-[1600px] mx-auto px-4 py-20">
         <div className="text-center space-y-4 mb-20">
           <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tight leading-none">
-            {t('unlock_full')} <span className="text-viet-red">{t('potential')}</span>
+            {t('unlock_full')} <span className="text-primary">{t('potential')}</span>
           </h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             {t('membership_intro')}
@@ -56,9 +56,9 @@ export function Membership() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan, idx) => (
-            <div key={idx} className={`p-10 border transition-all relative flex flex-col ${plan.popular ? "border-viet-red shadow-2xl scale-105 z-10" : "border-slate-100 hover:border-slate-300"}`}>
+            <div key={idx} className={`p-10 border transition-all relative flex flex-col ${plan.popular ? "border-primary shadow-2xl scale-105 z-10" : "border-slate-100 hover:border-slate-300"}`}>
               {plan.popular && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-viet-red text-white px-6 py-2 font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-red-500/20">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-6 py-2 font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20">
                   {t('most_popular')}
                 </div>
               )}
@@ -72,12 +72,12 @@ export function Membership() {
               <div className="space-y-4 mb-12 flex-1">
                 {plan.features.map((feature, fIdx) => (
                   <div key={fIdx} className="flex items-start gap-3">
-                    <CheckCircle2 size={18} className="text-viet-red shrink-0" />
+                    <CheckCircle2 size={18} className="text-primary shrink-0" />
                     <span className="text-sm text-slate-600 leading-relaxed">{feature}</span>
                   </div>
                 ))}
               </div>
-              <button className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all ${plan.popular ? "bg-viet-red text-white hover:bg-red-700 shadow-lg shadow-red-500/20" : "bg-slate-900 text-white hover:bg-slate-800"}`}>
+              <button className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all ${plan.popular ? "bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20" : "bg-slate-900 text-white hover:bg-slate-800"}`}>
                 {plan.button}
               </button>
             </div>

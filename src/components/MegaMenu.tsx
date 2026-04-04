@@ -32,7 +32,7 @@ export function MegaMenu({ sections, columns = 3, className }: MegaMenuProps) {
               <li key={link.label}>
                 <Link 
                   to={link.href} 
-                  className="text-sm text-slate-600 hover:text-viet-red transition-colors block"
+                  className="text-sm text-slate-600 hover:text-primary transition-colors block"
                 >
                   {link.label}
                 </Link>

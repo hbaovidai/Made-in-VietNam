@@ -21,13 +21,13 @@ export function CategoryDetailPage() {
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200 py-3">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-xs text-slate-500">
-          <Link to="/" className="hover:text-viet-red flex items-center gap-1">
+          <Link to="/" className="hover:text-primary flex items-center gap-1">
             <Home size={12} /> {t('home')}
           </Link>
           <ChevronRight size={12} />
           <span className="text-slate-900 font-medium">{t('category_directory')}</span>
           <ChevronRight size={12} />
-          <span className="text-viet-red font-bold">{t(group.name)}</span>
+          <span className="text-primary font-bold">{t(group.name)}</span>
         </div>
       </div>
 
@@ -37,14 +37,14 @@ export function CategoryDetailPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-4 max-w-2xl">
               <h1 className="text-4xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
-                {t(group.name)} <span className="text-viet-red">{t('directory')}</span>
+                {t(group.name)} <span className="text-primary">{t('directory')}</span>
               </h1>
               <p className="text-slate-600 text-lg leading-relaxed">
                 {t('category_hero_desc_1')} <span className="font-bold text-slate-900">{t(group.name)}</span> {t('category_hero_desc_2')} 
                 {t('category_hero_desc_3')}
               </p>
               <div className="flex items-center gap-4 pt-4">
-                <Link to="/rfq" className="bg-viet-red text-white px-8 py-3 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-lg shadow-red-500/20">
+                <Link to="/rfq" className="bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-lg shadow-primary/20">
                   {t('post_sourcing_request')}
                 </Link>
                 <Link to="/suppliers" className="bg-slate-900 text-white px-8 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-sm shadow-lg shadow-slate-900/20">
@@ -72,7 +72,7 @@ export function CategoryDetailPage() {
         {group.sections.map((section, idx) => (
           <div key={section.title} className="space-y-6">
             <div className="flex items-center gap-4">
-              <div className="h-8 w-1.5 bg-viet-red" />
+              <div className="h-8 w-1.5 bg-primary" />
               <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
                 {t(section.title)}
               </h2>
@@ -94,7 +94,7 @@ export function CategoryDetailPage() {
           <p className="text-slate-400 text-lg">
             {t('sourcing_requirements_desc')}
           </p>
-          <Link to="/rfq" className="inline-block bg-viet-red text-white px-12 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-lg shadow-2xl shadow-red-500/40">
+          <Link to="/rfq" className="inline-block bg-primary text-white px-12 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-lg shadow-2xl shadow-primary/40">
             {t('post_your_rfq_now')}
           </Link>
         </div>

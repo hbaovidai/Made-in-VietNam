@@ -19,7 +19,7 @@ export function SupplierProfile() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold text-slate-900">{t('supplier_not_found')}</h2>
-          <Link to="/suppliers" className="text-viet-red font-bold underline">{t('back_to_suppliers')}</Link>
+          <Link to="/suppliers" className="text-primary font-bold underline">{t('back_to_suppliers')}</Link>
         </div>
       </div>
     );
@@ -47,13 +47,13 @@ export function SupplierProfile() {
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
                   <h1 className="text-3xl md:text-5xl font-black tracking-tight">{supplier.name}</h1>
-                  <div className="bg-viet-red text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  <div className="bg-primary text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg">
                     {t('verified_manufacturer')}
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-6 text-sm font-bold opacity-90">
                   <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-viet-red" />
+                    <MapPin size={18} className="text-primary" />
                     <span>{supplier.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export function SupplierProfile() {
                 <MessageSquare size={18} />
                 {t('contact')}
               </button>
-              <button className="flex-1 md:flex-none bg-viet-red text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-red-700 transition-all shadow-xl flex items-center justify-center gap-2">
+              <button className="flex-1 md:flex-none bg-primary text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all shadow-xl flex items-center justify-center gap-2">
                 <FileText size={18} />
                 {t('request_rfq')}
               </button>
@@ -97,14 +97,14 @@ export function SupplierProfile() {
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "py-6 text-xs font-black uppercase tracking-widest transition-all relative",
-                  activeTab === tab.id ? "text-viet-red" : "text-slate-400 hover:text-slate-600"
+                  activeTab === tab.id ? "text-primary" : "text-slate-400 hover:text-slate-600"
                 )}
               >
                 {tab.label}
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 w-full h-1 bg-viet-red rounded-full"
+                    className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-full"
                   />
                 )}
               </button>
@@ -144,7 +144,7 @@ export function SupplierProfile() {
             <section className="space-y-6">
               <div className="flex justify-between items-end">
                 <h2 className="text-2xl font-bold text-slate-900">{t('featured_products_title')}</h2>
-                <button onClick={() => setActiveTab('Products')} className="text-viet-red font-bold text-sm hover:underline">
+                <button onClick={() => setActiveTab('Products')} className="text-primary font-bold text-sm hover:underline">
                   {t('view_all_products')}
                 </button>
               </div>
@@ -179,9 +179,9 @@ export function SupplierProfile() {
           <div className="lg:col-span-4 space-y-8">
             {/* Verification Card */}
             <div className="bg-slate-900 rounded-2xl p-8 text-white space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-viet-red/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-viet-red rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                   <ShieldCheck size={24} />
                 </div>
                 <div>
@@ -235,7 +235,7 @@ export function SupplierProfile() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('website')}</div>
-                    <a href="#" className="text-sm font-bold text-viet-red hover:underline">www.{supplier.name.toLowerCase().replace(/\s/g, '')}.vn</a>
+                    <a href="#" className="text-sm font-bold text-primary hover:underline">www.{supplier.name.toLowerCase().replace(/\s/g, '')}.vn</a>
                   </div>
                 </div>
               </div>

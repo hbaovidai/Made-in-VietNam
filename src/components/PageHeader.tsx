@@ -20,18 +20,18 @@ export function PageHeader({ title, description, breadcrumbs, image, className }
     <div className={`bg-white border-b border-slate-200 ${className}`}>
       {/* Breadcrumbs */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 text-xs text-slate-500">
-        <Link to="/" className="hover:text-viet-red flex items-center gap-1">
+        <Link to="/" className="hover:text-primary flex items-center gap-1">
           <Home size={12} /> Home
         </Link>
         {breadcrumbs.map((crumb, idx) => (
           <React.Fragment key={idx}>
             <ChevronRight size={12} />
             {crumb.href ? (
-              <Link to={crumb.href} className="hover:text-viet-red">
+              <Link to={crumb.href} className="hover:text-primary">
                 {crumb.label}
               </Link>
             ) : (
-              <span className={idx === breadcrumbs.length - 1 ? "text-viet-red font-bold" : "text-slate-900 font-medium"}>
+              <span className={idx === breadcrumbs.length - 1 ? "text-primary font-bold" : "text-slate-900 font-medium"}>
                 {crumb.label}
               </span>
             )}

@@ -36,7 +36,7 @@ export function UserGuide() {
         {/* Sourcing Process */}
         <div className="space-y-12 mb-32">
           <div className="flex items-center gap-4">
-            <div className="h-8 w-1.5 bg-viet-red" />
+            <div className="h-8 w-1.5 bg-primary" />
             <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">
               {t('sourcing_process')}
             </h2>
@@ -44,13 +44,13 @@ export function UserGuide() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
             {steps.map((step, idx) => (
               <div key={idx} className="bg-white p-8 border border-slate-200 hover:shadow-xl transition-all group relative">
-                <div className="absolute -top-4 -left-4 w-10 h-10 bg-viet-red text-white flex items-center justify-center font-black text-xl shadow-lg">
+                <div className="absolute -top-4 -left-4 w-10 h-10 bg-primary text-white flex items-center justify-center font-black text-xl shadow-lg">
                   {idx + 1}
                 </div>
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   {step.icon}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-viet-red transition-colors">{step.title}</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">{step.title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -71,7 +71,7 @@ export function UserGuide() {
           </div>
           <div className="flex-1 space-y-8 order-1 lg:order-2">
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-tight">
-              {t('why_source_from')} <span className="text-viet-red">Vietnam</span>?
+              {t('why_source_from')} <span className="text-primary">Vietnam</span>?
             </h2>
             <p className="text-slate-600 text-lg leading-relaxed">
               {t('why_source_from_desc')}
@@ -79,13 +79,13 @@ export function UserGuide() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {features.map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle2 size={20} className="text-viet-red shrink-0" />
+                  <CheckCircle2 size={20} className="text-primary shrink-0" />
                   <span className="text-slate-700 font-medium">{feature}</span>
                 </div>
               ))}
             </div>
             <div className="pt-8">
-              <Link to="/register" className="bg-viet-red text-white px-12 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+              <Link to="/register" className="bg-primary text-white px-12 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
                 {t('start_sourcing_now')}
               </Link>
             </div>
@@ -111,7 +111,7 @@ export function UserGuide() {
                 <Link to="/apps" className="bg-white text-slate-900 px-10 py-4 font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm">
                   {t('download_app')}
                 </Link>
-                <Link to="/help" className="bg-viet-red text-white px-10 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+                <Link to="/help" className="bg-primary text-white px-10 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
                   {t('learn_more')}
                 </Link>
               </div>

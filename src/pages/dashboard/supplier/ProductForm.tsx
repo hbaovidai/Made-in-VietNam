@@ -169,7 +169,7 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
             content: (
               <div className="space-y-6">
                 <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer" onClick={handleImageMockUpload}>
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-viet-red mb-4">
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-primary mb-4">
                     <UploadCloud size={32} />
                   </div>
                   <h4 className="text-sm font-bold text-slate-900 mb-1">{t('click_to_upload')}</h4>

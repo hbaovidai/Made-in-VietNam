@@ -152,8 +152,8 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">VIE</span>
-                <span className="text-lg sm:text-2xl font-black text-viet-red tracking-tighter">product</span>
+                <span className="text-lg sm:text-2xl font-black text-primary tracking-tighter">VIE</span>
+                <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">product</span>
               </div>
               <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
                 {t('b2b_global_trade')}
@@ -163,7 +163,7 @@ export function Header() {
 
           {/* ═══ Desktop Search Bar ═══ */}
           <div className="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl">
-            <div className="flex items-stretch w-full h-11 border-2 border-viet-red rounded-sm overflow-visible bg-white">
+            <div className="flex items-stretch w-full h-11 border-2 border-primary rounded-sm overflow-visible bg-white">
               <div className="relative shrink-0 h-full">
                 <button
                   onClick={(e) => {
@@ -186,7 +186,7 @@ export function Header() {
                         }}
                         className={cn(
                           "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors",
-                          searchType === option ? "text-viet-red font-bold" : "text-slate-700"
+                          searchType === option ? "text-primary font-bold" : "text-slate-700"
                         )}
                       >
                         {option}
@@ -200,7 +200,7 @@ export function Header() {
                 className="flex-1 px-4 h-full text-sm outline-none w-full min-w-0"
                 placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
               />
-              <button className="bg-viet-red text-white px-6 h-full font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
+              <button className="bg-primary text-white px-6 h-full font-bold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
                 <Search size={18} />
                 <span>{t('search')}</span>
               </button>
@@ -214,7 +214,7 @@ export function Header() {
                   e.stopPropagation();
                   setIsLangDropdownOpen(!isLangDropdownOpen);
                 }}
-                className="flex items-center gap-1 text-slate-600 hover:text-viet-red"
+                className="flex items-center gap-1 text-slate-600 hover:text-primary"
               >
                 <Globe size={20} />
                 <span className="text-sm font-bold uppercase">{i18n.language || 'vi'}</span>
@@ -222,28 +222,28 @@ export function Header() {
               </button>
               {isLangDropdownOpen && (
                 <div className="absolute top-full right-0 mt-4 w-40 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 z-[100]">
-                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'vi' ? "text-viet-red font-bold bg-red-50/50" : "text-slate-700")}>🇻🇳 Tiếng Việt</button>
-                  <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'en' ? "text-viet-red font-bold bg-red-50/50" : "text-slate-700")}>🇬🇧 English</button>
+                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'vi' ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇻🇳 Tiếng Việt</button>
+                  <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'en' ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇬🇧 English</button>
                 </div>
               )}
             </div>
 
-            <Link to="/verify" className="flex flex-col items-center gap-1 text-viet-red hover:text-red-700 group px-2">
+            <Link to="/verify" className="flex flex-col items-center gap-1 text-primary hover:text-red-700 group px-2">
               <ShieldCheck size={20} className="group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-bold whitespace-nowrap">{t('verify_qr_short', 'Xác nhận Hàng giả')}</span>
             </Link>
 
             <div className="flex items-center gap-1">
-              <Link to="/rfq" className="p-2 text-slate-600 hover:text-viet-red hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
+              <Link to="/rfq" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
                 <ClipboardList size={20} />
               </Link>
-              <Link to="/dashboard/buyer/messages" className="p-2 text-slate-600 hover:text-viet-red hover:bg-slate-50 rounded-full transition-colors relative" title={t('dashboard_messages')}>
+              <Link to="/dashboard/buyer/messages" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('dashboard_messages')}>
                 <MessageSquare size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-viet-red rounded-full ring-2 ring-white" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full ring-2 ring-white" />
               </Link>
-              <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-viet-red hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket')}>
+              <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket')}>
                 <ShoppingCart size={20} />
-                <span className="absolute -top-1 -right-1 bg-viet-red text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">3</span>
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">3</span>
               </Link>
             </div>
 
@@ -254,10 +254,10 @@ export function Header() {
                 <User size={18} />
               </div>
               <div className="flex flex-col items-start justify-center">
-                <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-viet-red">
+                <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-primary">
                   {t('sign_in')}
                 </Link>
-                <Link to="/register" className="text-[10px] font-bold text-viet-red hover:underline uppercase tracking-wider">
+                <Link to="/register" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
                   {t('join_free')}
                 </Link>
               </div>
@@ -269,19 +269,19 @@ export function Header() {
             {/* Search icon — opens mobile search */}
             <button
               onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-              className="p-2 text-slate-600 hover:text-viet-red transition-colors md:hidden"
+              className="p-2 text-slate-600 hover:text-primary transition-colors md:hidden"
             >
               <Search size={22} />
             </button>
             {/* Cart icon */}
-            <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-viet-red transition-colors relative">
+            <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary transition-colors relative">
               <ShoppingCart size={22} />
-              <span className="absolute -top-0.5 -right-0.5 bg-viet-red text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+              <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
             </Link>
             {/* Menu toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-slate-600 hover:text-viet-red transition-colors"
+              className="p-2 text-slate-600 hover:text-primary transition-colors"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -292,14 +292,14 @@ export function Header() {
       {/* ═══ Mobile Search Bar (expandable) ═══ */}
       {isMobileSearchOpen && (
         <div className="md:hidden border-t border-slate-100 px-3 py-3 bg-white">
-          <div className="flex items-stretch h-10 border-2 border-viet-red rounded-lg overflow-hidden">
+          <div className="flex items-stretch h-10 border-2 border-primary rounded-lg overflow-hidden">
             <input
               type="text"
               className="flex-1 px-3 text-sm outline-none min-w-0"
               placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
               autoFocus
             />
-            <button className="bg-viet-red text-white px-4 shrink-0">
+            <button className="bg-primary text-white px-4 shrink-0">
               <Search size={18} />
             </button>
           </div>
@@ -315,7 +315,7 @@ export function Header() {
               onMouseEnter={() => setIsCategoriesOpen(true)}
               onMouseLeave={() => setIsCategoriesOpen(false)}
             >
-              <Link to="/categories" className="flex items-center gap-2 bg-viet-red text-white px-6 h-full font-bold text-sm">
+              <Link to="/categories" className="flex items-center gap-2 bg-primary text-white px-6 h-full font-bold text-sm">
                 <Menu size={18} />
                 {t('all_categories')}
               </Link>
@@ -327,9 +327,9 @@ export function Header() {
               )}
             </div>
             <nav className="flex items-center gap-8 ml-8">
-              <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('top_ranking_products')}</Link>
-              <Link to="/video" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('video_channel')}</Link>
-              <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-viet-red">{t('secured_trading_service')}</Link>
+              <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-primary">{t('top_ranking_products')}</Link>
+              <Link to="/video" className="text-sm font-bold text-slate-700 hover:text-primary">{t('video_channel')}</Link>
+              <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-primary">{t('secured_trading_service')}</Link>
             </nav>
           </div>
           <div className="flex items-center h-full gap-6">
@@ -340,8 +340,8 @@ export function Header() {
               <NavDropdown label={t('buyer')} to="/dashboard/buyer" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
                 <MegaMenu sections={buyerMenuSections} columns={3} className="w-[720px]" />
               </NavDropdown>
-              <Link to="/help" className="hover:text-viet-red">{t('help')}</Link>
-              <Link to="/apps" className="hover:text-viet-red flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>
+              <Link to="/help" className="hover:text-primary">{t('help')}</Link>
+              <Link to="/apps" className="hover:text-primary flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>
             </div>
           </div>
         </div>
@@ -365,11 +365,11 @@ export function Header() {
                   <User size={18} />
                 </div>
                 <div>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-viet-red">
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-primary">
                     {t('sign_in')}
                   </Link>
                   <span className="mx-1.5 text-slate-300">|</span>
-                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-viet-red">
+                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-primary">
                     {t('join_free')}
                   </Link>
                 </div>
@@ -389,7 +389,7 @@ export function Header() {
                       key={lIdx}
                       to={link.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-viet-red transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
                     >
                       <span className="text-slate-400">{link.icon}</span>
                       <span className="flex-1">{link.label}</span>
@@ -406,13 +406,13 @@ export function Header() {
                 <Globe size={16} className="text-slate-400" />
                 <button
                   onClick={() => changeLanguage('vi')}
-                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'vi' ? "bg-viet-red text-white" : "bg-slate-100 text-slate-600")}
+                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'vi' ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
                 >
                   🇻🇳 VI
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'en' ? "bg-viet-red text-white" : "bg-slate-100 text-slate-600")}
+                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'en' ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
                 >
                   🇬🇧 EN
                 </button>
@@ -420,7 +420,7 @@ export function Header() {
               <Link
                 to="/verify"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 justify-center w-full py-3 bg-viet-red text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors"
+                className="flex items-center gap-2 justify-center w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-dark transition-colors"
               >
                 <ShieldCheck size={16} />
                 {t('verify_qr_short', 'Xác nhận hàng giả')}

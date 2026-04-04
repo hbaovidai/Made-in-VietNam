@@ -60,13 +60,13 @@ export function SupplierAnalytics() {
           {/* Visitor Trend */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Eye size={20} className="text-viet-red" /> {t('visitor_trend')}
+              <Eye size={20} className="text-primary" /> {t('visitor_trend')}
             </h3>
             <div className="h-64 flex items-end gap-2">
               {[30, 50, 40, 70, 60, 90, 80, 100, 85, 95, 75, 110].map((h, i) => (
                 <div key={i} className="flex-1 bg-slate-100 relative group cursor-pointer">
                   <div 
-                    className="absolute bottom-0 left-0 right-0 bg-viet-red/20 group-hover:bg-viet-red transition-all" 
+                    className="absolute bottom-0 left-0 right-0 bg-primary/20 group-hover:bg-primary transition-all" 
                     style={{ height: `${h}%` }} 
                   />
                 </div>
@@ -80,7 +80,7 @@ export function SupplierAnalytics() {
           {/* Inquiry Trend */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <MessageSquare size={20} className="text-viet-red" /> {t('inquiry_trend')}
+              <MessageSquare size={20} className="text-primary" /> {t('inquiry_trend')}
             </h3>
             <div className="h-64 flex items-end gap-2">
               {[20, 40, 30, 50, 45, 60, 55, 70, 65, 80, 75, 90].map((h, i) => (
@@ -101,7 +101,7 @@ export function SupplierAnalytics() {
         {/* Top Products Table */}
         <div className="space-y-6">
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-            <TrendingUp size={20} className="text-viet-red" /> {t('top_performing_products')}
+            <TrendingUp size={20} className="text-primary" /> {t('top_performing_products')}
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -118,7 +118,7 @@ export function SupplierAnalytics() {
                 {topProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-viet-red transition-colors">{product.name}</div>
+                      <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{product.name}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-slate-600">{product.views}</span>

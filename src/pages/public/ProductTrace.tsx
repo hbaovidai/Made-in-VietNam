@@ -21,7 +21,7 @@ export function ProductTrace() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 border-4 border-slate-200 border-t-viet-red rounded-full animate-spin mb-4" />
+        <div className="w-16 h-16 border-4 border-slate-200 border-t-primary rounded-full animate-spin mb-4" />
         <h2 className="text-xl font-bold text-slate-800 animate-pulse">Đang định danh QR...</h2>
         <p className="text-slate-500 text-sm mt-2 font-mono">{code}</p>
       </div>
@@ -108,7 +108,7 @@ export function ProductTrace() {
                 <BadgeInfo className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ghi chú lịch sử quét</div>
-                  <div className="text-sm font-medium text-slate-800">Bạn là người thứ <span className="font-bold text-viet-red">{qr.scans + 1}</span> quét mã này.</div>
+                  <div className="text-sm font-medium text-slate-800">Bạn là người thứ <span className="font-bold text-primary">{qr.scans + 1}</span> quét mã này.</div>
                 </div>
               </div>
             </div>

@@ -18,7 +18,7 @@ const VARIANT_MAP: Record<BadgeVariant, string> = {
   warning: 'bg-amber-50 text-amber-600 border-amber-200',
   danger: 'bg-red-50 text-red-600 border-red-200',
   info: 'bg-blue-50 text-blue-600 border-blue-200',
-  primary: 'bg-viet-red/10 text-viet-red border-viet-red/20',
+  primary: 'bg-primary/10 text-primary border-primary/20',
 };
 
 const SIZE_MAP: Record<BadgeSize, string> = {

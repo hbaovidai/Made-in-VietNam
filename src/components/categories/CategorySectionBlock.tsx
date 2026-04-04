@@ -27,7 +27,7 @@ export function CategorySectionBlock({ section, image, className }: CategorySect
             </h3>
             <Link
               to={`/products?cat=${section.title.toLowerCase().replace(/\s+/g, '-')}`}
-              className="mt-4 inline-flex items-center text-xs font-bold text-white bg-viet-red px-4 py-2 hover:bg-red-700 transition-colors uppercase tracking-widest"
+              className="mt-4 inline-flex items-center text-xs font-bold text-white bg-primary px-4 py-2 hover:bg-primary-dark transition-colors uppercase tracking-widest"
             >
               View Products
             </Link>
@@ -42,14 +42,14 @@ export function CategorySectionBlock({ section, image, className }: CategorySect
             <Link
               key={sub.name}
               to={sub.href}
-              className="text-sm text-slate-600 hover:text-viet-red transition-colors block py-0.5 border-b border-transparent hover:border-viet-red/20"
+              className="text-sm text-slate-600 hover:text-primary transition-colors block py-0.5 border-b border-transparent hover:border-primary/20"
             >
               {sub.name}
             </Link>
           ))}
           <Link
             to={`/products?cat=${section.title.toLowerCase().replace(/\s+/g, '-')}`}
-            className="text-sm font-bold text-viet-red hover:underline flex items-center gap-1"
+            className="text-sm font-bold text-primary hover:underline flex items-center gap-1"
           >
             More Categories »
           </Link>

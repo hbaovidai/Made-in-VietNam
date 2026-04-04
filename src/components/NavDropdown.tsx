@@ -25,7 +25,7 @@ export function NavDropdown({ label, to, children, className, panelClassName, ar
     >
       <LabelElement 
         to={to as string}
-        className="flex items-center gap-1 text-sm font-bold text-slate-700 hover:text-viet-red transition-colors h-full"
+        className="flex items-center gap-1 text-sm font-bold text-slate-700 hover:text-primary transition-colors h-full"
       >
         {label}
         <ChevronDown size={14} className={cn("transition-transform duration-200", isOpen && "rotate-180")} />

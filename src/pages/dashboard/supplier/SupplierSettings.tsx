@@ -19,7 +19,7 @@ export function SupplierSettings() {
       title={t('account_settings_title')} 
       subtitle={t('account_settings_subtitle')}
       actions={
-        <button className="bg-viet-red text-white px-8 py-2 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs shadow-lg shadow-red-500/20 flex items-center gap-2">
+        <button className="bg-primary text-white px-8 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20 flex items-center gap-2">
           <Save size={14} /> {t('save_changes')}
         </button>
       }
@@ -29,35 +29,35 @@ export function SupplierSettings() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <User size={20} className="text-viet-red" /> {t('contact_person_details')}
+              <User size={20} className="text-primary" /> {t('contact_person_details')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('first_name')}</label>
-                <input type="text" defaultValue="Huynh Le" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red" />
+                <input type="text" defaultValue="Huynh Le" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('last_name')}</label>
-                <input type="text" defaultValue="Hoai Bao" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red" />
+                <input type="text" defaultValue="Hoai Bao" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('email_address')}</label>
-              <input type="email" defaultValue="huynhlehoaibao23@gmail.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red" />
+              <input type="email" defaultValue="huynhlehoaibao23@gmail.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>
-              <input type="tel" defaultValue="+84 123 456 789" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red" />
+              <input type="tel" defaultValue="+84 123 456 789" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
             </div>
           </div>
 
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Globe size={20} className="text-viet-red" /> {t('location_preferences')}
+              <Globe size={20} className="text-primary" /> {t('location_preferences')}
             </h3>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('country_region')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red">
+              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
                 <option>Vietnam</option>
                 <option>United States</option>
                 <option>China</option>
@@ -66,7 +66,7 @@ export function SupplierSettings() {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('preferred_language')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red">
+              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
                 <option>English</option>
                 <option>Vietnamese</option>
                 <option>Chinese</option>
@@ -74,7 +74,7 @@ export function SupplierSettings() {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('currency_label')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-viet-red">
+              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
                 <option>USD ($)</option>
                 <option>VND (₫)</option>
                 <option>EUR (€)</option>
@@ -88,17 +88,17 @@ export function SupplierSettings() {
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight mb-6">{t('other_settings')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {settingsSections.map((section, idx) => (
-              <div key={idx} className="p-6 border border-slate-100 hover:border-viet-red transition-all flex items-center justify-between group cursor-pointer">
+              <div key={idx} className="p-6 border border-slate-100 hover:border-primary transition-all flex items-center justify-between group cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     {section.icon}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-800 group-hover:text-viet-red transition-colors">{section.title}</div>
+                    <div className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">{section.title}</div>
                     <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{section.desc}</div>
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-slate-300 group-hover:text-viet-red" />
+                <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
               </div>
             ))}
           </div>

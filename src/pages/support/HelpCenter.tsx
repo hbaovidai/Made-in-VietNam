@@ -42,9 +42,9 @@ export function HelpCenter() {
             <input 
               type="text" 
               placeholder={t('search_help_placeholder')} 
-              className="w-full px-8 py-6 bg-white border border-slate-200 rounded-full outline-none focus:border-viet-red transition-colors shadow-2xl shadow-slate-200/50 text-xl"
+              className="w-full px-8 py-6 bg-white border border-slate-200 rounded-full outline-none focus:border-primary transition-colors shadow-2xl shadow-slate-200/50 text-xl"
             />
-            <button className="absolute right-8 top-1/2 -translate-y-1/2 bg-viet-red text-white p-3 rounded-full hover:bg-red-700 transition-colors">
+            <button className="absolute right-8 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-full hover:bg-primary-dark transition-colors">
               <Search size={24} />
             </button>
           </div>
@@ -57,9 +57,9 @@ export function HelpCenter() {
               <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 {cat.icon}
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-viet-red transition-colors">{cat.title}</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">{cat.title}</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-6">{cat.desc}</p>
-              <div className="flex items-center gap-1 text-viet-red font-bold text-sm uppercase tracking-widest">
+              <div className="flex items-center gap-1 text-primary font-bold text-sm uppercase tracking-widest">
                 {t('browse_articles')} <ChevronRight size={14} />
               </div>
             </div>
@@ -69,7 +69,7 @@ export function HelpCenter() {
         {/* Popular Articles */}
         <div className="bg-white border border-slate-200 p-12">
           <div className="flex items-center gap-4 mb-12">
-            <div className="h-8 w-1.5 bg-viet-red" />
+            <div className="h-8 w-1.5 bg-primary" />
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
               {t('popular_articles')}
             </h2>
@@ -79,10 +79,10 @@ export function HelpCenter() {
               <Link 
                 key={idx} 
                 to="/help/user-guide" 
-                className="flex items-center justify-between py-4 border-b border-slate-100 group hover:border-viet-red transition-colors"
+                className="flex items-center justify-between py-4 border-b border-slate-100 group hover:border-primary transition-colors"
               >
-                <span className="text-slate-700 font-medium group-hover:text-viet-red">{article}</span>
-                <ChevronRight size={16} className="text-slate-300 group-hover:text-viet-red" />
+                <span className="text-slate-700 font-medium group-hover:text-primary">{article}</span>
+                <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
               </Link>
             ))}
           </div>
@@ -95,7 +95,7 @@ export function HelpCenter() {
             <p className="text-slate-400 text-lg">{t('still_need_help_desc')}</p>
           </div>
           <div className="flex gap-4">
-            <Link to="/contact" className="bg-viet-red text-white px-10 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-red-500/40">
+            <Link to="/contact" className="bg-primary text-white px-10 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-2xl shadow-primary/40">
               {t('contact_support')}
             </Link>
             <Link to="/contact" className="bg-white text-slate-900 px-10 py-4 font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm">

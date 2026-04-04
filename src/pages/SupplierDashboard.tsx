@@ -7,7 +7,7 @@ export function SupplierDashboard() {
   const { t } = useTranslation();
   const stats = [
     { label: t('total_products'), value: '48', icon: <Package size={20} />, color: 'bg-blue-500' },
-    { icon: <FileText size={20} />, label: t('rfqs_received'), value: '156', color: 'bg-viet-red' },
+    { icon: <FileText size={20} />, label: t('rfqs_received'), value: '156', color: 'bg-primary' },
     { icon: <Users size={20} />, label: t('profile_views'), value: '2.4k', color: 'bg-emerald-500' },
     { icon: <DollarSign size={20} />, label: t('total_sales'), value: '$124k', color: 'bg-viet-gold' },
   ];
@@ -22,7 +22,7 @@ export function SupplierDashboard() {
     <div className="space-y-10">
       {/* Welcome Section */}
       <div className="bg-slate-900 rounded-3xl p-8 text-white flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-viet-red/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
         <div className="space-y-4 relative z-10">
           <h2 className="text-3xl font-bold">{t('supplier_welcome_back', { name: 'VietAgro Exports' })}</h2>
           <p className="text-slate-400 max-w-md">
@@ -34,7 +34,7 @@ export function SupplierDashboard() {
           </div>
         </div>
         <div className="flex gap-4 relative z-10">
-          <button className="bg-viet-red text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-900/40">
+          <button className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary-dark/40">
             {t('add_new_product')}
           </button>
           <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-all">
@@ -67,7 +67,7 @@ export function SupplierDashboard() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-900">{t('recent_inquiries')}</h3>
-            <button className="text-viet-red font-bold text-sm hover:underline">{t('manage_all')}</button>
+            <button className="text-primary font-bold text-sm hover:underline">{t('manage_all')}</button>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <table className="w-full text-left">
@@ -89,7 +89,7 @@ export function SupplierDashboard() {
                     <td className="px-6 py-4 text-sm text-slate-600">{inq.product}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        inq.status === 'New' ? 'bg-viet-red/10 text-viet-red' : 'bg-slate-100 text-slate-500'
+                        inq.status === 'New' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'
                       }`}>
                         {t(inq.status.toLowerCase())}
                       </span>

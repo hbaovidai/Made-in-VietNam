@@ -21,7 +21,7 @@ export function SupplierList() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Header Section */}
       <div className="bg-slate-900 text-white py-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-viet-red/10 skew-x-12 transform translate-x-32" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/10 skew-x-12 transform translate-x-32" />
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-6">
             <Link to="/" className="hover:text-white">{t('home')}</Link>
@@ -31,20 +31,20 @@ export function SupplierList() {
           <div className="max-w-2xl space-y-6">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
               <Trans i18nKey="find_verified_manufacturers">
-                Find <span className="text-viet-red">Verified</span> Vietnamese Manufacturers
+                Find <span className="text-primary">Verified</span> Vietnamese Manufacturers
               </Trans>
             </h1>
             <p className="text-slate-400 text-lg leading-relaxed">
               {t('suppliers_desc')}
             </p>
             <div className="relative max-w-xl group">
-              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-viet-red transition-colors" />
+              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t('search_suppliers_placeholder')}
-                className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-500 outline-none focus:bg-white/20 focus:border-viet-red transition-all"
+                className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-500 outline-none focus:bg-white/20 focus:border-primary transition-all"
               />
             </div>
           </div>
@@ -58,7 +58,7 @@ export function SupplierList() {
             <div className="sticky top-28 space-y-10">
               <div>
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <div className="w-4 h-[2px] bg-viet-red" />
+                  <div className="w-4 h-[2px] bg-primary" />
                   {t('industries')}
                 </h3>
                 <div className="space-y-2">
@@ -67,8 +67,8 @@ export function SupplierList() {
                     className={cn(
                       "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
                       !selectedIndustry
-                        ? "bg-viet-red text-white border-viet-red shadow-lg shadow-red-600/20"
-                        : "bg-white text-slate-600 border-slate-100 hover:border-viet-red/30 hover:bg-slate-50"
+                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                        : "bg-white text-slate-600 border-slate-100 hover:border-primary/30 hover:bg-slate-50"
                     )}
                   >
                     {t('all_industries')}
@@ -80,8 +80,8 @@ export function SupplierList() {
                       className={cn(
                         "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
                         selectedIndustry === cat
-                          ? "bg-viet-red text-white border-viet-red shadow-lg shadow-red-600/20"
-                          : "bg-white text-slate-600 border-slate-100 hover:border-viet-red/30 hover:bg-slate-50"
+                          ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                          : "bg-white text-slate-600 border-slate-100 hover:border-primary/30 hover:bg-slate-50"
                       )}
                     >
                       {cat}
@@ -115,7 +115,7 @@ export function SupplierList() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('sort_by')}</span>
-                <select className="bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 outline-none focus:border-viet-red transition-colors">
+                <select className="bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 outline-none focus:border-primary transition-colors">
                   <option>{t('most_relevant')}</option>
                   <option>{t('years_experience')}</option>
                   <option>{t('recently_verified')}</option>

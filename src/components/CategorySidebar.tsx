@@ -13,7 +13,7 @@ export function CategorySidebar() {
   return (
     <div className="hidden lg:flex flex-col w-64 bg-white border border-slate-200 shrink-0 relative z-30">
       <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
-        <LayoutGrid size={18} className="text-viet-red" />
+        <LayoutGrid size={18} className="text-primary" />
         <span className="font-bold text-slate-800">{t('categories')}</span>
       </div>
       <div className="flex-1 py-1 overflow-y-auto max-h-[400px] no-scrollbar">
@@ -25,10 +25,10 @@ export function CategorySidebar() {
             onMouseLeave={() => setActiveCategory(null)}
             className={cn(
               "group flex items-center justify-between px-4 py-2 cursor-pointer transition-colors",
-              activeCategory === cat.slug ? "bg-red-50 text-viet-red" : "hover:bg-red-50 hover:text-viet-red"
+              activeCategory === cat.slug ? "bg-blue-50 text-primary" : "hover:bg-blue-50 hover:text-primary"
             )}
           >
-            <span className="text-xs font-medium text-slate-700 group-hover:text-viet-red truncate flex-1">
+            <span className="text-xs font-medium text-slate-700 group-hover:text-primary truncate flex-1">
               {t(cat.name)}
             </span>
             <ChevronRight size={12} className={cn("transition-opacity", activeCategory === cat.slug ? "opacity-100" : "opacity-30")} />
@@ -48,20 +48,20 @@ export function CategorySidebar() {
                         {group.sections.slice(0, 4).map((section) => (
                           <div key={section.title} className="space-y-3">
                             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-1.5">
-                              <Link to={`/categories/${group.slug}`} className="hover:text-viet-red">
+                              <Link to={`/categories/${group.slug}`} className="hover:text-primary">
                                 {t(section.title)}
                               </Link>
                             </h4>
                             <ul className="space-y-1.5">
                               {section.subcategories.slice(0, 5).map((sub) => (
                                 <li key={sub.name}>
-                                  <Link to={sub.href} className="text-xs text-slate-600 hover:text-viet-red block">
+                                  <Link to={sub.href} className="text-xs text-slate-600 hover:text-primary block">
                                     {t(sub.name)}
                                   </Link>
                                 </li>
                               ))}
                               <li>
-                                <Link to={`/categories/${group.slug}`} className="text-xs text-viet-red font-bold hover:underline">
+                                <Link to={`/categories/${group.slug}`} className="text-xs text-primary font-bold hover:underline">
                                   {t('view_more')} »
                                 </Link>
                               </li>
@@ -82,7 +82,7 @@ export function CategorySidebar() {
                           <p className="text-[10px] text-slate-500 leading-tight">
                             {t('source_directly_from')} {t(group.name)}.
                           </p>
-                          <Link to={`/categories/${group.slug}`} className="mt-2 inline-block text-[10px] font-bold text-viet-red uppercase tracking-widest hover:underline">
+                          <Link to={`/categories/${group.slug}`} className="mt-2 inline-block text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">
                             {t('explore_all')}
                           </Link>
                         </div>

@@ -44,7 +44,7 @@ export function SecuredTrading() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-32">
           <div className="space-y-6">
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tight leading-none">
-              {t('your_safety')} <span className="text-viet-red">{t('priority')}</span>
+              {t('your_safety')} <span className="text-primary">{t('priority')}</span>
             </h2>
             <p className="text-lg text-slate-600 leading-relaxed">
               {t('secured_trading_intro')}
@@ -52,7 +52,7 @@ export function SecuredTrading() {
             <div className="space-y-4">
               {[t('payment_protection_100'), t('verified_supplier_network'), t('dispute_resolution_support'), t('quality_inspection_services')].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle2 size={20} className="text-viet-red" />
+                  <CheckCircle2 size={20} className="text-primary" />
                   <span className="font-bold text-slate-800 uppercase tracking-widest text-xs">{item}</span>
                 </div>
               ))}
@@ -63,7 +63,7 @@ export function SecuredTrading() {
               <img src="https://picsum.photos/seed/trust/800/800" alt="Trust" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             <div className="absolute -bottom-10 -left-10 bg-white p-8 shadow-2xl border border-slate-100 rounded-2xl max-w-xs hidden lg:block">
-              <Shield size={40} className="text-viet-red mb-4" />
+              <Shield size={40} className="text-primary mb-4" />
               <p className="text-sm font-bold text-slate-900 leading-relaxed">
                 {t('secured_trading_quote')}
               </p>
@@ -74,7 +74,7 @@ export function SecuredTrading() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, idx) => (
-            <div key={idx} className="p-8 border border-slate-100 hover:border-viet-red transition-all group">
+            <div key={idx} className="p-8 border border-slate-100 hover:border-primary transition-all group">
               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 {feature.icon}
               </div>
@@ -90,7 +90,7 @@ export function SecuredTrading() {
           <h2 className="text-3xl font-black uppercase tracking-tight">{t('ready_to_trade_securely')}</h2>
           <p className="text-slate-400 max-w-2xl mx-auto">{t('ready_to_trade_securely_desc')}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-viet-red text-white px-10 py-4 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs">
+            <button className="bg-primary text-white px-10 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs">
               {t('join_free_now')}
             </button>
             <button className="bg-transparent border border-white/20 text-white px-10 py-4 font-bold hover:bg-white/10 transition-colors uppercase tracking-widest text-xs">

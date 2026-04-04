@@ -96,7 +96,39 @@ export function SupplierProducts() {
           action={<button className="btn-primary mt-4" onClick={handleCreate}>{t('create_first_product')}</button>}
         />
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Mobile: Card List */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {productList.map((product) => (
+            <div key={product.id} className="p-4 flex gap-3 items-start">
+              <div className="w-16 h-16 bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200">
+                <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-sm text-slate-900 truncate">{product.name}</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">ID: PRD-{product.id}</div>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{product.category}</span>
+                  <span className="font-bold text-xs text-primary">{product.priceRange}</span>
+                  <Badge variant="success">{t('status_selling')}</Badge>
+                </div>
+                <div className="flex items-center gap-1 mt-2">
+                  <button className="btn-icon" onClick={() => handleEdit(product)}>
+                    <Edit2 size={14} />
+                  </button>
+                  <button className="btn-icon-danger" onClick={() => handleDeleteClick(product)}>
+                    <Trash2 size={14} />
+                  </button>
+                  <button className="btn-icon">
+                    <MoreVertical size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Desktop: Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="table-header">
@@ -116,7 +148,7 @@ export function SupplierProducts() {
                         <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-slate-900 truncate group-hover:text-viet-red transition-colors">{product.name}</div>
+                        <div className="font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{product.name}</div>
                         <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">ID: PRD-{product.id}</div>
                       </div>
                     </div>
@@ -148,6 +180,7 @@ export function SupplierProducts() {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {/* Forms and Dialogs */}

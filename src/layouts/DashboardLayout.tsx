@@ -21,11 +21,11 @@ function SidebarItem({ icon, label, path, active, onClick }: SidebarItemProps) {
       className={cn(
         "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
         active
-          ? "bg-viet-red text-white shadow-lg shadow-red-900/20"
+          ? "bg-primary text-white shadow-lg shadow-primary-dark/20"
           : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
       )}
     >
-      <div className={cn("shrink-0 transition-transform group-hover:scale-110", active ? "text-white" : "text-slate-400 group-hover:text-viet-red")}>
+      <div className={cn("shrink-0 transition-transform group-hover:scale-110", active ? "text-white" : "text-slate-400 group-hover:text-primary")}>
         {icon}
       </div>
       <span>{label}</span>
@@ -40,10 +40,10 @@ function BottomNavItem({ icon, label, path, active }: { icon: React.ReactNode; l
       to={path}
       className={cn(
         "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 transition-colors relative",
-        active ? "text-viet-red" : "text-slate-400"
+        active ? "text-primary" : "text-slate-400"
       )}
     >
-      {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-viet-red rounded-full" />}
+      {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />}
       <div className={cn("transition-transform", active && "scale-110")}>{icon}</div>
       <span className="text-[10px] font-bold leading-none">{label}</span>
     </Link>
@@ -108,12 +108,12 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
     <>
       <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
-          <div className="w-8 h-8 bg-viet-red rounded-lg flex items-center justify-center text-viet-gold">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-viet-gold">
             <Globe size={18} />
           </div>
           <div className="flex flex-row items-center">
-            <span className="text-sm font-bold text-slate-900 leading-none tracking-tight">VIE</span>
-            <span className="text-sm font-bold text-viet-red leading-none tracking-tight">PRODUCT</span>
+            <span className="text-sm font-bold text-primary leading-none tracking-tight">VIE</span>
+            <span className="text-sm font-bold text-slate-900 leading-none tracking-tight">PRODUCT</span>
           </div>
         </Link>
         {/* Close button — mobile only */}
@@ -157,7 +157,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
             localStorage.removeItem('user_role');
             window.location.href = '/login';
           }}
-          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-red-50 hover:text-viet-red transition-all"
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"
         >
           <LogOut size={20} />
           <span>{t('sign_out')}</span>
@@ -198,7 +198,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile & tablet */}
             <button
-              className="lg:hidden p-2 -ml-2 text-slate-600 hover:text-viet-red transition-colors"
+              className="lg:hidden p-2 -ml-2 text-slate-600 hover:text-primary transition-colors"
               onClick={() => setIsSidebarOpen(true)}
             >
               <Menu size={22} />

@@ -48,44 +48,44 @@ export function SupplierProfile() {
       actions={
         <button 
           onClick={() => setIsEditModalOpen(true)}
-          className="bg-viet-red text-white px-8 py-2 font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-xs shadow-lg shadow-red-500/20 flex items-center gap-2"
+          className="bg-primary text-white px-8 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20 flex items-center gap-2"
         >
           <Edit2 size={14} /> {t('edit_profile_btn')}
         </button>
       }
     >
-      <div className="p-8 space-y-12">
+      <div className="p-4 sm:p-8 space-y-8 sm:space-y-12">
         {/* Company Header */}
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <div className="relative group">
-            <div className="w-32 h-32 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden">
+            <div className="w-20 h-20 sm:w-32 sm:h-32 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden">
               <img src="https://picsum.photos/seed/company/200/200" alt="Company Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
             </div>
             <button 
               onClick={handleLogoUpload}
-              className="absolute -bottom-2 -right-2 bg-viet-red text-white p-2 text-xs rounded-lg shadow-lg hover:bg-red-700 transition-colors"
+              className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors"
             >
               <Camera size={16} />
             </button>
           </div>
           <div className="space-y-4 flex-1">
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Hanoi Textile & Garment Co., Ltd.</h2>
+              <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">Hanoi Textile & Garment Co., Ltd.</h2>
               <span className="flex items-center gap-1.5 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
                 <Shield size={12} /> {t('verified_badge_profile')}
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <Building2 size={14} className="text-viet-red" />
+                <Building2 size={14} className="text-primary" />
                 <span>{t('biz_type_manufacturer_trading')}</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <MapPin size={14} className="text-viet-red" />
+                <MapPin size={14} className="text-primary" />
                 <span>{t('location_hanoi')}</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <Globe size={14} className="text-viet-red" />
+                <Globe size={14} className="text-primary" />
                 <span>www.hanoitextile.com</span>
               </div>
             </div>
@@ -96,10 +96,10 @@ export function SupplierProfile() {
         </div>
 
         {/* Company Details Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 border-t border-slate-100">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 pt-8 sm:pt-12 border-t border-slate-100">
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Building2 size={20} className="text-viet-red" /> {t('biz_info_title')}
+              <Building2 size={20} className="text-primary" /> {t('biz_info_title')}
             </h3>
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
@@ -124,11 +124,11 @@ export function SupplierProfile() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                <Award size={20} className="text-viet-red" /> {t('certs_awards_title')}
+                <Award size={20} className="text-primary" /> {t('certs_awards_title')}
               </h3>
               <button 
                 onClick={() => setIsCertModalOpen(true)}
-                className="text-viet-red text-[10px] font-bold uppercase tracking-widest hover:underline flex items-center gap-1"
+                className="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline flex items-center gap-1"
               >
                 <Plus size={12} /> {t('add_new_btn')}
               </button>
@@ -149,7 +149,7 @@ export function SupplierProfile() {
                   </div>
                   <button 
                     onClick={() => handleDeleteCert(cert.id)}
-                    className="p-2 text-slate-300 hover:text-viet-red transition-colors opacity-0 group-hover:opacity-100"
+                    className="p-2 text-slate-300 hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -163,7 +163,7 @@ export function SupplierProfile() {
         <div className="pt-12 border-t border-slate-100 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <MapPin size={20} className="text-viet-red" /> {t('featured_products_profile')}
+              <MapPin size={20} className="text-primary" /> {t('featured_products_profile')}
             </h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -174,7 +174,7 @@ export function SupplierProfile() {
                 </div>
                 <div className="p-3">
                   <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{product.name}</h4>
-                  <div className="text-viet-red font-bold text-xs mt-1">{product.priceRange}</div>
+                  <div className="text-primary font-bold text-xs mt-1">{product.priceRange}</div>
                 </div>
               </div>
             ))}

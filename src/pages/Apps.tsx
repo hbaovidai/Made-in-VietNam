@@ -28,7 +28,7 @@ export function Apps() {
         <div className="flex flex-col lg:flex-row gap-20 items-center mb-32">
           <div className="flex-1 space-y-8 text-center lg:text-left">
             <h2 className="text-5xl font-black text-slate-900 uppercase tracking-tighter leading-tight">
-              {t('sourcing_in_your')} <span className="text-viet-red">{t('pocket')}</span>
+              {t('sourcing_in_your')} <span className="text-primary">{t('pocket')}</span>
             </h2>
             <p className="text-slate-600 text-xl leading-relaxed max-w-2xl mx-auto lg:mx-0">
               {t('app_showcase_desc')}
@@ -69,7 +69,7 @@ export function Apps() {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-viet-red/5 rounded-full blur-3xl -z-10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10" />
           </div>
         </div>
 
@@ -85,7 +85,7 @@ export function Apps() {
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-viet-red transition-colors">{feature.title}</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">{feature.title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
@@ -98,7 +98,7 @@ export function Apps() {
             <h2 className="text-3xl font-black uppercase tracking-tight">{t('scan_to_download')}</h2>
             <p className="text-slate-400 text-lg">{t('scan_to_download_desc')}</p>
             <div className="flex items-center justify-center lg:justify-start gap-4">
-              <CheckCircle2 size={20} className="text-viet-red" />
+              <CheckCircle2 size={20} className="text-primary" />
               <span className="text-slate-300">{t('safe_and_secure_download')}</span>
             </div>
           </div>

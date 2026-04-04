@@ -39,7 +39,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
       <div className="pt-12 p-6 space-y-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-black text-slate-900 group-hover:text-viet-red transition-colors tracking-tight">
+            <h3 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors tracking-tight">
               {supplier.name}
             </h3>
             {supplier.isVerified && (
@@ -50,7 +50,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             )}
           </div>
           <div className="flex items-center gap-1 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <MapPin size={12} className="text-viet-red" />
+            <MapPin size={12} className="text-primary" />
             <span>{supplier.location}</span>
           </div>
         </div>
@@ -79,7 +79,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             <Award size={16} className="text-viet-gold" />
             <span>{supplier.certifications[0]}</span>
           </div>
-          <div className="bg-slate-900 text-white p-2 rounded-lg group-hover:bg-viet-red transition-colors">
+          <div className="bg-slate-900 text-white p-2 rounded-lg group-hover:bg-primary transition-colors">
             <ChevronRight size={16} />
           </div>
         </div>

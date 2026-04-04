@@ -20,21 +20,21 @@ export function BuyerMessages() {
       actions={
         <div className="flex gap-2">
           <div className="relative">
-            <input type="text" placeholder={t('search_messages')} className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-viet-red" />
+            <input type="text" placeholder={t('search_messages')} className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-primary" />
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           </div>
-          <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-viet-red transition-colors">
+          <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-primary transition-colors">
             <Filter size={18} />
           </button>
         </div>
       }
     >
-      <div className="flex flex-col lg:flex-row h-[600px]">
+      <div className="flex flex-col lg:flex-row h-auto lg:h-[600px]">
         {/* Message List */}
-        <div className="w-full lg:w-80 border-r border-slate-100 overflow-y-auto divide-y divide-slate-50">
+        <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-y-auto divide-y divide-slate-50 max-h-[250px] lg:max-h-none">
           {messages.map((msg) => (
-            <div key={msg.id} className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer group relative ${msg.unread ? "bg-red-50/30" : ""}`}>
-              {msg.unread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-viet-red" />}
+            <div key={msg.id} className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer group relative ${msg.unread ? "bg-blue-50/30" : ""}`}>
+              {msg.unread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs shrink-0">
                   {msg.avatar}
@@ -65,17 +65,17 @@ export function BuyerMessages() {
                 <div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">{t('online_now')}</div>
               </div>
             </div>
-            <button className="p-2 text-slate-400 hover:text-viet-red">
+            <button className="p-2 text-slate-400 hover:text-primary">
               <MoreVertical size={18} />
             </button>
           </div>
           
-          <div className="flex-1 p-6 overflow-y-auto space-y-6">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 min-h-[200px] lg:min-h-0">
             <div className="flex justify-center">
               <span className="bg-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{t('today_label')}</span>
             </div>
             
-            <div className="flex items-start gap-3 max-w-[80%]">
+            <div className="flex items-start gap-2 sm:gap-3 max-w-[85%] sm:max-w-[80%]">
               <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-[10px] shrink-0">
                 HT
               </div>
@@ -87,11 +87,11 @@ export function BuyerMessages() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 max-w-[80%] ml-auto flex-row-reverse">
-              <div className="w-8 h-8 rounded-full bg-viet-red text-white flex items-center justify-center font-bold text-[10px] shrink-0">
+            <div className="flex items-start gap-2 sm:gap-3 max-w-[85%] sm:max-w-[80%] ml-auto flex-row-reverse">
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-[10px] shrink-0">
                 HB
               </div>
-              <div className="bg-viet-red p-4 shadow-lg shadow-red-500/10 rounded-2xl rounded-tr-none text-white">
+              <div className="bg-primary p-4 shadow-lg shadow-primary/10 rounded-2xl rounded-tr-none text-white">
                 <p className="text-sm leading-relaxed">
                   That sounds great. Please ship them to our office in California. I'll provide the address shortly.
                 </p>
@@ -102,8 +102,8 @@ export function BuyerMessages() {
 
           <div className="p-4 bg-white border-t border-slate-100">
             <div className="relative">
-              <input type="text" placeholder={t('type_message')} className="w-full pl-6 pr-16 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-viet-red transition-colors" />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-viet-red text-white p-3 rounded-lg hover:bg-red-700 transition-colors">
+              <input type="text" placeholder={t('type_message')} className="w-full pl-4 sm:pl-6 pr-14 sm:pr-16 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary transition-colors text-sm" />
+              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-lg hover:bg-primary-dark transition-colors">
                 <Send size={18} />
               </button>
             </div>

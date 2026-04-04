@@ -19,8 +19,8 @@ export function CategoryGroupTabs({ activeSlug }: CategoryGroupTabsProps) {
               key={group.slug}
               to={`/categories/${group.slug}`}
               className={cn(
-                "text-sm font-bold text-slate-700 hover:text-viet-red transition-colors whitespace-nowrap h-full flex items-center border-b-2 border-transparent",
-                activeSlug === group.slug && "text-viet-red border-viet-red"
+                "text-sm font-bold text-slate-700 hover:text-primary transition-colors whitespace-nowrap h-full flex items-center border-b-2 border-transparent",
+                activeSlug === group.slug && "text-primary border-primary"
               )}
             >
               {t(group.name)}

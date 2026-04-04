@@ -28,13 +28,13 @@ export function VideoChannel() {
         <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
           <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto">
             {[t('all_videos'), t('factory_tours'), t('product_reviews'), t('sourcing_guides'), t('market_trends')].map((cat, idx) => (
-              <button key={idx} className={`px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${idx === 0 ? "bg-viet-red text-white" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
+              <button key={idx} className={`px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${idx === 0 ? "bg-primary text-white" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
                 {cat}
               </button>
             ))}
           </div>
           <div className="relative w-full md:w-80">
-            <input type="text" placeholder={t('search_videos_placeholder')} className="w-full px-4 py-2 bg-white border border-slate-200 outline-none focus:border-viet-red" />
+            <input type="text" placeholder={t('search_videos_placeholder')} className="w-full px-4 py-2 bg-white border border-slate-200 outline-none focus:border-primary" />
             <Search size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
           </div>
         </div>
@@ -49,12 +49,12 @@ export function VideoChannel() {
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-24 h-24 bg-viet-red text-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+              <div className="w-24 h-24 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
                 <Play size={40} fill="currentColor" />
               </div>
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
-              <span className="bg-viet-red text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 inline-block">{t('featured')}</span>
+              <span className="bg-primary text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 inline-block">{t('featured')}</span>
               <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">The Future of Vietnamese Manufacturing: Industry 4.0</h2>
               <div className="flex items-center gap-6 text-slate-300 text-sm">
                 <span className="flex items-center gap-1"><Clock size={14} /> 18:30</span>
@@ -77,7 +77,7 @@ export function VideoChannel() {
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="w-12 h-12 bg-viet-red text-white rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center">
                     <Play size={20} fill="currentColor" />
                   </div>
                 </div>
@@ -85,7 +85,7 @@ export function VideoChannel() {
                   {video.duration}
                 </div>
               </div>
-              <h3 className="text-slate-900 font-bold group-hover:text-viet-red transition-colors line-clamp-2 mb-2">{video.title}</h3>
+              <h3 className="text-slate-900 font-bold group-hover:text-primary transition-colors line-clamp-2 mb-2">{video.title}</h3>
               <div className="flex items-center gap-4 text-slate-500 text-xs">
                 <span className="flex items-center gap-1"><Eye size={12} /> {video.views}</span>
                 <span>{video.date}</span>

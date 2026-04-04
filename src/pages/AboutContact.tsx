@@ -9,12 +9,12 @@ export function AboutContact() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Hero Section */}
       <section className="bg-slate-900 text-white py-24 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-viet-red/10 skew-x-12 transform translate-x-32" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/10 skew-x-12 transform translate-x-32" />
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-6">
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
               <Trans i18nKey="about_hero_title">
-                Empowering <span className="text-viet-red">Vietnamese</span> Excellence Globally
+                Empowering <span className="text-primary">Vietnamese</span> Excellence Globally
               </Trans>
             </h1>
             <p className="text-slate-400 text-xl leading-relaxed">
@@ -28,7 +28,7 @@ export function AboutContact() {
       <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            { label: t('verified_suppliers'), value: "5,000+", icon: <ShieldCheck className="text-viet-red" /> },
+            { label: t('verified_suppliers'), value: "5,000+", icon: <ShieldCheck className="text-primary" /> },
             { label: t('products_listed'), value: "100k+", icon: <Globe className="text-blue-400" /> },
             { label: t('global_buyers'), value: "25k+", icon: <Users className="text-emerald-400" /> },
             { label: t('export_markets'), value: "120+", icon: <Award className="text-viet-gold" /> }
@@ -62,7 +62,7 @@ export function AboutContact() {
                 t('mission_point_4')
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2 size={24} className="text-viet-red" />
+                  <CheckCircle2 size={24} className="text-primary" />
                   <span className="text-slate-700 font-medium">{item}</span>
                 </div>
               ))}
@@ -72,7 +72,7 @@ export function AboutContact() {
             <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
               <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&q=80&w=1000" alt="Vietnamese Factory" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
-            <div className="absolute -bottom-8 -left-8 bg-viet-red text-white p-8 rounded-3xl shadow-2xl max-w-xs">
+            <div className="absolute -bottom-8 -left-8 bg-primary text-white p-8 rounded-3xl shadow-2xl max-w-xs">
               <p className="text-xl font-bold italic">{t('mission_quote')}</p>
             </div>
           </div>
@@ -89,7 +89,7 @@ export function AboutContact() {
             </div>
             <div className="space-y-8">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-viet-red shrink-0">
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
                   <Phone size={24} />
                 </div>
                 <div>
@@ -121,22 +121,22 @@ export function AboutContact() {
             <form className="grid md:grid-cols-2 gap-8" onSubmit={(e) => e.preventDefault()}>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">{t('full_name_label')}</label>
-                <input type="text" placeholder={t('full_name_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all" />
+                <input type="text" placeholder={t('full_name_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">{t('email_address_label')}</label>
-                <input type="email" placeholder={t('email_address_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all" />
+                <input type="email" placeholder={t('email_address_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-bold text-slate-700">{t('subject_label')}</label>
-                <input type="text" placeholder={t('subject_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all" />
+                <input type="text" placeholder={t('subject_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-bold text-slate-700">{t('message_label')}</label>
-                <textarea rows={5} placeholder={t('message_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-viet-red/20 focus:border-viet-red outline-none transition-all resize-none" />
+                <textarea rows={5} placeholder={t('message_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" />
               </div>
               <div className="md:col-span-2">
-                <button className="w-full bg-viet-red text-white py-4 rounded-xl font-bold text-lg hover:bg-red-700 transition-all shadow-xl hover:shadow-red-900/20 flex items-center justify-center gap-3">
+                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3">
                   {t('send_message')}
                   <Send size={20} />
                 </button>

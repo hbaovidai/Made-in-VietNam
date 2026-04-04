@@ -8,7 +8,7 @@ export function BuyerDashboard() {
   const { t } = useTranslation();
   const stats = [
     { label: t('active_rfqs'), value: '12', icon: <FileText size={20} />, color: 'bg-blue-500' },
-    { icon: <MessageSquare size={20} />, label: t('new_messages'), value: '5', color: 'bg-viet-red' },
+    { icon: <MessageSquare size={20} />, label: t('new_messages'), value: '5', color: 'bg-primary' },
     { icon: <Heart size={20} />, label: t('saved_items'), value: '24', color: 'bg-pink-500' },
     { icon: <Clock size={20} />, label: t('pending_quotes'), value: '8', color: 'bg-viet-gold' },
   ];
@@ -45,7 +45,7 @@ export function BuyerDashboard() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-900">{t('recent_rfqs')}</h3>
-            <button className="text-viet-red font-bold text-sm hover:underline">{t('view_all')}</button>
+            <button className="text-primary font-bold text-sm hover:underline">{t('view_all')}</button>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <table className="w-full text-left">
@@ -85,7 +85,7 @@ export function BuyerDashboard() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-900">{t('saved_items')}</h3>
-            <button className="text-viet-red font-bold text-sm hover:underline">{t('view_all')}</button>
+            <button className="text-primary font-bold text-sm hover:underline">{t('view_all')}</button>
           </div>
           <div className="space-y-4">
             {products.slice(0, 2).map((product) => (
@@ -95,7 +95,7 @@ export function BuyerDashboard() {
                 </div>
                 <div className="flex flex-col justify-center">
                   <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{product.name}</h4>
-                  <div className="text-viet-red font-bold text-sm mt-1">{product.priceRange}</div>
+                  <div className="text-primary font-bold text-sm mt-1">{product.priceRange}</div>
                   <div className="text-[10px] text-slate-400 mt-1">{t('moq')}: {product.moq}</div>
                 </div>
               </div>
