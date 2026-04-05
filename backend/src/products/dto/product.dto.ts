@@ -1,0 +1,132 @@
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ProductStatus } from '@prisma/client';
+
+export class CreateProductDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  minPrice: number;
+
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  maxPrice: number;
+
+  @IsString()
+  @IsOptional()
+  currency?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  unit: string;
+
+  @IsNumber()
+  @Min(1)
+  @Type(() => Number)
+  moq: number;
+
+  @IsString()
+  @IsNotEmpty()
+  moqUnit: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  images?: string[];
+}
+
+export class UpdateProductDto {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  @Type(() => Number)
+  minPrice?: number;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  @Type(() => Number)
+  maxPrice?: number;
+
+  @IsString()
+  @IsOptional()
+  unit?: string;
+
+  @IsNumber()
+  @Min(1)
+  @IsOptional()
+  @Type(() => Number)
+  moq?: number;
+
+  @IsString()
+  @IsOptional()
+  moqUnit?: string;
+
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  images?: string[];
+
+  @IsEnum(ProductStatus)
+  @IsOptional()
+  status?: ProductStatus;
+}
+
+export class ProductQueryDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  supplierId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  limit?: number = 20;
+
+  @IsOptional()
+  @IsString()
+  sortBy?: string = 'createdAt';
+
+  @IsOptional()
+  @IsString()
+  sortOrder?: 'asc' | 'desc' = 'desc';
+}

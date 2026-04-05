@@ -1,0 +1,382 @@
+// VIEproduct B2B Platform - Database Schema
+// NestJS + PostgreSQL + Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+// ==================== ENUMS ====================
+
+enum Role {
+  BUYER
+  SUPPLIER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  REJECTED
+}
+
+enum RFQStatus {
+  OPEN
+  QUOTED
+  NEGOTIATING
+  CLOSED
+  EXPIRED
+}
+
+enum QuoteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum BatchStatus {
+  ACTIVE
+  PENDING
+  EXPIRED
+}
+
+enum QRStatus {
+  ACTIVE
+  COMPROMISED
+  EXPIRED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+}
+
+// ==================== USERS ====================
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  role         Role       @default(BUYER)
+  fullName     String     @map("full_name")
+  phone        String?
+  avatar       String?
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  supplier      Supplier?
+  rfqs          RFQ[]
+  inquiryBasket InquiryBasket?
+  sentMessages  Message[]                  @relation("MessageSender")
+  conversations ConversationParticipant[]
+
+  @@map("users")
+}
+
+// ==================== SUPPLIERS ====================
+
+model Supplier {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  companyName     String   @map("company_name")
+  slug            String   @unique
+  logo            String?
+  banner          String?
+  description     String?
+  businessType    String?  @map("business_type")
+  yearEstablished Int?     @map("year_established")
+  employeeCount   String?  @map("employee_count")
+  address         String?
+  city            String?
+  province        String?
+  website         String?
+  isVerified      Boolean  @default(false) @map("is_verified")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]
+  certifications Certification[]
+  industries     SupplierIndustry[]
+  markets        SupplierMarket[]
+  batches        Batch[]
+  quotes         Quote[]
+
+  @@map("suppliers")
+}
+
+model Certification {
+  id          String    @id @default(uuid())
+  supplierId  String    @map("supplier_id")
+  name        String
+  issuedBy    String?   @map("issued_by")
+  issuedDate  DateTime? @map("issued_date")
+  expiryDate  DateTime? @map("expiry_date")
+  documentUrl String?   @map("document_url")
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@map("certifications")
+}
+
+model SupplierIndustry {
+  id         String @id @default(uuid())
+  supplierId String @map("supplier_id")
+  industry   String
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([supplierId, industry])
+  @@map("supplier_industries")
+}
+
+model SupplierMarket {
+  id         String @id @default(uuid())
+  supplierId String @map("supplier_id")
+  market     String
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([supplierId, market])
+  @@map("supplier_markets")
+}
+
+// ==================== PRODUCTS ====================
+
+model Category {
+  id       String  @id @default(uuid())
+  name     String  @unique
+  slug     String  @unique
+  parentId String? @map("parent_id")
+
+  // Self-relation for nested categories
+  parent   Category?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("SubCategories")
+  products Product[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("categories")
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  supplierId  String        @map("supplier_id")
+  name        String
+  slug        String        @unique
+  description String?
+  minPrice    Float         @map("min_price")
+  maxPrice    Float         @map("max_price")
+  currency    String        @default("VND")
+  unit        String        // "kg", "cái", "bộ"
+  moq         Int           // Minimum Order Quantity
+  moqUnit     String        @map("moq_unit")
+  categoryId  String        @map("category_id")
+  images      String[]      // Array of image URLs
+  status      ProductStatus @default(ACTIVE)
+  rating      Float         @default(0)
+  reviewCount Int           @default(0) @map("review_count")
+  viewCount   Int           @default(0) @map("view_count")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  supplier     Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  category     Category      @relation(fields: [categoryId], references: [id])
+  batches      Batch[]
+  inquiryItems InquiryItem[]
+
+  @@map("products")
+}
+
+// ==================== RFQ (Request for Quotation) ====================
+
+model RFQ {
+  id           String    @id @default(uuid())
+  buyerId      String    @map("buyer_id")
+  productName  String    @map("product_name")
+  category     String
+  quantity     Int
+  quantityUnit String    @map("quantity_unit")
+  description  String
+  budget       String?
+  destination  String
+  status       RFQStatus @default(OPEN)
+  expiresAt    DateTime  @map("expires_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  buyer  User    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  quotes Quote[]
+
+  @@map("rfqs")
+}
+
+model Quote {
+  id         String      @id @default(uuid())
+  rfqId      String      @map("rfq_id")
+  supplierId String      @map("supplier_id")
+  price      Float
+  currency   String      @default("VND")
+  leadTime   String      @map("lead_time")
+  message    String?
+  status     QuoteStatus @default(PENDING)
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  rfq      RFQ      @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@map("quotes")
+}
+
+// ==================== MESSAGING ====================
+
+model Conversation {
+  id            String    @id @default(uuid())
+  lastMessage   String?   @map("last_message")
+  lastMessageAt DateTime? @map("last_message_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String @id @default(uuid())
+  conversationId String @map("conversation_id")
+  userId         String @map("user_id")
+  unreadCount    Int    @default(0) @map("unread_count")
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String      @id @default(uuid())
+  conversationId String      @map("conversation_id")
+  senderId       String      @map("sender_id")
+  content        String
+  type           MessageType @default(TEXT)
+  attachments    String[]
+  createdAt      DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+// ==================== ANTI-COUNTERFEIT ====================
+
+model Batch {
+  id              String      @id @default(uuid())
+  supplierId      String      @map("supplier_id")
+  productId       String      @map("product_id")
+  batchNumber     String      @unique @map("batch_number")
+  manufactureDate DateTime    @map("manufacture_date")
+  expiryDate      DateTime    @map("expiry_date")
+  quantity        Int
+  status          BatchStatus @default(ACTIVE)
+  qrGenerated     Boolean     @default(false) @map("qr_generated")
+  createdAt       DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  qrCodes  QRCode[]
+
+  @@map("batches")
+}
+
+model QRCode {
+  id         String   @id @default(uuid())
+  batchId    String   @map("batch_id")
+  code       String   @unique
+  secretHash String   @map("secret_hash")
+  scanCount  Int      @default(0) @map("scan_count")
+  maxScans   Int      @default(50) @map("max_scans")
+  status     QRStatus @default(ACTIVE)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  batch      Batch       @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  scanEvents ScanEvent[]
+
+  @@map("qr_codes")
+}
+
+model ScanEvent {
+  id        String   @id @default(uuid())
+  qrCodeId  String   @map("qr_code_id")
+  ipHash    String   @map("ip_hash")
+  userAgent String?  @map("user_agent")
+  location  String?
+  isValid   Boolean  @default(true) @map("is_valid")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  qrCode QRCode @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+
+  @@index([qrCodeId, createdAt])
+  @@map("scan_events")
+}
+
+// ==================== INQUIRY BASKET ====================
+
+model InquiryBasket {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items InquiryItem[]
+
+  @@map("inquiry_baskets")
+}
+
+model InquiryItem {
+  id        String   @id @default(uuid())
+  basketId  String   @map("basket_id")
+  productId String   @map("product_id")
+  quantity  Int
+  note      String?
+  addedAt   DateTime @default(now()) @map("added_at")
+
+  // Relations
+  basket  InquiryBasket @relation(fields: [basketId], references: [id], onDelete: Cascade)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inquiry_items")
+}
