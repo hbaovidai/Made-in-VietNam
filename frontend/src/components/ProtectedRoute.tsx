@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -7,15 +8,16 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
-  const isAuthenticated = localStorage.getItem('auth_token') !== null;
-  const userRole = localStorage.getItem('user_role');
+  const { user, isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     // Redirect to login, but save the attempted URL so we can redirect back after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Kiểm tra quyền truy cập Role-Based Access Control
+  // Role-Based Access Control
+  const userRole = user.role.toLowerCase(); // 'buyer' or 'supplier'
+
   if (location.pathname.startsWith('/dashboard/buyer') && userRole === 'supplier') {
     return <Navigate to="/dashboard/supplier" replace />;
   }

@@ -16,6 +16,6 @@ export class GenerateQRCodesDto {
 
 export class VerifyQRDto {
   @IsString() @IsNotEmpty() code: string;
-  @IsString() @IsNotEmpty() token: string; // HMAC token
+  @IsString() @IsOptional() token?: string; // HMAC token — optional for manual entry
   @IsString() @IsOptional() ipUrl?: string; // Tạm dùng body để truyền IP thay vì req.ip cho DTO
 }

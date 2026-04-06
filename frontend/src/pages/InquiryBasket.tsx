@@ -2,21 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Send, ShoppingCart, ChevronRight, Store, Package } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { products, suppliers } from '../data/mockData';
 
 export function InquiryBasket() {
   const { t } = useTranslation();
-  // Mock basket data using existing mock products
-  const [basketItems, setBasketItems] = React.useState([
-    {
-      ...products[0],
-      supplier: suppliers.find(s => s.id === products[0].supplierId)
-    },
-    {
-      ...products[2],
-      supplier: suppliers.find(s => s.id === products[2].supplierId)
-    }
-  ]);
+  // Assume basket is empty initially since there's no backend state for it yet.
+  const [basketItems, setBasketItems] = React.useState<any[]>([]);
 
   const removeItem = (id: string) => {
     setBasketItems(prev => prev.filter(item => item.id !== id));

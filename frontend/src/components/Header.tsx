@@ -6,8 +6,9 @@ import { cn } from '../utils/cn';
 import { NavDropdown } from './NavDropdown';
 import { MegaMenu } from './MegaMenu';
 import { CategoryMegaMenu } from './categories/CategoryMegaMenu';
-
+import { useAuth } from '../contexts/AuthContext';
 export function Header() {
+  const { user, isAuthenticated, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(false);
@@ -120,7 +121,7 @@ export function Header() {
       links: [
         { icon: <Package size={18} />, label: t('products'), href: "/products" },
         { icon: <User size={18} />, label: t('suppliers'), href: "/suppliers" },
-        { icon: <Menu size={18} />, label: t('all_categories'), href: "/categories" },
+        { icon: <Menu size={18} />, label: t('all_categories'), href: "/products" },
         { icon: <ShoppingCart size={18} />, label: t('inquiry_basket'), href: "/inquiry-basket" },
       ]
     },
@@ -162,21 +163,21 @@ export function Header() {
           </Link>
 
           {/* ═══ Desktop Search Bar ═══ */}
-          <div className="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl">
-            <div className="flex items-stretch w-full h-11 border-2 border-primary rounded-sm overflow-visible bg-white">
+          <div className="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl ml-4">
+            <div className="flex items-stretch w-full h-12 rounded-xl overflow-visible bg-[#EEF2FC] transition-all focus-within:ring-2 focus-within:ring-[#A2875E]/30 focus-within:shadow-sm">
               <div className="relative shrink-0 h-full">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsSearchDropdownOpen(!isSearchDropdownOpen);
                   }}
-                  className="h-full flex items-center gap-1 px-4 bg-slate-50 text-sm font-medium text-slate-700 border-r border-slate-200 hover:bg-slate-100 min-w-[150px] justify-between whitespace-nowrap"
+                  className="h-full flex items-center gap-2 px-5 text-sm font-bold text-[#1E293B] min-w-[140px] justify-between whitespace-nowrap border-r border-[#CBD5E1]/50 rounded-l-xl hover:bg-[#E2E8F0]/50 transition-colors"
                 >
-                  {searchType} <ChevronDown size={14} className={cn("transition-transform", isSearchDropdownOpen && "rotate-180")} />
+                  {searchType} <ChevronDown size={14} className={cn("transition-transform text-slate-400", isSearchDropdownOpen && "rotate-180")} />
                 </button>
 
                 {isSearchDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 shadow-lg rounded-sm py-1 z-[60]">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-xl py-2 z-[60]">
                     {searchOptions.map((option) => (
                       <button
                         key={option}
@@ -185,8 +186,8 @@ export function Header() {
                           setIsSearchDropdownOpen(false);
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors",
-                          searchType === option ? "text-primary font-bold" : "text-slate-700"
+                          "w-full text-left px-5 py-2.5 text-sm hover:bg-slate-50 transition-colors",
+                          searchType === option ? "text-[#A2875E] font-black bg-[#A2875E]/5" : "text-slate-600 font-medium"
                         )}
                       >
                         {option}
@@ -195,15 +196,15 @@ export function Header() {
                   </div>
                 )}
               </div>
-              <input
-                type="text"
-                className="flex-1 px-4 h-full text-sm outline-none w-full min-w-0"
-                placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
-              />
-              <button className="bg-primary text-white px-6 h-full font-bold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
-                <Search size={18} />
-                <span>{t('search')}</span>
-              </button>
+              
+              <div className="flex-1 flex items-center px-4 bg-transparent">
+                <Search size={22} className="text-[#9B7A4F] mr-3 shrink-0" strokeWidth={2.5} />
+                <input
+                  type="text"
+                  className="flex-1 h-full text-sm sm:text-base outline-none w-full min-w-0 bg-transparent text-slate-700 placeholder-slate-400/80 font-medium"
+                  placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
+                />
+              </div>
             </div>
           </div>
 
@@ -249,19 +250,37 @@ export function Header() {
 
             <div className="h-6 w-px bg-slate-200 mx-2" />
 
-            <div className="flex items-center gap-3 group relative cursor-pointer">
-              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 group-hover:bg-slate-200 text-slate-600 transition-colors">
-                <User size={18} />
-              </div>
-              <div className="flex flex-col items-start justify-center">
-                <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-primary">
-                  {t('sign_in')}
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-3 group relative cursor-pointer">
+                <Link to={`/dashboard/${user.role.toLowerCase()}`} className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 text-primary transition-colors overflow-hidden">
+                    {user.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <User size={18} />}
+                  </div>
+                  <div className="flex flex-col items-start justify-center">
+                    <span className="text-xs font-bold text-slate-700 max-w-[100px] truncate">{user.fullName}</span>
+                    <span className="text-[10px] text-primary font-medium">{user.role === 'BUYER' ? t('buyer') : t('supplier')}</span>
+                  </div>
                 </Link>
-                <Link to="/register" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
-                  {t('join_free')}
-                </Link>
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 hidden group-hover:block z-[100]">
+                  <Link to={`/dashboard/${user.role.toLowerCase()}`} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors block text-slate-700 font-medium">Bảng điều khiển</Link>
+                  <button onClick={logout} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors font-medium">Đăng xuất</button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-3 group relative cursor-pointer">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 group-hover:bg-slate-200 text-slate-600 transition-colors">
+                  <User size={18} />
+                </div>
+                <div className="flex flex-col items-start justify-center">
+                  <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-primary">
+                    {t('sign_in')}
+                  </Link>
+                  <Link to="/register" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
+                    {t('join_free')}
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ═══ Mobile Action Buttons ═══ */}
@@ -292,16 +311,16 @@ export function Header() {
       {/* ═══ Mobile Search Bar (expandable) ═══ */}
       {isMobileSearchOpen && (
         <div className="md:hidden border-t border-slate-100 px-3 py-3 bg-white">
-          <div className="flex items-stretch h-10 border-2 border-primary rounded-lg overflow-hidden">
+          <div className="flex items-center h-12 bg-[#EEF2FC] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#A2875E]/30 focus-within:shadow-sm">
+            <div className="pl-4">
+              <Search size={20} className="text-[#9B7A4F]" strokeWidth={2.5} />
+            </div>
             <input
               type="text"
-              className="flex-1 px-3 text-sm outline-none min-w-0"
+              className="flex-1 px-3 bg-transparent h-full text-sm outline-none w-full min-w-0 text-slate-700 placeholder-slate-400/80 font-medium"
               placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
               autoFocus
             />
-            <button className="bg-primary text-white px-4 shrink-0">
-              <Search size={18} />
-            </button>
           </div>
         </div>
       )}
@@ -315,7 +334,7 @@ export function Header() {
               onMouseEnter={() => setIsCategoriesOpen(true)}
               onMouseLeave={() => setIsCategoriesOpen(false)}
             >
-              <Link to="/categories" className="flex items-center gap-2 bg-primary text-white px-6 h-full font-bold text-sm">
+              <Link to="/products" className="flex items-center gap-2 bg-primary text-white px-6 h-full font-bold text-sm">
                 <Menu size={18} />
                 {t('all_categories')}
               </Link>
@@ -361,18 +380,29 @@ export function Header() {
             {/* Menu Header */}
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                  <User size={18} />
+                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 overflow-hidden">
+                  {isAuthenticated && user?.avatar ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" /> : <User size={18} />}
                 </div>
-                <div>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-primary">
-                    {t('sign_in')}
-                  </Link>
-                  <span className="mx-1.5 text-slate-300">|</span>
-                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-primary">
-                    {t('join_free')}
-                  </Link>
-                </div>
+                {isAuthenticated && user ? (
+                  <div>
+                    <Link to={`/dashboard/${user.role.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-primary block">
+                      {user.fullName}
+                    </Link>
+                    <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-xs font-medium text-red-500 hover:text-red-700 text-left">
+                      Đăng xuất
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-slate-900 hover:text-primary">
+                      {t('sign_in')}
+                    </Link>
+                    <span className="mx-1.5 text-slate-300">|</span>
+                    <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-sm font-bold text-primary">
+                      {t('join_free')}
+                    </Link>
+                  </div>
+                )}
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
                 <X size={22} />

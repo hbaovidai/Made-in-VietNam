@@ -20,7 +20,7 @@ export function CategorySidebar() {
         {ALL_CATEGORIES_LIST.map((cat) => (
           <div
             key={cat.slug}
-            onClick={() => navigate(`/categories/${cat.slug}`)}
+            onClick={() => navigate(`/products?category=${cat.slug}`)}
             onMouseEnter={() => setActiveCategory(cat.slug)}
             onMouseLeave={() => setActiveCategory(null)}
             className={cn(
@@ -48,7 +48,7 @@ export function CategorySidebar() {
                         {group.sections.slice(0, 4).map((section) => (
                           <div key={section.title} className="space-y-3">
                             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-1.5">
-                              <Link to={`/categories/${group.slug}`} className="hover:text-primary">
+                              <Link to={`/products?category=${group.slug}`} className="hover:text-primary">
                                 {t(section.title)}
                               </Link>
                             </h4>
@@ -61,7 +61,7 @@ export function CategorySidebar() {
                                 </li>
                               ))}
                               <li>
-                                <Link to={`/categories/${group.slug}`} className="text-xs text-primary font-bold hover:underline">
+                                <Link to={`/products?category=${group.slug}`} className="text-xs text-primary font-bold hover:underline">
                                   {t('view_more')} »
                                 </Link>
                               </li>
@@ -82,7 +82,7 @@ export function CategorySidebar() {
                           <p className="text-[10px] text-slate-500 leading-tight">
                             {t('source_directly_from')} {t(group.name)}.
                           </p>
-                          <Link to={`/categories/${group.slug}`} className="mt-2 inline-block text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">
+                          <Link to={`/products?category=${group.slug}`} className="mt-2 inline-block text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">
                             {t('explore_all')}
                           </Link>
                         </div>
@@ -96,7 +96,7 @@ export function CategorySidebar() {
         ))}
       </div>
       <div className="p-3 border-t border-slate-100">
-        <Link to="/categories" className="flex items-center justify-center gap-1 w-full py-2 bg-slate-50 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+        <Link to="/products" className="flex items-center justify-center gap-1 w-full py-2 bg-slate-50 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
           {t('all_categories')} <ChevronRight size={14} />
         </Link>
       </div>

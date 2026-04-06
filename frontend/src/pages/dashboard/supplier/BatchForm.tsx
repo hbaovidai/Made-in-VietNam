@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
-import { products } from '../../../data/mockData';
-import { Batch } from '../../../data/batchMockData';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface BatchFormProps {
   isOpen: boolean;
   onClose: () => void;
-  batch?: Batch | null;
+  batch?: any | null;
   onSave: (batch: any) => void;
 }
 
 export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
   const { t } = useTranslation();
   const { addToast } = useToast();
-  
-  // Get supplier's products - memoized to prevent infinite loops
-  const supplierProducts = useMemo(() => products.filter((p) => p.supplierId === 's1'), [products]);
+  const { user } = useAuth();
+  const [supplierProducts, setSupplierProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isOpen && user?.id) {
+      api.get(`/products?supplierId=${user.supplier?.id}&limit=100`).then(res => {
+        setSupplierProducts(res.data.data || []);
+      }).catch(err => console.error(err));
+    }
+  }, [isOpen, user?.id]);
 
   const [formData, setFormData] = useState({
     productId: supplierProducts[0]?.id || '',
@@ -25,8 +32,6 @@ export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
     manufactureDate: '',
     expiryDate: '',
     quantity: 100,
-    status: 'active' as const,
-    qrGenerated: false,
   });
 
   useEffect(() => {
@@ -38,9 +43,7 @@ export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
         batchNumber: `LOT-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         manufactureDate: new Date().toISOString().split('T')[0],
         expiryDate: '',
-        quantity: 100,
-        status: 'active',
-        qrGenerated: false,
+        quantity: 100
       });
     }
   }, [batch, isOpen, supplierProducts]);
@@ -63,7 +66,13 @@ export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
       return;
     }
 
-    onSave(formData);
+    onSave({
+      productId: formData.productId,
+      batchNumber: formData.batchNumber,
+      manufactureDate: new Date(formData.manufactureDate).toISOString(),
+      expiryDate: new Date(formData.expiryDate).toISOString(),
+      quantity: Number(formData.quantity)
+    });
   };
 
   return (
@@ -141,19 +150,6 @@ export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
               value={formData.quantity}
               onChange={handleChange}
             />
-          </div>
-          <div>
-            <label className="input-label">{t('current_status_label')}</label>
-            <select
-              name="status"
-              className="input"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value="active">{t('status_active')}</option>
-              <option value="pending">{t('status_pending')}</option>
-              <option value="expired">{t('status_expired')}</option>
-            </select>
           </div>
         </div>
       </div>

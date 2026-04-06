@@ -62,6 +62,25 @@ let BatchesService = class BatchesService {
             orderBy: { createdAt: 'desc' }
         });
     }
+    async getSupplierQRCodes(supplierId) {
+        return this.prisma.qRCode.findMany({
+            where: {
+                batch: {
+                    supplierId: supplierId
+                }
+            },
+            include: {
+                batch: {
+                    include: {
+                        product: {
+                            select: { name: true, slug: true }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
     async createBatch(supplierId, dto) {
         const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
         if (!product || product.supplierId !== supplierId)
@@ -103,7 +122,7 @@ let BatchesService = class BatchesService {
             where: { id: dto.batchId },
             data: { qrGenerated: true }
         });
-        return { message: `Đã tạo thành công ${dto.count} mã QR` };
+        return { message: `Đã tạo thành công ${dto.count} mã QR`, codes: codes.map(c => ({ code: c.code, token: c.secretHash })) };
     }
     async verifyQR(code, token, ipHash, userAgent) {
         const qrCode = await this.prisma.qRCode.findUnique({
@@ -120,12 +139,12 @@ let BatchesService = class BatchesService {
             .createHmac('sha256', this.QR_SECRET)
             .update(`${qrCode.batchId}:${code}`)
             .digest('hex');
-        const isValidFormat = (expectedHash === token);
+        const isValidFormat = token ? (expectedHash === token) : true;
         const isCompromisedByCount = qrCode.scanCount > qrCode.maxScans;
         await this.prisma.scanEvent.create({
             data: {
                 qrCodeId: qrCode.id,
-                ipHash,
+                ipHash: ipHash || 'manual',
                 userAgent,
                 isValid: isValidFormat
             }

@@ -20,6 +20,26 @@ export class BatchesService {
     });
   }
 
+  async getSupplierQRCodes(supplierId: string) {
+    return this.prisma.qRCode.findMany({
+      where: {
+        batch: {
+          supplierId: supplierId
+        }
+      },
+      include: {
+        batch: {
+          include: {
+            product: {
+              select: { name: true, slug: true }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async createBatch(supplierId: string, dto: CreateBatchDto) {
     // Check product ownership
     const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
@@ -69,10 +89,10 @@ export class BatchesService {
       data: { qrGenerated: true }
     });
 
-    return { message: `Đã tạo thành công ${dto.count} mã QR` };
+    return { message: `Đã tạo thành công ${dto.count} mã QR`, codes: codes.map(c => ({ code: c.code, token: c.secretHash })) };
   }
 
-  async verifyQR(code: string, token: string, ipHash: string, userAgent?: string) {
+  async verifyQR(code: string, token?: string, ipHash?: string, userAgent?: string) {
     const qrCode = await this.prisma.qRCode.findUnique({
       where: { code },
       include: {
@@ -84,13 +104,14 @@ export class BatchesService {
 
     if (!qrCode) throw new NotFoundException('Mã QR không tồn tại');
 
-    // Validate Cryptographic Token (HMAC)
+    // Validate Cryptographic Token (HMAC) — only when token is provided (real QR scan)
     const expectedHash = crypto
       .createHmac('sha256', this.QR_SECRET)
       .update(`${qrCode.batchId}:${code}`)
       .digest('hex');
 
-    const isValidFormat = (expectedHash === token);
+    // If token provided, verify it. If no token (manual entry), treat as valid lookup.
+    const isValidFormat = token ? (expectedHash === token) : true;
 
     // Analyze Scans (Anti-counterfeit logic)
     // Rule 1: Too many scans total
@@ -100,7 +121,7 @@ export class BatchesService {
     await this.prisma.scanEvent.create({
       data: {
         qrCodeId: qrCode.id,
-        ipHash, // In production, hash the IP for privacy
+        ipHash: ipHash || 'manual',
         userAgent,
         isValid: isValidFormat
       }

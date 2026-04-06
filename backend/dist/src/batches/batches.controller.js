@@ -58,6 +58,9 @@ let BatchesController = class BatchesController {
     getSupplierBatches(supplierId) {
         return this.batchesService.getSupplierBatches(supplierId);
     }
+    getSupplierQRCodes(supplierId) {
+        return this.batchesService.getSupplierQRCodes(supplierId);
+    }
     createBatch(body) {
         const { supplierId, ...dto } = body;
         return this.batchesService.createBatch(supplierId, dto);
@@ -81,6 +84,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], BatchesController.prototype, "getSupplierBatches", null);
+__decorate([
+    (0, common_1.Get)('supplier/:supplierId/qrcodes'),
+    __param(0, (0, common_1.Param)('supplierId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], BatchesController.prototype, "getSupplierQRCodes", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

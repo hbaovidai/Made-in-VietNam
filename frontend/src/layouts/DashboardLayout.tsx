@@ -3,6 +3,7 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarItemProps {
   key?: string;
@@ -53,6 +54,7 @@ function BottomNavItem({ icon, label, path, active }: { icon: React.ReactNode; l
 export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
   const { t } = useTranslation();
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -152,11 +154,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
           </div>
         </div>
         <button 
-          onClick={() => {
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user_role');
-            window.location.href = '/login';
-          }}
+          onClick={() => logout()}
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"
         >
           <LogOut size={20} />
@@ -210,11 +208,11 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <div className="text-sm font-bold text-slate-900">Hoai Bao</div>
+                <div className="text-sm font-bold text-slate-900">{user?.fullName || 'User'}</div>
                 <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'buyer' ? t('buyer') : t('supplier')} {t('account')}</div>
               </div>
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm">
-                HB
+                {user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
               </div>
             </div>
           </div>

@@ -968,7 +968,7 @@
   "setting_personal_info": "Personal Information",
   "setting_personal_info_desc": "Update your name, bio, and profile picture.",
   "buyer_dashboard_title": "Buyer Dashboard",
-  "buyer_welcome": "Welcome back, Huynh Le Hoai Bao. Here's what's happening with your sourcing.",
+  "buyer_welcome": "Welcome back, {{name}}. Here's what's happening with your sourcing.",
   "post_new_rfq": "Post New RFQ",
   "saved_products": "Saved Products",
   "inquiry_basket_stat": "Inquiry Basket",

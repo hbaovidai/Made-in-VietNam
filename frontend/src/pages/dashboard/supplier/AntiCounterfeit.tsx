@@ -1,13 +1,24 @@
 import React from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { ShieldCheck, ShieldAlert, Activity, AlertTriangle, TrendingUp } from 'lucide-react';
-import { qrCodes } from '../../../data/qrMockData';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function AntiCounterfeit() {
   const { t } = useTranslation();
-  const totalScans = qrCodes.reduce((sum, item) => sum + item.scans, 0);
-  const compromised = qrCodes.filter(q => q.status === 'compromised').length;
+  const { user } = useAuth();
+  const [qrs, setQrs] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (!user) return;
+    api.get(`/batches/supplier/${user.supplier?.id}/qrcodes`)
+      .then(res => setQrs(res.data))
+      .catch(err => console.error(err));
+  }, [user]);
+
+  const totalScans = qrs.reduce((sum, item) => sum + (item.scanCount || 0), 0);
+  const compromised = qrs.filter(q => q.status === 'COMPROMISED').length;
   
   return (
     <DashboardSection 
@@ -35,7 +46,7 @@ export function AntiCounterfeit() {
             </div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('valid_qrs')}</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900">{qrCodes.length - compromised}</div>
+          <div className="text-2xl sm:text-3xl font-black text-slate-900">{qrs.length - compromised}</div>
           <div className="text-sm text-slate-500 font-medium mt-2">{t('valid_qrs_desc')}</div>
         </div>
 
@@ -60,13 +71,13 @@ export function AntiCounterfeit() {
       
       {/* Mobile: Card List */}
       <div className="md:hidden space-y-3">
-        {qrCodes.filter(q => q.status === 'compromised').map(alert => (
+        {qrs.filter(q => q.status === 'COMPROMISED').map(alert => (
           <div key={alert.id} className="card p-4 border-l-4 border-l-red-500 bg-blue-50/30 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-mono text-xs font-bold bg-slate-100 px-2 py-1 rounded">{alert.code}</span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700">{t('severity_critical')}</span>
             </div>
-            <div className="text-xs text-slate-500">{new Date(alert.lastScanned).toLocaleString('vi-VN')}</div>
+            <div className="text-xs text-slate-500">{new Date(alert.updatedAt || alert.createdAt).toLocaleString('vi-VN')}</div>
             <div className="text-sm text-slate-600">{t('event_mock_desc')}</div>
           </div>
         ))}
@@ -84,10 +95,10 @@ export function AntiCounterfeit() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {qrCodes.filter(q => q.status === 'compromised').map(alert => (
+            {qrs.filter(q => q.status === 'COMPROMISED').map(alert => (
               <tr key={alert.id} className="hover:bg-blue-50 transition-colors">
                 <td className="px-6 py-4 text-sm font-medium text-slate-600">
-                  {new Date(alert.lastScanned).toLocaleString('vi-VN')}
+                  {new Date(alert.updatedAt || alert.createdAt).toLocaleString('vi-VN')}
                 </td>
                 <td className="px-6 py-4">
                   <span className="font-mono text-xs font-bold bg-slate-100 px-2 py-1 rounded">

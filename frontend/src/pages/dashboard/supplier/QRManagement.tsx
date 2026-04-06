@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
-import { Search, Download, QrCode, ShieldAlert, CheckCircle, Clock } from 'lucide-react';
-import { qrCodes, QRCodeData } from '../../../data/qrMockData';
-import { batches } from '../../../data/batchMockData';
+import { Search, Download, QrCode, ShieldAlert, CheckCircle, Clock, Loader2 } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { useToast } from '../../../components/ui/Toast';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function QRManagement() {
   const { t } = useTranslation();
-  const [qrs, setQrs] = useState<QRCodeData[]>(qrCodes);
+  const { user } = useAuth();
   const { addToast } = useToast();
+  const [qrs, setQrs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const getBatchNumber = (batchId: string) => {
-    return batches.find(b => b.id === batchId)?.batchNumber || 'Unknown Batch';
-  };
+  React.useEffect(() => {
+    if (!user) return;
+    setLoading(true);
+    api.get(`/batches/supplier/${user.supplier?.id}/qrcodes`)
+      .then(res => setQrs(res.data))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
+  }, [user]);
 
   const downloadQR = (code: string) => {
     addToast({ type: 'success', title: t('downloading_qr'), message: t('downloading_qr_desc', { code }) });
@@ -33,7 +40,11 @@ export function QRManagement() {
         </div>
       </div>
 
-      {qrs.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="animate-spin text-primary" size={32} />
+        </div>
+      ) : qrs.length === 0 ? (
         <EmptyState 
           icon={<QrCode size={48} className="text-slate-300" />}
           title={t('no_qrs')}
@@ -65,18 +76,18 @@ export function QRManagement() {
                     </div>
                   </td>
                   <td className="table-cell font-medium text-slate-600">
-                    {getBatchNumber(qr.batchId)}
+                    {qr.batch?.batchNumber || 'Unknown Batch'}
                   </td>
                   <td className="table-cell text-center font-bold text-slate-800">
-                    {qr.scans}
+                    {qr.scanCount}
                   </td>
                   <td className="table-cell text-xs text-slate-500">
-                    {new Date(qr.lastScanned).toLocaleString()}
+                    {new Date(qr.createdAt).toLocaleString()}
                   </td>
                   <td className="table-cell">
-                    {qr.status === 'active' && <Badge variant="success" icon={<CheckCircle size={12}/>}>{t('qr_status_safe')}</Badge>}
-                    {qr.status === 'compromised' && <Badge variant="danger" icon={<ShieldAlert size={12}/>}>{t('qr_status_compromised')}</Badge>}
-                    {qr.status === 'expired' && <Badge variant="warning" icon={<Clock size={12}/>}>{t('qr_status_expired')}</Badge>}
+                    {qr.status === 'ACTIVE' && <Badge variant="success" icon={<CheckCircle size={12}/>}>{t('qr_status_safe')}</Badge>}
+                    {qr.status === 'COMPROMISED' && <Badge variant="danger" icon={<ShieldAlert size={12}/>}>{t('qr_status_compromised')}</Badge>}
+                    {qr.status === 'EXPIRED' && <Badge variant="warning" icon={<Clock size={12}/>}>{t('qr_status_expired')}</Badge>}
                   </td>
                   <td className="table-cell text-right">
                     <button 

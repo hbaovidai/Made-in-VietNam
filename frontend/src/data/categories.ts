@@ -26,65 +26,65 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       {
         title: 'Nông sản & Thực phẩm',
         subcategories: [
-          { name: 'Hạt cà phê', href: '/products?cat=coffee' },
-          { name: 'Gia vị', href: '/products?cat=spices' },
-          { name: 'Gạo', href: '/products?cat=rice' },
-          { name: 'Trái cây sấy', href: '/products?cat=dried-fruits' },
-          { name: 'Hải sản', href: '/products?cat=seafood' },
+          { name: 'Hạt cà phê', href: '/products?category=hat-ca-phe' },
+          { name: 'Gia vị', href: '/products?category=gia-vi' },
+          { name: 'Gạo', href: '/products?category=gao' },
+          { name: 'Trái cây sấy', href: '/products?category=trai-cay-say' },
+          { name: 'Hải sản', href: '/products?category=hai-san' },
         ]
       }
     ]
   },
   {
-    id: 'det-may',
-    slug: 'det-may',
+    id: 'det-may-may-mac',
+    slug: 'det-may-may-mac',
     name: 'Dệt may & May mặc',
     image: 'https://picsum.photos/seed/apparel/400/600',
     sections: [
       {
         title: 'Quần áo & Phụ kiện',
         subcategories: [
-          { name: 'Áo thun', href: '/products?cat=tshirts' },
-          { name: 'Áo khoác', href: '/products?cat=jackets' },
-          { name: 'Váy', href: '/products?cat=dresses' },
-          { name: 'Giày dép', href: '/products?cat=footwear' },
-          { name: 'Túi xách & Hành lý', href: '/products?cat=bags' },
+          { name: 'Áo thun', href: '/products?category=ao-thun' },
+          { name: 'Áo khoác', href: '/products?category=ao-khoac' },
+          { name: 'Váy', href: '/products?category=vay' },
+          { name: 'Giày dép', href: '/products?category=giay-dep' },
+          { name: 'Túi xách & Hành lý', href: '/products?category=tui-xach-hanh-ly' },
         ]
       }
     ]
   },
   {
-    id: 'noi-that',
-    slug: 'noi-that',
+    id: 'noi-that-trang-tri',
+    slug: 'noi-that-trang-tri',
     name: 'Nội thất & Trang trí',
     image: 'https://picsum.photos/seed/furniture/400/600',
     sections: [
       {
         title: 'Nội thất',
         subcategories: [
-          { name: 'Nội thất tre', href: '/products?cat=bamboo-furniture' },
-          { name: 'Ghế mây', href: '/products?cat=rattan-chairs' },
-          { name: 'Trang trí nhà cửa', href: '/products?cat=home-decor' },
-          { name: 'Nội thất văn phòng', href: '/products?cat=office-furniture' },
-          { name: 'Nội thất ngoài trời', href: '/products?cat=outdoor-furniture' },
+          { name: 'Nội thất tre', href: '/products?category=noi-that-tre' },
+          { name: 'Ghế mây', href: '/products?category=ghe-may' },
+          { name: 'Trang trí nhà cửa', href: '/products?category=trang-tri-nha-cua' },
+          { name: 'Nội thất văn phòng', href: '/products?category=noi-that-van-phong' },
+          { name: 'Nội thất ngoài trời', href: '/products?category=noi-that-ngoai-troi' },
         ]
       }
     ]
   },
   {
-    id: 'thu-cong',
-    slug: 'thu-cong',
+    id: 'thu-cong-my-nghe',
+    slug: 'thu-cong-my-nghe',
     name: 'Thủ công mỹ nghệ',
     image: 'https://picsum.photos/seed/handicrafts/400/600',
     sections: [
       {
         title: 'Sản phẩm thủ công',
         subcategories: [
-          { name: 'Giỏ xách', href: '/products?cat=baskets' },
-          { name: 'Gốm sứ', href: '/products?cat=ceramics' },
-          { name: 'Sơn mài', href: '/products?cat=lacquerware' },
-          { name: 'Sản phẩm lụa', href: '/products?cat=silk' },
-          { name: 'Đồ gỗ chạm khắc', href: '/products?cat=wood-carvings' },
+          { name: 'Giỏ xách', href: '/products?category=gio-xach' },
+          { name: 'Gốm sứ', href: '/products?category=gom-su' },
+          { name: 'Sơn mài', href: '/products?category=son-mai' },
+          { name: 'Sản phẩm lụa', href: '/products?category=san-pham-lua' },
+          { name: 'Đồ gỗ chạm khắc', href: '/products?category=do-go-cham-khac' },
         ]
       }
     ]
@@ -98,28 +98,28 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       {
         title: 'Thiết bị điện tử',
         subcategories: [
-          { name: 'Điện thoại di động', href: '/products?cat=mobile' },
-          { name: 'Phụ kiện', href: '/products?cat=accessories' },
-          { name: 'Thiết bị thông minh', href: '/products?cat=smart-devices' },
-          { name: 'Âm thanh gia đình', href: '/products?cat=home-audio' },
-          { name: 'Máy tính & Phần cứng', href: '/products?cat=computers' },
+          { name: 'Điện thoại di động', href: '/products?category=dien-thoai-di-dong' },
+          { name: 'Phụ kiện', href: '/products?category=phu-kien' },
+          { name: 'Thiết bị thông minh', href: '/products?category=thiet-bi-thong-minh' },
+          { name: 'Âm thanh gia đình', href: '/products?category=am-thanh-gia-dinh' },
+          { name: 'Máy tính & Phần cứng', href: '/products?category=may-tinh-phan-cung' },
         ]
       }
     ]
   },
   {
-    id: 'thuc-pham',
-    slug: 'thuc-pham',
+    id: 'thuc-pham-do-uong',
+    slug: 'thuc-pham-do-uong',
     name: 'Thực phẩm & Đồ uống',
     image: 'https://picsum.photos/seed/food/400/600',
     sections: [
       {
         title: 'Thực phẩm & Đồ uống',
         subcategories: [
-          { name: 'Đồ ăn vặt', href: '/products?cat=snacks' },
-          { name: 'Đồ uống', href: '/products?cat=beverages' },
-          { name: 'Thực phẩm đóng hộp', href: '/products?cat=canned-food' },
-          { name: 'Thực phẩm chức năng', href: '/products?cat=supplements' },
+          { name: 'Đồ ăn vặt', href: '/products?category=do-an-vat' },
+          { name: 'Đồ uống', href: '/products?category=do-uong' },
+          { name: 'Thực phẩm đóng hộp', href: '/products?category=thuc-pham-dong-hop' },
+          { name: 'Thực phẩm chức năng', href: '/products?category=thuc-pham-chuc-nang' },
         ]
       }
     ]
@@ -128,9 +128,9 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
 
 export const ALL_CATEGORIES_LIST = [
   { name: "Nông sản", slug: "nong-san" },
-  { name: "Dệt may & May mặc", slug: "det-may" },
-  { name: "Nội thất & Trang trí", slug: "noi-that" },
-  { name: "Thủ công mỹ nghệ", slug: "thu-cong" },
+  { name: "Dệt may & May mặc", slug: "det-may-may-mac" },
+  { name: "Nội thất & Trang trí", slug: "noi-that-trang-tri" },
+  { name: "Thủ công mỹ nghệ", slug: "thu-cong-my-nghe" },
   { name: "Điện tử", slug: "dien-tu" },
-  { name: "Thực phẩm & Đồ uống", slug: "thuc-pham" }
+  { name: "Thực phẩm & Đồ uống", slug: "thuc-pham-do-uong" }
 ];

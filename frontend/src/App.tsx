@@ -4,6 +4,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 // ============================================================
 // Lazy-loaded Pages (Code Splitting)
@@ -24,8 +25,6 @@ const RFQ = React.lazy(() => import('./pages/RFQ').then(m => ({ default: m.RFQ }
 const LoginRegister = React.lazy(() => import('./pages/LoginRegister').then(m => ({ default: m.LoginRegister })));
 const AboutContact = React.lazy(() => import('./pages/AboutContact').then(m => ({ default: m.AboutContact })));
 const InquiryBasket = React.lazy(() => import('./pages/InquiryBasket').then(m => ({ default: m.InquiryBasket })));
-const CategoryDetailPage = React.lazy(() => import('./pages/CategoryDetailPage').then(m => ({ default: m.CategoryDetailPage })));
-const CategoriesOverview = React.lazy(() => import('./pages/CategoriesOverview').then(m => ({ default: m.CategoriesOverview })));
 const NotFound = React.lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const VideoChannel = React.lazy(() => import('./pages/VideoChannel').then(m => ({ default: m.VideoChannel })));
 const Reports = React.lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
@@ -90,8 +89,9 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
+    <AuthProvider>
+      <BrowserRouter>
+        <ErrorBoundary>
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -106,8 +106,6 @@ export default function App() {
               <Route path="/suppliers" element={<SupplierList />} />
               <Route path="/suppliers/:id" element={<SupplierProfile />} />
               <Route path="/rfq" element={<RFQ />} />
-              <Route path="/categories" element={<CategoriesOverview />} />
-              <Route path="/categories/:slug" element={<CategoryDetailPage />} />
               <Route path="/inquiry-basket" element={<InquiryBasket />} />
               <Route path="/about" element={<AboutContact />} />
               <Route path="/contact" element={<AboutContact />} />
@@ -167,6 +165,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </ErrorBoundary>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

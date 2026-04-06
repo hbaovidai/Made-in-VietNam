@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QrCode, ShieldCheck, ArrowRight, Camera } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
-import { qrCodes } from '../../data/qrMockData';
 import { useTranslation } from 'react-i18next';
 
 export function VerifyProduct() {
@@ -26,8 +25,9 @@ export function VerifyProduct() {
     setIsScanning(true);
     addToast({ type: 'info', title: t('opening_camera'), message: t('camera_simulation') });
     setTimeout(() => {
-      // Pick a random QR ID to demo
-      const randomQr = qrCodes[Math.floor(Math.random() * qrCodes.length)].code;
+      // Create a fake UID format to test error path or real one if backend has it. 
+      // In real scenario backend would handle actual barcode.
+      const randomQr = 'test-code-' + Math.floor(Math.random() * 1000);
       setCode(randomQr);
       setIsScanning(false);
       addToast({ type: 'success', title: t('scan_complete'), message: t('qr_detected', { code: randomQr }) });

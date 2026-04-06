@@ -1,20 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin } from 'lucide-react';
+import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { products, suppliers } from '../data/mockData';
 import { cn } from '../utils/cn';
 import { ProductCard } from '../components/ProductCard';
+import { api } from '../lib/api';
 
 export function ProductDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const product = products.find((p) => p.id === id);
-  const supplier = suppliers.find((s) => s.id === product?.supplierId);
-  const [activeImage, setActiveImage] = React.useState(0);
-  const [isFavorite, setIsFavorite] = React.useState(false);
+  const [product, setProduct] = useState<any>(null);
+  const [supplier, setSupplier] = useState<any>(null);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [activeImage, setActiveImage] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  if (!product || !supplier) {
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const prodRes = await api.get(`/products/${id}`);
+        const p = prodRes.data;
+        setProduct(p);
+
+        if (p.supplierId) {
+          const suppRes = await api.get(`/suppliers/${p.supplierId}`);
+          setSupplier(suppRes.data);
+        }
+
+        const relatedRes = await api.get(`/products?category=${p.category?.slug || ''}&limit=4`);
+        setRelatedProducts(relatedRes.data.data?.filter((ri: any) => ri.id !== id) || []);
+      } catch (err) {
+        console.error('Failed to load product details', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (id) loadData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center space-y-4">
@@ -25,8 +60,6 @@ export function ProductDetail() {
     );
   }
 
-  const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id);
-
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Breadcrumbs */}
@@ -36,7 +69,7 @@ export function ProductDetail() {
           <ChevronRight size={10} className="shrink-0" />
           <Link to="/products" className="hover:text-primary shrink-0">{t('products_breadcrumb')}</Link>
           <ChevronRight size={10} className="shrink-0 hidden sm:block" />
-          <Link to={`/products?category=${product.category}`} className="hover:text-primary shrink-0 hidden sm:block">{t(product.category)}</Link>
+          <Link to={`/products?category=${product.category?.slug}`} className="hover:text-primary shrink-0 hidden sm:block">{t(product.category?.name || 'Category')}</Link>
           <ChevronRight size={10} className="shrink-0" />
           <span className="text-slate-900 font-medium truncate max-w-[120px] sm:max-w-none">{product.name}</span>
         </nav>
@@ -48,7 +81,7 @@ export function ProductDetail() {
           <div className="lg:col-span-5 space-y-4">
             <div className="aspect-square bg-white rounded-2xl border border-slate-200 overflow-hidden relative group">
               <img
-                src={product.image}
+                src={product.images?.[activeImage] || 'https://via.placeholder.com/600'}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -64,7 +97,7 @@ export function ProductDetail() {
               </button>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              {[product.image, ...Array(3).fill('https://picsum.photos/seed/detail/600/600')].map((img, idx) => (
+              {(product.images?.length > 0 ? product.images : ['https://via.placeholder.com/600']).slice(0, 4).map((img: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
@@ -84,12 +117,12 @@ export function ProductDetail() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                  {t(product.category)}
+                  {product.category?.name || 'Category'}
                 </span>
                 <div className="flex items-center gap-1 text-viet-gold">
                   <Star size={14} className="fill-viet-gold" />
-                  <span className="text-xs font-bold text-slate-700">{product.rating}</span>
-                  <span className="text-xs text-slate-400">{t('reviews_count', { count: product.reviews })}</span>
+                  <span className="text-xs font-bold text-slate-700">{product.rating || 4.9}</span>
+                  <span className="text-xs text-slate-400">{t('reviews_count', { count: product.reviews || 120 })}</span>
                 </div>
               </div>
               <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
@@ -99,13 +132,15 @@ export function ProductDetail() {
 
             <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-xl sm:text-3xl font-bold text-primary">{product.priceRange}</span>
-                <span className="text-slate-400 text-sm">{t('per_unit')}</span>
+                <span className="text-xl sm:text-3xl font-bold text-primary">
+                  {product.price ? `$${product.price}` : 'Contact for Price'}
+                </span>
+                <span className="text-slate-400 text-sm">/ {product.unit || 'unit'}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                 <div>
                   <div className="text-xs text-slate-500 mb-1">{t('min_order')}</div>
-                  <div className="font-bold text-slate-900">{product.moq}</div>
+                  <div className="font-bold text-slate-900">{product.moq} {product.unit}</div>
                 </div>
                 <div>
                   <div className="text-xs text-slate-500 mb-1">{t('lead_time')}</div>
@@ -144,42 +179,50 @@ export function ProductDetail() {
 
           {/* Right Column: Supplier Info */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-slate-100">
-                <h3 className="font-bold text-slate-900 mb-4">{t('supplier_information')}</h3>
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-lg border border-slate-100 p-1 shrink-0">
-                    <img src={supplier.logo} alt={supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
-                  </div>
-                  <div>
-                    <Link to={`/suppliers/${supplier.id}`} className="font-bold text-slate-900 hover:text-primary transition-colors block">
-                      {supplier.name}
-                    </Link>
-                    <div className="flex items-center gap-1 text-xs text-emerald-600 font-bold mt-1">
-                      <ShieldCheck size={14} />
-                      <span>{t('verified_supplier')}</span>
+            {supplier && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div className="p-6 border-b border-slate-100">
+                  <h3 className="font-bold text-slate-900 mb-4">{t('supplier_information')}</h3>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-lg border border-slate-100 p-1 shrink-0">
+                      <img src={supplier.logo || 'https://via.placeholder.com/150'} alt={supplier.companyName || supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                    </div>
+                    <div>
+                      <Link to={`/suppliers/${supplier.id}`} className="font-bold text-slate-900 hover:text-primary transition-colors block line-clamp-2">
+                        {supplier.companyName || supplier.name}
+                      </Link>
+                      {supplier.isVerified && (
+                        <div className="flex items-center gap-1 text-xs text-emerald-600 font-bold mt-1">
+                          <ShieldCheck size={14} />
+                          <span>{t('verified_supplier')}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
+                <div className="p-6 space-y-4 bg-slate-50/50">
+                  <div className="flex items-center gap-3 text-sm text-slate-600">
+                    <MapPin size={16} className="text-slate-400 shrink-0" />
+                    <span>{supplier.city ? `${supplier.city}, ${supplier.province}` : 'Viet Nam'}</span>
+                  </div>
+                  {(supplier.certifications?.length > 0) && (
+                    <div className="flex items-center gap-3 text-sm text-slate-600 overflow-hidden">
+                      <Award size={16} className="text-slate-400 shrink-0" />
+                      <span className="truncate">{supplier.certifications.map((c: any) => c.name || c).join(', ')}</span>
+                    </div>
+                  )}
+                  {(supplier.markets?.length > 0) && (
+                    <div className="flex items-center gap-3 text-sm text-slate-600 overflow-hidden">
+                      <Globe size={16} className="text-slate-400 shrink-0" />
+                      <span className="truncate">{t('exports_to', { markets: supplier.markets.map((m: any) => m.market || m).join(', ') })}</span>
+                    </div>
+                  )}
+                  <Link to={`/suppliers/${supplier.id}`} className="block w-full text-center py-2 text-sm font-bold text-primary border border-primary rounded-lg hover:bg-blue-50 transition-colors">
+                    {t('view_profile')}
+                  </Link>
+                </div>
               </div>
-              <div className="p-6 space-y-4 bg-slate-50/50">
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <MapPin size={16} className="text-slate-400" />
-                  <span>{supplier.location}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Award size={16} className="text-slate-400" />
-                  <span>{supplier.certifications.join(', ')}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Globe size={16} className="text-slate-400" />
-                  <span>{t('exports_to', { markets: supplier.markets.join(', ') })}</span>
-                </div>
-                <Link to={`/suppliers/${supplier.id}`} className="block w-full text-center py-2 text-sm font-bold text-primary border border-primary rounded-lg hover:bg-blue-50 transition-colors">
-                  {t('view_profile')}
-                </Link>
-              </div>
-            </div>
+            )}
 
             <div className="bg-viet-gold/10 rounded-2xl p-6 border border-viet-gold/20 space-y-4">
               <div className="flex items-center gap-2 text-viet-gold-dark">
@@ -267,12 +310,12 @@ export function ProductDetail() {
                 {relatedProducts.slice(0, 3).map((p) => (
                   <Link key={p.id} to={`/products/${p.id}`} className="flex gap-4 group">
                     <div className="w-20 h-20 rounded-lg overflow-hidden border border-slate-200 shrink-0">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                      <img src={p.images?.[0] || p.image || 'https://via.placeholder.com/150'} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-primary transition-colors">{p.name}</h4>
-                      <div className="text-primary font-bold text-sm mt-1">{p.priceRange}</div>
-                      <div className="text-[10px] text-slate-400 mt-1">{t('moq_label')} {p.moq}</div>
+                      <div className="text-primary font-bold text-sm mt-1">{p.price ? `$${p.price}` : p.priceRange}</div>
+                      <div className="text-[10px] text-slate-400 mt-1">{t('moq_label')} {p.moq} {p.unit}</div>
                     </div>
                   </Link>
                 ))}

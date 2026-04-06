@@ -26,7 +26,12 @@ let ProductsService = class ProductsService {
             where.name = { contains: search, mode: 'insensitive' };
         }
         if (category) {
-            where.category = { slug: category };
+            where.category = {
+                OR: [
+                    { slug: category },
+                    { parent: { slug: category } }
+                ]
+            };
         }
         if (supplierId) {
             where.supplierId = supplierId;

@@ -2,9 +2,14 @@ import React from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Building2, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function SupplierSettings() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const nameParts = (user?.fullName || '').split(' ');
+  const lastName = nameParts.pop() || '';
+  const firstName = nameParts.join(' ') || '';
 
   const settingsSections = [
     { icon: <Building2 size={20} className="text-blue-500" />, title: t('setting_company_info'), desc: t('setting_company_info_desc') },
@@ -34,16 +39,16 @@ export function SupplierSettings() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('first_name')}</label>
-                <input type="text" defaultValue="Huynh Le" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <input type="text" defaultValue={firstName} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('last_name')}</label>
-                <input type="text" defaultValue="Hoai Bao" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <input type="text" defaultValue={lastName} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('email_address')}</label>
-              <input type="email" defaultValue="huynhlehoaibao23@gmail.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+              <input type="email" defaultValue={user?.email || ''} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>

@@ -1,18 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, CheckCircle2, FileText } from 'lucide-react';
+import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { suppliers, products } from '../data/mockData';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
+import { api } from '../lib/api';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const supplier = suppliers.find((s) => s.id === id);
-  const supplierProducts = products.filter((p) => p.supplierId === id);
-  const [activeTab, setActiveTab] = React.useState('Home');
+  
+  const [supplier, setSupplier] = useState<any>(null);
+  const [supplierProducts, setSupplierProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [activeTab, setActiveTab] = useState('Home');
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const suppRes = await api.get(`/suppliers/${id}`);
+        setSupplier(suppRes.data);
+
+        const prodRes = await api.get(`/products?supplierId=${id}`);
+        setSupplierProducts(prodRes.data.data || []);
+      } catch (err) {
+        console.error('Failed to load supplier details', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (id) loadData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   if (!supplier) {
     return (
@@ -29,13 +58,13 @@ export function SupplierProfile() {
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Banner & Logo */}
       <div className="relative h-72 md:h-96 bg-slate-200">
-        <img src={supplier.banner} alt={supplier.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+        <img src={supplier.banner || 'https://via.placeholder.com/1200x400'} alt={supplier.companyName || supplier.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full p-8 md:p-12">
           <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-end gap-8">
             <div className="relative shrink-0">
               <div className="w-32 h-32 md:w-48 md:h-48 rounded-[2rem] bg-white border-4 border-white shadow-2xl p-4 overflow-hidden">
-                <img src={supplier.logo} alt={supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                <img src={supplier.logo || 'https://via.placeholder.com/200'} alt={supplier.companyName || supplier.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
               </div>
               {supplier.isVerified && (
                 <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-2.5 rounded-2xl shadow-lg border-4 border-white">
@@ -46,24 +75,26 @@ export function SupplierProfile() {
             <div className="flex-1 text-white space-y-4 pb-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
-                  <h1 className="text-3xl md:text-5xl font-black tracking-tight">{supplier.name}</h1>
+                  <h1 className="text-3xl md:text-5xl font-black tracking-tight">{supplier.companyName || supplier.name}</h1>
                   <div className="bg-primary text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg">
                     {t('verified_manufacturer')}
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-6 text-sm font-bold opacity-90">
                   <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-primary" />
-                    <span>{supplier.location}</span>
+                    <MapPin size={18} className="text-primary shrink-0" />
+                    <span>{supplier.city ? `${supplier.city}, ${supplier.province}` : 'Viet Nam'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar size={18} className="text-viet-gold" />
-                    <span>{t('est')} {supplier.yearEstablished}</span>
+                    <Calendar size={18} className="text-viet-gold shrink-0" />
+                    <span>{t('est')} {supplier.yearEstablished || 2010}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Globe size={18} className="text-blue-400" />
-                    <span>{t('main_markets_label')} {supplier.markets.join(', ')}</span>
-                  </div>
+                  {(supplier.markets?.length > 0) && (
+                    <div className="flex items-center gap-2">
+                      <Globe size={18} className="text-blue-400 shrink-0" />
+                      <span>{t('main_markets_label')} {supplier.markets.map((m: any) => m.market || m).join(', ')}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -119,17 +150,17 @@ export function SupplierProfile() {
           <div className="lg:col-span-8 space-y-12">
             {/* About Section */}
             <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900">{t('about_supplier', { name: supplier.name })}</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t('about_supplier', { name: supplier.companyName || supplier.name })}</h2>
               <p className="text-slate-600 leading-relaxed text-lg">
-                {supplier.description} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                {supplier.description || 'Welcome to our company.'}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {[
                   { label: t('business_type'), value: t('manufacturer_exporter') },
-                  { label: t('main_products'), value: supplier.industry.join(', ') },
+                  { label: t('main_products'), value: supplier.industries?.map((i: any) => i.industry || i).join(', ') || 'Various' },
                   { label: t('total_employees'), value: t('employees_range') },
                   { label: t('annual_revenue'), value: t('revenue_range') },
-                  { label: t('main_markets'), value: supplier.markets.join(', ') },
+                  { label: t('main_markets'), value: supplier.markets?.map((m: any) => m.market || m).join(', ') || 'Global' },
                   { label: t('export_percentage'), value: t('export_range') }
                 ].map((item) => (
                   <div key={item.label} className="space-y-1">
@@ -156,23 +187,25 @@ export function SupplierProfile() {
             </section>
 
             {/* Certifications */}
-            <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900">{t('certifications_compliance')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {supplier.certifications.map((cert) => (
-                  <div key={cert} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-viet-gold shadow-sm border border-slate-100">
-                      <Award size={24} />
+            {(supplier.certifications?.length > 0) && (
+              <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+                <h2 className="text-2xl font-bold text-slate-900">{t('certifications_compliance')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {supplier.certifications.map((cert: any, i: number) => (
+                    <div key={i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-viet-gold shadow-sm border border-slate-100">
+                        <Award size={24} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900">{cert.name || cert}</div>
+                        <div className="text-xs text-slate-500">{t('verified_valid')}</div>
+                      </div>
+                      <CheckCircle2 size={20} className="ml-auto text-emerald-500" />
                     </div>
-                    <div>
-                      <div className="font-bold text-slate-900">{cert}</div>
-                      <div className="text-xs text-slate-500">{t('verified_valid')}</div>
-                    </div>
-                    <CheckCircle2 size={20} className="ml-auto text-emerald-500" />
-                  </div>
-                ))}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -217,7 +250,7 @@ export function SupplierProfile() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('phone')}</div>
-                    <div className="text-sm font-bold text-slate-800">+84 (28) 1234 5678</div>
+                    <div className="text-sm font-bold text-slate-800">{supplier.phone || '+84 (28) 1234 5678'}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -226,7 +259,7 @@ export function SupplierProfile() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('email')}</div>
-                    <div className="text-sm font-bold text-slate-800">sales@{supplier.name.toLowerCase().replace(/\s/g, '')}.com</div>
+                    <div className="text-sm font-bold text-slate-800">{supplier.email || `sales@company.com`}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -235,7 +268,7 @@ export function SupplierProfile() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('website')}</div>
-                    <a href="#" className="text-sm font-bold text-primary hover:underline">www.{supplier.name.toLowerCase().replace(/\s/g, '')}.vn</a>
+                    <a href="#" className="text-sm font-bold text-primary hover:underline">{supplier.website || 'www.company.vn'}</a>
                   </div>
                 </div>
               </div>

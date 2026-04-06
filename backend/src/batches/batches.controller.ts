@@ -13,6 +13,11 @@ export class BatchesController {
     return this.batchesService.getSupplierBatches(supplierId);
   }
 
+  @Get('supplier/:supplierId/qrcodes')
+  getSupplierQRCodes(@Param('supplierId') supplierId: string) {
+    return this.batchesService.getSupplierQRCodes(supplierId);
+  }
+
   @Post()
   createBatch(@Body() body: CreateBatchDto & { supplierId: string }) {
     const { supplierId, ...dto } = body;

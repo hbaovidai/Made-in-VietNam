@@ -11,6 +11,6 @@ export declare class GenerateQRCodesDto {
 }
 export declare class VerifyQRDto {
     code: string;
-    token: string;
+    token?: string;
     ipUrl?: string;
 }

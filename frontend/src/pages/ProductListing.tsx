@@ -1,21 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Filter, ChevronDown, Search, SlidersHorizontal, LayoutGrid, List, X } from 'lucide-react';
+import { Filter, ChevronDown, Search, SlidersHorizontal, LayoutGrid, List, X, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { products, categories } from '../data/mockData';
+import { ALL_CATEGORIES_LIST, CATEGORY_GROUPS } from '../data/categories';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
+import { api } from '../lib/api';
 
 export function ProductListing() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const filteredProducts = categoryFilter
-    ? products.filter((p) => p.category === categoryFilter)
-    : products;
+  const activeCategoryGroup = React.useMemo(() => {
+    if (!categoryFilter) return null;
+    const group = CATEGORY_GROUPS.find(g => 
+      g.slug === categoryFilter || 
+      g.sections.some(s => s.subcategories.some(sub => sub.href.includes(categoryFilter)))
+    );
+    return group ? group.slug : categoryFilter;
+  }, [categoryFilter]);
+
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      try {
+        const queryParams = new URLSearchParams();
+        if (categoryFilter) {
+          queryParams.append('category', categoryFilter);
+        }
+        const res = await api.get(`/products?${queryParams.toString()}`);
+        setProducts(res.data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, [categoryFilter]);
 
   const clearFilters = () => {
     setSearchParams({});
@@ -24,32 +52,33 @@ export function ProductListing() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Breadcrumbs & Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">
+      <div className="bg-white px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <div className="max-w-[1600px] mx-auto">
+          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
             <Link to="/" className="hover:text-primary">{t('home')}</Link>
-            <span>/</span>
-            <span className="text-slate-900 font-medium">{t('products_breadcrumb')}</span>
+            <span>›</span>
+            <span className="text-[#1E293B]">
+              {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('products_breadcrumb')}
+            </span>
           </nav>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-              {categoryFilter ? `${categoryFilter} ${t('products_breadcrumb')}` : t('all_products')}
-            </h1>
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 md:w-80">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder={t('search_in_results')}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                />
-              </div>
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2 bg-white border border-slate-200 rounded-lg text-slate-600"
-              >
-                <Filter size={20} />
-              </button>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-black text-[#1E293B] tracking-tight mb-4">
+                {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('all_products')}
+              </h1>
+            </div>
+            
+            <div className="flex bg-slate-50/80 rounded-lg items-center px-4 py-2 shrink-0 border border-slate-100">
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-3">Sort by</span>
+               <select className="bg-transparent text-sm font-bold text-[#1E293B] outline-none appearance-none pr-6 cursor-pointer">
+                 <option>Popular</option>
+                 <option>Price: Low to High</option>
+                 <option>Price: High to Low</option>
+               </select>
+               <div className="pointer-events-none -ml-4">
+                 <ChevronDown size={14} className="text-slate-500" />
+               </div>
             </div>
           </div>
         </div>
@@ -61,56 +90,58 @@ export function ProductListing() {
           <aside className="hidden lg:block w-72 shrink-0 space-y-10">
             <div className="sticky top-28 space-y-10">
               <div>
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <div className="w-4 h-[2px] bg-primary" />
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-3">
+                  <div className="w-4 h-[2px] bg-[#043365]" />
                   {t('categories')}
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <button
                     onClick={() => setSearchParams({})}
                     className={cn(
-                      "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
+                      "w-full text-left px-5 py-3.5 rounded-xl text-sm font-bold transition-all",
                       !categoryFilter
-                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                        : "bg-white text-slate-600 border-slate-100 hover:border-primary/30 hover:bg-slate-50"
+                        ? "bg-[#043365] text-white shadow-md"
+                        : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                     )}
                   >
                     {t('all_categories')}
                   </button>
-                  {categories.map((cat) => (
+                  {ALL_CATEGORIES_LIST.map((cat) => (
                     <button
-                      key={cat}
-                      onClick={() => setSearchParams({ category: cat })}
+                      key={cat.slug}
+                      onClick={() => setSearchParams({ category: cat.slug })}
                       className={cn(
-                        "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all border",
-                        categoryFilter === cat
-                          ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                          : "bg-white text-slate-600 border-slate-100 hover:border-primary/30 hover:bg-slate-50"
+                        "w-full text-left px-5 py-3.5 rounded-xl text-sm font-bold transition-all",
+                        activeCategoryGroup === cat.slug
+                          ? "bg-[#043365] text-white shadow-md"
+                          : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                       )}
                     >
-                      {t(cat)}
+                      {cat.name}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <div className="w-4 h-[2px] bg-primary" />
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-3">
+                  <div className="w-4 h-[2px] bg-[#043365]" />
                   {t('supplier_type')}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {[
                     { key: 'verified_supplier_filter', label: t('verified_supplier_filter') },
                     { key: 'premium_member_filter', label: t('premium_member_filter') },
                     { key: 'factory_direct_filter', label: t('factory_direct_filter') }
                   ].map((type) => (
-                    <label key={type.key} className="flex items-center gap-3 group cursor-pointer">
+                    <label key={type.key} className="flex items-center gap-4 cursor-pointer group">
                       <div className="relative flex items-center justify-center">
-                        <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-slate-200 rounded-md checked:bg-primary checked:border-primary transition-all" />
-                        <Search size={12} className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
+                        <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-slate-200 rounded text-[#043365] focus:ring-[#043365] transition-all bg-white" />
+                        <svg className="absolute w-3.5 h-3.5 text-[#043365] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" viewBox="0 0 14 14" fill="none">
+                          <path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                       </div>
-                      <span className="text-sm font-bold text-slate-600 group-hover:text-primary transition-colors">{type.label}</span>
+                      <span className="text-sm font-bold text-slate-700 group-hover:text-[#043365] transition-colors">{type.label}</span>
                     </label>
                   ))}
                 </div>
@@ -128,33 +159,45 @@ export function ProductListing() {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1 space-y-8">
-            <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                  <LayoutGrid size={20} className="text-slate-400" />
-                </div>
-                <span className="text-sm font-bold text-slate-500">
-                  {t('showing')} <span className="text-slate-900">{filteredProducts.length}</span> {t('results')}
-                </span>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-8">
+              <div className="text-sm font-bold text-[#1E293B]">
+                {products.length} <span className="font-medium text-slate-500">{t('results')}</span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('sort_by')}</span>
-                <select className="bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm font-bold text-slate-700 outline-none focus:border-primary transition-colors">
-                  <option>{t('most_relevant')}</option>
-                  <option>{t('price_low_to_high')}</option>
-                  <option>{t('price_high_to_low')}</option>
-                  <option>{t('newest_arrivals')}</option>
-                </select>
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="lg:hidden p-2 text-slate-600 bg-white border border-slate-200 rounded-lg shadow-sm"
+                >
+                  <Filter size={18} />
+                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setViewMode('grid')}
+                    className={cn("p-2 rounded bg-slate-100 text-slate-600", viewMode === 'grid' && "bg-[#E2E8F0] text-[#1E293B]")}
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('list')}
+                    className={cn("p-2 rounded text-slate-400 hover:text-slate-600", viewMode === 'list' && "bg-[#E2E8F0] text-[#1E293B]")}
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="animate-spin text-primary" size={48} />
+              </div>
+            ) : products.length > 0 ? (
               <div className={cn(
                 "grid gap-8",
                 viewMode === 'grid' ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"
               )}>
-                {filteredProducts.map((product) => (
+                {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
@@ -193,16 +236,16 @@ export function ProductListing() {
               <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">{t('categories')}</h3>
                 <div className="grid grid-cols-1 gap-2">
-                  {categories.map((cat) => (
+                  {ALL_CATEGORIES_LIST.map((cat) => (
                     <button
-                      key={cat}
-                      onClick={() => { setSearchParams({ category: cat }); setIsSidebarOpen(false); }}
+                      key={cat.slug}
+                      onClick={() => { setSearchParams({ category: cat.slug }); setIsSidebarOpen(false); }}
                       className={cn(
                         "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        categoryFilter === cat ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100"
+                        activeCategoryGroup === cat.slug ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100"
                       )}
                     >
-                      {t(cat)}
+                      {t(cat.name)}
                     </button>
                   ))}
                 </div>

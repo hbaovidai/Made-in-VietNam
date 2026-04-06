@@ -1,30 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
-import { Search, Filter, Plus, MoreVertical, Edit2, Trash2, Eye, Box } from 'lucide-react';
-import { products, Product } from '../../../data/mockData';
+import { Search, Filter, Plus, MoreVertical, Edit2, Trash2, Eye, Box, Loader2 } from 'lucide-react';
 import { ProductForm } from './ProductForm';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Badge } from '../../../components/ui/Badge';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function SupplierProducts() {
   const { t } = useTranslation();
   const { addToast } = useToast();
+  const { user } = useAuth();
   
-  // Local state for mock CRUD
-  const [productList, setProductList] = useState<Product[]>(products.filter(p => p.supplierId === 's1'));
+  const [productList, setProductList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = async () => {
+    if (!user?.supplier?.id) return;
+    setLoading(true);
+    try {
+      const res = await api.get(`/products?supplierId=${user.supplier.id}&limit=100`);
+      setProductList(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to fetch products', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [user]);
   
   // Modal states
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<any | null>(null);
 
   // Handlers
-  const handleEdit = (product: Product) => {
+  const handleEdit = (product: any) => {
     setEditingProduct(product);
     setIsFormOpen(true);
   };
@@ -34,34 +53,35 @@ export function SupplierProducts() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteClick = (product: Product) => {
+  const handleDeleteClick = (product: any) => {
     setProductToDelete(product);
     setIsDeleteOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (productToDelete) {
-      setProductList((prev) => prev.filter((p) => p.id !== productToDelete.id));
-      addToast({ type: 'success', title: t('success') || 'Thành công', message: t('delete_success', { name: productToDelete.name }) });
+      try {
+        await api.delete(`/products/${productToDelete.id}`, { data: { supplierId: user?.supplier?.id } });
+        setProductList((prev) => prev.filter((p) => p.id !== productToDelete.id));
+        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('delete_success', { name: productToDelete.name }) });
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
-  const saveProduct = (formData: any) => {
-    if (editingProduct) {
-      // Edit
-      setProductList((prev) =>
-        prev.map((p) => (p.id === editingProduct.id ? { ...p, ...formData } : p))
-      );
-      addToast({ type: 'success', title: t('success') || 'Thành công', message: t('update_success', { name: formData.name }) });
-    } else {
-      // Create
-      const newProduct: Product = {
-        ...formData,
-        id: 'p' + Math.floor(Math.random() * 10000),
-        supplierId: 's1',
-      };
-      setProductList((prev) => [newProduct, ...prev]);
-      addToast({ type: 'success', title: t('success') || 'Thành công', message: t('create_success', { name: formData.name }) });
+  const saveProduct = async (formData: any) => {
+    try {
+      if (editingProduct) {
+        await api.put(`/products/${editingProduct.id}`, { ...formData, supplierId: user?.supplier?.id });
+        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('update_success', { name: formData.name }) });
+      } else {
+        await api.post('/products', { ...formData, supplierId: user?.supplier?.id });
+        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('create_success', { name: formData.name }) });
+      }
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
     }
     setIsFormOpen(false);
   };
@@ -88,7 +108,11 @@ export function SupplierProducts() {
         </div>
       </div>
 
-      {productList.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="animate-spin text-primary" size={32} />
+        </div>
+      ) : productList.length === 0 ? (
         <EmptyState 
           icon={<Box size={48} className="text-slate-300" />}
           title={t('no_products')}
@@ -102,14 +126,14 @@ export function SupplierProducts() {
           {productList.map((product) => (
             <div key={product.id} className="p-4 flex gap-3 items-start">
               <div className="w-16 h-16 bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200">
-                <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
+                <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm text-slate-900 truncate">{product.name}</div>
                 <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">ID: PRD-{product.id}</div>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{product.category}</span>
-                  <span className="font-bold text-xs text-primary">{product.priceRange}</span>
+                  <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{product.category?.name || ''}</span>
+                  <span className="font-bold text-xs text-primary">{product.minPrice?.toLocaleString()}đ - {product.maxPrice?.toLocaleString()}đ</span>
                   <Badge variant="success">{t('status_selling')}</Badge>
                 </div>
                 <div className="flex items-center gap-1 mt-2">
@@ -145,7 +169,7 @@ export function SupplierProducts() {
                   <td className="table-cell">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200">
-                        <img src={product.image || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
                         <div className="font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{product.name}</div>
@@ -154,10 +178,10 @@ export function SupplierProducts() {
                     </div>
                   </td>
                   <td className="table-cell">
-                    <span className="text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full">{product.category}</span>
+                    <span className="text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full">{product.category?.name || ''}</span>
                   </td>
                   <td className="table-cell">
-                    <span className="font-bold text-slate-900">{product.priceRange}</span>
+                    <span className="font-bold text-slate-900">{product.minPrice?.toLocaleString()}đ - {product.maxPrice?.toLocaleString()}đ</span>
                   </td>
                   <td className="table-cell">
                     <Badge variant="success">{t('status_selling')}</Badge>

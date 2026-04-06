@@ -19,9 +19,14 @@ export class ProductsService {
       where.name = { contains: search, mode: 'insensitive' };
     }
 
-    // Filter by category slug
+    // Filter by category slug (match the category itself or any of its children)
     if (category) {
-      where.category = { slug: category };
+      where.category = {
+        OR: [
+          { slug: category },
+          { parent: { slug: category } }
+        ]
+      };
     }
 
     // Filter by supplier

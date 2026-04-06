@@ -970,7 +970,7 @@
   "setting_personal_info": "Thông tin cá nhân",
   "setting_personal_info_desc": "Cập nhật tên, tiểu sử và ảnh đại diện.",
   "buyer_dashboard_title": "Bảng điều khiển Người mua",
-  "buyer_welcome": "Chào mừng trở lại, Huynh Le Hoai Bao. Đây là tình hình tìm nguồn hàng của bạn.",
+  "buyer_welcome": "Chào mừng trở lại, {{name}}. Đây là tình hình tìm nguồn hàng của bạn.",
   "post_new_rfq": "Đăng RFQ mới",
   "saved_products": "Sản phẩm đã lưu",
   "inquiry_basket_stat": "Giỏ yêu cầu",

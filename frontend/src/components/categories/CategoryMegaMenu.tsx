@@ -1,77 +1,100 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ALL_CATEGORIES_LIST, CATEGORY_GROUPS } from '../../data/categories';
 import { cn } from '../../utils/cn';
+import { api } from '../../lib/api';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  children?: Category[];
+}
 
 export function CategoryMegaMenu() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [activeGroup, setActiveGroup] = React.useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeGroup, setActiveGroup] = useState<Category | null>(null);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await api.get('/categories');
+        setCategories(res.data);
+        if (res.data.length > 0) {
+          setActiveGroup(res.data[0]);
+        }
+      } catch (error) {
+        console.error('Lỗi khi tải danh mục:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="relative flex items-center justify-center bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-[1600px] mx-auto">
+        <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-[1600px] mx-auto">
       {/* Sidebar List */}
-      <div className="w-72 border-r border-slate-100 py-2 shrink-0 overflow-y-auto max-h-[600px]">
-        {ALL_CATEGORIES_LIST.map((cat) => {
-          // Find if this category belongs to a group for the mega menu detail
-          const group = CATEGORY_GROUPS.find(g => g.slug === cat.slug);
-          
-          return (
-            <div
-              key={cat.slug}
-              onClick={() => navigate(`/categories/${cat.slug}`)}
-              className={cn(
-                "group flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-slate-50",
-                activeGroup === cat.slug && "bg-slate-50 text-primary"
-              )}
-              onMouseEnter={() => setActiveGroup(cat.slug)}
-            >
-              <span className="text-sm font-medium text-slate-700 group-hover:text-primary truncate flex-1">
-                {t(cat.name)}
-              </span>
-              <ChevronRight size={14} className="text-slate-300 group-hover:text-primary" />
-            </div>
-          );
-        })}
+      <div className="w-72 border-r border-slate-100 py-2 shrink-0 overflow-y-auto max-h-[600px] bg-white">
+        {categories.map((cat) => (
+          <div
+            key={cat.id}
+            onClick={() => navigate(`/products?category=${cat.slug}`)}
+            className={cn(
+              "group flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-slate-50",
+              activeGroup?.id === cat.id && "bg-slate-50 text-primary"
+            )}
+            onMouseEnter={() => setActiveGroup(cat)}
+          >
+            <span className="text-sm font-medium text-slate-700 group-hover:text-primary truncate flex-1">
+              {cat.name}
+            </span>
+            <ChevronRight size={14} className="text-slate-300 group-hover:text-primary" />
+          </div>
+        ))}
       </div>
 
       {/* Detail Panel */}
       <div className="flex-1 p-8 bg-white overflow-y-auto max-h-[600px]">
         {activeGroup ? (
-          <div className="grid grid-cols-3 gap-8">
-            {/* We'll find the group that matches the activeGroup name or just show a default set for demo */}
-            {(() => {
-              const group = CATEGORY_GROUPS.find(g => g.slug === activeGroup) || CATEGORY_GROUPS[0];
-
-              return group.sections.map((section) => (
-                <div key={section.title} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-4 col-span-3">
+               <h4 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex justify-between items-center">
+                 <Link to={`/products?category=${activeGroup.slug}`} className="hover:text-primary">
+                   Tất cả trong {activeGroup.name}
+                 </Link>
+               </h4>
+            </div>
+            
+            {/* Split children into columns arbitrarily for UI */}
+            {activeGroup.children && activeGroup.children.length > 0 ? (
+              activeGroup.children.map((sub: Category) => (
+                <div key={sub.id} className="space-y-4">
                   <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
-                    <Link to={`/categories/${group.slug}`} className="hover:text-primary">
-                      {t(section.title)}
+                    <Link to={`/products?category=${sub.slug}`} className="hover:text-primary">
+                      {sub.name}
                     </Link>
                   </h4>
-                  <ul className="space-y-2">
-                    {section.subcategories.map((sub) => (
-                      <li key={sub.name}>
-                        <Link
-                          to={sub.href}
-                          className="text-sm text-slate-600 hover:text-primary transition-colors block"
-                        >
-                          {t(sub.name)}
-                        </Link>
-                      </li>
-                    ))}
-                    <li>
-                      <Link to={`/categories/${group.slug}`} className="text-sm text-primary font-bold hover:underline">
-                        {t('view_more_arrow')}
-                      </Link>
-                    </li>
-                  </ul>
+                  {/* If backend has level-3 children, map them here. */}
                 </div>
-              ));
-            })()}
+              ))
+            ) : (
+              <div className="col-span-3 text-sm text-slate-500">
+                Chưa có danh mục con.
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex items-center justify-center h-full text-slate-400 italic">

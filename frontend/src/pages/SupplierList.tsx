@@ -1,21 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, Award, Globe } from 'lucide-react';
+import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, Award, Globe, Loader2 } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
-import { suppliers, categories } from '../data/mockData';
+import { categories } from '../data/mockData';
 import { SupplierCard } from '../components/SupplierCard';
 import { cn } from '../utils/cn';
+import { api } from '../lib/api';
 
 export function SupplierList() {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [selectedIndustry, setSelectedIndustry] = React.useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredSuppliers = suppliers.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesIndustry = !selectedIndustry || s.industry.includes(selectedIndustry);
-    return matchesSearch && matchesIndustry;
-  });
+  useEffect(() => {
+    async function fetchSuppliers() {
+      setLoading(true);
+      try {
+        const queryParams = new URLSearchParams();
+        if (selectedIndustry) {
+          queryParams.append('industry', selectedIndustry);
+        }
+        if (searchTerm) {
+          queryParams.append('search', searchTerm);
+        }
+        const res = await api.get(`/suppliers?${queryParams.toString()}`);
+        setSuppliers(res.data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch suppliers', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    // Simple debounce approach inside useEffect
+    const timeoutId = setTimeout(() => {
+      fetchSuppliers();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [selectedIndustry, searchTerm]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -110,7 +135,7 @@ export function SupplierList() {
                   <Globe size={20} className="text-slate-400" />
                 </div>
                 <span className="text-sm font-bold text-slate-500">
-                  {t('showing')} <span className="text-slate-900">{filteredSuppliers.length}</span> {t('verified_suppliers')}
+                  {t('showing')} <span className="text-slate-900">{suppliers.length}</span> {t('verified_suppliers')}
                 </span>
               </div>
               <div className="flex items-center gap-4">
@@ -123,9 +148,13 @@ export function SupplierList() {
               </div>
             </div>
 
-            {filteredSuppliers.length > 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="animate-spin text-primary" size={48} />
+              </div>
+            ) : suppliers.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {filteredSuppliers.map((supplier) => (
+                {suppliers.map((supplier) => (
                   <SupplierCard key={supplier.id} supplier={supplier} />
                 ))}
               </div>

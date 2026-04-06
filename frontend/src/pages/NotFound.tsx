@@ -25,7 +25,7 @@ export function NotFound() {
           <Home size={18} /> {t('back_to_home')}
         </Link>
         <Link 
-          to="/categories" 
+          to="/products" 
           className="flex-1 flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 font-bold hover:bg-slate-800 transition-all uppercase tracking-widest text-sm shadow-lg shadow-slate-900/20"
         >
           <LayoutGrid size={18} /> {t('browse_categories')}

@@ -1,18 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, LayoutGrid, Star, Factory, Shield } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, LayoutGrid, Star, Factory, Shield, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { products, suppliers } from '../data/mockData';
-import { ProductCard } from '../components/ProductCard';
-import { SupplierCard } from '../components/SupplierCard';
 import { CategorySidebar } from '../components/CategorySidebar';
 import { CATEGORY_GROUPS } from '../data/categories';
 import { CategoryCard } from '../components/categories/CategoryCard';
 import { SEOHead } from '../components/SEOHead';
+import { ProductCard } from '../components/ProductCard';
+import { SupplierCard } from '../components/SupplierCard';
+import { api } from '../lib/api';
 
 export function Home() {
   const { t } = useTranslation();
+  const [products, setProducts] = useState<any[]>([]);
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [prodRes, suppRes] = await Promise.all([
+          api.get('/products?limit=12'),
+          api.get('/suppliers?limit=3')
+        ]);
+        setProducts(prodRes.data.data);
+        setSuppliers(suppRes.data.data);
+      } catch (error) {
+        console.error('Home Loading Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  // Format price if available
+  const getPriceRange = (product: any) => {
+    return `$${product.price} - $${product.price * 1.5}`; // Temporary mock range for visual
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -63,9 +97,9 @@ export function Home() {
             </div>
             <div className="flex-1 p-4 space-y-4 overflow-y-auto">
               {products.slice(0, 3).map((product) => (
-                <Link key={product.id} to={`/product/${product.id}`} className="flex gap-3 group">
+                <Link key={product.id} to={`/products/${product.id}`} className="flex gap-3 group">
                   <div className="w-16 h-16 bg-slate-100 shrink-0 border border-slate-100 overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
+                    <img src={product.images[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                   <div className="flex flex-col justify-center">
                     <span className="text-xs font-medium text-slate-800 line-clamp-2 group-hover:text-primary">{product.name}</span>
@@ -120,25 +154,25 @@ export function Home() {
               {products.slice(0, 10).map((product) => (
                 <Link key={product.id} to={`/products/${product.id}`} className="bg-white p-3 hover:shadow-lg transition-shadow group cursor-pointer w-[160px] sm:w-[200px] shrink-0">
                   <div className="aspect-square bg-slate-50 mb-3 overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
+                    <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                   <h3 className="text-xs sm:text-sm font-medium text-slate-800 line-clamp-2 mb-1 group-hover:text-primary h-8 sm:h-10">{product.name}</h3>
-                  <span className="text-primary font-bold text-xs sm:text-sm">{product.priceRange}</span>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{t('min_order')}: {product.moq}</div>
+                  <span className="text-primary font-bold text-xs sm:text-sm">{getPriceRange(product)}</span>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{t('min_order')}: {product.moq} {product.unit}</div>
                 </Link>
               ))}
             </div>
           </div>
           <div className="hidden lg:grid grid-cols-5 gap-px bg-slate-200">
             {products.slice(0, 10).map((product) => (
-              <div key={product.id} className="bg-white p-4 hover:shadow-lg transition-shadow group cursor-pointer">
+              <div key={product.id} onClick={() => window.location.href = `/products/${product.id}`} className="bg-white p-4 hover:shadow-lg transition-shadow group cursor-pointer">
                 <div className="aspect-square bg-slate-50 mb-4 overflow-hidden">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
+                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                 </div>
                 <h3 className="text-sm font-medium text-slate-800 line-clamp-2 mb-2 group-hover:text-primary h-10">{product.name}</h3>
                 <div className="flex flex-col">
-                  <span className="text-primary font-bold">{product.priceRange}</span>
-                  <span className="text-[11px] text-slate-400 mt-1">{t('min_order')}: {product.moq}</span>
+                  <span className="text-primary font-bold">{getPriceRange(product)}</span>
+                  <span className="text-[11px] text-slate-400 mt-1">{t('min_order')}: {product.moq} {product.unit}</span>
                 </div>
               </div>
             ))}
@@ -160,14 +194,31 @@ export function Home() {
             <div className="flex gap-4 w-max">
               {suppliers.slice(0, 3).map((supplier) => (
                 <div key={supplier.id} className="w-[280px] shrink-0">
-                  <SupplierCard supplier={supplier} />
+                  {/* SupplierCard does not exactly match new properties (it used mock properties). We will fix SupplierCard later if it breaks, or map it properly now. For now passing 'supplier' obj. */}
+                  <SupplierCard supplier={{
+                    ...supplier,
+                    name: supplier.companyName,
+                    rating: 4.8,
+                    responseRate: 98,
+                    image: supplier.logo,
+                    banner: supplier.banner,
+                    products: [] // mock missing field
+                  }} />
                 </div>
               ))}
             </div>
           </div>
           <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 p-6">
             {suppliers.slice(0, 3).map((supplier) => (
-              <SupplierCard key={supplier.id} supplier={supplier} />
+              <SupplierCard key={supplier.id} supplier={{
+                ...supplier,
+                name: supplier.companyName,
+                rating: 4.8,
+                responseRate: 98,
+                image: supplier.logo,
+                banner: supplier.banner,
+                products: [] // mock missing field
+              }} />
             ))}
           </div>
         </div>
@@ -178,7 +229,7 @@ export function Home() {
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{t('browse_by')} <span className="text-primary">{t('category')}</span></h2>
-            <Link to="/categories" className="text-xs sm:text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-1">
+            <Link to="/products" className="text-xs sm:text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-1">
               {t('view_all_categories')} <ChevronRight size={14} />
             </Link>
           </div>

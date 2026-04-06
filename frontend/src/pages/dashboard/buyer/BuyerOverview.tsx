@@ -2,9 +2,11 @@ import React from 'react';
 import { ShoppingCart, MessageSquare, FileText, Clock, ChevronRight, Star, ArrowUpRight, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function BuyerOverview() {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const stats = [
     { label: t('active_rfqs'), value: "12", icon: <FileText className="text-blue-500" /> },
@@ -26,7 +28,7 @@ export function BuyerOverview() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{t('buyer_dashboard_title')}</h1>
-          <p className="text-slate-500 text-sm">{t('buyer_welcome')}</p>
+          <p className="text-slate-500 text-sm">{t('buyer_welcome', { name: user?.fullName || '' })}</p>
         </div>
         <Link to="/rfq" className="bg-primary text-white px-6 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20">
           {t('post_new_rfq')}
@@ -109,7 +111,7 @@ export function BuyerOverview() {
                 <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{t('post_rfq_link')}</span>
                 <ArrowUpRight size={16} className="text-primary" />
               </Link>
-              <Link to="/categories" className="flex items-center justify-between group">
+              <Link to="/products" className="flex items-center justify-between group">
                 <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{t('browse_directory')}</span>
                 <ArrowUpRight size={16} className="text-primary" />
               </Link>
