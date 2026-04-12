@@ -20,7 +20,7 @@ export function Apps() {
         title={t('mobile_apps_title')} 
         description={t('mobile_apps_desc')}
         breadcrumbs={[{ label: t('apps') }]}
-        image="https://picsum.photos/seed/apps/400/600"
+        
       />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -62,12 +62,18 @@ export function Apps() {
           <div className="flex-1 w-full max-w-xl relative">
             <div className="w-72 h-[580px] bg-slate-900 border-[12px] border-slate-800 rounded-[50px] shadow-2xl mx-auto relative overflow-hidden z-10 rotate-6 hover:rotate-0 transition-transform duration-700">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-slate-800 rounded-b-3xl z-20" />
-              <img 
-                src="https://picsum.photos/seed/app-home/400/800" 
-                alt="App Home" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+              <div className="w-full h-full bg-slate-950 flex flex-col items-center pt-20 px-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik00MCAwaC00MHY0MGg0MHoiLz48L2c+PC9zdmc+')] opacity-20 pointer-events-none" />
+                <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-primary/30 to-transparent blur-2xl pointer-events-none" />
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center mb-8 relative z-10 shadow-2xl shadow-primary/40">
+                  <span className="text-white font-black text-2xl">M</span>
+                </div>
+                <div className="w-full space-y-4 relative z-10">
+                  <div className="h-24 bg-slate-800/80 rounded-2xl w-full border border-slate-700" />
+                  <div className="h-24 bg-slate-800/80 rounded-2xl w-full border border-slate-700" />
+                  <div className="h-24 bg-slate-800/80 rounded-2xl w-full border border-slate-700" />
+                </div>
+              </div>
             </div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10" />
           </div>

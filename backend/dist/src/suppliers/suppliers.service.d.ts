@@ -195,4 +195,10 @@ export declare class SuppliersService {
     deleteCertification(certId: string, supplierId: string): Promise<{
         message: string;
     }>;
+    getStats(supplierId: string): Promise<{
+        products: number;
+        batches: number;
+        qrCodes: number;
+        totalViews: number;
+    }>;
 }

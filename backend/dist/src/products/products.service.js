@@ -59,27 +59,53 @@ let ProductsService = class ProductsService {
             },
         };
     }
-    async findBySlug(slug) {
-        const product = await this.prisma.product.findUnique({
-            where: { slug },
-            include: {
-                category: { select: { id: true, name: true, slug: true } },
-                supplier: {
-                    select: {
-                        id: true,
-                        companyName: true,
-                        slug: true,
-                        isVerified: true,
-                        logo: true,
-                        description: true,
-                        city: true,
-                        province: true,
-                        industries: { select: { industry: true } },
-                        markets: { select: { market: true } },
+    async findByIdOrSlug(idOrSlug) {
+        let product = null;
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+        if (isUUID) {
+            product = await this.prisma.product.findUnique({
+                where: { id: idOrSlug },
+                include: {
+                    category: { select: { id: true, name: true, slug: true } },
+                    supplier: {
+                        select: {
+                            id: true,
+                            companyName: true,
+                            slug: true,
+                            isVerified: true,
+                            logo: true,
+                            description: true,
+                            city: true,
+                            province: true,
+                            industries: { select: { industry: true } },
+                            markets: { select: { market: true } },
+                        },
                     },
                 },
-            },
-        });
+            });
+        }
+        if (!product) {
+            product = await this.prisma.product.findUnique({
+                where: { slug: idOrSlug },
+                include: {
+                    category: { select: { id: true, name: true, slug: true } },
+                    supplier: {
+                        select: {
+                            id: true,
+                            companyName: true,
+                            slug: true,
+                            isVerified: true,
+                            logo: true,
+                            description: true,
+                            city: true,
+                            province: true,
+                            industries: { select: { industry: true } },
+                            markets: { select: { market: true } },
+                        },
+                    },
+                },
+            });
+        }
         if (!product)
             throw new common_1.NotFoundException('Sản phẩm không tồn tại');
         await this.prisma.product.update({

@@ -19,6 +19,7 @@ export class RfqService {
         description: dto.description,
         budget: dto.budget,
         destination: dto.destination,
+        contactEmail: dto.contactEmail,
         expiresAt: new Date(dto.expiresAt),
       },
     });

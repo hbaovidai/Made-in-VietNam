@@ -99,10 +99,15 @@ export function SupplierProfile() {
               </div>
             </div>
             <div className="flex gap-4 pb-4 w-full md:w-auto">
-              <button className="flex-1 md:flex-none bg-white text-slate-900 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-100 transition-all shadow-xl flex items-center justify-center gap-2">
+              <a 
+                href={`https://zalo.me/${supplier.phone?.replace(/\D/g, '') || ''}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 md:flex-none bg-[#0068FF] text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#0055DD] transition-all shadow-xl flex items-center justify-center gap-2"
+              >
                 <MessageSquare size={18} />
-                {t('contact')}
-              </button>
+                Zalo
+              </a>
               <button className="flex-1 md:flex-none bg-primary text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all shadow-xl flex items-center justify-center gap-2">
                 <FileText size={18} />
                 {t('request_rfq')}

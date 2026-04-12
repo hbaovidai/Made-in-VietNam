@@ -104,6 +104,20 @@ let SuppliersService = class SuppliersService {
         await this.prisma.certification.delete({ where: { id: certId } });
         return { message: 'Đã xóa chứng nhận' };
     }
+    async getStats(supplierId) {
+        const [productCount, batchCount, qrCount, totalViews] = await Promise.all([
+            this.prisma.product.count({ where: { supplierId, status: 'ACTIVE' } }),
+            this.prisma.batch.count({ where: { supplierId } }),
+            this.prisma.qRCode.count({ where: { batch: { supplierId } } }),
+            this.prisma.product.aggregate({ where: { supplierId }, _sum: { viewCount: true } }),
+        ]);
+        return {
+            products: productCount,
+            batches: batchCount,
+            qrCodes: qrCount,
+            totalViews: totalViews._sum.viewCount || 0,
+        };
+    }
 };
 exports.SuppliersService = SuppliersService;
 exports.SuppliersService = SuppliersService = __decorate([

@@ -1,23 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
-import { TrendingUp, TrendingDown, Eye, Users, MessageSquare, Package, ChevronRight, Calendar, ArrowUpRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, Users, MessageSquare, Package, ChevronRight, Calendar, ArrowUpRight, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
 
 export function SupplierAnalytics() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  
+  const [statsData, setStatsData] = useState({
+    products: 0,
+    batches: 0,
+    qrCodes: 0,
+    totalViews: 0
+  });
+  const [topProductsData, setTopProductsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.supplier?.id) {
+      setLoading(true);
+      Promise.all([
+        api.get(`/suppliers/${user.supplier.id}/stats`),
+        api.get(`/products?supplierId=${user.supplier.id}&sortBy=viewCount&sortOrder=desc&limit=5`)
+      ])
+      .then(([statsRes, productsRes]) => {
+        setStatsData(statsRes.data);
+        setTopProductsData(productsRes.data.data || []);
+      })
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
+    }
+  }, [user]);
 
   const stats = [
-    { label: t('profile_views'), value: "1,240", change: "+12%", trend: "up", icon: <Eye className="text-blue-500" /> },
-    { label: t('product_clicks'), value: "850", change: "+5%", trend: "up", icon: <Package className="text-orange-500" /> },
-    { label: t('inquiries_stat'), value: "15", change: "-2%", trend: "down", icon: <MessageSquare className="text-red-500" /> },
-    { label: t('new_leads'), value: "8", change: "+15%", trend: "up", icon: <Users className="text-green-500" /> },
-  ];
-
-  const topProducts = [
-    { id: 1, name: "Industrial Grade PVC Pipes", views: "450", clicks: "120", conversion: "26%" },
-    { id: 2, name: "Cotton T-shirts Summer Edition", views: "380", clicks: "95", conversion: "25%" },
-    { id: 3, name: "Eco-friendly Bamboo Packaging", views: "210", clicks: "45", conversion: "21%" },
-    { id: 4, name: "LED Smart Home Lighting", views: "180", clicks: "38", conversion: "21%" },
+    { label: t('profile_views'), value: (statsData.totalViews || 0).toString(), change: "+12%", trend: "up", icon: <Eye className="text-blue-500" /> },
+    { label: t('products'), value: (statsData.products || 0).toString(), change: "+5%", trend: "up", icon: <Package className="text-orange-500" /> },
+    { label: t('batches'), value: (statsData.batches || 0).toString(), change: "+2", trend: "up", icon: <MessageSquare className="text-blue-500" /> },
+    { label: t('qrs_generated'), value: (statsData.qrCodes || 0).toString(), change: "+15%", trend: "up", icon: <Users className="text-green-500" /> },
   ];
 
   return (
@@ -103,39 +124,28 @@ export function SupplierAnalytics() {
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
             <TrendingUp size={20} className="text-primary" /> {t('top_performing_products')}
           </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_product_name')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_views')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_clicks')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table_conversion')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('table_trend')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {topProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{product.name}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-slate-600">{product.views}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-slate-600">{product.clicks}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-slate-900">{product.conversion}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <ArrowUpRight size={16} className="text-green-500 ml-auto" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-4">
+            {loading ? (
+              <div className="flex justify-center p-8"><Loader2 className="animate-spin text-slate-400" /></div>
+            ) : topProductsData.length === 0 ? (
+              <div className="text-sm text-slate-500 text-center p-4">Chưa có sản phẩm nào</div>
+            ) : topProductsData.map((product, idx) => (
+              <div key={product.id} className="flex items-center justify-between p-4 bg-white border border-slate-100 hover:border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center font-bold text-sm shrink-0">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{product.name}</div>
+                    <div className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-0.5">{product.category?.name || 'General'}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-black text-slate-900">{product.viewCount}</div>
+                  <div className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-0.5">{t('views')}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

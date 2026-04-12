@@ -29,7 +29,7 @@ export function SellerGuide() {
         title={t('seller_guide_title')} 
         description={t('seller_guide_desc')}
         breadcrumbs={[{ label: t('help'), href: "/help" }, { label: t('seller_guide_title') }]}
-        image="https://picsum.photos/seed/seller/400/600"
+        
       />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20">

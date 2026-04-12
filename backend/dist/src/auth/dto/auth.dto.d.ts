@@ -11,3 +11,12 @@ export declare class LoginDto {
     email: string;
     password: string;
 }
+export declare class UpdateProfileDto {
+    fullName?: string;
+    phone?: string;
+    avatar?: string;
+}
+export declare class ChangePasswordDto {
+    oldPassword: string;
+    newPassword: string;
+}

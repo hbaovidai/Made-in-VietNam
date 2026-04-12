@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../components/PageHeader';
-import { FileText, Download, ShieldCheck, CheckCircle2, ChevronRight, Search, Filter } from 'lucide-react';
+import { FileText, Download, ShieldCheck, CheckCircle2, ChevronRight, Search, Filter, Loader2 } from 'lucide-react';
+import { api } from '../lib/api';
 
 export function Reports() {
   const { t } = useTranslation();
-  const reports = [
-    { id: 1, title: "Textile Industry Audit Report 2026", type: t('industry_report'), date: "Mar 20, 2026", size: "4.2 MB", downloads: "1.2k" },
-    { id: 2, title: "Electronics Manufacturing Growth Analysis", type: t('market_analysis'), date: "Mar 15, 2026", size: "2.8 MB", downloads: "850" },
-    { id: 3, title: "Vietnam Logistics & Supply Chain Review", type: t('logistics'), date: "Mar 10, 2026", size: "5.1 MB", downloads: "2.1k" },
-    { id: 4, title: "Sustainable Sourcing Trends in Vietnam", type: t('sustainability'), date: "Mar 05, 2026", size: "3.5 MB", downloads: "1.5k" },
-    { id: 5, title: "Vietnam Export Performance Q1 2026", type: t('economic_data'), date: "Feb 28, 2026", size: "1.9 MB", downloads: "3.2k" },
-    { id: 6, title: "Furniture Industry Supplier Directory", type: t('directory'), date: "Feb 20, 2026", size: "8.4 MB", downloads: "4.5k" },
-  ];
+  const [reports, setReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/reports').then((res) => {
+      setReports(res.data);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -20,7 +25,7 @@ export function Reports() {
         title={t('audited_supplier_reports')} 
         description={t('audited_supplier_reports_desc')}
         breadcrumbs={[{ label: t('reports') }]}
-        image="https://picsum.photos/seed/reports/400/600"
+        
       />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -71,27 +76,35 @@ export function Reports() {
         </div>
 
         {/* Report List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reports.map((report) => (
-            <div key={report.id} className="bg-white p-6 border border-slate-200 hover:border-primary transition-all group cursor-pointer shadow-sm hover:shadow-md">
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                  <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="animate-spin text-primary" size={48} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reports.map((report) => (
+              <div key={report.id} className="bg-white p-6 border border-slate-200 hover:border-primary transition-all group cursor-pointer shadow-sm hover:shadow-md">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                    <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{report.category || 'Report'}</span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{report.type}</span>
+                <h3 className="text-slate-900 font-bold group-hover:text-primary transition-colors mb-4 line-clamp-2">{report.title}</h3>
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
+                  <span>{new Date(report.createdAt).toLocaleDateString()}</span>
+                  <span>{report.price === 0 ? 'Free' : `$${report.price}`}</span>
+                </div>
+                <button 
+                  onClick={() => window.open(report.pdfUrl, '_blank')}
+                  className="w-full py-3 border border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all flex items-center justify-center gap-2"
+                >
+                  <Download size={14} /> {t('download_pdf')}
+                </button>
               </div>
-              <h3 className="text-slate-900 font-bold group-hover:text-primary transition-colors mb-4 line-clamp-2">{report.title}</h3>
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
-                <span>{report.date}</span>
-                <span>{report.size}</span>
-                <span>{report.downloads} {t('downloads').toLowerCase()}</span>
-              </div>
-              <button className="w-full py-3 border border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all flex items-center justify-center gap-2">
-                <Download size={14} /> {t('download_pdf')}
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Load More */}
         <div className="mt-16 text-center">

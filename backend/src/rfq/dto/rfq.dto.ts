@@ -10,6 +10,7 @@ export class CreateRFQDto {
   @IsString() description: string;
   @IsString() @IsOptional() budget?: string;
   @IsString() destination: string;
+  @IsString() @IsOptional() contactEmail?: string;
   @IsString() expiresAt: string; // ISO date string
 }
 

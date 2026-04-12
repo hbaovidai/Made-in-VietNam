@@ -1,9 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Globe, MessageSquare, Send, CheckCircle2, Award, ShieldCheck, Users } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
+import { api } from '../lib/api';
+import { useToast } from '../components/ui/Toast';
 
 export function AboutContact() {
   const { t } = useTranslation();
+  const { addToast } = useToast();
+  const [form, setForm] = useState({ fullName: '', email: '', subject: '', message: '' });
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.fullName || !form.email || !form.subject || !form.message) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng điền đầy đủ thông tin' });
+      return;
+    }
+    setSending(true);
+    try {
+      await api.post('/contact', form);
+      addToast({ type: 'success', title: 'Thành công', message: 'Tin nhắn đã được gửi! Chúng tôi sẽ phản hồi sớm nhất.' });
+      setForm({ fullName: '', email: '', subject: '', message: '' });
+    } catch (e) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể gửi tin nhắn. Vui lòng thử lại.' });
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -89,27 +112,21 @@ export function AboutContact() {
             </div>
             <div className="space-y-8">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
-                  <Phone size={24} />
-                </div>
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0"><Phone size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('call_us')}</div>
                   <div className="text-lg font-bold">+84 (28) 1234 5678</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-viet-gold shrink-0">
-                  <Mail size={24} />
-                </div>
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-viet-gold shrink-0"><Mail size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('email_us')}</div>
                   <div className="text-lg font-bold">support@madeinvietnam.com</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-blue-400 shrink-0">
-                  <MapPin size={24} />
-                </div>
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-blue-400 shrink-0"><MapPin size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('visit_us')}</div>
                   <div className="text-lg font-bold">{t('footer_address')}</div>
@@ -118,26 +135,26 @@ export function AboutContact() {
             </div>
           </div>
           <div className="lg:w-2/3 p-12 md:p-16">
-            <form className="grid md:grid-cols-2 gap-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="grid md:grid-cols-2 gap-8" onSubmit={handleSubmit}>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">{t('full_name_label')}</label>
-                <input type="text" placeholder={t('full_name_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+                <input type="text" placeholder={t('full_name_placeholder')} value={form.fullName} onChange={(e) => setForm({...form, fullName: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">{t('email_address_label')}</label>
-                <input type="email" placeholder={t('email_address_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+                <input type="email" placeholder={t('email_address_placeholder')} value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-bold text-slate-700">{t('subject_label')}</label>
-                <input type="text" placeholder={t('subject_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+                <input type="text" placeholder={t('subject_placeholder')} value={form.subject} onChange={(e) => setForm({...form, subject: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-bold text-slate-700">{t('message_label')}</label>
-                <textarea rows={5} placeholder={t('message_placeholder')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" />
+                <textarea rows={5} placeholder={t('message_placeholder')} value={form.message} onChange={(e) => setForm({...form, message: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" />
               </div>
               <div className="md:col-span-2">
-                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3">
-                  {t('send_message')}
+                <button type="submit" disabled={sending} className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3 disabled:opacity-50">
+                  {sending ? 'Đang gửi...' : t('send_message')}
                   <Send size={20} />
                 </button>
               </div>
@@ -148,3 +165,4 @@ export function AboutContact() {
     </div>
   );
 }
+

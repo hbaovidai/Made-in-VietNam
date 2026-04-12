@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, ShoppingBag, User, Menu, Globe, ChevronDown, MessageSquare, ClipboardList, ShoppingCart, Smartphone, HelpCircle, ShieldCheck, X, ChevronRight, Home, Package, FileText, BarChart3, Shield } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, Globe, ChevronDown, MessageSquare, ClipboardList, ShoppingCart, Smartphone, HelpCircle, ShieldCheck, X, ChevronRight, Home, Package, FileText, BarChart3, Shield, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { NavDropdown } from './NavDropdown';
 import { MegaMenu } from './MegaMenu';
 import { CategoryMegaMenu } from './categories/CategoryMegaMenu';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../lib/api';
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { t, i18n } = useTranslation();
@@ -16,7 +17,47 @@ export function Header() {
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = React.useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = React.useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState(false);
+  const [isNotifOpen, setIsNotifOpen] = React.useState(false);
+  const [notifications, setNotifications] = React.useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = React.useState(0);
+  const [cartCount, setCartCount] = React.useState(0);
   const location = useLocation();
+
+  // Fetch notification unread count + inquiry basket count
+  React.useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      api.get(`/notifications/${user.id}/unread-count`)
+        .then(res => setUnreadCount(res.data?.count || 0))
+        .catch(() => {});
+      api.get(`/inquiry-basket/${user.id}`)
+        .then(res => setCartCount(res.data?.items?.length || 0))
+        .catch(() => {});
+    }
+  }, [isAuthenticated, user?.id, location.pathname]);
+
+  const loadNotifications = async () => {
+    if (!user?.id) return;
+    try {
+      const res = await api.get(`/notifications/${user.id}`);
+      setNotifications(res.data || []);
+    } catch (e) {}
+  };
+
+  const toggleNotifDropdown = async () => {
+    if (!isNotifOpen) {
+      await loadNotifications();
+    }
+    setIsNotifOpen(!isNotifOpen);
+  };
+
+  const markAllRead = async () => {
+    if (!user?.id) return;
+    try {
+      await api.put(`/notifications/${user.id}/read-all`);
+      setUnreadCount(0);
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    } catch (e) {}
+  };
 
   // Close mobile menu on route change
   React.useEffect(() => {
@@ -48,8 +89,6 @@ export function Header() {
         { label: t('supplier_directory'), href: "/suppliers" },
         { label: t('verified_suppliers'), href: "/suppliers?verified=true" },
         { label: t('audited_factories'), href: "/suppliers?audited=true" },
-        { label: t('trade_assurance'), href: "/services/trade-assurance" },
-        { label: t('supplier_membership'), href: "/services/membership" },
       ]
     },
     {
@@ -65,8 +104,6 @@ export function Header() {
       title: t('resources'),
       links: [
         { label: t('seller_guide'), href: "/help/seller-guide" },
-        { label: t('help_center'), href: "/help" },
-        { label: t('contact_support'), href: "/contact" },
       ]
     }
   ];
@@ -77,7 +114,6 @@ export function Header() {
       links: [
         { label: t('new_user_guide'), href: "/help/user-guide" },
         { label: t('audited_suppliers_reports'), href: "/reports" },
-        { label: t('meet_suppliers'), href: "/events" },
         { label: t('secured_trading_service'), href: "/services/secured-trading" },
         { label: t('buyer_center'), href: "/dashboard/buyer" },
         { label: t('contact_us'), href: "/contact" },
@@ -105,12 +141,13 @@ export function Header() {
     const handleClickOutside = () => {
       setIsSearchDropdownOpen(false);
       setIsLangDropdownOpen(false);
+      setIsNotifOpen(false);
     };
-    if (isSearchDropdownOpen || isLangDropdownOpen) {
+    if (isSearchDropdownOpen || isLangDropdownOpen || isNotifOpen) {
       window.addEventListener('click', handleClickOutside);
     }
     return () => window.removeEventListener('click', handleClickOutside);
-  }, [isSearchDropdownOpen, isLangDropdownOpen]);
+  }, [isSearchDropdownOpen, isLangDropdownOpen, isNotifOpen]);
 
   /* ═══════════════════════════════════════════ */
   /* Mobile menu link groups                     */
@@ -131,7 +168,7 @@ export function Header() {
         { icon: <ClipboardList size={18} />, label: t('post_rfQ'), href: "/rfq" },
         { icon: <ShieldCheck size={18} />, label: t('verify_qr_short', 'Xác nhận hàng giả'), href: "/verify" },
         { icon: <Shield size={18} />, label: t('trade_assurance'), href: "/services/trade-assurance" },
-        { icon: <MessageSquare size={18} />, label: t('messages'), href: "/dashboard/buyer/messages" },
+        { icon: <MessageSquare size={18} />, label: t('contact'), href: user?.role === 'SUPPLIER' ? "/dashboard/supplier/messages" : "/dashboard/buyer/messages" },
       ]
     },
     {
@@ -196,7 +233,7 @@ export function Header() {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex-1 flex items-center px-4 bg-transparent">
                 <Search size={22} className="text-[#9B7A4F] mr-3 shrink-0" strokeWidth={2.5} />
                 <input
@@ -229,22 +266,62 @@ export function Header() {
               )}
             </div>
 
-            <Link to="/verify" className="flex flex-col items-center gap-1 text-primary hover:text-red-700 group px-2">
+            <Link to="/verify" className="p-2 text-primary hover:text-red-700 hover:bg-slate-50 rounded-full transition-colors relative group" title={t('verify_qr_short', 'Xác nhận Hàng giả')}>
               <ShieldCheck size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-bold whitespace-nowrap">{t('verify_qr_short', 'Xác nhận Hàng giả')}</span>
             </Link>
 
             <div className="flex items-center gap-1">
               <Link to="/rfq" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
                 <ClipboardList size={20} />
               </Link>
-              <Link to="/dashboard/buyer/messages" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('dashboard_messages')}>
+              <Link to={user?.role === 'SUPPLIER' ? "/dashboard/supplier/messages" : "/dashboard/buyer/messages"} className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('contact')}>
                 <MessageSquare size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full ring-2 ring-white" />
               </Link>
+
+              {/* Notification Bell */}
+              {isAuthenticated && (
+                <div className="relative">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
+                    className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative"
+                    title="Thông báo"
+                  >
+                    <Bell size={20} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center ring-2 ring-white px-1">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  {isNotifOpen && (
+                    <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden z-[100]" onClick={(e) => e.stopPropagation()}>
+                      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                        <h4 className="font-bold text-sm text-slate-900">Thông báo</h4>
+                        {unreadCount > 0 && (
+                          <button onClick={markAllRead} className="text-xs text-primary font-bold hover:underline">Đánh dấu tất cả đã đọc</button>
+                        )}
+                      </div>
+                      <div className="max-h-72 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="p-8 text-center text-sm text-slate-400">Không có thông báo</div>
+                        ) : notifications.slice(0, 10).map((notif: any) => (
+                          <div key={notif.id} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
+                            <div className="text-sm font-bold text-slate-900">{notif.title}</div>
+                            <div className="text-xs text-slate-500 mt-1 line-clamp-2">{notif.message}</div>
+                            <div className="text-[10px] text-slate-400 mt-2">{new Date(notif.createdAt).toLocaleDateString()}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket')}>
                 <ShoppingCart size={20} />
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">3</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">{cartCount}</span>
+                )}
               </Link>
             </div>
 
@@ -261,22 +338,25 @@ export function Header() {
                     <span className="text-[10px] text-primary font-medium">{user.role === 'BUYER' ? t('buyer') : t('supplier')}</span>
                   </div>
                 </Link>
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 hidden group-hover:block z-[100]">
-                  <Link to={`/dashboard/${user.role.toLowerCase()}`} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors block text-slate-700 font-medium">Bảng điều khiển</Link>
-                  <button onClick={logout} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors font-medium">Đăng xuất</button>
+                <div className="absolute top-full right-0 pt-2 hidden group-hover:block z-[100]">
+                  <div className="w-48 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2">
+                    <Link to={`/dashboard/${user.role.toLowerCase()}`} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors block text-slate-700 font-medium">Bảng điều khiển</Link>
+                    <button onClick={logout} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors font-medium">Đăng xuất</button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-3 group relative cursor-pointer">
-                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 group-hover:bg-slate-200 text-slate-600 transition-colors">
+              <div className="flex items-center gap-2 group relative">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-600 transition-colors">
                   <User size={18} />
                 </div>
-                <div className="flex flex-col items-start justify-center">
-                  <Link to="/login" className="text-xs font-medium text-slate-600 hover:text-primary">
+                <div className="flex items-center justify-center text-sm font-bold">
+                  <Link to="/login" className="text-slate-600 hover:text-primary whitespace-nowrap transition-colors">
                     {t('sign_in')}
                   </Link>
-                  <Link to="/register" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
-                    {t('join_free')}
+                  <span className="mx-2 text-slate-300">/</span>
+                  <Link to="/register" className="text-primary hover:text-primary-dark whitespace-nowrap transition-colors">
+                    {t('register')}
                   </Link>
                 </div>
               </div>
@@ -295,7 +375,9 @@ export function Header() {
             {/* Cart icon */}
             <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary transition-colors relative">
               <ShoppingCart size={22} />
-              <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>
+              )}
             </Link>
             {/* Menu toggle */}
             <button
@@ -347,7 +429,7 @@ export function Header() {
             </div>
             <nav className="flex items-center gap-8 ml-8">
               <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-primary">{t('top_ranking_products')}</Link>
-              <Link to="/video" className="text-sm font-bold text-slate-700 hover:text-primary">{t('video_channel')}</Link>
+              <Link to="/reports" className="text-sm font-bold text-slate-700 hover:text-primary">{t('audited_suppliers_reports')}</Link>
               <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-primary">{t('secured_trading_service')}</Link>
             </nav>
           </div>

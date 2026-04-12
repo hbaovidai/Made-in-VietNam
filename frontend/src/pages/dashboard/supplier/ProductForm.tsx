@@ -66,7 +66,7 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
   const handleImageMockUpload = () => {
     addToast({ type: 'info', title: t('uploading_image') });
     setTimeout(() => {
-      setFormData((prev) => ({ ...prev, image: 'https://picsum.photos/seed/' + Math.random() + '/600/600' }));
+      setFormData((prev) => ({ ...prev, image: 'https://placehold.co/600x600/e2e8f0/0f172a?text=Product+Image' }));
       addToast({ type: 'success', title: t('complete'), message: t('upload_image_success') });
     }, 1000);
   };

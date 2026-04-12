@@ -13,16 +13,16 @@ export declare class BatchesController {
             qrCodes: number;
         };
     } & {
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.BatchStatus;
+        supplierId: string;
+        expiryDate: Date;
         productId: string;
         batchNumber: string;
         manufactureDate: Date;
-        expiryDate: Date;
         quantity: number;
-        id: string;
-        supplierId: string;
-        status: import("@prisma/client").$Enums.BatchStatus;
         qrGenerated: boolean;
-        createdAt: Date;
     })[]>;
     getSupplierQRCodes(supplierId: string): Promise<({
         batch: {
@@ -31,23 +31,23 @@ export declare class BatchesController {
                 slug: string;
             };
         } & {
+            id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.BatchStatus;
+            supplierId: string;
+            expiryDate: Date;
             productId: string;
             batchNumber: string;
             manufactureDate: Date;
-            expiryDate: Date;
             quantity: number;
-            id: string;
-            supplierId: string;
-            status: import("@prisma/client").$Enums.BatchStatus;
             qrGenerated: boolean;
-            createdAt: Date;
         };
     } & {
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.QRStatus;
         batchId: string;
         code: string;
-        id: string;
-        status: import("@prisma/client").$Enums.QRStatus;
-        createdAt: Date;
         secretHash: string;
         scanCount: number;
         maxScans: number;
@@ -55,16 +55,16 @@ export declare class BatchesController {
     createBatch(body: CreateBatchDto & {
         supplierId: string;
     }): Promise<{
+        id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.BatchStatus;
+        supplierId: string;
+        expiryDate: Date;
         productId: string;
         batchNumber: string;
         manufactureDate: Date;
-        expiryDate: Date;
         quantity: number;
-        id: string;
-        supplierId: string;
-        status: import("@prisma/client").$Enums.BatchStatus;
         qrGenerated: boolean;
-        createdAt: Date;
     }>;
     generateQRCodes(body: GenerateQRCodesDto & {
         supplierId: string;
@@ -80,48 +80,48 @@ export declare class BatchesController {
         warning: string;
         data: {
             id: string;
-            supplierId: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
             name: string;
             slug: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
+            updatedAt: Date;
             description: string | null;
+            supplierId: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
-            updatedAt: Date;
+            categoryId: string;
         };
     } | {
         valid: boolean;
         data: {
             product: {
                 id: string;
-                supplierId: string;
-                status: import("@prisma/client").$Enums.ProductStatus;
-                createdAt: Date;
                 name: string;
                 slug: string;
+                createdAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
+                updatedAt: Date;
                 description: string | null;
+                supplierId: string;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
                 unit: string;
                 moq: number;
                 moqUnit: string;
-                categoryId: string;
                 images: string[];
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
-                updatedAt: Date;
+                categoryId: string;
             };
             supplier: {
                 companyName: string;

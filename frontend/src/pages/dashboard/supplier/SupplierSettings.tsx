@@ -1,20 +1,70 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Building2, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../components/ui/Toast';
+import { api } from '../../../lib/api';
 
 export function SupplierSettings() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { addToast } = useToast();
   const nameParts = (user?.fullName || '').split(' ');
   const lastName = nameParts.pop() || '';
   const firstName = nameParts.join(' ') || '';
 
+  const [profileForm, setProfileForm] = useState({
+    firstName,
+    lastName,
+    email: user?.email || '',
+    phone: user?.phone || '',
+  });
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+  });
+
+  const [saving, setSaving] = useState(false);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await api.put(`/auth/profile/${user.id}`, {
+        fullName: `${profileForm.firstName} ${profileForm.lastName}`.trim(),
+        phone: profileForm.phone,
+      });
+      addToast({ type: 'success', title: t('save_changes'), message: 'Đã cập nhật thông tin cá nhân' });
+    } catch (e) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật thông tin' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!user || !passwordForm.currentPassword || !passwordForm.newPassword) return;
+    if (passwordForm.newPassword.length < 6) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+      return;
+    }
+    try {
+      await api.put(`/auth/password/${user.id}`, {
+        oldPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      setPasswordForm({ currentPassword: '', newPassword: '' });
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã đổi mật khẩu' });
+    } catch (e: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: e.response?.data?.message || 'Không thể đổi mật khẩu' });
+    }
+  };
+
   const settingsSections = [
     { icon: <Building2 size={20} className="text-blue-500" />, title: t('setting_company_info'), desc: t('setting_company_info_desc') },
     { icon: <Mail size={20} className="text-orange-500" />, title: t('setting_email_notif'), desc: t('setting_email_notif_desc') },
-    { icon: <Lock size={20} className="text-red-500" />, title: t('setting_security'), desc: t('setting_security_desc') },
     { icon: <CreditCard size={20} className="text-green-500" />, title: t('setting_payment'), desc: t('setting_payment_desc') },
     { icon: <Globe size={20} className="text-purple-500" />, title: t('setting_lang_region'), desc: t('setting_lang_region_desc') },
   ];
@@ -24,8 +74,12 @@ export function SupplierSettings() {
       title={t('account_settings_title')} 
       subtitle={t('account_settings_subtitle')}
       actions={
-        <button className="bg-primary text-white px-8 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20 flex items-center gap-2">
-          <Save size={14} /> {t('save_changes')}
+        <button 
+          onClick={handleSaveProfile}
+          disabled={saving}
+          className="bg-primary text-white px-8 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20 flex items-center gap-2 disabled:opacity-50"
+        >
+          <Save size={14} /> {saving ? 'Đang lưu...' : t('save_changes')}
         </button>
       }
     >
@@ -39,52 +93,38 @@ export function SupplierSettings() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('first_name')}</label>
-                <input type="text" defaultValue={firstName} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <input type="text" value={profileForm.firstName} onChange={(e) => setProfileForm({...profileForm, firstName: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('last_name')}</label>
-                <input type="text" defaultValue={lastName} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <input type="text" value={profileForm.lastName} onChange={(e) => setProfileForm({...profileForm, lastName: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('email_address')}</label>
-              <input type="email" defaultValue={user?.email || ''} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+              <input type="email" value={profileForm.email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 text-sm outline-none text-slate-500 cursor-not-allowed" />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>
-              <input type="tel" defaultValue="+84 123 456 789" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+              <input type="tel" value={profileForm.phone} onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
             </div>
           </div>
 
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Globe size={20} className="text-primary" /> {t('location_preferences')}
+              <Lock size={20} className="text-primary" /> Đổi mật khẩu
             </h3>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('country_region')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
-                <option>Vietnam</option>
-                <option>United States</option>
-                <option>China</option>
-                <option>Germany</option>
-              </select>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu hiện tại</label>
+              <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder="Nhập mật khẩu hiện tại" />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('preferred_language')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
-                <option>English</option>
-                <option>Vietnamese</option>
-                <option>Chinese</option>
-              </select>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu mới</label>
+              <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('currency_label')}</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary">
-                <option>USD ($)</option>
-                <option>VND (₫)</option>
-                <option>EUR (€)</option>
-              </select>
-            </div>
+            <button type="button" onClick={handleChangePassword} className="bg-slate-900 text-white px-6 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
+              Cập nhật mật khẩu
+            </button>
           </div>
         </div>
 

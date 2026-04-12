@@ -1,16 +1,34 @@
-import React from 'react';
-import { Package, MessageSquare, FileText, TrendingUp, ChevronRight, Star, ArrowUpRight, Eye, Users, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, MessageSquare, FileText, TrendingUp, ChevronRight, Star, ArrowUpRight, Eye, Users, Award, QrCode } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
 
 export function SupplierOverview() {
   const { t } = useTranslation();
 
+  const { user } = useAuth();
+  const [statsData, setStatsData] = useState({
+    products: 0,
+    batches: 0,
+    qrCodes: 0,
+    totalViews: 0,
+  });
+
+  useEffect(() => {
+    if (user?.supplier?.id) {
+      api.get(`/suppliers/${user.supplier.id}/stats`)
+        .then(res => setStatsData(res.data))
+        .catch(err => console.error('Failed to fetch stats', err));
+    }
+  }, [user]);
+
   const stats = [
-    { label: t('active_products'), value: "48", icon: <Package className="text-blue-500" /> },
-    { label: t('new_inquiries'), value: "15", icon: <MessageSquare className="text-orange-500" /> },
-    { label: t('profile_views'), value: "1.2k", icon: <Eye className="text-yellow-500" /> },
-    { label: t('total_leads'), value: "85", icon: <Users className="text-green-500" /> },
+    { label: t('active_products'), value: statsData.products.toString(), icon: <Package className="text-blue-500" /> },
+    { label: t('batch_mgmt_title') || 'Lô hàng', value: statsData.batches.toString(), icon: <FileText className="text-orange-500" /> },
+    { label: t('qr_management') || 'Mã QR đã tạo', value: statsData.qrCodes.toString(), icon: <QrCode className="text-green-500" /> },
+    { label: t('profile_views'), value: statsData.totalViews.toString(), icon: <Eye className="text-yellow-500" /> },
   ];
 
   const recentInquiries = [
@@ -26,7 +44,7 @@ export function SupplierOverview() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{t('supplier_dashboard_title')}</h1>
-          <p className="text-slate-500 text-sm">{t('supplier_welcome')}</p>
+          <p className="text-slate-500 text-sm">{t('supplier_welcome', { name: user?.fullName || '' })}</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:gap-4">
           <Link to="/dashboard/supplier/products" className="bg-white text-slate-900 border border-slate-200 px-6 py-2 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs">

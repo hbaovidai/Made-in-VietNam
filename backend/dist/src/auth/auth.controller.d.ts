@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto } from './dto/auth.dto';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -50,5 +50,21 @@ export declare class AuthController {
             logo: string | null;
             isVerified: boolean;
         } | null;
+    }>;
+    updateProfile(id: string, dto: UpdateProfileDto): Promise<{
+        message: string;
+        user: {
+            id: string;
+            createdAt: Date;
+            email: string;
+            role: import("@prisma/client").$Enums.Role;
+            fullName: string;
+            phone: string | null;
+            avatar: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+        };
+    }>;
+    changePassword(id: string, dto: ChangePasswordDto): Promise<{
+        message: string;
     }>;
 }

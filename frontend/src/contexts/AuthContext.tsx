@@ -6,6 +6,7 @@ export interface User {
   email: string;
   fullName: string;
   role: 'BUYER' | 'SUPPLIER';
+  phone?: string | null;
   avatar?: string | null;
   supplier?: {
     id: string;
@@ -25,14 +26,29 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    // Eagerly load from localStorage so it's available on first render
+    const storedUser = localStorage.getItem('mivn5_user');
+    if (storedUser) {
+      try {
+        return JSON.parse(storedUser);
+      } catch (err) {
+        return null;
+      }
+    }
+    return null;
+  });
 
-  // Lưu tạm thông tin đăng nhập trong LocalStorage (sẽ cài JWT thay thế khi có cơ hội)
+  // Ensure hydration matches or any updates are tracked
   useEffect(() => {
     const storedUser = localStorage.getItem('mivn5_user');
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        // Only update if it's different to prevent infinite re-renders
+        if (!user || user.id !== parsed.id) {
+          setUser(parsed);
+        }
       } catch (err) {
         localStorage.removeItem('mivn5_user');
       }

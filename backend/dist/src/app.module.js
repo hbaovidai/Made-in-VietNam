@@ -18,6 +18,11 @@ const rfq_module_1 = require("./rfq/rfq.module");
 const messages_module_1 = require("./messages/messages.module");
 const inquiry_basket_module_1 = require("./inquiry-basket/inquiry-basket.module");
 const batches_module_1 = require("./batches/batches.module");
+const users_module_1 = require("./users/users.module");
+const notifications_module_1 = require("./notifications/notifications.module");
+const contact_module_1 = require("./contact/contact.module");
+const memberships_module_1 = require("./memberships/memberships.module");
+const reports_module_1 = require("./reports/reports.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -34,6 +39,11 @@ exports.AppModule = AppModule = __decorate([
             messages_module_1.MessagesModule,
             inquiry_basket_module_1.InquiryBasketModule,
             batches_module_1.BatchesModule,
+            users_module_1.UsersModule,
+            notifications_module_1.NotificationsModule,
+            contact_module_1.ContactModule,
+            memberships_module_1.MembershipsModule,
+            reports_module_1.ReportsModule,
         ],
     })
 ], AppModule);

@@ -19,10 +19,10 @@ export declare class InquiryBasketService {
             };
         } & {
             id: string;
-            quantity: number;
             productId: string;
-            note: string | null;
+            quantity: number;
             basketId: string;
+            note: string | null;
             addedAt: Date;
         })[];
     } & {
@@ -33,10 +33,10 @@ export declare class InquiryBasketService {
     }>;
     addItem(userId: string, dto: AddInquiryItemDto): Promise<{
         id: string;
-        quantity: number;
         productId: string;
-        note: string | null;
+        quantity: number;
         basketId: string;
+        note: string | null;
         addedAt: Date;
     }>;
     removeItem(itemId: string, userId: string): Promise<{

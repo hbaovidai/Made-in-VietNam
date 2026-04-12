@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../contexts/AuthContext';
@@ -68,7 +68,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
     { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
-    { icon: <MessageSquare size={20} />, label: t('messages'), path: '/dashboard/buyer/messages' },
+    { icon: <Clock size={20} />, label: t('history', 'Lịch sử duyệt'), path: '/dashboard/buyer/history' },
+    { icon: <MessageSquare size={20} />, label: t('contact'), path: '/dashboard/buyer/messages' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
@@ -91,7 +92,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
     { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
-    { icon: <MessageSquare size={20} />, label: t('messages'), path: '/dashboard/buyer/messages' },
+    { icon: <MessageSquare size={20} />, label: t('contact'), path: '/dashboard/buyer/messages' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
@@ -109,10 +110,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
   const sidebarContent = (
     <>
       <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-viet-gold">
-            <Globe size={18} />
-          </div>
+        <Link to="/" className="flex items-center gap-1" onClick={closeSidebar}>
+          <img src="/logoVIE.png" alt="Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
           <div className="flex flex-row items-center">
             <span className="text-sm font-bold text-primary leading-none tracking-tight">VIE</span>
             <span className="text-sm font-bold text-slate-900 leading-none tracking-tight">PRODUCT</span>
@@ -153,7 +152,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
             </div>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => logout()}
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"
         >

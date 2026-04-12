@@ -25,7 +25,7 @@ let ProductsController = class ProductsController {
         return this.productsService.findAll(query);
     }
     findBySlug(slug) {
-        return this.productsService.findBySlug(slug);
+        return this.productsService.findByIdOrSlug(slug);
     }
     findRelated(id) {
         return this.productsService.findRelated(id);

@@ -111,6 +111,12 @@ export declare class SuppliersController {
         isVerified: boolean;
         userId: string;
     }>;
+    getStats(id: string): Promise<{
+        products: number;
+        batches: number;
+        qrCodes: number;
+        totalViews: number;
+    }>;
     update(id: string, dto: UpdateSupplierDto): Promise<{
         products: ({
             category: {

@@ -7,10 +7,21 @@ import { useAuth } from '../../../contexts/AuthContext';
 export function BuyerOverview() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const [rfqCount, setRfqCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (user?.id) {
+      import('../../../lib/api').then(({ api }) => {
+        api.get(`/rfqs/buyer/${user.id}`)
+          .then(res => setRfqCount(res.data.length || 0))
+          .catch(err => console.error(err));
+      });
+    }
+  }, [user]);
 
   const stats = [
-    { label: t('active_rfqs'), value: "12", icon: <FileText className="text-blue-500" /> },
-    { label: t('new_messages'), value: "5", icon: <MessageSquare className="text-orange-500" /> },
+    { label: t('active_rfqs'), value: rfqCount.toString(), icon: <FileText className="text-blue-500" /> },
+    { label: t('new_messages'), value: "0", icon: <MessageSquare className="text-orange-500" /> },
     { label: t('saved_products'), value: "24", icon: <Star className="text-yellow-500" /> },
     { label: t('inquiry_basket_stat'), value: "8", icon: <ShoppingCart className="text-green-500" /> },
   ];
@@ -85,7 +96,9 @@ export function BuyerOverview() {
               {[1, 2].map((i) => (
                 <div key={i} className="flex gap-4 group cursor-pointer">
                   <div className="w-20 h-20 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-100">
-                    <img src={`https://picsum.photos/seed/supplier${i}/200/200`} alt="Supplier" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                    <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <span className="text-xl font-black text-slate-400">VGT</span>
+                    </div>
                   </div>
                   <div className="flex flex-col justify-center">
                     <h3 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Vietnam Global Trade Co.</h3>

@@ -1,0 +1,112 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class UsersService {
+  constructor(private prisma: PrismaService) {}
+
+  // ==================== SAVED PRODUCTS ====================
+
+  async getSavedProducts(userId: string) {
+    const saved = await this.prisma.savedProduct.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            minPrice: true,
+            maxPrice: true,
+            currency: true,
+            images: true,
+            slug: true,
+          }
+        }
+      }
+    });
+    return saved.map((s: any) => s.product);
+  }
+
+  async saveProduct(userId: string, productId: string) {
+    try {
+      return await this.prisma.savedProduct.create({
+        data: { userId, productId }
+      });
+    } catch (e) {
+      // Ignored if already saved
+      return { success: true };
+    }
+  }
+
+  async unsaveProduct(userId: string, productId: string) {
+    await this.prisma.savedProduct.deleteMany({
+      where: { userId, productId }
+    });
+    return { success: true };
+  }
+
+  async clearSavedProducts(userId: string) {
+    await this.prisma.savedProduct.deleteMany({
+      where: { userId }
+    });
+    return { success: true };
+  }
+
+  // ==================== VIEW HISTORY ====================
+
+  async getViewHistory(userId: string) {
+    const history = await this.prisma.viewHistory.findMany({
+      where: { userId },
+      orderBy: { viewedAt: 'desc' },
+      distinct: ['productId'],
+      take: 20, // Keep it to recent 20
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            minPrice: true,
+            maxPrice: true,
+            currency: true,
+            images: true,
+            slug: true,
+          }
+        }
+      }
+    });
+    return history.map((h: any) => ({ ...h.product, historyId: h.id, viewedAt: h.viewedAt }));
+  }
+
+  async recordView(userId: string, productId: string) {
+    const existing = await this.prisma.viewHistory.findFirst({
+      where: { userId, productId },
+      orderBy: { viewedAt: 'desc' }
+    });
+
+    if (existing) {
+      return this.prisma.viewHistory.update({
+        where: { id: existing.id },
+        data: { viewedAt: new Date() }
+      });
+    }
+
+    return this.prisma.viewHistory.create({
+      data: { userId, productId }
+    });
+  }
+
+  async deleteHistoryItem(userId: string, historyId: string) {
+    await this.prisma.viewHistory.deleteMany({
+      where: { id: historyId, userId }
+    });
+    return { success: true };
+  }
+
+  async clearHistory(userId: string) {
+    await this.prisma.viewHistory.deleteMany({
+      where: { userId }
+    });
+    return { success: true };
+  }
+}

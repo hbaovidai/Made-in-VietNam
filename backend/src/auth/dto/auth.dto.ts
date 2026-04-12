@@ -34,3 +34,27 @@ export class LoginDto {
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;
 }
+
+export class UpdateProfileDto {
+  @IsString()
+  @IsOptional()
+  fullName?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @IsNotEmpty({ message: 'Mật khẩu cũ không được để trống' })
+  oldPassword: string;
+
+  @IsString()
+  @MinLength(6, { message: 'Mật khẩu mới tối thiểu 6 ký tự' })
+  newPassword: string;
+}

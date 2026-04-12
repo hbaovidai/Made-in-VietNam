@@ -1,15 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Send, Info, CheckCircle2, ShieldCheck, Zap, Clock, MessageSquare } from 'lucide-react';
+import { Send, Info, CheckCircle2, ShieldCheck, Zap, Clock, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../contexts/AuthContext';
+import { api } from '../lib/api';
 
 export function RFQ() {
   const { t } = useTranslation();
-  const [submitted, setSubmitted] = React.useState(false);
+  const { user } = useAuth();
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [products, setProducts] = useState<any[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    productName: '',
+    category: 'General', // Default, hidden from UI
+    quantity: '',
+    quantityUnit: 'pieces',
+    description: '',
+    destination: '',
+    contactEmail: '',
+  });
+
+  React.useEffect(() => {
+    api.get('/products?limit=100')
+      .then(res => setProducts(res.data.data || []))
+      .catch(err => console.error('Failed to load products', err));
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    // Auto-fill category based on selected product
+    if (name === 'productName') {
+      const selected = products.find(p => p.name === value);
+      setFormData({
+        ...formData,
+        productName: value,
+        category: selected?.category?.name || 'General'
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!user || user.role !== 'BUYER') {
+      setErrorMsg('Bạn phải đăng nhập tài khoản Buyer mới có thể đăng RFQ.');
+      return;
+    }
+    
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      // Set expiresAt to 30 days from now 
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30);
+      
+      await api.post('/rfqs', {
+        ...formData,
+        quantity: parseInt(formData.quantity, 10),
+        expiresAt: expiresAt.toISOString(),
+        buyerId: user.id
+      });
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -62,23 +124,25 @@ export function RFQ() {
                     <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">1</div>
                     <h2 className="text-xl font-bold text-slate-900">{t('product_information')}</h2>
                   </div>
+                  {errorMsg && (
+                    <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-bold border border-red-100 flex items-center justify-center">
+                      <AlertCircle size={16} className="mr-2" /> {errorMsg}
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-sm font-bold text-slate-700">{t('product_name_label')}</label>
-                      <input
+                      <select
                         required
-                        type="text"
-                        placeholder={t('product_name_placeholder')}
+                        name="productName"
+                        value={formData.productName}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">{t('category_label')}</label>
-                      <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
-                        <option>{t('select_category_placeholder')}</option>
-                        <option>{t('agriculture')}</option>
-                        <option>{t('textiles_garments')}</option>
-                        <option>{t('furniture_decor')}</option>
+                      >
+                        <option value="">-- Chọn sản phẩm từ hệ thống --</option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.name}>{p.name}</option>
+                        ))}
                       </select>
                     </div>
                     <div className="space-y-2">
@@ -86,14 +150,23 @@ export function RFQ() {
                       <div className="flex gap-2">
                         <input
                           required
+                          name="quantity"
+                          value={formData.quantity}
+                          onChange={handleChange}
                           type="number"
+                          min="1"
                           placeholder={t('quantity_placeholder')}
                           className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                         />
-                        <select className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
-                          <option>kg</option>
-                          <option>pieces</option>
-                          <option>tons</option>
+                        <select 
+                          name="quantityUnit"
+                          value={formData.quantityUnit}
+                          onChange={handleChange}
+                          className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        >
+                          <option value="kg">kg</option>
+                          <option value="pieces">pieces</option>
+                          <option value="tons">tons</option>
                         </select>
                       </div>
                     </div>
@@ -110,6 +183,9 @@ export function RFQ() {
                     <label className="text-sm font-bold text-slate-700">{t('description_label')}</label>
                     <textarea
                       required
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
                       rows={5}
                       placeholder={t('description_placeholder')}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
@@ -117,19 +193,26 @@ export function RFQ() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">{t('estimated_budget_label')}</label>
-                      <input
-                        type="text"
-                        placeholder={t('budget_placeholder')}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700">{t('destination_country_label')}</label>
                       <input
                         required
                         type="text"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleChange}
                         placeholder={t('country_placeholder')}
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Email liên hệ</label>
+                      <input
+                        required
+                        type="email"
+                        name="contactEmail"
+                        value={formData.contactEmail}
+                        onChange={handleChange}
+                        placeholder="buyer@example.com"
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
@@ -140,10 +223,15 @@ export function RFQ() {
                 <div className="pt-6">
                   <button
                     type="submit"
-                    className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-xl hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3 group"
+                    disabled={loading}
+                    className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-xl hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary-dark/20 flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {t('submit_request')}
-                    <Send size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    {loading ? <Loader2 size={24} className="animate-spin" /> : (
+                      <>
+                        {t('submit_request')}
+                        <Send size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </>
+                    )}
                   </button>
                   <p className="text-center text-slate-400 text-sm mt-6">
                     {t('rfq_terms')}

@@ -1,6 +1,6 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,5 +19,15 @@ export class AuthController {
   @Get('profile/:id')
   getProfile(@Param('id') id: string) {
     return this.authService.getProfile(id);
+  }
+
+  @Put('profile/:id')
+  updateProfile(@Param('id') id: string, @Body() dto: UpdateProfileDto) {
+    return this.authService.updateProfile(id, dto);
+  }
+
+  @Put('password/:id')
+  changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(id, dto);
   }
 }

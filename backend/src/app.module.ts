@@ -9,6 +9,11 @@ import { RfqModule } from './rfq/rfq.module';
 import { MessagesModule } from './messages/messages.module';
 import { InquiryBasketModule } from './inquiry-basket/inquiry-basket.module';
 import { BatchesModule } from './batches/batches.module';
+import { UsersModule } from './users/users.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ContactModule } from './contact/contact.module';
+import { MembershipsModule } from './memberships/memberships.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -22,6 +27,11 @@ import { BatchesModule } from './batches/batches.module';
     MessagesModule,
     InquiryBasketModule,
     BatchesModule,
+    UsersModule,
+    NotificationsModule,
+    ContactModule,
+    MembershipsModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}

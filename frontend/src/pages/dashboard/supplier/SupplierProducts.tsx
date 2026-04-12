@@ -6,51 +6,59 @@ import { ConfirmDialog } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Badge } from '../../../components/ui/Badge';
+import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../../lib/api';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export function SupplierProducts() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { addToast } = useToast();
-  const { user } = useAuth();
   
-  const [productList, setProductList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchProducts = async () => {
-    if (!user?.supplier?.id) return;
-    setLoading(true);
-    try {
-      const res = await api.get(`/products?supplierId=${user.supplier.id}&limit=100`);
-      setProductList(res.data.data || []);
-    } catch (err) {
-      console.error('Failed to fetch products', err);
-    } finally {
-      setLoading(false);
+  // Dummy data set for UI demonstration
+  const dummyProducts = [
+    {
+      id: "P001",
+      name: "Động cơ điện công nghiệp 3 pha 15kW",
+      category: { name: "Máy móc & Thiết bị" },
+      minPrice: 12000000,
+      maxPrice: 15000000,
+      images: ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=300&q=80"],
+      status: "ACTIVE"
+    },
+    {
+      id: "P002",
+      name: "Tấm pin năng lượng mặt trời Mono 450W",
+      category: { name: "Năng lượng" },
+      minPrice: 2500000,
+      maxPrice: 2800000,
+      images: ["https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=300&q=80"],
+      status: "ACTIVE"
+    },
+    {
+      id: "P003",
+      name: "Bản mạch in PCBA nhiều lớp chuẩn công nghiệp",
+      category: { name: "Điện tử" },
+      minPrice: 50000,
+      maxPrice: 150000,
+      images: ["https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&q=80"],
+      status: "ACTIVE"
     }
-  };
+  ];
 
-  useEffect(() => {
-    fetchProducts();
-  }, [user]);
-  
-  // Modal states
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [productList, setProductList] = useState<any[]>(dummyProducts);
+  const [loading, setLoading] = useState(false);
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<any | null>(null);
 
   // Handlers
   const handleEdit = (product: any) => {
-    setEditingProduct(product);
-    setIsFormOpen(true);
+    navigate(`/dashboard/supplier/products/${product.id}/edit`);
   };
 
   const handleCreate = () => {
-    setEditingProduct(null);
-    setIsFormOpen(true);
+    navigate('/dashboard/supplier/products/add');
   };
 
   const handleDeleteClick = (product: any) => {
@@ -60,30 +68,12 @@ export function SupplierProducts() {
 
   const confirmDelete = async () => {
     if (productToDelete) {
-      try {
-        await api.delete(`/products/${productToDelete.id}`, { data: { supplierId: user?.supplier?.id } });
+      setTimeout(() => {
         setProductList((prev) => prev.filter((p) => p.id !== productToDelete.id));
-        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('delete_success', { name: productToDelete.name }) });
-      } catch (err) {
-        console.error(err);
-      }
+        addToast({ type: 'success', title: 'Thành công', message: `Đã xoá ${productToDelete.name}` });
+        setIsDeleteOpen(false);
+      }, 500);
     }
-  };
-
-  const saveProduct = async (formData: any) => {
-    try {
-      if (editingProduct) {
-        await api.put(`/products/${editingProduct.id}`, { ...formData, supplierId: user?.supplier?.id });
-        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('update_success', { name: formData.name }) });
-      } else {
-        await api.post('/products', { ...formData, supplierId: user?.supplier?.id });
-        addToast({ type: 'success', title: t('success') || 'Thành công', message: t('create_success', { name: formData.name }) });
-      }
-      fetchProducts();
-    } catch (err) {
-      console.error(err);
-    }
-    setIsFormOpen(false);
   };
 
   return (
@@ -207,13 +197,7 @@ export function SupplierProducts() {
         </>
       )}
 
-      {/* Forms and Dialogs */}
-      <ProductForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
-        product={editingProduct} 
-        onSave={saveProduct} 
-      />
+      {/* Dialogs */}
 
       <ConfirmDialog 
         isOpen={isDeleteOpen}

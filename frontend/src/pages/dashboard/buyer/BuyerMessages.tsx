@@ -1,113 +1,78 @@
 import React from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
-import { MessageSquare, ChevronRight, Search, Filter, MoreVertical, Send } from 'lucide-react';
+import { MessageSquare, Mail, Phone, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export function BuyerMessages() {
   const { t } = useTranslation();
 
-  const messages = [
-    { id: 1, sender: "Hanoi Textile Co.", lastMessage: "Yes, we can provide samples for your review. When would you like us to ship them?", time: "2 hours ago", unread: true, avatar: "HT" },
-    { id: 2, sender: "Vietnam Global Trade", lastMessage: "The quote for your RFQ #RFQ-002 has been updated. Please check the new pricing.", time: "5 hours ago", unread: false, avatar: "VG" },
-    { id: 3, sender: "Saigon Electronics", lastMessage: "We have received your inquiry. Our sales team will get back to you shortly.", time: "1 day ago", unread: false, avatar: "SE" },
-    { id: 4, sender: "Da Nang Furniture", lastMessage: "Thank you for your interest in our products. We are currently out of stock for that item.", time: "2 days ago", unread: false, avatar: "DF" },
+  const contactMethods = [
+    {
+      icon: <MessageSquare size={32} className="text-[#0068FF]" />,
+      title: 'Zalo',
+      description: 'Liên hệ nhanh với nhà cung cấp qua Zalo. Truy cập trang nhà cung cấp để lấy số điện thoại Zalo.',
+      action: 'Tìm nhà cung cấp',
+      href: '/suppliers',
+      color: 'bg-[#0068FF]/10 border-[#0068FF]/20',
+      btnColor: 'bg-[#0068FF] hover:bg-[#0055DD] text-white',
+    },
+    {
+      icon: <Mail size={32} className="text-orange-500" />,
+      title: 'Email',
+      description: 'Gửi email trực tiếp đến nhà cung cấp. Thông tin email hiển thị trên hồ sơ nhà cung cấp.',
+      action: 'Tìm nhà cung cấp',
+      href: '/suppliers',
+      color: 'bg-orange-50 border-orange-100',
+      btnColor: 'bg-orange-500 hover:bg-orange-600 text-white',
+    },
+    {
+      icon: <Phone size={32} className="text-green-500" />,
+      title: 'Điện thoại',
+      description: 'Gọi điện trực tiếp tới đường dây nóng của nhà cung cấp để trao đổi nhanh.',
+      action: 'Tìm nhà cung cấp',
+      href: '/suppliers',
+      color: 'bg-green-50 border-green-100',
+      btnColor: 'bg-green-500 hover:bg-green-600 text-white',
+    },
   ];
 
   return (
     <DashboardSection 
-      title={t('messages_title')} 
-      subtitle={t('messages_subtitle')}
-      actions={
-        <div className="flex gap-2">
-          <div className="relative">
-            <input type="text" placeholder={t('search_messages')} className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-primary" />
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
-          <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-primary transition-colors">
-            <Filter size={18} />
-          </button>
-        </div>
-      }
+      title="Liên hệ nhà cung cấp" 
+      subtitle="Liên hệ trực tiếp với nhà cung cấp qua Zalo, Email hoặc Điện thoại"
     >
-      <div className="flex flex-col lg:flex-row h-auto lg:h-[600px]">
-        {/* Message List */}
-        <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-y-auto divide-y divide-slate-50 max-h-[250px] lg:max-h-none">
-          {messages.map((msg) => (
-            <div key={msg.id} className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer group relative ${msg.unread ? "bg-blue-50/30" : ""}`}>
-              {msg.unread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs shrink-0">
-                  {msg.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className={`text-xs font-bold truncate ${msg.unread ? "text-slate-900" : "text-slate-700"}`}>{msg.sender}</div>
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest shrink-0">{msg.time}</div>
-                  </div>
-                  <div className={`text-[11px] line-clamp-2 leading-relaxed ${msg.unread ? "text-slate-800 font-medium" : "text-slate-500"}`}>
-                    {msg.lastMessage}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div className="p-6 sm:p-8">
+        {/* Info Banner */}
+        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-900 to-primary/20 pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-xl font-black uppercase tracking-tight mb-3">Kết nối trực tiếp với nhà cung cấp</h2>
+            <p className="text-slate-300 text-sm leading-relaxed max-w-2xl">
+              Thay vì chat trên hệ thống, bạn có thể liên hệ trực tiếp qua Zalo, Email hoặc Điện thoại để trao đổi nhanh hơn. 
+              Truy cập trang hồ sơ nhà cung cấp để lấy thông tin liên hệ.
+            </p>
+          </div>
         </div>
 
-        {/* Message Content Placeholder */}
-        <div className="flex-1 flex flex-col bg-slate-50/50">
-          <div className="p-4 bg-white border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs">
-                HT
+        {/* Contact Methods Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {contactMethods.map((method, idx) => (
+            <div key={idx} className={`border rounded-2xl p-6 sm:p-8 space-y-6 ${method.color} hover:shadow-lg transition-all`}>
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                {method.icon}
               </div>
               <div>
-                <div className="text-sm font-bold text-slate-900">Hanoi Textile Co.</div>
-                <div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">{t('online_now')}</div>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-2">{method.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{method.description}</p>
               </div>
+              <a 
+                href={method.href} 
+                className={`block text-center py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-colors ${method.btnColor}`}
+              >
+                {method.action} <ExternalLink size={12} className="inline ml-1" />
+              </a>
             </div>
-            <button className="p-2 text-slate-400 hover:text-primary">
-              <MoreVertical size={18} />
-            </button>
-          </div>
-          
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 min-h-[200px] lg:min-h-0">
-            <div className="flex justify-center">
-              <span className="bg-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{t('today_label')}</span>
-            </div>
-            
-            <div className="flex items-start gap-2 sm:gap-3 max-w-[85%] sm:max-w-[80%]">
-              <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-[10px] shrink-0">
-                HT
-              </div>
-              <div className="bg-white p-4 border border-slate-200 shadow-sm rounded-2xl rounded-tl-none">
-                <p className="text-sm text-slate-700 leading-relaxed">
-                  Yes, we can provide samples for your review. When would you like us to ship them?
-                </p>
-                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">10:45 AM</div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2 sm:gap-3 max-w-[85%] sm:max-w-[80%] ml-auto flex-row-reverse">
-              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-[10px] shrink-0">
-                HB
-              </div>
-              <div className="bg-primary p-4 shadow-lg shadow-primary/10 rounded-2xl rounded-tr-none text-white">
-                <p className="text-sm leading-relaxed">
-                  That sounds great. Please ship them to our office in California. I'll provide the address shortly.
-                </p>
-                <div className="text-[10px] text-white/60 font-bold uppercase tracking-widest mt-2">11:02 AM</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 bg-white border-t border-slate-100">
-            <div className="relative">
-              <input type="text" placeholder={t('type_message')} className="w-full pl-4 sm:pl-6 pr-14 sm:pr-16 py-3 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary transition-colors text-sm" />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-lg hover:bg-primary-dark transition-colors">
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </DashboardSection>

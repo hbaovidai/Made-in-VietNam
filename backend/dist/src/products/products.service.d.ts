@@ -45,7 +45,7 @@ export declare class ProductsService {
             totalPages: number;
         };
     }>;
-    findBySlug(slug: string): Promise<{
+    findByIdOrSlug(idOrSlug: string): Promise<{
         category: {
             id: string;
             name: string;

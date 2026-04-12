@@ -28,7 +28,7 @@ export function TradeAssurance() {
         title={t('trade_assurance_title')} 
         description={t('trade_assurance_desc')}
         breadcrumbs={[{ label: t('services'), href: "/services" }, { label: t('trade_assurance') }]}
-        image="https://picsum.photos/seed/protection/400/600"
+        
       />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -78,25 +78,21 @@ export function TradeAssurance() {
           </div>
           <div className="flex-1 w-full max-w-xl">
             <div className="aspect-square bg-white border-8 border-white shadow-2xl rounded-3xl overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500">
-              <img 
-                src="https://picsum.photos/seed/security/800/800" 
-                alt="Security" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+              <div className="w-full h-full bg-gradient-to-br from-blue-500 via-primary to-indigo-700 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik00MCAwaC00MHY0MGg0MHoiLz48L2c+PC9zdmc+')] opacity-30 pointer-events-none" />
+                <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-900/40 rounded-full blur-3xl pointer-events-none" />
+                <ShieldCheck size={160} className="text-white/90 relative z-10" strokeWidth={1} />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Dispute Resolution */}
         <div className="bg-slate-900 p-12 lg:p-20 text-white rounded-3xl overflow-hidden relative">
-          <div className="absolute inset-0 opacity-10">
-            <img 
-              src="https://picsum.photos/seed/dispute/1200/800" 
-              alt="Dispute" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+          <div className="absolute inset-0 opacity-100">
+            <div className="w-full h-full bg-gradient-to-tr from-slate-900 via-primary-900/50 to-slate-900" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik00MCAwaC00MHY0MGg0MHoiLz48L2c+PC9zdmc+')] opacity-20 mix-blend-overlay" />
           </div>
           <div className="relative max-w-3xl mx-auto text-center space-y-8">
             <MessageSquare size={64} className="text-viet-gold mx-auto" />

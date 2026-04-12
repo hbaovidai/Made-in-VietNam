@@ -13,10 +13,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-viet-gold">
-                <Globe size={24} />
-              </div>
+            <Link to="/" className="flex items-center gap-1">
+              <img src="/logoVIE.png" alt="Logo" className="h-14 w-auto object-contain mix-blend-multiply" />
               <div className="flex flex-row items-baseline">
                 <span className="text-xl font-bold text-primary leading-none tracking-tight">VIE</span>
                 <span className="text-xl font-bold text-slate-900 leading-none tracking-tight">product</span>
@@ -86,9 +84,9 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-        <p>© {currentYear} VIEproduct {t('all_rights_reserved_text')}</p>
+          <p>© {currentYear} VIEproduct {t('all_rights_reserved_text')}</p>
           <div className="flex items-center gap-6">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/320px-Flag_of_Vietnam.svg.png" alt="Vietnam Flag" className="h-4 rounded-sm" />
+            <img src="https://flagcdn.com/w40/vn.png" srcSet="https://flagcdn.com/w80/vn.png 2x" alt="Vietnam Flag" className="h-4 rounded-sm" />
             <span>{t('proudly_vietnamese')}</span>
           </div>
         </div>

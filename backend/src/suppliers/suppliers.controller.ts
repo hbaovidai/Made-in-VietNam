@@ -16,6 +16,11 @@ export class SuppliersController {
     return this.suppliersService.findBySlug(slug);
   }
 
+  @Get(':id/stats')
+  getStats(@Param('id') id: string) {
+    return this.suppliersService.getStats(id);
+  }
+
   // Tạm nhận supplierId từ body (JWT thay thế sau)
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateSupplierDto) {

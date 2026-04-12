@@ -43,9 +43,13 @@ export function Home() {
     );
   }
 
-  // Format price if available
+  // Format price from real DB data
   const getPriceRange = (product: any) => {
-    return `$${product.price} - $${product.price * 1.5}`; // Temporary mock range for visual
+    if (product.minPrice != null && product.maxPrice != null) {
+      return `$${product.minPrice} - $${product.maxPrice}`;
+    }
+    if (product.minPrice != null) return `$${product.minPrice}`;
+    return 'Contact for price';
   };
 
   return (

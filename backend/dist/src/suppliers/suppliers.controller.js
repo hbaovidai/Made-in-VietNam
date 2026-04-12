@@ -27,6 +27,9 @@ let SuppliersController = class SuppliersController {
     findBySlug(slug) {
         return this.suppliersService.findBySlug(slug);
     }
+    getStats(id) {
+        return this.suppliersService.getStats(id);
+    }
     update(id, dto) {
         return this.suppliersService.update(id, dto);
     }
@@ -52,6 +55,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findBySlug", null);
+__decorate([
+    (0, common_1.Get)(':id/stats'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "getStats", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
