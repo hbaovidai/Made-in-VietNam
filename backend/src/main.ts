@@ -13,8 +13,10 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
-      process.env.FRONTEND_URL || 'https://made-in-viet-nam.vercel.app',
-    ].filter(Boolean),
+      'https://vieproduct.com.vn',
+      'https://www.vieproduct.com.vn',
+      'https://made-in-viet-nam.vercel.app',
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   });
