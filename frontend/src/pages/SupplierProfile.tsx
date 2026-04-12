@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
@@ -7,15 +7,23 @@ import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 
+import { AuthRequireModal } from '../components/ui/AuthRequireModal';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../components/ui/Toast';
+
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { id } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [supplier, setSupplier] = useState<any>(null);
   const [supplierProducts, setSupplierProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [activeTab, setActiveTab] = useState('Home');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMessage, setAuthModalMessage] = useState('');
 
   useEffect(() => {
     async function loadData() {
@@ -99,16 +107,31 @@ export function SupplierProfile() {
               </div>
             </div>
             <div className="flex gap-4 pb-4 w-full md:w-auto">
-              <a 
-                href={`https://zalo.me/${supplier.phone?.replace(/\D/g, '') || ''}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalMessage('Vui lòng đăng nhập để trao đổi trực tiếp với nhà cung cấp.');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
+                  }
+                }}
                 className="flex-1 md:flex-none bg-[#0068FF] text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#0055DD] transition-all shadow-xl flex items-center justify-center gap-2"
               >
                 <MessageSquare size={18} />
                 Zalo
-              </a>
-              <button className="flex-1 md:flex-none bg-primary text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all shadow-xl flex items-center justify-center gap-2">
+              </button>
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    navigate('/rfq');
+                  }
+                }}
+                className="flex-1 md:flex-none bg-primary text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all shadow-xl flex items-center justify-center gap-2"
+              >
                 <FileText size={18} />
                 {t('request_rfq')}
               </button>
@@ -281,6 +304,12 @@ export function SupplierProfile() {
           </div>
         </div>
       </div>
+      
+      <AuthRequireModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        message={authModalMessage} 
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -21,11 +21,27 @@ export class CategoriesController {
     return this.categoriesService.findBySlug(slug);
   }
 
-  // PROTECTED: Chỉ ADMIN mới tạo được category
+  // PROTECTED ADMIN: Tạo danh mục
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Post()
   create(@Body() dto: CreateCategoryDto) {
     return this.categoriesService.create(dto);
+  }
+
+  // PROTECTED ADMIN: Sửa danh mục
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Put(':id')
+  update(@Param('id') id: string, @Body() dto: { name?: string; parentId?: string }) {
+    return this.categoriesService.update(id, dto);
+  }
+
+  // PROTECTED ADMIN: Xóa danh mục
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.categoriesService.delete(id);
   }
 }

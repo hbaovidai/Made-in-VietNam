@@ -66,6 +66,41 @@ let CategoriesService = class CategoriesService {
             },
         });
     }
+    async update(id, dto) {
+        const category = await this.prisma.category.findUnique({ where: { id } });
+        if (!category)
+            throw new common_1.NotFoundException('Danh mục không tồn tại');
+        const data = {};
+        if (dto.name) {
+            data.name = dto.name;
+            data.slug = dto.name
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+        }
+        if (dto.parentId !== undefined)
+            data.parentId = dto.parentId || null;
+        return this.prisma.category.update({ where: { id }, data });
+    }
+    async delete(id) {
+        const category = await this.prisma.category.findUnique({
+            where: { id },
+            include: { _count: { select: { products: true, children: true } } },
+        });
+        if (!category)
+            throw new common_1.NotFoundException('Danh mục không tồn tại');
+        if (category._count.products > 0) {
+            throw new common_1.NotFoundException(`Không thể xóa — danh mục đang chứa ${category._count.products} sản phẩm`);
+        }
+        if (category._count.children > 0) {
+            throw new common_1.NotFoundException(`Không thể xóa — danh mục có ${category._count.children} danh mục con`);
+        }
+        await this.prisma.category.delete({ where: { id } });
+        return { message: 'Đã xóa danh mục' };
+    }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([

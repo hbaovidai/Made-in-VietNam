@@ -32,6 +32,20 @@ export class UsersService {
     };
   }
 
+  // ADMIN: Khóa / Mở khóa tài khoản
+  async toggleUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED') {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại');
+    if (user.role === 'ADMIN') throw new NotFoundException('Không thể khóa tài khoản Admin');
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: { status },
+      select: { id: true, email: true, fullName: true, role: true, status: true },
+    });
+    return updated;
+  }
+
   // ==================== SAVED PRODUCTS ====================
 
   async getSavedProducts(userId: string) {

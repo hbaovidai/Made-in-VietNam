@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Delete,
   Param,
   Body,
@@ -25,6 +26,17 @@ export class UsersController {
   @Get()
   getAllUsers(@Query() query: any) {
     return this.usersService.findAll(query);
+  }
+
+  // PROTECTED ADMIN: Khóa / Mở khóa tài khoản
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Put(':id/status')
+  toggleUserStatus(
+    @Param('id') id: string,
+    @Body('status') status: 'ACTIVE' | 'SUSPENDED',
+  ) {
+    return this.usersService.toggleUserStatus(id, status);
   }
 
   // PROTECTED: Chỉ xem sản phẩm đã lưu của mình

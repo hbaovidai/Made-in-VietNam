@@ -8,8 +8,8 @@ export declare class CategoriesController {
             id: string;
             name: string;
             slug: string;
-            createdAt: Date;
             parentId: string | null;
+            createdAt: Date;
         }[];
         _count: {
             products: number;
@@ -18,16 +18,16 @@ export declare class CategoriesController {
         id: string;
         name: string;
         slug: string;
-        createdAt: Date;
         parentId: string | null;
+        createdAt: Date;
     })[]>;
     findBySlug(slug: string): Promise<{
         children: {
             id: string;
             name: string;
             slug: string;
-            createdAt: Date;
             parentId: string | null;
+            createdAt: Date;
         }[];
         products: ({
             supplier: {
@@ -41,8 +41,8 @@ export declare class CategoriesController {
             slug: string;
             createdAt: Date;
             status: import("@prisma/client").$Enums.ProductStatus;
-            updatedAt: Date;
             description: string | null;
+            updatedAt: Date;
             supplierId: string;
             minPrice: number;
             maxPrice: number;
@@ -50,11 +50,11 @@ export declare class CategoriesController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
-            categoryId: string;
         })[];
         _count: {
             products: number;
@@ -63,14 +63,27 @@ export declare class CategoriesController {
         id: string;
         name: string;
         slug: string;
-        createdAt: Date;
         parentId: string | null;
+        createdAt: Date;
     }>;
     create(dto: CreateCategoryDto): Promise<{
         id: string;
         name: string;
         slug: string;
-        createdAt: Date;
         parentId: string | null;
+        createdAt: Date;
+    }>;
+    update(id: string, dto: {
+        name?: string;
+        parentId?: string;
+    }): Promise<{
+        id: string;
+        name: string;
+        slug: string;
+        parentId: string | null;
+        createdAt: Date;
+    }>;
+    delete(id: string): Promise<{
+        message: string;
     }>;
 }

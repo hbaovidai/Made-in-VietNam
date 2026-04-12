@@ -41,6 +41,19 @@ let UsersService = class UsersService {
             meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / +limit) }
         };
     }
+    async toggleUserStatus(userId, status) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user)
+            throw new common_1.NotFoundException('Người dùng không tồn tại');
+        if (user.role === 'ADMIN')
+            throw new common_1.NotFoundException('Không thể khóa tài khoản Admin');
+        const updated = await this.prisma.user.update({
+            where: { id: userId },
+            data: { status },
+            select: { id: true, email: true, fullName: true, role: true, status: true },
+        });
+        return updated;
+    }
     async getSavedProducts(userId) {
         const saved = await this.prisma.savedProduct.findMany({
             where: { userId },

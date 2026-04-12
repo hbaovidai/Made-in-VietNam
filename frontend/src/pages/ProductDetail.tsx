@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { ProductCard } from '../components/ProductCard';
+import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
@@ -13,6 +14,7 @@ export function ProductDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<any>(null);
   const [supplier, setSupplier] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
@@ -20,6 +22,10 @@ export function ProductDetail() {
   
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMessage, setAuthModalMessage] = useState('');
+  
   const { addToast } = useToast();
 
   const handleToggleFavorite = async () => {
@@ -216,23 +222,45 @@ export function ProductDetail() {
 
             {/* Actions */}
             <div className="space-y-3">
-              <Link to={`/rfq?product=${product.id}`} className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 sm:py-5 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs md:text-sm">
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    navigate(`/rfq?product=${product.id}`);
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 sm:py-5 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs md:text-sm"
+              >
                 Request Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              </Link>
-              <a 
-                href={`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
+              </button>
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalMessage('Vui lòng đăng nhập để trao đổi trực tiếp với nhà cung cấp.');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
+                  }
+                }}
                 className="w-full flex items-center justify-center gap-2 bg-[#0068FF] text-white py-4 font-bold hover:bg-[#0055DD] transition-colors uppercase tracking-widest text-xs rounded-lg"
               >
                 Liên hệ qua Zalo <MessageSquare size={14} />
-              </a>
-              <a 
-                href={`mailto:${supplier?.email || ''}`}
+              </button>
+              <button 
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalMessage('Vui lòng đăng nhập để gửi email cho nhà cung cấp.');
+                    setIsAuthModalOpen(true);
+                  } else {
+                    window.location.href = `mailto:${supplier?.email || ''}`;
+                  }
+                }}
                 className="w-full flex items-center justify-center gap-2 bg-white border border-[#021833] text-[#021833] py-4 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs rounded-lg"
               >
                 Gửi Email <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              </a>
+              </button>
             </div>
 
             {/* Tech Specs */}
@@ -361,6 +389,11 @@ export function ProductDetail() {
           </div>
         </div>
       </div>
+      <AuthRequireModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        message={authModalMessage} 
+      />
     </div>
   );
 }

@@ -47,7 +47,7 @@ export function Register() {
 
       loginUser(res.data.user, res.data.token);
       addToast({ type: 'success', title: 'Hoan nghênh!', message: 'Đăng ký tài khoản thành công.' });
-      navigate(`/dashboard/${role.toLowerCase()}`);
+      navigate(role === 'buyer' ? '/' : `/dashboard/${role.toLowerCase()}`);
     } catch (err: any) {
       addToast({ 
         type: 'error', 

@@ -27,6 +27,9 @@ let UsersController = class UsersController {
     getAllUsers(query) {
         return this.usersService.findAll(query);
     }
+    toggleUserStatus(id, status) {
+        return this.usersService.toggleUserStatus(id, status);
+    }
     getSavedProducts(id, currentUser) {
         if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
             throw new common_1.ForbiddenException('Bạn chỉ có thể xem danh sách của chính mình');
@@ -80,6 +83,16 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getAllUsers", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Put)(':id/status'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "toggleUserStatus", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id/saved'),

@@ -31,7 +31,7 @@ export function Login() {
       
       let from = (location.state as any)?.from?.pathname;
       if (!from || (res.data.user.role === 'SUPPLIER' && from.startsWith('/dashboard/buyer')) || (res.data.user.role === 'BUYER' && from.startsWith('/dashboard/supplier'))) {
-        from = `/dashboard/${res.data.user.role.toLowerCase()}`;
+        from = res.data.user.role === 'BUYER' ? '/' : `/dashboard/${res.data.user.role.toLowerCase()}`;
       }
       navigate(from);
     } catch (err: any) {

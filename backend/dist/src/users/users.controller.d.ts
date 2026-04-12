@@ -5,12 +5,12 @@ export declare class UsersController {
     getAllUsers(query: any): Promise<{
         data: {
             id: string;
-            createdAt: Date;
             email: string;
             role: import("@prisma/client").$Enums.Role;
             fullName: string;
             phone: string | null;
             status: import("@prisma/client").$Enums.UserStatus;
+            createdAt: Date;
             supplier: {
                 id: string;
                 companyName: string;
@@ -23,6 +23,13 @@ export declare class UsersController {
             limit: number;
             totalPages: number;
         };
+    }>;
+    toggleUserStatus(id: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<{
+        id: string;
+        email: string;
+        role: import("@prisma/client").$Enums.Role;
+        fullName: string;
+        status: import("@prisma/client").$Enums.UserStatus;
     }>;
     getSavedProducts(id: string, currentUser: {
         id: string;

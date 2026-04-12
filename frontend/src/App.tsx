@@ -70,6 +70,8 @@ const AdminOverview = React.lazy(() => import('./pages/dashboard/admin/AdminOver
 const AdminUsers = React.lazy(() => import('./pages/dashboard/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
 const AdminSuppliers = React.lazy(() => import('./pages/dashboard/admin/AdminSuppliers').then(m => ({ default: m.AdminSuppliers })));
 const AdminProducts = React.lazy(() => import('./pages/dashboard/admin/AdminProducts').then(m => ({ default: m.AdminProducts })));
+const AdminCategories = React.lazy(() => import('./pages/dashboard/admin/AdminCategories').then(m => ({ default: m.AdminCategories })));
+const AdminContacts = React.lazy(() => import('./pages/dashboard/admin/AdminContacts').then(m => ({ default: m.AdminContacts })));
 
 // Redirect base dashboard based on role
 function DashboardRedirect() {
@@ -202,6 +204,8 @@ export default function App() {
               <Route path="users" element={<AdminUsers />} />
               <Route path="suppliers" element={<AdminSuppliers />} />
               <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="contacts" element={<AdminContacts />} />
             </Route>
           </Routes>
         </Suspense>

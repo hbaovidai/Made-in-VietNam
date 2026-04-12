@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
 import { api } from '../../../lib/api';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, User as UserIcon } from 'lucide-react';
+import { Loader2, User as UserIcon, Lock, Unlock } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
+import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminUsers() {
   const { addToast } = useToast();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [confirmLock, setConfirmLock] = useState<{ isOpen: boolean; user: any; intent: 'ACTIVE' | 'SUSPENDED' }>({
+    isOpen: false, user: null, intent: 'SUSPENDED'
+  });
 
   useEffect(() => {
     loadUsers();
@@ -22,6 +27,23 @@ export function AdminUsers() {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải người dùng' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async () => {
+    const { user, intent } = confirmLock;
+    if (!user) return;
+    try {
+      await api.put(`/users/${user.id}/status`, { status: intent });
+      addToast({
+        type: 'success',
+        title: 'Thành công',
+        message: intent === 'SUSPENDED' ? `Đã khóa tài khoản ${user.fullName}` : `Đã mở khóa tài khoản ${user.fullName}`
+      });
+      setConfirmLock({ ...confirmLock, isOpen: false });
+      loadUsers();
+    } catch (error) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Thao tác thất bại' });
     }
   };
 
@@ -51,7 +73,8 @@ export function AdminUsers() {
                     <th className="p-4">Thông tin</th>
                     <th className="p-4">Vai trò</th>
                     <th className="p-4">Trạng thái</th>
-                    <th className="p-4 pr-6 text-right">Ngày tham gia</th>
+                    <th className="p-4">Ngày tham gia</th>
+                    <th className="p-4 pr-6 text-right">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
@@ -71,18 +94,44 @@ export function AdminUsers() {
                       </td>
                       <td className="p-4">{getRoleBadge(user.role)}</td>
                       <td className="p-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-600">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          {user.status || 'ACTIVE'}
-                        </span>
+                        {(user.status || 'ACTIVE') === 'ACTIVE' ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-600">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            Hoạt động
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-600">
+                            <Lock size={12} />
+                            Bị khóa
+                          </span>
+                        )}
                       </td>
-                      <td className="p-4 pr-6 text-right text-slate-500 font-medium">
+                      <td className="p-4 text-slate-500 font-medium">
                         {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                      </td>
+                      <td className="p-4 pr-6 text-right">
+                        {user.role !== 'ADMIN' && (
+                          (user.status || 'ACTIVE') === 'ACTIVE' ? (
+                            <button
+                              onClick={() => setConfirmLock({ isOpen: true, user, intent: 'SUSPENDED' })}
+                              className="bg-red-50 text-red-600 border border-red-200 text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-100 transition-colors inline-flex items-center gap-1"
+                            >
+                              <Lock size={14} /> Khóa
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setConfirmLock({ isOpen: true, user, intent: 'ACTIVE' })}
+                              className="bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors inline-flex items-center gap-1 shadow-sm shadow-primary/20"
+                            >
+                              <Unlock size={14} /> Mở khóa
+                            </button>
+                          )
+                        )}
                       </td>
                     </tr>
                   ))}
                   {users.length === 0 && (
-                    <tr><td colSpan={5} className="p-12 text-center text-slate-400 font-medium">Chưa có người dùng nào</td></tr>
+                    <tr><td colSpan={6} className="p-12 text-center text-slate-400 font-medium">Chưa có người dùng nào</td></tr>
                   )}
                 </tbody>
               </table>
@@ -90,6 +139,20 @@ export function AdminUsers() {
           </div>
         )}
       </DashboardSection>
+
+      <ConfirmDialog
+        isOpen={confirmLock.isOpen}
+        onClose={() => setConfirmLock({ ...confirmLock, isOpen: false })}
+        onConfirm={handleToggleStatus}
+        title={confirmLock.intent === 'SUSPENDED' ? 'Khóa tài khoản?' : 'Mở khóa tài khoản?'}
+        message={
+          confirmLock.intent === 'SUSPENDED'
+            ? `Tài khoản "${confirmLock.user?.fullName}" (${confirmLock.user?.email}) sẽ bị khóa và không thể đăng nhập.`
+            : `Mở khóa tài khoản "${confirmLock.user?.fullName}" (${confirmLock.user?.email})?`
+        }
+        confirmText={confirmLock.intent === 'SUSPENDED' ? 'Khóa tài khoản' : 'Mở khóa'}
+        variant={confirmLock.intent === 'SUSPENDED' ? 'danger' : 'info'}
+      />
     </div>
   );
 }

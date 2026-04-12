@@ -90,6 +90,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <User size={20} />, label: 'Người dùng', path: '/dashboard/admin/users' },
     { icon: <ShieldCheck size={20} />, label: 'Duyệt Doanh nghiệp', path: '/dashboard/admin/suppliers' },
     { icon: <Package size={20} />, label: 'Sản phẩm', path: '/dashboard/admin/products' },
+    { icon: <Archive size={20} />, label: 'Danh mục', path: '/dashboard/admin/categories' },
+    { icon: <MessageSquare size={20} />, label: 'Liên hệ', path: '/dashboard/admin/contacts' },
   ];
 
   const links = type === 'admin' ? adminLinks : (type === 'buyer' ? buyerLinks : supplierLinks);
