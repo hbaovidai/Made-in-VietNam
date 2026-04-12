@@ -15,18 +15,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsController = void 0;
 const common_1 = require("@nestjs/common");
 const notifications_service_1 = require("./notifications.service");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 let NotificationsController = class NotificationsController {
     notificationsService;
     constructor(notificationsService) {
         this.notificationsService = notificationsService;
     }
-    getUnreadCount(userId) {
+    getUnreadCount(userId, currentUserId) {
+        if (currentUserId !== userId)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.notificationsService.getUnreadCount(userId);
     }
-    getNotifications(userId) {
+    getNotifications(userId, currentUserId) {
+        if (currentUserId !== userId)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.notificationsService.getNotifications(userId);
     }
-    markAllAsRead(userId) {
+    markAllAsRead(userId, currentUserId) {
+        if (currentUserId !== userId)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.notificationsService.markAllAsRead(userId);
     }
     markAsRead(id) {
@@ -35,27 +43,34 @@ let NotificationsController = class NotificationsController {
 };
 exports.NotificationsController = NotificationsController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':userId/unread-count'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "getUnreadCount", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':userId'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "getNotifications", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)(':userId/read-all'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "markAllAsRead", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)(':id/read'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),

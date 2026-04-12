@@ -45,7 +45,7 @@ export function Register() {
         role: role.toUpperCase() 
       });
 
-      loginUser(res.data.user);
+      loginUser(res.data.user, res.data.token);
       addToast({ type: 'success', title: 'Hoan nghênh!', message: 'Đăng ký tài khoản thành công.' });
       navigate(`/dashboard/${role.toLowerCase()}`);
     } catch (err: any) {

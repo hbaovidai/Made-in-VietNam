@@ -228,18 +228,39 @@ export function Home() {
         </div>
       </section>
 
-      {/* ═══ Browse by Category ═══ */}
+      {/* ═══ Categories of Excellence ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div className="space-y-4 sm:space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{t('browse_by')} <span className="text-primary">{t('category')}</span></h2>
-            <Link to="/products" className="text-xs sm:text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-1">
-              {t('view_all_categories')} <ChevronRight size={14} />
+        <div className="bg-[#EEF0FF] rounded-2xl p-6 sm:p-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Categories of <span className="text-primary">Excellence</span></h2>
+              <p className="text-slate-500 text-sm mt-2 max-w-md">
+                Khám phá các ngành sản xuất hàng đầu Việt Nam, tối ưu hóa cho chuỗi cung ứng toàn cầu.
+              </p>
+            </div>
+            <Link to="/products" className="text-sm font-bold text-[#043365] hover:text-primary transition-colors shrink-0">
+              Xem tất cả danh mục →
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-            {CATEGORY_GROUPS.map((group) => (
-              <CategoryCard key={group.slug} group={group} />
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-4 sm:gap-6">
+            {[
+              { name: 'Nông sản', slug: 'nong-san', icon: '/sectors/agriculture.png' },
+              { name: 'Dệt may', slug: 'det-may-may-mac', icon: '/sectors/textiles.png' },
+              { name: 'Nội thất', slug: 'noi-that-trang-tri', icon: '/sectors/furniture.png' },
+              { name: 'Mỹ nghệ', slug: 'thu-cong-my-nghe', icon: '/sectors/handicrafts.png' },
+              { name: 'Điện tử', slug: 'dien-tu', icon: '/sectors/electronics.png' },
+              { name: 'F&B', slug: 'thuc-pham-do-uong', icon: '/sectors/food.png' },
+            ].map((sector) => (
+              <Link
+                key={sector.slug}
+                to={`/products?category=${sector.slug}`}
+                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-shadow">
+                  <img src={sector.icon} alt={sector.name} className="w-full h-full object-cover" />
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors text-center">{sector.name}</span>
+              </Link>
             ))}
           </div>
         </div>

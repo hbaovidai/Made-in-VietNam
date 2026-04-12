@@ -65,6 +65,12 @@ const SupplierAnalytics = React.lazy(() => import('./pages/dashboard/supplier/Su
 const SupplierProfileDashboard = React.lazy(() => import('./pages/dashboard/supplier/SupplierProfile').then(m => ({ default: m.SupplierProfile })));
 const SupplierSettings = React.lazy(() => import('./pages/dashboard/supplier/SupplierSettings').then(m => ({ default: m.SupplierSettings })));
 
+// Admin Lazy Pages
+const AdminOverview = React.lazy(() => import('./pages/dashboard/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
+const AdminUsers = React.lazy(() => import('./pages/dashboard/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const AdminSuppliers = React.lazy(() => import('./pages/dashboard/admin/AdminSuppliers').then(m => ({ default: m.AdminSuppliers })));
+const AdminProducts = React.lazy(() => import('./pages/dashboard/admin/AdminProducts').then(m => ({ default: m.AdminProducts })));
+
 // Redirect base dashboard based on role
 function DashboardRedirect() {
   const { user } = useAuth();
@@ -185,6 +191,17 @@ export default function App() {
               <Route path="analytics" element={<SupplierAnalytics />} />
               <Route path="profile" element={<SupplierProfileDashboard />} />
               <Route path="settings" element={<SupplierSettings />} />
+            </Route>
+
+            <Route path="/dashboard/admin" element={
+              <ProtectedRoute>
+                <DashboardLayout type="admin" />
+              </ProtectedRoute>
+            }>
+              <Route index element={<AdminOverview />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="suppliers" element={<AdminSuppliers />} />
+              <Route path="products" element={<AdminProducts />} />
             </Route>
           </Routes>
         </Suspense>

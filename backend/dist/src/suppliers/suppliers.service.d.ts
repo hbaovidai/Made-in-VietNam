@@ -195,6 +195,25 @@ export declare class SuppliersService {
     deleteCertification(certId: string, supplierId: string): Promise<{
         message: string;
     }>;
+    verifySupplier(supplierId: string, isVerified: boolean): Promise<{
+        id: string;
+        slug: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyName: string;
+        logo: string | null;
+        banner: string | null;
+        description: string | null;
+        businessType: string | null;
+        yearEstablished: number | null;
+        employeeCount: string | null;
+        address: string | null;
+        city: string | null;
+        province: string | null;
+        website: string | null;
+        isVerified: boolean;
+        userId: string;
+    }>;
     getStats(supplierId: string): Promise<{
         products: number;
         batches: number;

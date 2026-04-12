@@ -15,95 +15,145 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
-    getSavedProducts(id) {
+    getAllUsers(query) {
+        return this.usersService.findAll(query);
+    }
+    getSavedProducts(id, currentUser) {
+        if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể xem danh sách của chính mình');
+        }
         return this.usersService.getSavedProducts(id);
     }
-    saveProduct(id, productId) {
+    saveProduct(id, productId, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.saveProduct(id, productId);
     }
-    unsaveProduct(id, productId) {
+    unsaveProduct(id, productId, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.unsaveProduct(id, productId);
     }
-    clearSavedProducts(id) {
+    clearSavedProducts(id, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.clearSavedProducts(id);
     }
-    getViewHistory(id) {
+    getViewHistory(id, currentUser) {
+        if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể xem lịch sử của chính mình');
+        }
         return this.usersService.getViewHistory(id);
     }
-    recordView(id, productId) {
+    recordView(id, productId, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.recordView(id, productId);
     }
-    deleteHistoryItem(id, historyId) {
+    deleteHistoryItem(id, historyId, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.deleteHistoryItem(id, historyId);
     }
-    clearHistory(id) {
+    clearHistory(id, userId) {
+        if (userId !== id)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.usersService.clearHistory(id);
     }
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getAllUsers", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id/saved'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getSavedProducts", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(':id/saved'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('productId')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "saveProduct", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id/saved/:productId'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Param)('productId')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "unsaveProduct", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id/saved'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "clearSavedProducts", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id/history'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getViewHistory", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(':id/history'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('productId')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "recordView", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id/history/:historyId'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Param)('historyId')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "deleteHistoryItem", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id/history'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "clearHistory", null);
 exports.UsersController = UsersController = __decorate([

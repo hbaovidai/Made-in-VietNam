@@ -79,7 +79,9 @@ let RfqService = class RfqService {
                 buyer: { select: { fullName: true, email: true, phone: true } },
                 quotes: {
                     include: {
-                        supplier: { select: { companyName: true, logo: true, isVerified: true } },
+                        supplier: {
+                            select: { companyName: true, logo: true, isVerified: true },
+                        },
                     },
                     orderBy: { price: 'asc' },
                 },
@@ -91,7 +93,10 @@ let RfqService = class RfqService {
     }
     async getOpenRFQs() {
         return this.prisma.rFQ.findMany({
-            where: { status: { in: ['OPEN', 'QUOTED'] }, expiresAt: { gt: new Date() } },
+            where: {
+                status: { in: ['OPEN', 'QUOTED'] },
+                expiresAt: { gt: new Date() },
+            },
             orderBy: { createdAt: 'desc' },
             take: 50,
             include: {

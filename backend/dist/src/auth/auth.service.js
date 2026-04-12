@@ -44,12 +44,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 const prisma_service_1 = require("../prisma/prisma.service");
 let AuthService = class AuthService {
     prisma;
-    constructor(prisma) {
+    jwtService;
+    constructor(prisma, jwtService) {
         this.prisma = prisma;
+        this.jwtService = jwtService;
+    }
+    generateToken(user) {
+        const payload = { sub: user.id, email: user.email, role: user.role };
+        return this.jwtService.sign(payload);
     }
     async register(dto) {
         const existingUser = await this.prisma.user.findUnique({
@@ -89,9 +96,11 @@ let AuthService = class AuthService {
                 },
             });
         }
+        const token = this.generateToken(user);
         return {
             message: 'Đăng ký thành công',
             user,
+            token,
         };
     }
     async login(dto) {
@@ -115,10 +124,12 @@ let AuthService = class AuthService {
         if (!isMatch) {
             throw new common_1.UnauthorizedException('Email hoặc mật khẩu không đúng');
         }
+        const token = this.generateToken(user);
         const { passwordHash, ...userData } = user;
         return {
             message: 'Đăng nhập thành công',
             user: userData,
+            token,
         };
     }
     async getProfile(userId) {
@@ -192,6 +203,7 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

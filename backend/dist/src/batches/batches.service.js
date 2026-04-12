@@ -57,35 +57,39 @@ let BatchesService = class BatchesService {
             where: { supplierId },
             include: {
                 product: { select: { name: true, slug: true } },
-                _count: { select: { qrCodes: true } }
+                _count: { select: { qrCodes: true } },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async getSupplierQRCodes(supplierId) {
         return this.prisma.qRCode.findMany({
             where: {
                 batch: {
-                    supplierId: supplierId
-                }
+                    supplierId: supplierId,
+                },
             },
             include: {
                 batch: {
                     include: {
                         product: {
-                            select: { name: true, slug: true }
-                        }
-                    }
-                }
+                            select: { name: true, slug: true },
+                        },
+                    },
+                },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createBatch(supplierId, dto) {
-        const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: dto.productId },
+        });
         if (!product || product.supplierId !== supplierId)
             throw new common_1.ForbiddenException('Không có quyền với sản phẩm này');
-        const existing = await this.prisma.batch.findUnique({ where: { batchNumber: dto.batchNumber } });
+        const existing = await this.prisma.batch.findUnique({
+            where: { batchNumber: dto.batchNumber },
+        });
         if (existing)
             throw new common_1.BadRequestException('Mã lô đã tồn tại');
         return this.prisma.batch.create({
@@ -95,12 +99,14 @@ let BatchesService = class BatchesService {
                 batchNumber: dto.batchNumber,
                 manufactureDate: new Date(dto.manufactureDate),
                 expiryDate: new Date(dto.expiryDate),
-                quantity: dto.quantity
-            }
+                quantity: dto.quantity,
+            },
         });
     }
     async generateQRCodes(supplierId, dto) {
-        const batch = await this.prisma.batch.findUnique({ where: { id: dto.batchId } });
+        const batch = await this.prisma.batch.findUnique({
+            where: { id: dto.batchId },
+        });
         if (!batch || batch.supplierId !== supplierId)
             throw new common_1.ForbiddenException('Không có quyền với lô hàng này');
         if (batch.qrGenerated)
@@ -120,18 +126,24 @@ let BatchesService = class BatchesService {
         await this.prisma.qRCode.createMany({ data: codes });
         await this.prisma.batch.update({
             where: { id: dto.batchId },
-            data: { qrGenerated: true }
+            data: { qrGenerated: true },
         });
-        return { message: `Đã tạo thành công ${dto.count} mã QR`, codes: codes.map(c => ({ code: c.code, token: c.secretHash })) };
+        return {
+            message: `Đã tạo thành công ${dto.count} mã QR`,
+            codes: codes.map((c) => ({ code: c.code, token: c.secretHash })),
+        };
     }
     async verifyQR(code, token, ipHash, userAgent) {
         const qrCode = await this.prisma.qRCode.findUnique({
             where: { code },
             include: {
                 batch: {
-                    include: { product: true, supplier: { select: { companyName: true, isVerified: true } } }
-                }
-            }
+                    include: {
+                        product: true,
+                        supplier: { select: { companyName: true, isVerified: true } },
+                    },
+                },
+            },
         });
         if (!qrCode)
             throw new common_1.NotFoundException('Mã QR không tồn tại');
@@ -139,31 +151,34 @@ let BatchesService = class BatchesService {
             .createHmac('sha256', this.QR_SECRET)
             .update(`${qrCode.batchId}:${code}`)
             .digest('hex');
-        const isValidFormat = token ? (expectedHash === token) : true;
+        const isValidFormat = token ? expectedHash === token : true;
         const isCompromisedByCount = qrCode.scanCount > qrCode.maxScans;
         await this.prisma.scanEvent.create({
             data: {
                 qrCodeId: qrCode.id,
                 ipHash: ipHash || 'manual',
                 userAgent,
-                isValid: isValidFormat
-            }
+                isValid: isValidFormat,
+            },
         });
         await this.prisma.qRCode.update({
             where: { id: qrCode.id },
-            data: { scanCount: { increment: 1 } }
+            data: { scanCount: { increment: 1 } },
         });
         if (!isValidFormat) {
             throw new common_1.BadRequestException('Mã QR giả mạo (Chữ ký không hợp lệ)');
         }
         if (isCompromisedByCount || qrCode.status === 'COMPROMISED') {
             if (qrCode.status === 'ACTIVE') {
-                await this.prisma.qRCode.update({ where: { id: qrCode.id }, data: { status: 'COMPROMISED' } });
+                await this.prisma.qRCode.update({
+                    where: { id: qrCode.id },
+                    data: { status: 'COMPROMISED' },
+                });
             }
             return {
                 valid: false,
                 warning: 'CẢNH BÁO: Mã này đã được quét quá nhiều lần. Có thể là hàng giả bị sao chép mã QR.',
-                data: qrCode.batch.product
+                data: qrCode.batch.product,
             };
         }
         return {
@@ -174,13 +189,13 @@ let BatchesService = class BatchesService {
                 batch: {
                     batchNumber: qrCode.batch.batchNumber,
                     mfgDate: qrCode.batch.manufactureDate,
-                    expDate: qrCode.batch.expiryDate
+                    expDate: qrCode.batch.expiryDate,
                 },
                 scanInfo: {
                     scantCount: qrCode.scanCount + 1,
-                    isFirstScan: qrCode.scanCount === 0
-                }
-            }
+                    isFirstScan: qrCode.scanCount === 0,
+                },
+            },
         };
     }
 };

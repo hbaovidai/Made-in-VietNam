@@ -15,16 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InquiryBasketController = void 0;
 const common_1 = require("@nestjs/common");
 const inquiry_basket_service_1 = require("./inquiry-basket.service");
+const inquiry_dto_1 = require("./dto/inquiry.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 let InquiryBasketController = class InquiryBasketController {
     inquiryBasketService;
     constructor(inquiryBasketService) {
         this.inquiryBasketService = inquiryBasketService;
     }
-    getBasket(userId) {
+    getBasket(userId, currentUserId) {
+        if (currentUserId !== userId)
+            throw new common_1.ForbiddenException('Không có quyền');
         return this.inquiryBasketService.getBasket(userId);
     }
-    addItem(body) {
-        const { userId, ...dto } = body;
+    addItem(dto, userId) {
         return this.inquiryBasketService.addItem(userId, dto);
     }
     removeItem(itemId, userId) {
@@ -33,23 +39,31 @@ let InquiryBasketController = class InquiryBasketController {
 };
 exports.InquiryBasketController = InquiryBasketController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('BUYER'),
     (0, common_1.Get)(':userId'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], InquiryBasketController.prototype, "getBasket", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('BUYER'),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [inquiry_dto_1.AddInquiryItemDto, String]),
     __metadata("design:returntype", void 0)
 ], InquiryBasketController.prototype, "addItem", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('BUYER'),
     (0, common_1.Delete)(':itemId'),
     __param(0, (0, common_1.Param)('itemId')),
-    __param(1, (0, common_1.Body)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)

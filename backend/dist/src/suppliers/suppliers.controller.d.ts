@@ -1,8 +1,10 @@
 import { SuppliersService } from './suppliers.service';
 import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { PrismaService } from '../prisma/prisma.service';
 export declare class SuppliersController {
     private suppliersService;
-    constructor(suppliersService: SuppliersService);
+    private prisma;
+    constructor(suppliersService: SuppliersService, prisma: PrismaService);
     findAll(query: SupplierQueryDto): Promise<{
         data: ({
             certifications: {
@@ -117,7 +119,29 @@ export declare class SuppliersController {
         qrCodes: number;
         totalViews: number;
     }>;
-    update(id: string, dto: UpdateSupplierDto): Promise<{
+    verifySupplier(id: string, isVerified: boolean): Promise<{
+        id: string;
+        slug: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyName: string;
+        logo: string | null;
+        banner: string | null;
+        description: string | null;
+        businessType: string | null;
+        yearEstablished: number | null;
+        employeeCount: string | null;
+        address: string | null;
+        city: string | null;
+        province: string | null;
+        website: string | null;
+        isVerified: boolean;
+        userId: string;
+    }>;
+    update(id: string, dto: UpdateSupplierDto, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<{
         products: ({
             category: {
                 name: string;
@@ -189,6 +213,9 @@ export declare class SuppliersController {
         name: string;
         issuedBy?: string;
         documentUrl?: string;
+    }, currentUser: {
+        id: string;
+        role: string;
     }): Promise<{
         id: string;
         name: string;
@@ -198,7 +225,10 @@ export declare class SuppliersController {
         expiryDate: Date | null;
         documentUrl: string | null;
     }>;
-    deleteCertification(supplierId: string, certId: string): Promise<{
+    deleteCertification(supplierId: string, certId: string, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<{
         message: string;
     }>;
 }

@@ -8,8 +8,8 @@ export declare class NotificationsService {
         userId: string;
         message: string;
         link: string | null;
-        title: string;
         type: string;
+        title: string;
         isRead: boolean;
     }[]>;
     getUnreadCount(userId: string): Promise<{
@@ -21,8 +21,8 @@ export declare class NotificationsService {
         userId: string;
         message: string;
         link: string | null;
-        title: string;
         type: string;
+        title: string;
         isRead: boolean;
     }>;
     markAllAsRead(userId: string): Promise<{
@@ -40,8 +40,8 @@ export declare class NotificationsService {
         userId: string;
         message: string;
         link: string | null;
-        title: string;
         type: string;
+        title: string;
         isRead: boolean;
     }>;
 }

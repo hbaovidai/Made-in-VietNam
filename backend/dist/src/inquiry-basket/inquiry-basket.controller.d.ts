@@ -3,7 +3,7 @@ import { AddInquiryItemDto } from './dto/inquiry.dto';
 export declare class InquiryBasketController {
     private inquiryBasketService;
     constructor(inquiryBasketService: InquiryBasketService);
-    getBasket(userId: string): Promise<{
+    getBasket(userId: string, currentUserId: string): Promise<{
         items: ({
             product: {
                 id: string;
@@ -21,8 +21,8 @@ export declare class InquiryBasketController {
             id: string;
             productId: string;
             quantity: number;
-            basketId: string;
             note: string | null;
+            basketId: string;
             addedAt: Date;
         })[];
     } & {
@@ -31,14 +31,12 @@ export declare class InquiryBasketController {
         updatedAt: Date;
         userId: string;
     }>;
-    addItem(body: AddInquiryItemDto & {
-        userId: string;
-    }): Promise<{
+    addItem(dto: AddInquiryItemDto, userId: string): Promise<{
         id: string;
         productId: string;
         quantity: number;
-        basketId: string;
         note: string | null;
+        basketId: string;
         addedAt: Date;
     }>;
     removeItem(itemId: string, userId: string): Promise<{

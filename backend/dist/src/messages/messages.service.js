@@ -25,31 +25,40 @@ let MessagesService = class MessagesService {
                     include: {
                         participants: {
                             where: { userId: { not: userId } },
-                            include: { user: { select: { id: true, fullName: true, avatar: true, role: true } } }
-                        }
-                    }
-                }
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        fullName: true,
+                                        avatar: true,
+                                        role: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
-            orderBy: { conversation: { updatedAt: 'desc' } }
+            orderBy: { conversation: { updatedAt: 'desc' } },
         });
         return participants.map((p) => ({
             id: p.conversation.id,
             unreadCount: p.unreadCount,
             lastMessage: p.conversation.lastMessage,
             lastMessageAt: p.conversation.lastMessageAt,
-            targetUser: p.conversation.participants[0]?.user || null
+            targetUser: p.conversation.participants[0]?.user || null,
         }));
     }
     async getMessages(conversationId, userId, limit = 50, skip = 0) {
         const participant = await this.prisma.conversationParticipant.findUnique({
-            where: { conversationId_userId: { conversationId, userId } }
+            where: { conversationId_userId: { conversationId, userId } },
         });
         if (!participant)
             throw new common_1.ForbiddenException('Bạn không nằm trong hội thoại này');
         if (participant.unreadCount > 0) {
             await this.prisma.conversationParticipant.update({
                 where: { id: participant.id },
-                data: { unreadCount: 0 }
+                data: { unreadCount: 0 },
             });
         }
         return this.prisma.message.findMany({
@@ -57,7 +66,7 @@ let MessagesService = class MessagesService {
             orderBy: { createdAt: 'desc' },
             take: limit,
             skip,
-            include: { sender: { select: { id: true, fullName: true } } }
+            include: { sender: { select: { id: true, fullName: true } } },
         });
     }
     async startConversation(userId, dto) {
@@ -68,29 +77,34 @@ let MessagesService = class MessagesService {
                 AND: [
                     { participants: { some: { userId } } },
                     { participants: { some: { userId: dto.targetUserId } } },
-                ]
-            }
+                ],
+            },
         });
         if (existing)
             return existing;
         return this.prisma.conversation.create({
             data: {
                 participants: {
-                    create: [{ userId }, { userId: dto.targetUserId }]
+                    create: [{ userId }, { userId: dto.targetUserId }],
                 },
                 ...(dto.initialMessage && {
                     lastMessage: dto.initialMessage,
                     lastMessageAt: new Date(),
                     messages: {
-                        create: { senderId: userId, content: dto.initialMessage }
-                    }
-                })
-            }
+                        create: { senderId: userId, content: dto.initialMessage },
+                    },
+                }),
+            },
         });
     }
     async sendMessage(senderId, dto) {
         const participant = await this.prisma.conversationParticipant.findUnique({
-            where: { conversationId_userId: { conversationId: dto.conversationId, userId: senderId } }
+            where: {
+                conversationId_userId: {
+                    conversationId: dto.conversationId,
+                    userId: senderId,
+                },
+            },
         });
         if (!participant)
             throw new common_1.ForbiddenException('Bạn không nằm trong hội thoại này');
@@ -101,16 +115,19 @@ let MessagesService = class MessagesService {
                     senderId,
                     content: dto.content,
                     type: dto.type,
-                    attachments: dto.attachments || []
-                }
+                    attachments: dto.attachments || [],
+                },
             });
             await tx.conversation.update({
                 where: { id: dto.conversationId },
-                data: { lastMessage: dto.content, lastMessageAt: new Date() }
+                data: { lastMessage: dto.content, lastMessageAt: new Date() },
             });
             await tx.conversationParticipant.updateMany({
-                where: { conversationId: dto.conversationId, userId: { not: senderId } },
-                data: { unreadCount: { increment: 1 } }
+                where: {
+                    conversationId: dto.conversationId,
+                    userId: { not: senderId },
+                },
+                data: { unreadCount: { increment: 1 } },
             });
             return message;
         });

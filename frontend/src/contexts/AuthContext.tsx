@@ -5,7 +5,7 @@ export interface User {
   id: string;
   email: string;
   fullName: string;
-  role: 'BUYER' | 'SUPPLIER';
+  role: 'BUYER' | 'SUPPLIER' | 'ADMIN';
   phone?: string | null;
   avatar?: string | null;
   supplier?: {
@@ -18,8 +18,9 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
-  loginUser: (userData: User) => void;
+  loginUser: (userData: User, token: string) => void;
   logout: () => void;
 }
 
@@ -27,7 +28,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    // Eagerly load from localStorage so it's available on first render
     const storedUser = localStorage.getItem('mivn5_user');
     if (storedUser) {
       try {
@@ -39,35 +39,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null;
   });
 
-  // Ensure hydration matches or any updates are tracked
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem('mivn5_token');
+  });
+
+  // Ensure hydration matches
   useEffect(() => {
     const storedUser = localStorage.getItem('mivn5_user');
-    if (storedUser) {
+    const storedToken = localStorage.getItem('mivn5_token');
+    if (storedUser && storedToken) {
       try {
         const parsed = JSON.parse(storedUser);
-        // Only update if it's different to prevent infinite re-renders
         if (!user || user.id !== parsed.id) {
           setUser(parsed);
+          setToken(storedToken);
         }
       } catch (err) {
         localStorage.removeItem('mivn5_user');
+        localStorage.removeItem('mivn5_token');
       }
     }
   }, []);
 
-  const loginUser = (userData: User) => {
+  const loginUser = (userData: User, jwtToken: string) => {
     setUser(userData);
+    setToken(jwtToken);
     localStorage.setItem('mivn5_user', JSON.stringify(userData));
+    localStorage.setItem('mivn5_token', jwtToken);
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('mivn5_user');
+    localStorage.removeItem('mivn5_token');
     window.location.href = '/login';
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loginUser, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user && !!token, loginUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

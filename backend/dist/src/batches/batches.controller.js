@@ -49,25 +49,52 @@ exports.BatchesController = void 0;
 const common_1 = require("@nestjs/common");
 const batches_service_1 = require("./batches.service");
 const batch_dto_1 = require("./dto/batch.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const prisma_service_1 = require("../prisma/prisma.service");
 const crypto = __importStar(require("crypto"));
 let BatchesController = class BatchesController {
     batchesService;
-    constructor(batchesService) {
+    prisma;
+    constructor(batchesService, prisma) {
         this.batchesService = batchesService;
+        this.prisma = prisma;
     }
-    getSupplierBatches(supplierId) {
+    async getSupplierBatches(supplierId, userId) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier || supplier.id !== supplierId) {
+            throw new common_1.ForbiddenException('Bạn chỉ xem được lô hàng của mình');
+        }
         return this.batchesService.getSupplierBatches(supplierId);
     }
-    getSupplierQRCodes(supplierId) {
+    async getSupplierQRCodes(supplierId, userId) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier || supplier.id !== supplierId) {
+            throw new common_1.ForbiddenException('Bạn chỉ xem được QR codes của mình');
+        }
         return this.batchesService.getSupplierQRCodes(supplierId);
     }
-    createBatch(body) {
-        const { supplierId, ...dto } = body;
-        return this.batchesService.createBatch(supplierId, dto);
+    async createBatch(dto, userId) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier)
+            throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+        return this.batchesService.createBatch(supplier.id, dto);
     }
-    generateQRCodes(body) {
-        const { supplierId, ...dto } = body;
-        return this.batchesService.generateQRCodes(supplierId, dto);
+    async generateQRCodes(dto, userId) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier)
+            throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+        return this.batchesService.generateQRCodes(supplier.id, dto);
     }
     verifyQR(dto, req) {
         const rawIp = req.ip || req.connection.remoteAddress || 'unknown';
@@ -78,32 +105,44 @@ let BatchesController = class BatchesController {
 };
 exports.BatchesController = BatchesController;
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
     (0, common_1.Get)('supplier/:supplierId'),
     __param(0, (0, common_1.Param)('supplierId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
 ], BatchesController.prototype, "getSupplierBatches", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
     (0, common_1.Get)('supplier/:supplierId/qrcodes'),
     __param(0, (0, common_1.Param)('supplierId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
 ], BatchesController.prototype, "getSupplierQRCodes", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [batch_dto_1.CreateBatchDto, String]),
+    __metadata("design:returntype", Promise)
 ], BatchesController.prototype, "createBatch", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
     (0, common_1.Post)('qr/generate'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [batch_dto_1.GenerateQRCodesDto, String]),
+    __metadata("design:returntype", Promise)
 ], BatchesController.prototype, "generateQRCodes", null);
 __decorate([
     (0, common_1.Post)('qr/verify'),
@@ -115,6 +154,7 @@ __decorate([
 ], BatchesController.prototype, "verifyQR", null);
 exports.BatchesController = BatchesController = __decorate([
     (0, common_1.Controller)('batches'),
-    __metadata("design:paramtypes", [batches_service_1.BatchesService])
+    __metadata("design:paramtypes", [batches_service_1.BatchesService,
+        prisma_service_1.PrismaService])
 ], BatchesController);
 //# sourceMappingURL=batches.controller.js.map

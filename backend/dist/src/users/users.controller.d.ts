@@ -2,8 +2,33 @@ import { UsersService } from './users.service';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    getSavedProducts(id: string): Promise<any[]>;
-    saveProduct(id: string, productId: string): Promise<{
+    getAllUsers(query: any): Promise<{
+        data: {
+            id: string;
+            createdAt: Date;
+            email: string;
+            role: import("@prisma/client").$Enums.Role;
+            fullName: string;
+            phone: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            supplier: {
+                id: string;
+                companyName: string;
+                isVerified: boolean;
+            } | null;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getSavedProducts(id: string, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<any[]>;
+    saveProduct(id: string, productId: string, userId: string): Promise<{
         id: string;
         createdAt: Date;
         userId: string;
@@ -11,23 +36,26 @@ export declare class UsersController {
     } | {
         success: boolean;
     }>;
-    unsaveProduct(id: string, productId: string): Promise<{
+    unsaveProduct(id: string, productId: string, userId: string): Promise<{
         success: boolean;
     }>;
-    clearSavedProducts(id: string): Promise<{
+    clearSavedProducts(id: string, userId: string): Promise<{
         success: boolean;
     }>;
-    getViewHistory(id: string): Promise<any[]>;
-    recordView(id: string, productId: string): Promise<{
+    getViewHistory(id: string, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<any[]>;
+    recordView(id: string, productId: string, userId: string): Promise<{
         id: string;
         userId: string;
         productId: string;
         viewedAt: Date;
     }>;
-    deleteHistoryItem(id: string, historyId: string): Promise<{
+    deleteHistoryItem(id: string, historyId: string, userId: string): Promise<{
         success: boolean;
     }>;
-    clearHistory(id: string): Promise<{
+    clearHistory(id: string, userId: string): Promise<{
         success: boolean;
     }>;
 }

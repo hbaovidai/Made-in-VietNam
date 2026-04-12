@@ -28,6 +28,7 @@ enum UserStatus {
 
 enum ProductStatus {
   DRAFT
+  PENDING
   ACTIVE
   PAUSED
   REJECTED
@@ -195,7 +196,7 @@ model Product {
   moqUnit     String        @map("moq_unit")
   categoryId  String        @map("category_id")
   images      String[]      // Array of image URLs
-  status      ProductStatus @default(ACTIVE)
+  status      ProductStatus @default(PENDING)
   rating      Float         @default(0)
   reviewCount Int           @default(0) @map("review_count")
   viewCount   Int           @default(0) @map("view_count")

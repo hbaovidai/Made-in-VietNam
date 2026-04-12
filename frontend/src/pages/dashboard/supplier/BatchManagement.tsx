@@ -80,7 +80,6 @@ export function BatchManagement() {
         addToast({ type: 'success', title: t('complete'), message: t('update_batch_success', { batchNumber: formData.batchNumber }) });
       } else {
         const payload = {
-          supplierId: user?.supplier?.id,
           ...formData
         };
         await api.post('/batches', payload);
@@ -97,7 +96,6 @@ export function BatchManagement() {
     if (b.qrGenerated) return;
     try {
       await api.post('/batches/qr/generate', {
-        supplierId: user?.supplier?.id,
         batchId: b.id,
         count: 1
       });

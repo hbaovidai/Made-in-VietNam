@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MembershipsController = void 0;
 const common_1 = require("@nestjs/common");
 const memberships_service_1 = require("./memberships.service");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 let MembershipsController = class MembershipsController {
     membershipsService;
     constructor(membershipsService) {
@@ -23,11 +25,11 @@ let MembershipsController = class MembershipsController {
     getPlans() {
         return this.membershipsService.getPlans();
     }
-    getMySubscription(userId) {
-        return this.membershipsService.getMySubscription(userId);
+    getMySubscription(userId, currentUserId) {
+        return this.membershipsService.getMySubscription(currentUserId);
     }
-    subscribe(body) {
-        return this.membershipsService.subscribe(body.userId, body.planId);
+    subscribe(body, userId) {
+        return this.membershipsService.subscribe(userId, body.planId);
     }
 };
 exports.MembershipsController = MembershipsController;
@@ -38,17 +40,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MembershipsController.prototype, "getPlans", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('my-subscription/:userId'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], MembershipsController.prototype, "getMySubscription", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('subscribe'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], MembershipsController.prototype, "subscribe", null);
 exports.MembershipsController = MembershipsController = __decorate([

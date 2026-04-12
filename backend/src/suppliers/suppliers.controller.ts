@@ -1,45 +1,119 @@
-import { Controller, Get, Put, Post, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  ForbiddenException,
+} from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('suppliers')
 export class SuppliersController {
-  constructor(private suppliersService: SuppliersService) {}
+  constructor(
+    private suppliersService: SuppliersService,
+    private prisma: PrismaService,
+  ) {}
 
+  // PUBLIC
   @Get()
   findAll(@Query() query: SupplierQueryDto) {
     return this.suppliersService.findAll(query);
   }
 
+  // PUBLIC
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
   }
 
+  // PUBLIC
   @Get(':id/stats')
   getStats(@Param('id') id: string) {
     return this.suppliersService.getStats(id);
   }
 
-  // Tạm nhận supplierId từ body (JWT thay thế sau)
+  // PROTECTED ADMIN: Verify/Unverify supplier
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Put(':id/verify')
+  verifySupplier(@Param('id') id: string, @Body('isVerified') isVerified: boolean) {
+    return this.suppliersService.verifySupplier(id, isVerified);
+  }
+
+  // PROTECTED: Chỉ supplier chủ sở hữu mới sửa được, hoặc ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER', 'ADMIN')
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateSupplierDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateSupplierDto,
+    @CurrentUser() currentUser: { id: string; role: string },
+  ) {
+    if (currentUser.role !== 'ADMIN') {
+      const supplier = await this.prisma.supplier.findUnique({
+        where: { userId: currentUser.id },
+      });
+      if (!supplier || supplier.id !== id) {
+        throw new ForbiddenException(
+          'Bạn chỉ có thể chỉnh sửa hồ sơ của chính mình',
+        );
+      }
+    }
     return this.suppliersService.update(id, dto);
   }
 
+  // PROTECTED: Chỉ supplier chủ sở hữu mới thêm chứng nhận
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER', 'ADMIN')
   @Post(':id/certifications')
-  addCertification(
+  async addCertification(
     @Param('id') id: string,
     @Body() body: { name: string; issuedBy?: string; documentUrl?: string },
+    @CurrentUser() currentUser: { id: string; role: string },
   ) {
+    if (currentUser.role !== 'ADMIN') {
+      const supplier = await this.prisma.supplier.findUnique({
+        where: { userId: currentUser.id },
+      });
+      if (!supplier || supplier.id !== id) {
+        throw new ForbiddenException(
+          'Bạn chỉ có thể quản lý chứng nhận của chính mình',
+        );
+      }
+    }
     return this.suppliersService.addCertification(id, body);
   }
 
+  // PROTECTED: Chỉ supplier chủ sở hữu mới xoá chứng nhận
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER', 'ADMIN')
   @Delete(':supplierId/certifications/:certId')
-  deleteCertification(
+  async deleteCertification(
     @Param('supplierId') supplierId: string,
     @Param('certId') certId: string,
+    @CurrentUser() currentUser: { id: string; role: string },
   ) {
+    if (currentUser.role !== 'ADMIN') {
+      const supplier = await this.prisma.supplier.findUnique({
+        where: { userId: currentUser.id },
+      });
+      if (!supplier || supplier.id !== supplierId) {
+        throw new ForbiddenException(
+          'Bạn chỉ có thể quản lý chứng nhận của chính mình',
+        );
+      }
+    }
     return this.suppliersService.deleteCertification(certId, supplierId);
   }
 }

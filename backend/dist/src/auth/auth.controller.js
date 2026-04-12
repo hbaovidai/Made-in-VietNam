@@ -16,6 +16,8 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const auth_dto_1 = require("./dto/auth.dto");
+const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
+const current_user_decorator_1 = require("./decorators/current-user.decorator");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -27,13 +29,22 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
-    getProfile(id) {
+    getProfile(id, currentUser) {
+        if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể xem hồ sơ của chính mình');
+        }
         return this.authService.getProfile(id);
     }
-    updateProfile(id, dto) {
+    updateProfile(id, dto, currentUser) {
+        if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể chỉnh sửa hồ sơ của chính mình');
+        }
         return this.authService.updateProfile(id, dto);
     }
-    changePassword(id, dto) {
+    changePassword(id, dto, currentUser) {
+        if (currentUser.id !== id) {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể đổi mật khẩu của chính mình');
+        }
         return this.authService.changePassword(id, dto);
     }
 };
@@ -53,26 +64,32 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('profile/:id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "getProfile", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)('profile/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, auth_dto_1.UpdateProfileDto]),
+    __metadata("design:paramtypes", [String, auth_dto_1.UpdateProfileDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "updateProfile", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)('password/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, auth_dto_1.ChangePasswordDto]),
+    __metadata("design:paramtypes", [String, auth_dto_1.ChangePasswordDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "changePassword", null);
 exports.AuthController = AuthController = __decorate([

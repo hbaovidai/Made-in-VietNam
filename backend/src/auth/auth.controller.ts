@@ -1,6 +1,22 @@
-import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+  ForbiddenException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto } from './dto/auth.dto';
+import {
+  RegisterDto,
+  LoginDto,
+  UpdateProfileDto,
+  ChangePasswordDto,
+} from './dto/auth.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -16,18 +32,48 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('profile/:id')
-  getProfile(@Param('id') id: string) {
+  getProfile(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: { id: string; role: string },
+  ) {
+    // Chỉ cho phép xem profile của chính mình, trừ ADMIN
+    if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+      throw new ForbiddenException('Bạn chỉ có thể xem hồ sơ của chính mình');
+    }
     return this.authService.getProfile(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('profile/:id')
-  updateProfile(@Param('id') id: string, @Body() dto: UpdateProfileDto) {
+  updateProfile(
+    @Param('id') id: string,
+    @Body() dto: UpdateProfileDto,
+    @CurrentUser() currentUser: { id: string; role: string },
+  ) {
+    // Chỉ cho phép sửa profile của chính mình, trừ ADMIN
+    if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
+      throw new ForbiddenException(
+        'Bạn chỉ có thể chỉnh sửa hồ sơ của chính mình',
+      );
+    }
     return this.authService.updateProfile(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('password/:id')
-  changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
+  changePassword(
+    @Param('id') id: string,
+    @Body() dto: ChangePasswordDto,
+    @CurrentUser() currentUser: { id: string; role: string },
+  ) {
+    // Chỉ cho phép đổi mật khẩu của chính mình
+    if (currentUser.id !== id) {
+      throw new ForbiddenException(
+        'Bạn chỉ có thể đổi mật khẩu của chính mình',
+      );
+    }
     return this.authService.changePassword(id, dto);
   }
 }

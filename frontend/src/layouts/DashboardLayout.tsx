@@ -51,7 +51,7 @@ function BottomNavItem({ icon, label, path, active }: { icon: React.ReactNode; l
   );
 }
 
-export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
+export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin' }) {
   const { t } = useTranslation();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -85,7 +85,14 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/supplier/settings' },
   ];
 
-  const links = type === 'buyer' ? buyerLinks : supplierLinks;
+  const adminLinks = [
+    { icon: <LayoutDashboard size={20} />, label: 'Tổng quan', path: '/dashboard/admin' },
+    { icon: <User size={20} />, label: 'Người dùng', path: '/dashboard/admin/users' },
+    { icon: <ShieldCheck size={20} />, label: 'Duyệt Doanh nghiệp', path: '/dashboard/admin/suppliers' },
+    { icon: <Package size={20} />, label: 'Sản phẩm', path: '/dashboard/admin/products' },
+  ];
+
+  const links = type === 'admin' ? adminLinks : (type === 'buyer' ? buyerLinks : supplierLinks);
 
   // Bottom nav: show only the most important 5 items
   const buyerBottomNav = [
@@ -104,7 +111,9 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
     { icon: <User size={20} />, label: t('profile'), path: '/dashboard/supplier/profile' },
   ];
 
-  const bottomNavItems = type === 'buyer' ? buyerBottomNav : supplierBottomNav;
+  const adminBottomNav = adminLinks;
+
+  const bottomNavItems = type === 'admin' ? adminBottomNav : (type === 'buyer' ? buyerBottomNav : supplierBottomNav);
 
   /* ─────── Sidebar Content (shared between desktop & mobile) ─────── */
   const sidebarContent = (
@@ -125,7 +134,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
 
       <div className="flex-1 p-4 lg:p-6 space-y-2 overflow-y-auto">
         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-4">
-          {type === 'buyer' ? t('buyer') : t('supplier')} {t('dashboard')}
+          {type === 'admin' ? 'ADMIN' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('dashboard')}
         </div>
         {links.map((link) => (
           <SidebarItem
@@ -140,18 +149,20 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
       </div>
 
       <div className="p-4 lg:p-6 border-t border-slate-100">
-        <div className="bg-slate-900 rounded-2xl p-4 mb-4 lg:mb-6 relative overflow-hidden group cursor-pointer">
-          <div className="absolute top-0 right-0 w-12 h-12 bg-viet-gold/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl group-hover:scale-150 transition-transform" />
-          <div className="flex items-center gap-3 relative z-10">
-            <div className="w-8 h-8 bg-viet-gold rounded-lg flex items-center justify-center text-slate-900">
-              <ShieldCheck size={18} />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">{t('go_premium')}</div>
-              <div className="text-[10px] text-slate-400">{t('unlock_all_features')}</div>
+        {type !== 'admin' && (
+          <div className="bg-slate-900 rounded-2xl p-4 mb-4 lg:mb-6 relative overflow-hidden group cursor-pointer">
+            <div className="absolute top-0 right-0 w-12 h-12 bg-viet-gold/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl group-hover:scale-150 transition-transform" />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-8 h-8 bg-viet-gold rounded-lg flex items-center justify-center text-slate-900">
+                <ShieldCheck size={18} />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white">{t('go_premium')}</div>
+                <div className="text-[10px] text-slate-400">{t('unlock_all_features')}</div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <button
           onClick={() => logout()}
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"
@@ -208,7 +219,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' }) {
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <div className="text-sm font-bold text-slate-900">{user?.fullName || 'User'}</div>
-                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'buyer' ? t('buyer') : t('supplier')} {t('account')}</div>
+                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'admin' ? 'ADMIN' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('account')}</div>
               </div>
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm">
                 {user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}

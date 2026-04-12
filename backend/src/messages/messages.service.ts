@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SendMessageDto, CreateConversationDto } from './dto/message.dto';
 
@@ -14,12 +19,21 @@ export class MessagesService {
           include: {
             participants: {
               where: { userId: { not: userId } },
-              include: { user: { select: { id: true, fullName: true, avatar: true, role: true } } }
-            }
-          }
-        }
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    fullName: true,
+                    avatar: true,
+                    role: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      orderBy: { conversation: { updatedAt: 'desc' } }
+      orderBy: { conversation: { updatedAt: 'desc' } },
     });
 
     return participants.map((p: any) => ({
@@ -27,22 +41,28 @@ export class MessagesService {
       unreadCount: p.unreadCount,
       lastMessage: p.conversation.lastMessage,
       lastMessageAt: p.conversation.lastMessageAt,
-      targetUser: p.conversation.participants[0]?.user || null
+      targetUser: p.conversation.participants[0]?.user || null,
     }));
   }
 
-  async getMessages(conversationId: string, userId: string, limit = 50, skip = 0) {
+  async getMessages(
+    conversationId: string,
+    userId: string,
+    limit = 50,
+    skip = 0,
+  ) {
     // Verify participant
     const participant = await this.prisma.conversationParticipant.findUnique({
-      where: { conversationId_userId: { conversationId, userId } }
+      where: { conversationId_userId: { conversationId, userId } },
     });
-    if (!participant) throw new ForbiddenException('Bạn không nằm trong hội thoại này');
+    if (!participant)
+      throw new ForbiddenException('Bạn không nằm trong hội thoại này');
 
     // Reset unread count
     if (participant.unreadCount > 0) {
       await this.prisma.conversationParticipant.update({
         where: { id: participant.id },
-        data: { unreadCount: 0 }
+        data: { unreadCount: 0 },
       });
     }
 
@@ -51,12 +71,13 @@ export class MessagesService {
       orderBy: { createdAt: 'desc' },
       take: limit,
       skip,
-      include: { sender: { select: { id: true, fullName: true } } }
+      include: { sender: { select: { id: true, fullName: true } } },
     });
   }
 
   async startConversation(userId: string, dto: CreateConversationDto) {
-    if (userId === dto.targetUserId) throw new BadRequestException('Không thể tự nhắn tin cho mình');
+    if (userId === dto.targetUserId)
+      throw new BadRequestException('Không thể tự nhắn tin cho mình');
 
     // Check if conversation exists
     const existing = await this.prisma.conversation.findFirst({
@@ -64,8 +85,8 @@ export class MessagesService {
         AND: [
           { participants: { some: { userId } } },
           { participants: { some: { userId: dto.targetUserId } } },
-        ]
-      }
+        ],
+      },
     });
 
     if (existing) return existing;
@@ -74,25 +95,31 @@ export class MessagesService {
     return this.prisma.conversation.create({
       data: {
         participants: {
-          create: [{ userId }, { userId: dto.targetUserId }]
+          create: [{ userId }, { userId: dto.targetUserId }],
         },
         ...(dto.initialMessage && {
           lastMessage: dto.initialMessage,
           lastMessageAt: new Date(),
           messages: {
-            create: { senderId: userId, content: dto.initialMessage }
-          }
-        })
-      }
+            create: { senderId: userId, content: dto.initialMessage },
+          },
+        }),
+      },
     });
   }
 
   async sendMessage(senderId: string, dto: SendMessageDto) {
     // Verify participant
     const participant = await this.prisma.conversationParticipant.findUnique({
-      where: { conversationId_userId: { conversationId: dto.conversationId, userId: senderId } }
+      where: {
+        conversationId_userId: {
+          conversationId: dto.conversationId,
+          userId: senderId,
+        },
+      },
     });
-    if (!participant) throw new ForbiddenException('Bạn không nằm trong hội thoại này');
+    if (!participant)
+      throw new ForbiddenException('Bạn không nằm trong hội thoại này');
 
     // Transaction to insert message + update unread count for OTHERS
     return this.prisma.$transaction(async (tx: any) => {
@@ -102,20 +129,23 @@ export class MessagesService {
           senderId,
           content: dto.content,
           type: dto.type,
-          attachments: dto.attachments || []
-        }
+          attachments: dto.attachments || [],
+        },
       });
 
       // Update conversation last message info
       await tx.conversation.update({
         where: { id: dto.conversationId },
-        data: { lastMessage: dto.content, lastMessageAt: new Date() }
+        data: { lastMessage: dto.content, lastMessageAt: new Date() },
       });
 
       // Increment unread count for target users
       await tx.conversationParticipant.updateMany({
-        where: { conversationId: dto.conversationId, userId: { not: senderId } },
-        data: { unreadCount: { increment: 1 } }
+        where: {
+          conversationId: dto.conversationId,
+          userId: { not: senderId },
+        },
+        data: { unreadCount: { increment: 1 } },
       });
 
       return message;

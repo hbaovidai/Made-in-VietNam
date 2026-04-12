@@ -12,25 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const client_1 = require("@prisma/client");
 let ProductsService = class ProductsService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async findAll(query) {
-        const { search, category, supplierId, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = query;
-        const where = {
-            status: 'ACTIVE',
-        };
+        const { search, category, supplierId, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
+        const where = {};
+        if (status) {
+            where.status = status;
+        }
+        else {
+            where.status = 'ACTIVE';
+        }
         if (search) {
             where.name = { contains: search, mode: 'insensitive' };
         }
         if (category) {
             where.category = {
-                OR: [
-                    { slug: category },
-                    { parent: { slug: category } }
-                ]
+                OR: [{ slug: category }, { parent: { slug: category } }],
             };
         }
         if (supplierId) {
@@ -41,7 +43,15 @@ let ProductsService = class ProductsService {
                 where,
                 include: {
                     category: { select: { id: true, name: true, slug: true } },
-                    supplier: { select: { id: true, companyName: true, slug: true, isVerified: true, logo: true } },
+                    supplier: {
+                        select: {
+                            id: true,
+                            companyName: true,
+                            slug: true,
+                            isVerified: true,
+                            logo: true,
+                        },
+                    },
                 },
                 orderBy: { [sortBy]: sortOrder },
                 skip: (page - 1) * limit,
@@ -114,6 +124,15 @@ let ProductsService = class ProductsService {
         });
         return product;
     }
+    async findAllForSupplier(supplierId) {
+        return this.prisma.product.findMany({
+            where: { supplierId },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                category: { select: { name: true, slug: true } },
+            }
+        });
+    }
     async create(supplierId, dto) {
         const slug = dto.name
             .toLowerCase()
@@ -121,8 +140,9 @@ let ProductsService = class ProductsService {
             .replace(/[\u0300-\u036f]/g, '')
             .replace(/đ/g, 'd')
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '')
-            + '-' + Date.now();
+            .replace(/(^-|-$)/g, '') +
+            '-' +
+            Date.now();
         return this.prisma.product.create({
             data: {
                 supplierId,
@@ -144,30 +164,43 @@ let ProductsService = class ProductsService {
         });
     }
     async update(productId, supplierId, dto) {
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product)
             throw new common_1.NotFoundException('Sản phẩm không tồn tại');
-        if (product.supplierId !== supplierId)
+        if (supplierId && product.supplierId !== supplierId)
             throw new common_1.ForbiddenException('Không có quyền chỉnh sửa');
+        let newStatus = dto.status || product.status;
+        if (supplierId && product.status === client_1.ProductStatus.REJECTED) {
+            newStatus = client_1.ProductStatus.PENDING;
+        }
+        if (supplierId && newStatus === client_1.ProductStatus.ACTIVE && product.status !== client_1.ProductStatus.ACTIVE) {
+            newStatus = client_1.ProductStatus.PENDING;
+        }
         return this.prisma.product.update({
             where: { id: productId },
-            data: dto,
+            data: { ...dto, status: newStatus },
             include: {
                 category: { select: { name: true, slug: true } },
             },
         });
     }
     async delete(productId, supplierId) {
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product)
             throw new common_1.NotFoundException('Sản phẩm không tồn tại');
-        if (product.supplierId !== supplierId)
+        if (supplierId && product.supplierId !== supplierId)
             throw new common_1.ForbiddenException('Không có quyền xóa');
         await this.prisma.product.delete({ where: { id: productId } });
         return { message: 'Đã xóa sản phẩm' };
     }
     async findRelated(productId, limit = 6) {
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product)
             return [];
         return this.prisma.product.findMany({
@@ -180,6 +213,17 @@ let ProductsService = class ProductsService {
                 supplier: { select: { companyName: true, slug: true } },
             },
             take: limit,
+        });
+    }
+    async verifyProduct(productId, status) {
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
+        if (!product)
+            throw new common_1.NotFoundException('Sản phẩm không tồn tại');
+        return this.prisma.product.update({
+            where: { id: productId },
+            data: { status },
         });
     }
 };

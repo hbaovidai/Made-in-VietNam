@@ -62,8 +62,7 @@ export function RFQ() {
       await api.post('/rfqs', {
         ...formData,
         quantity: parseInt(formData.quantity, 10),
-        expiresAt: expiresAt.toISOString(),
-        buyerId: user.id
+        expiresAt: expiresAt.toISOString()
       });
       setSubmitted(true);
     } catch (err: any) {

@@ -3,7 +3,7 @@ import { SendMessageDto, CreateConversationDto } from './dto/message.dto';
 export declare class MessagesController {
     private messagesService;
     constructor(messagesService: MessagesService);
-    getUserConversations(userId: string): Promise<{
+    getUserConversations(userId: string, currentUserId: string): Promise<{
         id: any;
         unreadCount: any;
         lastMessage: any;
@@ -24,16 +24,12 @@ export declare class MessagesController {
         attachments: string[];
         senderId: string;
     })[]>;
-    startConversation(body: CreateConversationDto & {
-        userId: string;
-    }): Promise<{
+    startConversation(dto: CreateConversationDto, userId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         lastMessage: string | null;
         lastMessageAt: Date | null;
     }>;
-    sendMessage(body: SendMessageDto & {
-        senderId: string;
-    }): Promise<any>;
+    sendMessage(dto: SendMessageDto, senderId: string): Promise<any>;
 }

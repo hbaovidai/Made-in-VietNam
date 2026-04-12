@@ -28,7 +28,9 @@ export class CategoriesService {
           where: { status: 'ACTIVE' },
           take: 20,
           include: {
-            supplier: { select: { companyName: true, slug: true, isVerified: true } },
+            supplier: {
+              select: { companyName: true, slug: true, isVerified: true },
+            },
           },
         },
         _count: { select: { products: true } },

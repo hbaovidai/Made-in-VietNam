@@ -16,14 +16,18 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   // Role-Based Access Control
-  const userRole = user.role.toLowerCase(); // 'buyer' or 'supplier'
+  const userRole = user.role.toLowerCase(); // 'buyer', 'supplier', or 'admin'
 
-  if (location.pathname.startsWith('/dashboard/buyer') && userRole === 'supplier') {
-    return <Navigate to="/dashboard/supplier" replace />;
+  if (location.pathname.startsWith('/dashboard/admin') && userRole !== 'admin') {
+    return <Navigate to={`/dashboard/${userRole === 'supplier' ? 'supplier' : 'buyer'}`} replace />;
+  }
+
+  if (location.pathname.startsWith('/dashboard/buyer') && userRole !== 'buyer') {
+    return <Navigate to={`/dashboard/${userRole}`} replace />;
   }
   
-  if (location.pathname.startsWith('/dashboard/supplier') && userRole === 'buyer') {
-    return <Navigate to="/dashboard/buyer" replace />;
+  if (location.pathname.startsWith('/dashboard/supplier') && userRole !== 'supplier') {
+    return <Navigate to={`/dashboard/${userRole}`} replace />;
   }
 
   return <>{children}</>;

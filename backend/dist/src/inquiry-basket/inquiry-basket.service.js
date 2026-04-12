@@ -24,16 +24,42 @@ let InquiryBasketService = class InquiryBasketService {
                 items: {
                     include: {
                         product: {
-                            select: { id: true, name: true, slug: true, minPrice: true, maxPrice: true, unit: true, images: true, supplier: { select: { companyName: true } } }
-                        }
-                    }
-                }
-            }
+                            select: {
+                                id: true,
+                                name: true,
+                                slug: true,
+                                minPrice: true,
+                                maxPrice: true,
+                                unit: true,
+                                images: true,
+                                supplier: { select: { companyName: true } },
+                            },
+                        },
+                    },
+                },
+            },
         });
         if (!basket) {
             basket = await this.prisma.inquiryBasket.create({
                 data: { userId },
-                include: { items: { include: { product: { select: { id: true, name: true, slug: true, minPrice: true, maxPrice: true, unit: true, images: true, supplier: { select: { companyName: true } } } } } } }
+                include: {
+                    items: {
+                        include: {
+                            product: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                    minPrice: true,
+                                    maxPrice: true,
+                                    unit: true,
+                                    images: true,
+                                    supplier: { select: { companyName: true } },
+                                },
+                            },
+                        },
+                    },
+                },
             });
         }
         return basket;
@@ -41,12 +67,15 @@ let InquiryBasketService = class InquiryBasketService {
     async addItem(userId, dto) {
         const basket = await this.getBasket(userId);
         const existingItem = await this.prisma.inquiryItem.findFirst({
-            where: { basketId: basket.id, productId: dto.productId }
+            where: { basketId: basket.id, productId: dto.productId },
         });
         if (existingItem) {
             return this.prisma.inquiryItem.update({
                 where: { id: existingItem.id },
-                data: { quantity: existingItem.quantity + dto.quantity, note: dto.note || existingItem.note }
+                data: {
+                    quantity: existingItem.quantity + dto.quantity,
+                    note: dto.note || existingItem.note,
+                },
             });
         }
         return this.prisma.inquiryItem.create({
@@ -54,13 +83,15 @@ let InquiryBasketService = class InquiryBasketService {
                 basketId: basket.id,
                 productId: dto.productId,
                 quantity: dto.quantity,
-                note: dto.note
-            }
+                note: dto.note,
+            },
         });
     }
     async removeItem(itemId, userId) {
         const basket = await this.getBasket(userId);
-        const item = await this.prisma.inquiryItem.findUnique({ where: { id: itemId } });
+        const item = await this.prisma.inquiryItem.findUnique({
+            where: { id: itemId },
+        });
         if (!item || item.basketId !== basket.id)
             throw new common_1.NotFoundException('Item không tồn tại hoặc không thuộc giỏ của bạn');
         await this.prisma.inquiryItem.delete({ where: { id: itemId } });

@@ -1,4 +1,11 @@
-import { IsString, IsInt, IsOptional, IsEnum, Min, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  IsEnum,
+  Min,
+  IsPositive,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { RFQStatus, QuoteStatus } from '@prisma/client';
 

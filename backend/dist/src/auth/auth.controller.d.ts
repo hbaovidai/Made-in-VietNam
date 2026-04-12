@@ -13,6 +13,7 @@ export declare class AuthController {
             fullName: string;
             phone: string | null;
         };
+        token: string;
     }>;
     login(dto: LoginDto): Promise<{
         message: string;
@@ -33,8 +34,12 @@ export declare class AuthController {
             status: import("@prisma/client").$Enums.UserStatus;
             updatedAt: Date;
         };
+        token: string;
     }>;
-    getProfile(id: string): Promise<{
+    getProfile(id: string, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<{
         id: string;
         createdAt: Date;
         email: string;
@@ -51,7 +56,10 @@ export declare class AuthController {
             isVerified: boolean;
         } | null;
     }>;
-    updateProfile(id: string, dto: UpdateProfileDto): Promise<{
+    updateProfile(id: string, dto: UpdateProfileDto, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<{
         message: string;
         user: {
             id: string;
@@ -64,7 +72,10 @@ export declare class AuthController {
             status: import("@prisma/client").$Enums.UserStatus;
         };
     }>;
-    changePassword(id: string, dto: ChangePasswordDto): Promise<{
+    changePassword(id: string, dto: ChangePasswordDto, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<{
         message: string;
     }>;
 }

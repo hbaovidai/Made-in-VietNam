@@ -24,7 +24,7 @@ export function Login() {
 
     try {
       const res = await api.post('/auth/login', { email, password });
-      loginUser(res.data.user);
+      loginUser(res.data.user, res.data.token);
       
       const mappedRole = res.data.user.role === 'BUYER' ? t('login_as_buyer') : t('login_as_supplier');
       addToast({ type: 'success', title: t('success') || 'Thành công', message: mappedRole });

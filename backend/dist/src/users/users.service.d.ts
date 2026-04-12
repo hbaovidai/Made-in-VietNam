@@ -2,6 +2,28 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class UsersService {
     private prisma;
     constructor(prisma: PrismaService);
+    findAll(query?: any): Promise<{
+        data: {
+            id: string;
+            createdAt: Date;
+            email: string;
+            role: import("@prisma/client").$Enums.Role;
+            fullName: string;
+            phone: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            supplier: {
+                id: string;
+                companyName: string;
+                isVerified: boolean;
+            } | null;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
     getSavedProducts(userId: string): Promise<any[]>;
     saveProduct(userId: string, productId: string): Promise<{
         id: string;

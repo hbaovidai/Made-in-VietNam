@@ -31,7 +31,7 @@ export function Membership() {
     }
     setProcessing(true);
     try {
-      await api.post('/memberships/subscribe', { userId: user.id, planId });
+      await api.post('/memberships/subscribe', { planId });
       addToast({ type: 'success', title: 'Thành công', message: 'Đã nâng cấp gói thành viên!' });
     } catch (error) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Nâng cấp thất bại, vui lòng thử lại' });

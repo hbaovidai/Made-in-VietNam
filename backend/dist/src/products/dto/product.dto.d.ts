@@ -31,4 +31,5 @@ export declare class ProductQueryDto {
     limit?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    status?: ProductStatus;
 }

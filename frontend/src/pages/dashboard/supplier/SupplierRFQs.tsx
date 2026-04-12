@@ -59,7 +59,6 @@ export function SupplierRFQs() {
       setSubmittingQuote(true);
       await api.post('/rfqs/quotes', {
         rfqId: selectedRfq.id,
-        supplierId,
         price: parseFloat(quoteForm.price),
         currency: quoteForm.currency,
         leadTime: quoteForm.leadTime,

@@ -1,9 +1,14 @@
 import { RfqService } from './rfq.service';
 import { CreateRFQDto, CreateQuoteDto } from './dto/rfq.dto';
+import { PrismaService } from '../prisma/prisma.service';
 export declare class RfqController {
     private rfqService;
-    constructor(rfqService: RfqService);
-    getOpenRFQs(): Promise<({
+    private prisma;
+    constructor(rfqService: RfqService, prisma: PrismaService);
+    getOpenRFQs(currentUser: {
+        id: string;
+        role: string;
+    }): Promise<({
         _count: {
             quotes: number;
         };
@@ -26,7 +31,10 @@ export declare class RfqController {
         expiresAt: Date;
         buyerId: string;
     })[]>;
-    getBuyerRFQs(buyerId: string): Promise<({
+    getBuyerRFQs(buyerId: string, currentUser: {
+        id: string;
+        role: string;
+    }): Promise<({
         _count: {
             quotes: number;
         };
@@ -85,9 +93,7 @@ export declare class RfqController {
         expiresAt: Date;
         buyerId: string;
     }>;
-    createRFQ(body: CreateRFQDto & {
-        buyerId: string;
-    }): Promise<{
+    createRFQ(dto: CreateRFQDto, userId: string): Promise<{
         id: string;
         createdAt: Date;
         category: string;
@@ -103,9 +109,7 @@ export declare class RfqController {
         expiresAt: Date;
         buyerId: string;
     }>;
-    submitQuote(body: CreateQuoteDto & {
-        supplierId: string;
-    }): Promise<{
+    submitQuote(dto: CreateQuoteDto, userId: string): Promise<{
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.QuoteStatus;

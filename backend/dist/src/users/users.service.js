@@ -17,6 +17,30 @@ let UsersService = class UsersService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async findAll(query = {}) {
+        const { role, page = 1, limit = 20 } = query;
+        const where = {};
+        if (role)
+            where.role = role;
+        const [users, total] = await Promise.all([
+            this.prisma.user.findMany({
+                where,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    id: true, email: true, fullName: true, role: true,
+                    phone: true, status: true, createdAt: true,
+                    supplier: { select: { id: true, companyName: true, isVerified: true } }
+                },
+                skip: (+page - 1) * +limit,
+                take: +limit,
+            }),
+            this.prisma.user.count({ where }),
+        ]);
+        return {
+            data: users,
+            meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / +limit) }
+        };
+    }
     async getSavedProducts(userId) {
         const saved = await this.prisma.savedProduct.findMany({
             where: { userId },
@@ -31,16 +55,16 @@ let UsersService = class UsersService {
                         currency: true,
                         images: true,
                         slug: true,
-                    }
-                }
-            }
+                    },
+                },
+            },
         });
         return saved.map((s) => s.product);
     }
     async saveProduct(userId, productId) {
         try {
             return await this.prisma.savedProduct.create({
-                data: { userId, productId }
+                data: { userId, productId },
             });
         }
         catch (e) {
@@ -49,13 +73,13 @@ let UsersService = class UsersService {
     }
     async unsaveProduct(userId, productId) {
         await this.prisma.savedProduct.deleteMany({
-            where: { userId, productId }
+            where: { userId, productId },
         });
         return { success: true };
     }
     async clearSavedProducts(userId) {
         await this.prisma.savedProduct.deleteMany({
-            where: { userId }
+            where: { userId },
         });
         return { success: true };
     }
@@ -75,36 +99,40 @@ let UsersService = class UsersService {
                         currency: true,
                         images: true,
                         slug: true,
-                    }
-                }
-            }
+                    },
+                },
+            },
         });
-        return history.map((h) => ({ ...h.product, historyId: h.id, viewedAt: h.viewedAt }));
+        return history.map((h) => ({
+            ...h.product,
+            historyId: h.id,
+            viewedAt: h.viewedAt,
+        }));
     }
     async recordView(userId, productId) {
         const existing = await this.prisma.viewHistory.findFirst({
             where: { userId, productId },
-            orderBy: { viewedAt: 'desc' }
+            orderBy: { viewedAt: 'desc' },
         });
         if (existing) {
             return this.prisma.viewHistory.update({
                 where: { id: existing.id },
-                data: { viewedAt: new Date() }
+                data: { viewedAt: new Date() },
             });
         }
         return this.prisma.viewHistory.create({
-            data: { userId, productId }
+            data: { userId, productId },
         });
     }
     async deleteHistoryItem(userId, historyId) {
         await this.prisma.viewHistory.deleteMany({
-            where: { id: historyId, userId }
+            where: { id: historyId, userId },
         });
         return { success: true };
     }
     async clearHistory(userId) {
         await this.prisma.viewHistory.deleteMany({
-            where: { userId }
+            where: { userId },
         });
         return { success: true };
     }

@@ -12,7 +12,7 @@ export declare class MembershipsController {
         features: string[];
         isActive: boolean;
     }[]>;
-    getMySubscription(userId: string): Promise<({
+    getMySubscription(userId: string, currentUserId: string): Promise<({
         plan: {
             id: string;
             name: string;
@@ -32,9 +32,8 @@ export declare class MembershipsController {
         endDate: Date;
     }) | null>;
     subscribe(body: {
-        userId: string;
         planId: string;
-    }): Promise<{
+    }, userId: string): Promise<{
         plan: {
             id: string;
             name: string;

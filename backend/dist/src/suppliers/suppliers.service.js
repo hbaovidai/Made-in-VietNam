@@ -70,7 +70,9 @@ let SuppliersService = class SuppliersService {
         return supplier;
     }
     async update(supplierId, dto) {
-        const supplier = await this.prisma.supplier.findUnique({ where: { id: supplierId } });
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { id: supplierId },
+        });
         if (!supplier)
             throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
         const { industries, markets, ...data } = dto;
@@ -98,18 +100,35 @@ let SuppliersService = class SuppliersService {
         });
     }
     async deleteCertification(certId, supplierId) {
-        const cert = await this.prisma.certification.findUnique({ where: { id: certId } });
+        const cert = await this.prisma.certification.findUnique({
+            where: { id: certId },
+        });
         if (!cert || cert.supplierId !== supplierId)
             throw new common_1.NotFoundException('Chứng nhận không tồn tại');
         await this.prisma.certification.delete({ where: { id: certId } });
         return { message: 'Đã xóa chứng nhận' };
+    }
+    async verifySupplier(supplierId, isVerified) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { id: supplierId }
+        });
+        if (!supplier)
+            throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
+        const updated = await this.prisma.supplier.update({
+            where: { id: supplierId },
+            data: { isVerified }
+        });
+        return updated;
     }
     async getStats(supplierId) {
         const [productCount, batchCount, qrCount, totalViews] = await Promise.all([
             this.prisma.product.count({ where: { supplierId, status: 'ACTIVE' } }),
             this.prisma.batch.count({ where: { supplierId } }),
             this.prisma.qRCode.count({ where: { batch: { supplierId } } }),
-            this.prisma.product.aggregate({ where: { supplierId }, _sum: { viewCount: true } }),
+            this.prisma.product.aggregate({
+                where: { supplierId },
+                _sum: { viewCount: true },
+            }),
         ]);
         return {
             products: productCount,

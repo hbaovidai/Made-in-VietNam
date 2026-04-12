@@ -67,7 +67,9 @@ export class SuppliersService {
   }
 
   async update(supplierId: string, dto: UpdateSupplierDto) {
-    const supplier = await this.prisma.supplier.findUnique({ where: { id: supplierId } });
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { id: supplierId },
+    });
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
 
     const { industries, markets, ...data } = dto;
@@ -97,17 +99,38 @@ export class SuppliersService {
     return this.findBySlug(updated.slug);
   }
 
-  async addCertification(supplierId: string, data: { name: string; issuedBy?: string; documentUrl?: string }) {
+  async addCertification(
+    supplierId: string,
+    data: { name: string; issuedBy?: string; documentUrl?: string },
+  ) {
     return this.prisma.certification.create({
       data: { supplierId, ...data },
     });
   }
 
   async deleteCertification(certId: string, supplierId: string) {
-    const cert = await this.prisma.certification.findUnique({ where: { id: certId } });
-    if (!cert || cert.supplierId !== supplierId) throw new NotFoundException('Chứng nhận không tồn tại');
+    const cert = await this.prisma.certification.findUnique({
+      where: { id: certId },
+    });
+    if (!cert || cert.supplierId !== supplierId)
+      throw new NotFoundException('Chứng nhận không tồn tại');
     await this.prisma.certification.delete({ where: { id: certId } });
     return { message: 'Đã xóa chứng nhận' };
+  }
+
+  async verifySupplier(supplierId: string, isVerified: boolean) {
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { id: supplierId }
+    });
+    if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
+
+    // Update verified status
+    const updated = await this.prisma.supplier.update({
+      where: { id: supplierId },
+      data: { isVerified }
+    });
+
+    return updated;
   }
 
   async getStats(supplierId: string) {
@@ -115,7 +138,10 @@ export class SuppliersService {
       this.prisma.product.count({ where: { supplierId, status: 'ACTIVE' } }),
       this.prisma.batch.count({ where: { supplierId } }),
       this.prisma.qRCode.count({ where: { batch: { supplierId } } }),
-      this.prisma.product.aggregate({ where: { supplierId }, _sum: { viewCount: true } }),
+      this.prisma.product.aggregate({
+        where: { supplierId },
+        _sum: { viewCount: true },
+      }),
     ]);
 
     return {

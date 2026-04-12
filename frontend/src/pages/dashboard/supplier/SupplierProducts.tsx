@@ -6,6 +6,7 @@ import { ConfirmDialog } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Badge } from '../../../components/ui/Badge';
+import { api } from '../../../lib/api';
 import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,42 +16,27 @@ export function SupplierProducts() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   
-  // Dummy data set for UI demonstration
-  const dummyProducts = [
-    {
-      id: "P001",
-      name: "Động cơ điện công nghiệp 3 pha 15kW",
-      category: { name: "Máy móc & Thiết bị" },
-      minPrice: 12000000,
-      maxPrice: 15000000,
-      images: ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=300&q=80"],
-      status: "ACTIVE"
-    },
-    {
-      id: "P002",
-      name: "Tấm pin năng lượng mặt trời Mono 450W",
-      category: { name: "Năng lượng" },
-      minPrice: 2500000,
-      maxPrice: 2800000,
-      images: ["https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=300&q=80"],
-      status: "ACTIVE"
-    },
-    {
-      id: "P003",
-      name: "Bản mạch in PCBA nhiều lớp chuẩn công nghiệp",
-      category: { name: "Điện tử" },
-      minPrice: 50000,
-      maxPrice: 150000,
-      images: ["https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&q=80"],
-      status: "ACTIVE"
-    }
-  ];
-
-  const [productList, setProductList] = useState<any[]>(dummyProducts);
-  const [loading, setLoading] = useState(false);
+  const [productList, setProductList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<any | null>(null);
+
+  useEffect(() => {
+    loadMyProducts();
+  }, []);
+
+  const loadMyProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/products/me');
+      setProductList(res.data || []);
+    } catch (err) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể lấy dữ liệu Sản phẩm' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handlers
   const handleEdit = (product: any) => {
@@ -68,11 +54,14 @@ export function SupplierProducts() {
 
   const confirmDelete = async () => {
     if (productToDelete) {
-      setTimeout(() => {
+      try {
+        await api.delete(`/products/${productToDelete.id}`);
         setProductList((prev) => prev.filter((p) => p.id !== productToDelete.id));
-        addToast({ type: 'success', title: 'Thành công', message: `Đã xoá ${productToDelete.name}` });
+        addToast({ type: 'success', title: 'Thành công', message: `Đã xoá sản phẩm` });
         setIsDeleteOpen(false);
-      }, 500);
+      } catch (error) {
+        addToast({ type: 'error', title: 'Lỗi', message: 'Không thể xoá sản phẩm' });
+      }
     }
   };
 
@@ -124,7 +113,9 @@ export function SupplierProducts() {
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{product.category?.name || ''}</span>
                   <span className="font-bold text-xs text-primary">{product.minPrice?.toLocaleString()}đ - {product.maxPrice?.toLocaleString()}đ</span>
-                  <Badge variant="success">{t('status_selling')}</Badge>
+                  {product.status === 'PENDING' && <Badge variant="warning">⏳ Chờ Duyệt</Badge>}
+                  {product.status === 'ACTIVE' && <Badge variant="success">Đang Bán</Badge>}
+                  {product.status === 'REJECTED' && <Badge variant="danger">Vi Phạm</Badge>}
                 </div>
                 <div className="flex items-center gap-1 mt-2">
                   <button className="btn-icon" onClick={() => handleEdit(product)}>
@@ -174,7 +165,9 @@ export function SupplierProducts() {
                     <span className="font-bold text-slate-900">{product.minPrice?.toLocaleString()}đ - {product.maxPrice?.toLocaleString()}đ</span>
                   </td>
                   <td className="table-cell">
-                    <Badge variant="success">{t('status_selling')}</Badge>
+                    {product.status === 'PENDING' && <Badge variant="warning">⏳ Chờ Duyệt</Badge>}
+                    {product.status === 'ACTIVE' && <Badge variant="success">Đang Bán</Badge>}
+                    {product.status === 'REJECTED' && <Badge variant="danger">Vi Phạm</Badge>}
                   </td>
                   <td className="table-cell text-right">
                     <div className="flex items-center justify-end gap-1">

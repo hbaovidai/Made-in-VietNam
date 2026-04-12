@@ -158,6 +158,7 @@ class ProductQueryDto {
     limit = 20;
     sortBy = 'createdAt';
     sortOrder = 'desc';
+    status;
 }
 exports.ProductQueryDto = ProductQueryDto;
 __decorate([
@@ -199,4 +200,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductQueryDto.prototype, "sortOrder", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.ProductStatus),
+    __metadata("design:type", String)
+], ProductQueryDto.prototype, "status", void 0);
 //# sourceMappingURL=product.dto.js.map

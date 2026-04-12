@@ -1,10 +1,12 @@
 import { BatchesService } from './batches.service';
 import { CreateBatchDto, GenerateQRCodesDto, VerifyQRDto } from './dto/batch.dto';
+import { PrismaService } from '../prisma/prisma.service';
 import type { Request } from 'express';
 export declare class BatchesController {
     private batchesService;
-    constructor(batchesService: BatchesService);
-    getSupplierBatches(supplierId: string): Promise<({
+    private prisma;
+    constructor(batchesService: BatchesService, prisma: PrismaService);
+    getSupplierBatches(supplierId: string, userId: string): Promise<({
         product: {
             name: string;
             slug: string;
@@ -24,7 +26,7 @@ export declare class BatchesController {
         quantity: number;
         qrGenerated: boolean;
     })[]>;
-    getSupplierQRCodes(supplierId: string): Promise<({
+    getSupplierQRCodes(supplierId: string, userId: string): Promise<({
         batch: {
             product: {
                 name: string;
@@ -52,9 +54,7 @@ export declare class BatchesController {
         scanCount: number;
         maxScans: number;
     })[]>;
-    createBatch(body: CreateBatchDto & {
-        supplierId: string;
-    }): Promise<{
+    createBatch(dto: CreateBatchDto, userId: string): Promise<{
         id: string;
         createdAt: Date;
         status: import("@prisma/client").$Enums.BatchStatus;
@@ -66,9 +66,7 @@ export declare class BatchesController {
         quantity: number;
         qrGenerated: boolean;
     }>;
-    generateQRCodes(body: GenerateQRCodesDto & {
-        supplierId: string;
-    }): Promise<{
+    generateQRCodes(dto: GenerateQRCodesDto, userId: string): Promise<{
         message: string;
         codes: {
             code: `${string}-${string}-${string}-${string}-${string}`;

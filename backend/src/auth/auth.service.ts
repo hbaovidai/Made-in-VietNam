@@ -1,11 +1,36 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto } from './dto/auth.dto';
+import {
+  RegisterDto,
+  LoginDto,
+  UpdateProfileDto,
+  ChangePasswordDto,
+} from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
+
+  /**
+   * Tạo JWT token cho user
+   */
+  private generateToken(user: {
+    id: string;
+    email: string;
+    role: string;
+  }): string {
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    return this.jwtService.sign(payload);
+  }
 
   async register(dto: RegisterDto) {
     // Check if email already exists
@@ -55,9 +80,13 @@ export class AuthService {
       });
     }
 
+    // Tạo JWT token
+    const token = this.generateToken(user);
+
     return {
       message: 'Đăng ký thành công',
       user,
+      token,
     };
   }
 
@@ -87,11 +116,15 @@ export class AuthService {
       throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
     }
 
-    // Return user data (JWT sẽ thêm sau)
+    // Tạo JWT token
+    const token = this.generateToken(user);
+
+    // Return user data + token
     const { passwordHash, ...userData } = user;
     return {
       message: 'Đăng nhập thành công',
       user: userData,
+      token,
     };
   }
 

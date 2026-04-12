@@ -5,6 +5,33 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  // ==================== ADMIN: GET ALL USERS ====================
+  async findAll(query: any = {}) {
+    const { role, page = 1, limit = 20 } = query;
+    const where: any = {};
+    if (role) where.role = role;
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true, email: true, fullName: true, role: true, 
+          phone: true, status: true, createdAt: true,
+          supplier: { select: { id: true, companyName: true, isVerified: true } }
+        },
+        skip: (+page - 1) * +limit,
+        take: +limit,
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return {
+      data: users,
+      meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / +limit) }
+    };
+  }
+
   // ==================== SAVED PRODUCTS ====================
 
   async getSavedProducts(userId: string) {
@@ -21,9 +48,9 @@ export class UsersService {
             currency: true,
             images: true,
             slug: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
     return saved.map((s: any) => s.product);
   }
@@ -31,7 +58,7 @@ export class UsersService {
   async saveProduct(userId: string, productId: string) {
     try {
       return await this.prisma.savedProduct.create({
-        data: { userId, productId }
+        data: { userId, productId },
       });
     } catch (e) {
       // Ignored if already saved
@@ -41,14 +68,14 @@ export class UsersService {
 
   async unsaveProduct(userId: string, productId: string) {
     await this.prisma.savedProduct.deleteMany({
-      where: { userId, productId }
+      where: { userId, productId },
     });
     return { success: true };
   }
 
   async clearSavedProducts(userId: string) {
     await this.prisma.savedProduct.deleteMany({
-      where: { userId }
+      where: { userId },
     });
     return { success: true };
   }
@@ -71,41 +98,45 @@ export class UsersService {
             currency: true,
             images: true,
             slug: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
-    return history.map((h: any) => ({ ...h.product, historyId: h.id, viewedAt: h.viewedAt }));
+    return history.map((h: any) => ({
+      ...h.product,
+      historyId: h.id,
+      viewedAt: h.viewedAt,
+    }));
   }
 
   async recordView(userId: string, productId: string) {
     const existing = await this.prisma.viewHistory.findFirst({
       where: { userId, productId },
-      orderBy: { viewedAt: 'desc' }
+      orderBy: { viewedAt: 'desc' },
     });
 
     if (existing) {
       return this.prisma.viewHistory.update({
         where: { id: existing.id },
-        data: { viewedAt: new Date() }
+        data: { viewedAt: new Date() },
       });
     }
 
     return this.prisma.viewHistory.create({
-      data: { userId, productId }
+      data: { userId, productId },
     });
   }
 
   async deleteHistoryItem(userId: string, historyId: string) {
     await this.prisma.viewHistory.deleteMany({
-      where: { id: historyId, userId }
+      where: { id: historyId, userId },
     });
     return { success: true };
   }
 
   async clearHistory(userId: string) {
     await this.prisma.viewHistory.deleteMany({
-      where: { userId }
+      where: { userId },
     });
     return { success: true };
   }

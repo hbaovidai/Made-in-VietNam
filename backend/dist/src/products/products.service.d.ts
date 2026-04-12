@@ -88,6 +88,32 @@ export declare class ProductsService {
         viewCount: number;
         categoryId: string;
     }>;
+    findAllForSupplier(supplierId: string): Promise<({
+        category: {
+            name: string;
+            slug: string;
+        };
+    } & {
+        id: string;
+        name: string;
+        slug: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
+        updatedAt: Date;
+        description: string | null;
+        supplierId: string;
+        minPrice: number;
+        maxPrice: number;
+        currency: string;
+        unit: string;
+        moq: number;
+        moqUnit: string;
+        images: string[];
+        rating: number;
+        reviewCount: number;
+        viewCount: number;
+        categoryId: string;
+    })[]>;
     create(supplierId: string, dto: CreateProductDto): Promise<{
         category: {
             name: string;
@@ -114,7 +140,7 @@ export declare class ProductsService {
         viewCount: number;
         categoryId: string;
     }>;
-    update(productId: string, supplierId: string, dto: UpdateProductDto): Promise<{
+    update(productId: string, supplierId: string | null, dto: UpdateProductDto): Promise<{
         category: {
             name: string;
             slug: string;
@@ -140,7 +166,7 @@ export declare class ProductsService {
         viewCount: number;
         categoryId: string;
     }>;
-    delete(productId: string, supplierId: string): Promise<{
+    delete(productId: string, supplierId: string | null): Promise<{
         message: string;
     }>;
     findRelated(productId: string, limit?: number): Promise<({
@@ -169,4 +195,25 @@ export declare class ProductsService {
         viewCount: number;
         categoryId: string;
     })[]>;
+    verifyProduct(productId: string, status: 'ACTIVE' | 'REJECTED'): Promise<{
+        id: string;
+        name: string;
+        slug: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
+        updatedAt: Date;
+        description: string | null;
+        supplierId: string;
+        minPrice: number;
+        maxPrice: number;
+        currency: string;
+        unit: string;
+        moq: number;
+        moqUnit: string;
+        images: string[];
+        rating: number;
+        reviewCount: number;
+        viewCount: number;
+        categoryId: string;
+    }>;
 }

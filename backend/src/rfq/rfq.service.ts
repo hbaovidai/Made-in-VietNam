@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRFQDto, CreateQuoteDto, UpdateRFQStatusDto, UpdateQuoteStatusDto } from './dto/rfq.dto';
+import {
+  CreateRFQDto,
+  CreateQuoteDto,
+  UpdateRFQStatusDto,
+  UpdateQuoteStatusDto,
+} from './dto/rfq.dto';
 
 @Injectable()
 export class RfqService {
@@ -48,7 +57,8 @@ export class RfqService {
     const existingQuote = await this.prisma.quote.findFirst({
       where: { rfqId: dto.rfqId, supplierId },
     });
-    if (existingQuote) throw new ForbiddenException('Bạn đã báo giá cho RFQ này rồi');
+    if (existingQuote)
+      throw new ForbiddenException('Bạn đã báo giá cho RFQ này rồi');
 
     const quote = await this.prisma.quote.create({
       data: {
@@ -79,7 +89,9 @@ export class RfqService {
         buyer: { select: { fullName: true, email: true, phone: true } },
         quotes: {
           include: {
-            supplier: { select: { companyName: true, logo: true, isVerified: true } },
+            supplier: {
+              select: { companyName: true, logo: true, isVerified: true },
+            },
           },
           orderBy: { price: 'asc' }, // Sort by price by default
         },
@@ -90,10 +102,13 @@ export class RfqService {
   }
 
   // ================= Public/Marketplace =================
-  
+
   async getOpenRFQs() {
     return this.prisma.rFQ.findMany({
-      where: { status: { in: ['OPEN', 'QUOTED'] }, expiresAt: { gt: new Date() } },
+      where: {
+        status: { in: ['OPEN', 'QUOTED'] },
+        expiresAt: { gt: new Date() },
+      },
       orderBy: { createdAt: 'desc' },
       take: 50,
       include: {
