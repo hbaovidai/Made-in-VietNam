@@ -2,10 +2,7 @@ import axios from 'axios';
 
 // Khởi tạo instance API gọi kết nối vào Backend NestJS
 export const api = axios.create({
-  baseURL: 'http://localhost:3001/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1',
 });
 
 // Chặn Response để bắt mượt các lỗi trả về từ Backend

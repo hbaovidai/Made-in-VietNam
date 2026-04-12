@@ -7,7 +7,11 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.setGlobalPrefix('api/v1');
     app.enableCors({
-        origin: ['http://localhost:3000', 'http://localhost:5173'],
+        origin: [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            process.env.FRONTEND_URL || 'https://made-in-viet-nam.vercel.app',
+        ].filter(Boolean),
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         credentials: true,
     });
