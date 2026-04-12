@@ -11,8 +11,8 @@ export declare class NotificationsController {
         userId: string;
         message: string;
         link: string | null;
-        type: string;
         title: string;
+        type: string;
         isRead: boolean;
     }[]>;
     markAllAsRead(userId: string): Promise<{
@@ -24,8 +24,8 @@ export declare class NotificationsController {
         userId: string;
         message: string;
         link: string | null;
-        type: string;
         title: string;
+        type: string;
         isRead: boolean;
     }>;
 }
