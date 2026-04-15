@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { Search, Download, QrCode, ShieldAlert, CheckCircle, Clock, Loader2 } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
 import { EmptyState } from '../../../components/ui/EmptyState';
@@ -29,10 +28,11 @@ export function QRManagement() {
   };
 
   return (
-    <DashboardSection 
-      title={t('qr_mgmt_title')} 
-      subtitle={t('qr_mgmt_subtitle')}
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('qr_mgmt_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('qr_mgmt_subtitle')}</p>
+      </div>
       <div className="p-4 border-b border-slate-100 flex gap-4 items-center bg-slate-50/50">
         <div className="relative w-full max-w-sm">
           <input type="text" placeholder={t('search_qr')} className="input py-2 pl-10" />
@@ -103,6 +103,6 @@ export function QRManagement() {
           </table>
         </div>
       )}
-    </DashboardSection>
+    </div>
   );
 }

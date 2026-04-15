@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { TrendingUp, TrendingDown, Eye, Users, MessageSquare, Package, ChevronRight, Calendar, ArrowUpRight, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -42,20 +41,11 @@ export function SupplierAnalytics() {
   ];
 
   return (
-    <DashboardSection 
-      title={t('biz_analytics_title')} 
-      subtitle={t('biz_analytics_subtitle')}
-      actions={
-        <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-            <Calendar size={14} /> {t('last_30_days')}
-          </button>
-          <button className="bg-slate-900 text-white px-6 py-2 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
-            {t('export_data')}
-          </button>
-        </div>
-      }
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('biz_analytics_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('biz_analytics_subtitle')}</p>
+      </div>
       <div className="p-8 space-y-12">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -149,6 +139,6 @@ export function SupplierAnalytics() {
           </div>
         </div>
       </div>
-    </DashboardSection>
+    </div>
   );
 }

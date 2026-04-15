@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { FileText, ChevronRight, Clock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -41,15 +40,11 @@ export function BuyerRFQs() {
   };
 
   return (
-    <DashboardSection 
-      title={t('my_rfqs_title')} 
-      subtitle={t('my_rfqs_subtitle')}
-      actions={
-        <Link to="/rfq" className="bg-primary text-white px-6 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20">
-          {t('post_new_rfq')}
-        </Link>
-      }
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('my_rfqs_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('my_rfqs_subtitle')}</p>
+      </div>
       <div className="divide-y divide-slate-100">
         {loading ? (
           <div className="flex items-center justify-center p-12">
@@ -166,6 +161,6 @@ export function BuyerRFQs() {
           </div>
         </div>
       )}
-    </DashboardSection>
+    </div>
   );
 }

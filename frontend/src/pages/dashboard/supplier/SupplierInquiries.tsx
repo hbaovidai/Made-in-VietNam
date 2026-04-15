@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { useTranslation } from 'react-i18next';
 import { Search, Filter, MessageCircle, Clock, CheckCircle2, XCircle, SearchIcon, Eye, Loader2, Inbox } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -52,21 +51,12 @@ export function SupplierInquiries() {
   };
 
   return (
-    <DashboardSection 
-      title="Quản lý Yêu cầu (Inquiries)" 
-      subtitle="Quản lý và phản hồi các yêu cầu nhắn tin trực tiếp từ người mua"
-      actions={
-        <div className="flex gap-2">
-          <div className="relative">
-            <input type="text" placeholder="Tìm kiếm..." className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-64 transition-all" />
-            <SearchIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
-          <button className="p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2">
-            <Filter size={18} />
-          </button>
-        </div>
-      }
-    >
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">Quản lý Yêu cầu</h1>
+        <p className="text-sm text-slate-500 mt-1">Phản hồi các yêu cầu nhắn tin từ người mua — {inquiries.length} cuộc hội thoại</p>
+      </div>
       {loading ? (
         <div className="flex items-center justify-center p-16">
           <Loader2 className="animate-spin text-primary" size={32} />
@@ -151,6 +141,6 @@ export function SupplierInquiries() {
           </table>
         </div>
       )}
-    </DashboardSection>
+    </div>
   );
 }

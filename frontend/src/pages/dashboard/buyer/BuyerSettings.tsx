@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Loader2, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -86,20 +85,11 @@ export function BuyerSettings() {
   ];
 
   return (
-    <DashboardSection 
-      title={t('account_settings_title')} 
-      subtitle={t('account_settings_subtitle')}
-      actions={
-        <button 
-          onClick={handleSaveProfile}
-          disabled={isSavingProfile}
-          className="bg-primary text-white px-8 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20 flex items-center gap-2 disabled:opacity-50"
-        >
-          {isSavingProfile ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} 
-          {t('save_changes')}
-        </button>
-      }
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('account_settings_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('account_settings_subtitle')}</p>
+      </div>
       <div className="p-8 space-y-12">
         {/* Profile Form */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -184,6 +174,6 @@ export function BuyerSettings() {
           </div>
         </div>
       </div>
-    </DashboardSection>
+    </div>
   );
 }

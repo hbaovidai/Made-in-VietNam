@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { FileText, ChevronRight, Search, Filter, Clock, CheckCircle2, AlertCircle, Loader2, Send, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -96,22 +95,15 @@ export function SupplierRFQs() {
   };
 
   return (
-    <DashboardSection 
-      title={t('rfqs_received_title')} 
-      subtitle={t('rfqs_received_subtitle')}
-      actions={
-        <div className="flex gap-2">
-          <div className="relative">
-            <input type="text" placeholder={t('search_rfqs')} className="pl-8 pr-4 py-2 bg-white border border-slate-200 text-xs outline-none focus:border-primary" />
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
-          <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-primary transition-colors">
-            <Filter size={18} />
-          </button>
-        </div>
-      }
-    >
-      <div className="divide-y divide-slate-100">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('rfqs_received_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{rfqs.length} yêu cầu báo giá</p>
+      </div>
+
+      {/* Content */}
+      <div className="space-y-3">
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="animate-spin text-primary" size={32} />
@@ -291,6 +283,6 @@ export function SupplierRFQs() {
           </div>
         </div>
       )}
-    </DashboardSection>
+    </div>
   );
 }

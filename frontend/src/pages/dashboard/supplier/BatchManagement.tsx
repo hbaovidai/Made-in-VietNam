@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { Search, Plus, Trash2, Edit2, Archive, QrCode, Loader2 } from 'lucide-react';
 import { BatchForm } from './BatchForm';
 import { api } from '../../../lib/api';
@@ -107,15 +106,11 @@ export function BatchManagement() {
   };
 
   return (
-    <DashboardSection 
-      title={t('batch_mgmt_title')} 
-      subtitle={t('batch_mgmt_subtitle')}
-      actions={
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={16} /> {t('create_new_batch')}
-        </button>
-      }
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('batch_mgmt_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('batch_mgmt_subtitle')}</p>
+      </div>
       <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
         <div className="relative w-full md:w-80">
           <input type="text" placeholder={t('search_batch')} className="input py-2 pl-10" />
@@ -216,6 +211,6 @@ export function BatchManagement() {
         message={t('delete_batch_confirm', { batchNumber: batchToDelete?.batchNumber })}
         confirmText={t('delete_permanently')}
       />
-    </DashboardSection>
+    </div>
   );
 }

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { api } from '../../../lib/api';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, Plus, Edit2, Trash2, FolderTree } from 'lucide-react';
+import { Loader2, Plus, Edit2, Trash2, FolderTree, Search } from 'lucide-react';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminCategories() {
   const { addToast } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; category: any }>({
     isOpen: false, category: null
@@ -66,159 +66,172 @@ export function AdminCategories() {
       setConfirmDelete({ isOpen: false, category: null });
       loadCategories();
     } catch (error: any) {
-      // Typically backend will return 404 with specific message if products exist
       const msg = error?.response?.data?.message || error?.message || 'Không thể xóa danh mục';
       addToast({ type: 'error', title: 'Thất bại', message: msg });
       setConfirmDelete({ isOpen: false, category: null });
     }
   };
 
+  const filtered = categories.filter(c => !search || c.name?.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div className="space-y-6">
-      <DashboardSection 
-        title="Quản lý Danh mục" 
-        subtitle="Thêm, sửa, xóa các danh mục ngành hàng."
-        actions={
-          <button onClick={() => setIsAdding(true)} className="btn-primary flex items-center gap-2 text-sm px-4 py-2">
-            <Plus size={16} /> Thêm Danh mục
-          </button>
-        }
-      >
-        {isAdding && (
-          <div className="bg-white p-4 rounded-xl border border-slate-200 mb-6 flex gap-3 items-center">
-            <input 
-              type="text" 
-              className="input flex-1" 
-              placeholder="Tên danh mục mới..." 
-              value={newName}
-              onChange={e => setNewName(e.target.value)}
-              autoFocus
-            />
-            <button onClick={handleCreate} className="btn-primary py-2 px-4">Lưu</button>
-            <button onClick={() => setIsAdding(false)} className="btn-secondary py-2 px-4">Hủy</button>
-          </div>
-        )}
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Danh mục</h1>
+          <p className="text-sm text-slate-500 mt-1">Quản lý danh mục ngành hàng — {categories.length} danh mục</p>
+        </div>
+        <button 
+          onClick={() => setIsAdding(true)} 
+          className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0"
+        >
+          <Plus size={16} /> Thêm danh mục
+        </button>
+      </div>
 
-        {loading ? (
-          <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" size={32} /></div>
-        ) : (
-          <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden mt-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 uppercase text-[10px] tracking-wider font-bold text-slate-500">
-                    <th className="p-4 pl-6">ID</th>
-                    <th className="p-4">Tên danh mục</th>
-                    <th className="p-4 text-center">Số lượng SP</th>
-                    <th className="p-4 pr-6 text-right">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {categories.map(cat => {
-                    const childProductCount = (cat.children || []).reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0);
-                    const totalProducts = (cat._count?.products || 0) + childProductCount;
-                    return (
-                      <React.Fragment key={cat.id}>
-                        <tr className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6 text-slate-400 font-mono text-xs">{cat.id.substring(0,8)}</td>
-                          <td className="p-4">
-                            {isEditing.id === cat.id ? (
-                              <div className="flex items-center gap-2">
-                                <input 
-                                  className="input py-1.5 px-3 text-sm h-auto" 
-                                  value={isEditing.name} 
-                                  onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
-                                />
-                                <button onClick={() => handleUpdate(cat.id)} className="text-primary font-bold text-xs">Lưu</button>
-                                <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-500 font-bold text-xs">Hủy</button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2 font-bold text-slate-900 group">
-                                <FolderTree size={16} className="text-slate-400" />
-                                {cat.name}
-                                {cat.children?.length > 0 && (
-                                  <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                                    {cat.children.length} con
-                                  </span>
-                                )}
-                              </div>
+      {/* Add Form */}
+      {isAdding && (
+        <div className="flex gap-3 items-center">
+          <input 
+            type="text" 
+            className="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary transition-all" 
+            placeholder="Tên danh mục mới..." 
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            autoFocus
+            onKeyDown={e => e.key === 'Enter' && handleCreate()}
+          />
+          <button onClick={handleCreate} className="bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl">Lưu</button>
+          <button onClick={() => { setIsAdding(false); setNewName(''); }} className="text-sm font-bold text-slate-500 px-3 py-2.5">Hủy</button>
+        </div>
+      )}
+
+      {/* Search */}
+      <div className="relative max-w-sm">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Tìm danh mục..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary transition-all"
+        />
+      </div>
+
+      {/* Table */}
+      {loading ? (
+        <div className="flex justify-center py-16"><Loader2 className="animate-spin text-primary" size={28} /></div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[500px]">
+            <thead>
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                <th className="pb-3 pl-1">Tên danh mục</th>
+                <th className="pb-3 text-center">Số lượng SP</th>
+                <th className="pb-3 pr-1 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              {filtered.map(cat => {
+                const childProductCount = (cat.children || []).reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0);
+                const totalProducts = (cat._count?.products || 0) + childProductCount;
+                return (
+                  <React.Fragment key={cat.id}>
+                    <tr className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors">
+                      <td className="py-4 pl-1">
+                        {isEditing.id === cat.id ? (
+                          <div className="flex items-center gap-2">
+                            <input 
+                              className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-primary" 
+                              value={isEditing.name} 
+                              onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
+                              onKeyDown={e => e.key === 'Enter' && handleUpdate(cat.id)}
+                            />
+                            <button onClick={() => handleUpdate(cat.id)} className="text-primary font-bold text-xs">Lưu</button>
+                            <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-400 font-bold text-xs">Hủy</button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <FolderTree size={15} className="text-slate-400 shrink-0" />
+                            <span className="font-semibold text-slate-900">{cat.name}</span>
+                            {cat.children?.length > 0 && (
+                              <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                {cat.children.length} con
+                              </span>
                             )}
-                          </td>
-                          <td className="p-4 text-center font-bold text-slate-600">
-                            {totalProducts}
-                          </td>
-                          <td className="p-4 pr-6 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => setIsEditing({ id: cat.id, name: cat.name })}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
-                              >
-                                <Edit2 size={16} />
-                              </button>
-                              <button 
-                                onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-4 text-center font-semibold text-slate-600">{totalProducts}</td>
+                      <td className="py-4 pr-1 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button 
+                            onClick={() => setIsEditing({ id: cat.id, name: cat.name })}
+                            className="p-1.5 text-slate-400 hover:text-primary transition-colors"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button 
+                            onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
+                            className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {/* Subcategories */}
+                    {(cat.children || []).map((sub: any) => (
+                      <tr key={sub.id} className="border-b border-slate-50 hover:bg-slate-50/40 transition-colors">
+                        <td className="py-3 pl-8">
+                          {isEditing.id === sub.id ? (
+                            <div className="flex items-center gap-2">
+                              <input 
+                                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-primary" 
+                                value={isEditing.name} 
+                                onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
+                                onKeyDown={e => e.key === 'Enter' && handleUpdate(sub.id)}
+                              />
+                              <button onClick={() => handleUpdate(sub.id)} className="text-primary font-bold text-xs">Lưu</button>
+                              <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-400 font-bold text-xs">Hủy</button>
                             </div>
-                          </td>
-                        </tr>
-                        {/* Subcategories */}
-                        {(cat.children || []).map((sub: any) => (
-                          <tr key={sub.id} className="border-b border-slate-50 hover:bg-blue-50/30 transition-colors bg-slate-50/30">
-                            <td className="p-3 pl-10 text-slate-400 font-mono text-xs">{sub.id.substring(0,8)}</td>
-                            <td className="p-3 pl-10">
-                              {isEditing.id === sub.id ? (
-                                <div className="flex items-center gap-2">
-                                  <input 
-                                    className="input py-1.5 px-3 text-sm h-auto" 
-                                    value={isEditing.name} 
-                                    onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
-                                  />
-                                  <button onClick={() => handleUpdate(sub.id)} className="text-primary font-bold text-xs">Lưu</button>
-                                  <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-500 font-bold text-xs">Hủy</button>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2 text-slate-600 font-medium">
-                                  <span className="text-slate-300">└</span>
-                                  {sub.name}
-                                </div>
-                              )}
-                            </td>
-                            <td className="p-3 text-center font-bold text-slate-500 text-xs">
-                              {sub._count?.products || 0}
-                            </td>
-                            <td className="p-3 pr-6 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button 
-                                  onClick={() => setIsEditing({ id: sub.id, name: sub.name })}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
-                                >
-                                  <Edit2 size={14} />
-                                </button>
-                                <button 
-                                  onClick={() => setConfirmDelete({ isOpen: true, category: sub })}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </React.Fragment>
-                    );
-                  })}
-                  {categories.length === 0 && (
-                    <tr><td colSpan={4} className="p-12 text-center text-slate-400 font-medium">Chưa có danh mục nào</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </DashboardSection>
+                          ) : (
+                            <div className="flex items-center gap-2 text-slate-500">
+                              <span className="text-slate-300">└</span>
+                              <span className="font-medium">{sub.name}</span>
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3 text-center text-xs font-medium text-slate-400">{sub._count?.products || 0}</td>
+                        <td className="py-3 pr-1 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <button 
+                              onClick={() => setIsEditing({ id: sub.id, name: sub.name })}
+                              className="p-1.5 text-slate-400 hover:text-primary transition-colors"
+                            >
+                              <Edit2 size={13} />
+                            </button>
+                            <button 
+                              onClick={() => setConfirmDelete({ isOpen: true, category: sub })}
+                              className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={3} className="py-16 text-center text-slate-400 text-sm">Chưa có danh mục nào</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <ConfirmDialog
         isOpen={confirmDelete.isOpen}

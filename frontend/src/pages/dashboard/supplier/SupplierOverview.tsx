@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, FileText, TrendingUp, ChevronRight, ArrowUpRight, Eye, Users, Award, QrCode, Inbox } from 'lucide-react';
+import { Package, Eye, TrendingUp, ArrowUpRight, Users, Award, Inbox, ShoppingBag, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -16,7 +16,7 @@ export function SupplierOverview() {
     totalViews: 0,
   });
   const [recentInquiries, setRecentInquiries] = useState<any[]>([]);
-  const [loadingInquiries, setLoadingInquiries] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user?.supplier?.id) {
@@ -28,21 +28,21 @@ export function SupplierOverview() {
 
   useEffect(() => {
     if (user?.id) {
-      setLoadingInquiries(true);
       api.get(`/messages/conversations/${user.id}`)
         .then(res => {
           const conversations = Array.isArray(res.data) ? res.data : [];
-          setRecentInquiries(conversations.slice(0, 4));
+          setRecentInquiries(conversations.slice(0, 5));
         })
         .catch(err => console.error('Failed to fetch inquiries', err))
-        .finally(() => setLoadingInquiries(false));
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
-  // Calculate profile completion dynamically
   const calcProfileCompletion = () => {
     if (!user?.supplier) return 30;
-    let score = 30; // base for having account
+    let score = 30;
     if (user.supplier.companyNameEn) score += 10;
     if (user.supplier.description) score += 15;
     if (user.supplier.businessType) score += 10;
@@ -52,13 +52,6 @@ export function SupplierOverview() {
     return Math.min(score, 100);
   };
   const profileCompletion = calcProfileCompletion();
-
-  const stats = [
-    { label: t('active_products'), value: statsData.products.toString(), icon: <Package className="text-blue-500" /> },
-    { label: t('batch_mgmt_title') || 'Lô hàng', value: statsData.batches.toString(), icon: <FileText className="text-orange-500" /> },
-    { label: t('qr_management') || 'Mã QR đã tạo', value: statsData.qrCodes.toString(), icon: <QrCode className="text-green-500" /> },
-    { label: t('profile_views'), value: statsData.totalViews.toString(), icon: <Eye className="text-yellow-500" /> },
-  ];
 
   const formatTime = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -70,185 +63,240 @@ export function SupplierOverview() {
     return `${days} ngày trước`;
   };
 
+  // Simulated monthly data for charts
+  const months = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+  
+  const viewsData = months.map((_, i) => {
+    if (statsData.totalViews === 0) return 0;
+    const seed = (i + 1) * 13 + statsData.totalViews;
+    return Math.max(2, Math.round((seed * 31 % 50) + (i >= 9 ? 15 : 0)));
+  });
+  const viewsMax = Math.max(...viewsData, 1);
+
+  const productsData = months.map((_, i) => {
+    if (statsData.products === 0) return 0;
+    const base = Math.ceil(statsData.products / 12);
+    return i <= new Date().getMonth() ? Math.max(0, base + (i % 3 === 0 ? 1 : 0)) : 0;
+  });
+  const productsMax = Math.max(...productsData, 1);
+
+  const kpis = [
+    { label: 'Sản phẩm đang bán', value: statsData.products, icon: <Package size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/supplier/products' },
+    { label: 'Lượt xem hồ sơ', value: statsData.totalViews, icon: <Eye size={18} className="text-amber-500" />, bg: 'bg-amber-50', link: '/dashboard/supplier/profile' },
+    { label: 'Yêu cầu nhận được', value: recentInquiries.length, icon: <Users size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/supplier/inquiries' },
+    { label: 'Hoàn thiện hồ sơ', value: `${profileCompletion}%`, icon: <Award size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/supplier/profile' },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{t('supplier_dashboard_title')}</h1>
-          <p className="text-slate-500 text-sm">{t('supplier_welcome', { name: user?.fullName || '' })}</p>
-        </div>
-        <div className="flex flex-wrap gap-2 sm:gap-4">
-          <Link to="/dashboard/supplier/products" className="bg-white text-slate-900 border border-slate-200 px-6 py-2 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs">
-            {t('manage_products_btn')}
+    <div className="space-y-6">
+      {/* Welcome + Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <p className="text-sm text-slate-500">Xin chào, {user?.supplier?.companyName || user?.fullName || 'Nhà cung cấp'}</p>
+        <div className="flex gap-2">
+          <Link to="/dashboard/supplier/products" className="text-xs font-bold text-slate-600 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+            Quản lý sản phẩm
           </Link>
-          <Link to="/dashboard/supplier/profile" className="bg-primary text-white px-6 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs shadow-lg shadow-primary/20">
-            {t('edit_profile_overview_btn')}
+          <Link to="/dashboard/supplier/profile" className="text-xs font-bold text-white bg-primary px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
+            Chỉnh sửa hồ sơ
           </Link>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white p-4 sm:p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center">
-                {stat.icon}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {kpis.map((kpi, i) => (
+          <Link key={i} to={kpi.link} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg hover:shadow-slate-100 transition-all group">
+            <div className="flex items-center justify-between mb-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg}`}>
+                {kpi.icon}
               </div>
-              <ArrowUpRight size={16} className="text-slate-300" />
+              <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
             </div>
-            <div className="text-2xl font-black text-slate-900">{stat.value}</div>
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">{stat.label}</div>
-          </div>
+            <div className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</div>
+            <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{kpi.label}</div>
+          </Link>
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Inquiries */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-slate-200 shadow-sm">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="font-bold text-slate-900 uppercase tracking-widest text-sm">{t('recent_inquiries')}</h2>
-              <Link to="/dashboard/supplier/inquiries" className="text-xs font-bold text-primary hover:underline">{t('view_all')}</Link>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Profile Views Chart */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Eye size={16} className="text-amber-500" />
+              <h2 className="text-sm font-bold text-slate-900">Lượt xem hồ sơ</h2>
             </div>
-            <div className="divide-y divide-slate-100">
-              {loadingInquiries ? (
-                <div className="px-6 py-12 text-center">
-                  <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3" />
-                  <p className="text-xs text-slate-400">Đang tải...</p>
-                </div>
-              ) : recentInquiries.length === 0 ? (
-                <div className="px-6 py-12 text-center">
-                  <Inbox size={40} className="text-slate-300 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-slate-500">Chưa có yêu cầu nào</p>
-                  <p className="text-xs text-slate-400 mt-1">Khi người mua liên hệ với bạn, các yêu cầu sẽ hiển thị tại đây.</p>
-                </div>
-              ) : (
-                recentInquiries.map((inquiry: any) => (
-                  <Link 
-                    key={inquiry.id} 
-                    to="/dashboard/supplier/inquiries"
-                    className="px-4 sm:px-6 py-4 flex items-start sm:items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer group gap-3"
-                  >
-                    <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-100 rounded-full flex items-center justify-center shrink-0">
-                        <Users size={14} className="text-slate-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">
-                          {inquiry.otherUser?.fullName || 'Người mua'}
-                        </div>
-                        <div className="text-[10px] sm:text-xs text-slate-500 mt-1 truncate">
-                          {inquiry.lastMessage || 'Tin nhắn mới'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                        {inquiry.updatedAt ? formatTime(inquiry.updatedAt) : ''}
-                      </div>
-                      <ChevronRight size={14} className="text-slate-300 group-hover:text-primary ml-auto mt-1" />
-                    </div>
-                  </Link>
-                ))
-              )}
-            </div>
+            <span className="text-xs font-medium text-slate-400">12 tháng</span>
           </div>
-
-          {/* Performance Chart */}
-          <div className="bg-white border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-bold text-slate-900 uppercase tracking-widest text-sm">{t('performance_trends')}</h2>
-              <select className="text-xs font-bold text-slate-500 bg-slate-50 border border-slate-200 px-2 py-1 outline-none">
-                <option>{t('last_30_days')}</option>
-                <option>{t('last_7_days')}</option>
-                <option>{t('last_6_months')}</option>
-              </select>
-            </div>
-            {statsData.totalViews > 0 ? (
-              <>
-                <div className="h-64 flex items-end gap-4">
-                  {Array.from({ length: 12 }, (_, i) => {
-                    const seed = (i + 1) * 7 + statsData.totalViews;
-                    const h = Math.min(20 + ((seed * 31) % 60) + (i % 3) * 10, 100);
-                    return (
-                      <div key={i} className="flex-1 bg-slate-100 relative group cursor-pointer">
-                        <div 
-                          className="absolute bottom-0 left-0 right-0 bg-primary/20 group-hover:bg-primary transition-all" 
-                          style={{ height: `${h}%` }} 
-                        />
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          {Math.round(h * statsData.totalViews / 100)} {t('views_suffix')}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="mt-4 flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  <span>T1</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span>
-                  <span>T7</span><span>T8</span><span>T9</span><span>T10</span><span>T11</span><span>T12</span>
-                </div>
-              </>
-            ) : (
-              <div className="h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <TrendingUp size={40} className="text-slate-200 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-slate-400">Chưa có dữ liệu hiệu suất</p>
-                  <p className="text-xs text-slate-400 mt-1">Biểu đồ sẽ hiển thị khi sản phẩm của bạn bắt đầu có lượt xem.</p>
-                </div>
+          {statsData.totalViews > 0 ? (
+            <>
+              <div className="h-44 flex items-end gap-2">
+                {viewsData.map((value, i) => (
+                  <div key={i} className="flex-1 relative group cursor-pointer">
+                    <div className="w-full bg-slate-100 rounded-t-md" style={{ height: '176px' }}>
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 bg-amber-400/60 group-hover:bg-amber-500 rounded-t-md transition-all" 
+                        style={{ height: `${(value / viewsMax) * 100}%` }} 
+                      />
+                    </div>
+                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {value}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+              <div className="mt-3 flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+                {months.map(m => <span key={m}>{m}</span>)}
+              </div>
+            </>
+          ) : (
+            <div className="h-44 flex items-center justify-center">
+              <div className="text-center">
+                <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
+                <p className="text-xs text-slate-400">Chưa có dữ liệu lượt xem</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Sidebar Widgets */}
-        <div className="space-y-8">
-          {/* Business Growth */}
-          <div className="bg-slate-900 text-white p-5 sm:p-8 rounded-2xl space-y-6">
-            <h3 className="text-lg font-black uppercase tracking-tight">{t('grow_your_business')}</h3>
-            <div className="space-y-4">
-              <Link to="/premium" className="flex items-center justify-between group">
-                <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{t('upgrade_to_premium')}</span>
-                <ArrowUpRight size={16} className="text-primary" />
-              </Link>
-              <Link to="/services/membership" className="flex items-center justify-between group">
-                <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{t('membership_benefits')}</span>
-                <ArrowUpRight size={16} className="text-primary" />
-              </Link>
-              <Link to="/help/seller-guide" className="flex items-center justify-between group">
-                <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{t('seller_guide_link')}</span>
-                <ArrowUpRight size={16} className="text-primary" />
-              </Link>
+        {/* Products Listed Chart */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={16} className="text-blue-500" />
+              <h2 className="text-sm font-bold text-slate-900">Sản phẩm đã đăng</h2>
             </div>
+            <span className="text-xs font-medium text-slate-400">12 tháng</span>
           </div>
-
-          {/* Verification Status */}
-          <div className="bg-white border border-slate-200 p-5 sm:p-8 space-y-6">
-            <div className="flex items-center gap-3">
-              <Award size={32} className="text-primary" />
-              <h3 className="font-black text-slate-900 uppercase tracking-tight">{t('verified_supplier')}</h3>
+          {statsData.products > 0 ? (
+            <>
+              <div className="h-44 flex items-end gap-2">
+                {productsData.map((value, i) => (
+                  <div key={i} className="flex-1 relative group cursor-pointer">
+                    <div className="w-full bg-slate-100 rounded-t-md" style={{ height: '176px' }}>
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 bg-blue-400/60 group-hover:bg-blue-500 rounded-t-md transition-all" 
+                        style={{ height: `${(value / productsMax) * 100}%` }} 
+                      />
+                    </div>
+                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+                {months.map(m => <span key={m}>{m}</span>)}
+              </div>
+            </>
+          ) : (
+            <div className="h-44 flex items-center justify-center">
+              <div className="text-center">
+                <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
+                <p className="text-xs text-slate-400">Chưa có sản phẩm nào</p>
+              </div>
             </div>
-            <p className="text-slate-500 text-xs leading-relaxed">
-              {t('verified_supplier_desc')}
-            </p>
-            <div className="pt-4 border-t border-slate-100">
-              <div className="flex justify-between text-xs font-bold text-slate-900 uppercase tracking-widest mb-2">
-                <span>{t('profile_completion')}</span>
-                <span>{profileCompletion}%</span>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Recent Inquiries */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-900">Yêu cầu gần đây</h2>
+            <Link to="/dashboard/supplier/inquiries" className="text-xs font-bold text-primary hover:underline">Xem tất cả</Link>
+          </div>
+          {loading ? (
+            <div className="p-12 text-center">
+              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+            </div>
+          ) : recentInquiries.length === 0 ? (
+            <div className="p-12 text-center">
+              <Inbox size={32} className="text-slate-200 mx-auto mb-2" />
+              <p className="text-sm font-medium text-slate-400">Chưa có yêu cầu nào</p>
+              <p className="text-xs text-slate-400 mt-1">Khi người mua liên hệ, yêu cầu sẽ hiển thị tại đây.</p>
+            </div>
+          ) : (
+            <div>
+              {recentInquiries.map((inq: any, i: number) => (
+                <Link 
+                  key={inq.id} 
+                  to="/dashboard/supplier/inquiries"
+                  className={`px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors group ${i < recentInquiries.length - 1 ? 'border-b border-slate-50' : ''}`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
+                      {(inq.otherUser?.fullName || '?')[0].toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-slate-800 group-hover:text-primary transition-colors truncate">
+                        {inq.otherUser?.fullName || 'Người mua'}
+                      </div>
+                      <div className="text-xs text-slate-400 truncate mt-0.5">
+                        {inq.lastMessage || 'Tin nhắn mới'}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-medium shrink-0 ml-3">
+                    {inq.updatedAt ? formatTime(inq.updatedAt) : ''}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Profile Completion */}
+        <div className="space-y-5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                <Award size={18} className="text-purple-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Hồ sơ công ty</h3>
+                <p className="text-xs text-slate-400">Hoàn thiện để tăng uy tín</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-bold">
+                <span className="text-slate-500">Tiến độ</span>
+                <span className={profileCompletion >= 80 ? 'text-emerald-600' : 'text-amber-600'}>{profileCompletion}%</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className={`h-full transition-all duration-500 ${profileCompletion >= 80 ? 'bg-emerald-500' : profileCompletion >= 50 ? 'bg-viet-gold' : 'bg-primary'}`} 
+                  className={`h-full rounded-full transition-all duration-500 ${profileCompletion >= 80 ? 'bg-emerald-500' : profileCompletion >= 50 ? 'bg-amber-500' : 'bg-primary'}`} 
                   style={{ width: `${profileCompletion}%` }} 
                 />
               </div>
               {profileCompletion < 80 && (
-                <Link to="/dashboard/supplier/profile" className="text-[10px] text-primary font-bold mt-2 inline-block hover:underline">
-                  Hoàn thiện hồ sơ để tăng thứ hạng →
+                <Link to="/dashboard/supplier/profile" className="text-[10px] text-primary font-bold hover:underline inline-block mt-1">
+                  Hoàn thiện hồ sơ →
                 </Link>
               )}
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
+            <div className="relative z-10">
+              <h3 className="text-sm font-bold text-white mb-4">Phát triển kinh doanh</h3>
+              <div className="space-y-3">
+                {[
+                  { label: 'Nâng cấp Premium', to: '/premium' },
+                  { label: 'Quyền lợi thành viên', to: '/services/membership' },
+                  { label: 'Hướng dẫn bán hàng', to: '/help/seller-guide' },
+                ].map((link, i) => (
+                  <Link key={i} to={link.to} className="flex items-center justify-between group">
+                    <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{link.label}</span>
+                    <ArrowUpRight size={12} className="text-slate-500 group-hover:text-primary transition-colors" />
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>

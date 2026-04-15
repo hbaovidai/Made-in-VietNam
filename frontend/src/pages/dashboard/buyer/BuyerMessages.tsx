@@ -1,5 +1,4 @@
 import React from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { MessageSquare, Mail, Phone, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,10 +36,11 @@ export function BuyerMessages() {
   ];
 
   return (
-    <DashboardSection 
-      title="Liên hệ nhà cung cấp" 
-      subtitle="Liên hệ trực tiếp với nhà cung cấp qua Zalo, Email hoặc Điện thoại"
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">Liên hệ nhà cung cấp</h1>
+        <p className="text-sm text-slate-500 mt-1">Liên hệ trực tiếp với nhà cung cấp qua Zalo, Email hoặc Điện thoại</p>
+      </div>
       <div className="p-6 sm:p-8">
         {/* Info Banner */}
         <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
@@ -75,6 +75,6 @@ export function BuyerMessages() {
           ))}
         </div>
       </div>
-    </DashboardSection>
+    </div>
   );
 }

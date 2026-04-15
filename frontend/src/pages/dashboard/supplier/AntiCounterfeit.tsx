@@ -1,5 +1,4 @@
 import React from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { ShieldCheck, ShieldAlert, Activity, AlertTriangle, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
@@ -21,10 +20,11 @@ export function AntiCounterfeit() {
   const compromised = qrs.filter(q => q.status === 'COMPROMISED').length;
   
   return (
-    <DashboardSection 
-      title={t('anti_counterfeit_title')} 
-      subtitle={t('anti_counterfeit_subtitle')}
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('anti_counterfeit_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('anti_counterfeit_subtitle')}</p>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div className="card p-6 border-l-4 border-l-blue-500">
           <div className="flex justify-between items-start mb-4">
@@ -123,6 +123,6 @@ export function AntiCounterfeit() {
           </tbody>
         </table>
       </div>
-    </DashboardSection>
+    </div>
   );
 }

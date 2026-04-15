@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardSection } from '../../../components/DashboardSection';
 import { Clock, ChevronRight, Search, Filter, Trash2, Eye, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -54,20 +53,11 @@ export function BuyerHistory() {
   };
 
   return (
-    <DashboardSection 
-      title={t('browsing_history_title')} 
-      subtitle={t('browsing_history_subtitle')}
-      actions={
-        historyProducts.length > 0 && (
-          <button 
-            onClick={handleClearHistory}
-            className="bg-white text-slate-900 border border-slate-200 px-6 py-2 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs"
-          >
-            {t('clear_history')}
-          </button>
-        )
-      }
-    >
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-900">{t('browsing_history_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('browsing_history_subtitle')}</p>
+      </div>
       <div className="divide-y divide-slate-100">
         {loading ? (
            <div className="flex justify-center items-center py-20">
@@ -115,6 +105,6 @@ export function BuyerHistory() {
           </Link>
         </div>
       )}
-    </DashboardSection>
+    </div>
   );
 }
