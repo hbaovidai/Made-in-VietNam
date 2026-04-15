@@ -15,13 +15,27 @@ export function RFQ() {
 
   const [formData, setFormData] = useState({
     productName: '',
-    category: 'General', // Default, hidden from UI
+    category: 'General', 
     quantity: '',
     quantityUnit: 'pieces',
     description: '',
+    budget: '',
     destination: '',
-    contactEmail: '',
+    contactName: user?.fullName || '',
+    contactEmail: user?.email || '',
+    contactPhone: user?.phone || '',
   });
+
+  React.useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        contactName: prev.contactName || user?.fullName || '',
+        contactEmail: prev.contactEmail || user?.email || '',
+        contactPhone: prev.contactPhone || user?.phone || ''
+      }));
+    }
+  }, [user]);
 
   React.useEffect(() => {
     api.get('/products?limit=100')
@@ -100,118 +114,198 @@ export function RFQ() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Header */}
-      <div className="bg-slate-900 text-white py-16">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{t('rfq_title')}</h1>
-            <p className="text-slate-400 text-lg leading-relaxed">
+      <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 py-10 relative overflow-hidden">
+        {/* Soft Glows */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-400/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/4 translate-y-1/3" />
+        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-viet-gold/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
+          <div className="max-w-3xl space-y-4 flex flex-col items-center">
+            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+              {t('rfq_title')}
+            </h1>
+            <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
               {t('rfq_desc')}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Form */}
-          <div className="lg:col-span-8">
-            <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
-              <div className="p-8 md:p-12 space-y-10">
-                {/* Basic Info */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+        <div>
+          <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-primary/5 overflow-hidden">
+            <div className="p-8 md:p-12 space-y-10">
+                {/* A. Basic Info */}
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">1</div>
-                    <h2 className="text-xl font-bold text-slate-900">{t('product_information')}</h2>
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">A</div>
+                    <h2 className="text-xl font-bold text-slate-900">Thông tin sản phẩm</h2>
                   </div>
                   {errorMsg && (
                     <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-bold border border-red-100 flex items-center justify-center">
                       <AlertCircle size={16} className="mr-2" /> {errorMsg}
                     </div>
                   )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-bold text-slate-700">{t('product_name_label')}</label>
-                      <select
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Tên sản phẩm *</label>
+                      <input 
+                        type="text"
                         required
+                        list="product-suggestions"
                         name="productName"
                         value={formData.productName}
                         onChange={handleChange}
+                        placeholder="VD: Áo thun cotton nam... (Hoặc chọn từ danh sách)"
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      >
-                        <option value="">-- Chọn sản phẩm từ hệ thống --</option>
-                        {products.map(p => (
-                          <option key={p.id} value={p.name}>{p.name}</option>
-                        ))}
-                      </select>
+                      />
+                      <datalist id="product-suggestions">
+                         {products
+                           .filter(p => !formData.category || formData.category === 'General' || p.category?.name === formData.category)
+                           .map(p => (
+                             <option key={p.id} value={p.name} />
+                         ))}
+                      </datalist>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">{t('quantity_label')}</label>
-                      <div className="flex gap-2">
-                        <input
-                          required
-                          name="quantity"
-                          value={formData.quantity}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700">Danh mục</label>
+                        <select
+                          name="category"
+                          value={formData.category}
                           onChange={handleChange}
-                          type="number"
-                          min="1"
-                          placeholder={t('quantity_placeholder')}
-                          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                        />
-                        <select 
-                          name="quantityUnit"
-                          value={formData.quantityUnit}
-                          onChange={handleChange}
-                          className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                         >
-                          <option value="kg">kg</option>
-                          <option value="pieces">pieces</option>
-                          <option value="tons">tons</option>
+                          <option value="General">-- Chọn danh mục --</option>
+                          {Array.from(new Set(products.map(p => p.category?.name).filter(Boolean))).map((catName: any) => (
+                             <option key={catName} value={catName}>{catName}</option>
+                          ))}
                         </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700">Số lượng & Đơn vị *</label>
+                        <div className="flex gap-2">
+                          <input
+                            required
+                            name="quantity"
+                            value={formData.quantity}
+                            onChange={handleChange}
+                            type="number"
+                            min="1"
+                            placeholder="Nhập số lượng..."
+                            className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                          />
+                          <select 
+                            name="quantityUnit"
+                            value={formData.quantityUnit}
+                            onChange={handleChange}
+                            className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                          >
+                            <option value="pieces">Cái / Chiếc</option>
+                            <option value="kg">Kg</option>
+                            <option value="tons">Tấn</option>
+                            <option value="meters">Mét</option>
+                            <option value="sets">Bộ</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                {/* Details */}
+                {/* B. Details */}
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">2</div>
-                    <h2 className="text-xl font-bold text-slate-900">{t('detailed_requirements')}</h2>
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">B</div>
+                    <h2 className="text-xl font-bold text-slate-900">Yêu cầu kỹ thuật</h2>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700">{t('description_label')}</label>
+                    <label className="text-sm font-bold text-slate-700">Mô tả chi tiết *</label>
                     <textarea
                       required
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
-                      rows={5}
-                      placeholder={t('description_placeholder')}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
+                      rows={6}
+                      placeholder="Ghi rõ các yêu cầu về Chất liệu, Kích thước, Màu sắc, Tiêu chuẩn chất lượng, hoặc Quy cách đóng gói bạn mong muốn..."
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none leading-relaxed"
                     />
+                  </div>
+                </section>
+
+                {/* C. Commercial Requirements */}
+                <section className="space-y-6">
+                  <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">C</div>
+                    <h2 className="text-xl font-bold text-slate-900">Yêu cầu thương mại</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">{t('destination_country_label')}</label>
+                      <label className="text-sm font-bold text-slate-700">Khoảng giá mục tiêu / Ngân sách</label>
+                      <input
+                        type="text"
+                        name="budget"
+                        value={formData.budget}
+                        onChange={handleChange}
+                        placeholder="VD: 50.000 - 80.000 VNĐ/cái"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Địa điểm giao hàng *</label>
                       <input
                         required
                         type="text"
                         name="destination"
                         value={formData.destination}
                         onChange={handleChange}
-                        placeholder={t('country_placeholder')}
+                        placeholder="VD: Cảng Cát Lái, HCM"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* D. Contact Details */}
+                <section className="space-y-6">
+                  <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">D</div>
+                    <h2 className="text-xl font-bold text-slate-900">Thông tin liên hệ</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Tên người liên hệ</label>
+                      <input
+                        type="text"
+                        name="contactName"
+                        value={formData.contactName}
+                        onChange={handleChange}
+                        placeholder="Họ và tên..."
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Email liên hệ</label>
+                      <label className="text-sm font-bold text-slate-700">Số điện thoại</label>
+                      <input
+                        type="text"
+                        name="contactPhone"
+                        value={formData.contactPhone}
+                        onChange={handleChange}
+                        placeholder="VD: 0987..."
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-sm font-bold text-slate-700">Email nhận báo giá *</label>
                       <input
                         required
                         type="email"
                         name="contactEmail"
                         value={formData.contactEmail}
                         onChange={handleChange}
-                        placeholder="buyer@example.com"
+                        placeholder="VD: buyer@example.com"
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
@@ -238,63 +332,71 @@ export function RFQ() {
                 </div>
               </div>
             </form>
+        </div>
+
+        {/* Bottom Tips Hub */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Tips for RFQ */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <h3 className="text-xl font-bold text-slate-900 mb-8">{t('tips_for_rfq')}</h3>
+            <div className="space-y-6">
+              {[
+                {
+                  icon: <Zap size={20} className="text-viet-gold drop-shadow-sm" />,
+                  title: t('be_specific'),
+                  desc: t('be_specific_desc')
+                },
+                {
+                  icon: <ShieldCheck size={20} className="text-viet-gold drop-shadow-sm" />,
+                  title: t('mention_standards'),
+                  desc: t('mention_standards_desc')
+                },
+                {
+                  icon: <Clock size={20} className="text-viet-gold drop-shadow-sm" />,
+                  title: t('set_deadline'),
+                  desc: t('set_deadline_desc')
+                },
+                {
+                  icon: <MessageSquare size={20} className="text-viet-gold drop-shadow-sm" />,
+                  title: t('communication'),
+                  desc: t('communication_desc')
+                }
+              ].map((tip, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <div className="shrink-0 mt-1">{tip.icon}</div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm">{tip.title}</h4>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{tip.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Sidebar Tips */}
-          <div className="lg:col-span-4 space-y-8">
-            <div className="bg-white rounded-3xl border border-slate-200 p-8 space-y-8 shadow-sm">
-              <h3 className="text-xl font-bold text-slate-900">{t('tips_for_rfq')}</h3>
-              <div className="space-y-6">
-                {[
-                  {
-                    icon: <Zap size={20} className="text-viet-gold" />,
-                    title: t('be_specific'),
-                    desc: t('be_specific_desc')
-                  },
-                  {
-                    icon: <ShieldCheck size={20} className="text-emerald-500" />,
-                    title: t('mention_standards'),
-                    desc: t('mention_standards_desc')
-                  },
-                  {
-                    icon: <Clock size={20} className="text-blue-500" />,
-                    title: t('set_deadline'),
-                    desc: t('set_deadline_desc')
-                  },
-                  {
-                    icon: <MessageSquare size={20} className="text-primary" />,
-                    title: t('communication'),
-                    desc: t('communication_desc')
-                  }
-                ].map((tip, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="shrink-0">{tip.icon}</div>
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-sm">{tip.title}</h4>
-                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">{tip.desc}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* How it works */}
+          <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-xl">
+            <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/10">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <Info size={20} className="text-primary-light" />
               </div>
+              <h3 className="font-bold text-xl">{t('how_it_works')}</h3>
             </div>
-
-            <div className="bg-slate-900 rounded-3xl p-8 text-white space-y-6">
-              <div className="flex items-center gap-3">
-                <Info size={24} className="text-viet-gold" />
-                <h3 className="font-bold">{t('how_it_works')}</h3>
-              </div>
-              <div className="space-y-4">
-                {[
-                  t('rfq_step_1'),
-                  t('rfq_step_2'),
-                  t('rfq_step_3'),
-                  t('rfq_step_4')
-                ].map((step) => (
-                  <div key={step} className="text-sm text-slate-400 font-medium">
+            <div className="space-y-6">
+              {[
+                t('rfq_step_1'),
+                t('rfq_step_2'),
+                t('rfq_step_3'),
+                t('rfq_step_4')
+              ].map((step, idx) => (
+                <div key={step} className="flex items-start gap-4">
+                  <div className="shrink-0 w-6 h-6 rounded-full bg-white/10 text-white/60 flex items-center justify-center text-xs font-bold mt-0.5">
+                    {idx + 1}
+                  </div>
+                  <div className="text-sm text-slate-300 font-medium leading-relaxed">
                     {step}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

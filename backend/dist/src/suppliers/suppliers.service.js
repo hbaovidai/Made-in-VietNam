@@ -46,9 +46,10 @@ let SuppliersService = class SuppliersService {
             meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
         };
     }
-    async findBySlug(slug) {
-        const supplier = await this.prisma.supplier.findUnique({
-            where: { slug },
+    async findBySlug(slugOrId) {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+        const supplier = await this.prisma.supplier.findFirst({
+            where: isUUID ? { id: slugOrId } : { slug: slugOrId },
             include: {
                 user: { select: { fullName: true, email: true } },
                 industries: { select: { industry: true } },

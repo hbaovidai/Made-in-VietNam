@@ -13,10 +13,13 @@ exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const notifications_service_1 = require("../notifications/notifications.service");
 let ProductsService = class ProductsService {
     prisma;
-    constructor(prisma) {
+    notificationsService;
+    constructor(prisma, notificationsService) {
         this.prisma = prisma;
+        this.notificationsService = notificationsService;
     }
     async findAll(query) {
         const { search, category, supplierId, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
@@ -143,7 +146,7 @@ let ProductsService = class ProductsService {
             .replace(/(^-|-$)/g, '') +
             '-' +
             Date.now();
-        return this.prisma.product.create({
+        const product = await this.prisma.product.create({
             data: {
                 supplierId,
                 name: dto.name,
@@ -162,6 +165,18 @@ let ProductsService = class ProductsService {
                 category: { select: { name: true, slug: true } },
             },
         });
+        try {
+            await this.notificationsService.notifyAdmins({
+                title: 'Sản phẩm mới cần duyệt',
+                message: `Xưởng vừa đăng sản phẩm "${product.name}". Vui lòng kiểm duyệt nội dung.`,
+                link: '/dashboard/admin/products',
+                type: 'warning'
+            });
+        }
+        catch (err) {
+            console.error('Failed to notify admins:', err);
+        }
+        return product;
     }
     async update(productId, supplierId, dto) {
         const product = await this.prisma.product.findUnique({
@@ -230,6 +245,7 @@ let ProductsService = class ProductsService {
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_service_1.NotificationsService])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

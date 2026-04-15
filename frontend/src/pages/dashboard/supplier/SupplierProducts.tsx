@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardSection } from '../../../components/DashboardSection';
-import { Search, Filter, Plus, MoreVertical, Edit2, Trash2, Eye, Box, Loader2 } from 'lucide-react';
+import { Search, Filter, Plus, Edit2, Trash2, Eye, Box, Loader2, X } from 'lucide-react';
 import { ProductForm } from './ProductForm';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
@@ -18,6 +18,10 @@ export function SupplierProducts() {
   
   const [productList, setProductList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<any | null>(null);
@@ -38,6 +42,13 @@ export function SupplierProducts() {
     }
   };
 
+  const filteredProducts = productList.filter((p) => {
+    let match = true;
+    if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) match = false;
+    if (statusFilter && p.status !== statusFilter) match = false;
+    return match;
+  });
+
   // Handlers
   const handleEdit = (product: any) => {
     navigate(`/dashboard/supplier/products/${product.id}/edit`);
@@ -50,6 +61,10 @@ export function SupplierProducts() {
   const handleDeleteClick = (product: any) => {
     setProductToDelete(product);
     setIsDeleteOpen(true);
+  };
+
+  const handlePreview = (product: any) => {
+    window.open(`/products/${product.id}`, '_blank');
   };
 
   const confirmDelete = async () => {
@@ -76,14 +91,59 @@ export function SupplierProducts() {
       }
     >
       <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
-        <div className="relative w-full md:w-80">
-          <input type="text" placeholder={t('search_product')} className="input py-2 pl-10" />
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="relative w-full md:w-80 flex items-center gap-2">
+          <div className="relative flex-1">
+            <input 
+              type="text" 
+              placeholder={t('search_product')} 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input py-2 pl-10 w-full" 
+            />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <X size={14} />
+              </button>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2 w-full md:w-auto">
-          <button className="btn-secondary py-2 flex items-center gap-2">
-            <Filter size={16} /> {t('filter')}
+        <div className="flex gap-2 w-full md:w-auto relative">
+          <button 
+            onClick={() => setShowFilter(!showFilter)}
+            className={`py-2 px-4 flex items-center gap-2 rounded-lg text-sm font-bold border transition-colors ${showFilter || statusFilter ? 'bg-[#043365] text-white border-[#043365]' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`}
+          >
+            <Filter size={16} /> {statusFilter ? `Lọc: ${statusFilter}` : t('filter')}
           </button>
+          
+          {showFilter && (
+            <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-10 py-2">
+              <button 
+                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-slate-50 ${!statusFilter ? 'text-primary bg-primary/5' : 'text-slate-700'}`}
+                onClick={() => { setStatusFilter(''); setShowFilter(false); }}
+              >
+                Tất cả tính trạng
+              </button>
+              <button 
+                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-slate-50 ${statusFilter === 'ACTIVE' ? 'text-primary bg-primary/5' : 'text-slate-700'}`}
+                onClick={() => { setStatusFilter('ACTIVE'); setShowFilter(false); }}
+              >
+                Đang bán (Active)
+              </button>
+              <button 
+                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-slate-50 ${statusFilter === 'PENDING' ? 'text-primary bg-primary/5' : 'text-slate-700'}`}
+                onClick={() => { setStatusFilter('PENDING'); setShowFilter(false); }}
+              >
+                Chờ duyệt (Pending)
+              </button>
+              <button 
+                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-slate-50 ${statusFilter === 'REJECTED' ? 'text-primary bg-primary/5' : 'text-slate-700'}`}
+                onClick={() => { setStatusFilter('REJECTED'); setShowFilter(false); }}
+              >
+                Vi phạm (Rejected)
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -91,18 +151,18 @@ export function SupplierProducts() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="animate-spin text-primary" size={32} />
         </div>
-      ) : productList.length === 0 ? (
+      ) : filteredProducts.length === 0 ? (
         <EmptyState 
           icon={<Box size={48} className="text-slate-300" />}
-          title={t('no_products')}
-          description={t('no_products_desc')}
-          action={<button className="btn-primary mt-4" onClick={handleCreate}>{t('create_first_product')}</button>}
+          title={productList.length === 0 ? t('no_products') : "Không tìm thấy kết quả"}
+          description={productList.length === 0 ? t('no_products_desc') : "Thay đổi từ khóa hoặc bộ lọc để xem sản phẩm."}
+          action={productList.length === 0 ? <button className="btn-primary mt-4" onClick={handleCreate}>{t('create_first_product')}</button> : undefined}
         />
       ) : (
         <>
         {/* Mobile: Card List */}
         <div className="md:hidden divide-y divide-slate-100">
-          {productList.map((product) => (
+          {filteredProducts.map((product) => (
             <div key={product.id} className="p-4 flex gap-3 items-start">
               <div className="w-16 h-16 bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200">
                 <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
@@ -118,14 +178,14 @@ export function SupplierProducts() {
                   {product.status === 'REJECTED' && <Badge variant="danger">Vi Phạm</Badge>}
                 </div>
                 <div className="flex items-center gap-1 mt-2">
-                  <button className="btn-icon" onClick={() => handleEdit(product)}>
+                  <button className="btn-icon" onClick={() => handleEdit(product)} title="Sửa">
                     <Edit2 size={14} />
                   </button>
-                  <button className="btn-icon-danger" onClick={() => handleDeleteClick(product)}>
+                  <button className="btn-icon-danger" onClick={() => handleDeleteClick(product)} title="Xóa">
                     <Trash2 size={14} />
                   </button>
-                  <button className="btn-icon">
-                    <MoreVertical size={14} />
+                  <button className="btn-icon" onClick={() => handlePreview(product)} title="Xem trước">
+                    <Eye size={14} />
                   </button>
                 </div>
               </div>
@@ -145,7 +205,7 @@ export function SupplierProducts() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {productList.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} className="table-row group">
                   <td className="table-cell">
                     <div className="flex items-center gap-4">
@@ -159,7 +219,7 @@ export function SupplierProducts() {
                     </div>
                   </td>
                   <td className="table-cell">
-                    <span className="text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full">{product.category?.name || ''}</span>
+                    <span className="inline-block whitespace-nowrap text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full max-w-[150px] truncate">{product.category?.name || ''}</span>
                   </td>
                   <td className="table-cell">
                     <span className="font-bold text-slate-900">{product.minPrice?.toLocaleString()}đ - {product.maxPrice?.toLocaleString()}đ</span>
@@ -171,14 +231,14 @@ export function SupplierProducts() {
                   </td>
                   <td className="table-cell text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="btn-icon" onClick={() => handleEdit(product)}>
+                      <button className="btn-icon" onClick={() => handleEdit(product)} title="Sửa">
                         <Edit2 size={16} />
                       </button>
-                      <button className="btn-icon-danger" onClick={() => handleDeleteClick(product)}>
+                      <button className="btn-icon-danger" onClick={() => handleDeleteClick(product)} title="Xóa">
                         <Trash2 size={16} />
                       </button>
-                      <button className="btn-icon">
-                        <MoreVertical size={16} />
+                      <button className="btn-icon" onClick={() => handlePreview(product)} title="Xem trước">
+                        <Eye size={16} />
                       </button>
                     </div>
                   </td>

@@ -1,59 +1,33 @@
-import {
-  Controller,
-  Get,
-  Put,
-  Param,
-  UseGuards,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('notifications')
+@UseGuards(JwtAuthGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  // PROTECTED: Chỉ xem thông báo của mình
-  @UseGuards(JwtAuthGuard)
-  @Get(':userId/unread-count')
-  getUnreadCount(
-    @Param('userId') userId: string,
-    @CurrentUser('id') currentUserId: string,
-  ) {
-    if (currentUserId !== userId)
-      throw new ForbiddenException('Không có quyền');
-    return this.notificationsService.getUnreadCount(userId);
+  @Get()
+  async getMyNotifications(@CurrentUser('id') userId: string) {
+    return this.notificationsService.findAllForUser(userId);
   }
 
-  // PROTECTED
-  @UseGuards(JwtAuthGuard)
-  @Get(':userId')
-  getNotifications(
-    @Param('userId') userId: string,
-    @CurrentUser('id') currentUserId: string,
-  ) {
-    if (currentUserId !== userId)
-      throw new ForbiddenException('Không có quyền');
-    return this.notificationsService.getNotifications(userId);
+  @Get('unread-count')
+  async getUnreadCount(@CurrentUser('id') userId: string) {
+    const count = await this.notificationsService.countUnread(userId);
+    return { count };
   }
 
-  // PROTECTED
-  @UseGuards(JwtAuthGuard)
-  @Put(':userId/read-all')
-  markAllAsRead(
-    @Param('userId') userId: string,
-    @CurrentUser('id') currentUserId: string,
-  ) {
-    if (currentUserId !== userId)
-      throw new ForbiddenException('Không có quyền');
-    return this.notificationsService.markAllAsRead(userId);
+  @Patch('read-all')
+  async markAllAsRead(@CurrentUser('id') userId: string) {
+    await this.notificationsService.markAllAsRead(userId);
+    return { success: true };
   }
 
-  // PROTECTED
-  @UseGuards(JwtAuthGuard)
-  @Put(':id/read')
-  markAsRead(@Param('id') id: string) {
-    return this.notificationsService.markAsRead(id);
+  @Patch(':id/read')
+  async markAsRead(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    await this.notificationsService.markAsRead(id, userId);
+    return { success: true };
   }
 }

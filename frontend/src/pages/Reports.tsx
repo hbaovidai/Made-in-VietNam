@@ -30,45 +30,49 @@ export function Reports() {
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Search & Filter */}
-        <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between bg-white/80 backdrop-blur-xl p-4 rounded-3xl shadow-lg border border-white/50 relative z-10">
           <div className="relative w-full md:w-96">
-            <input type="text" placeholder={t('search_reports_placeholder')} className="w-full px-4 py-3 bg-white border border-slate-200 outline-none focus:border-primary shadow-sm" />
-            <Search size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input type="text" placeholder={t('search_reports_placeholder')} className="w-full px-6 py-4 bg-slate-50/50 rounded-2xl border border-slate-100 outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+            <Search size={20} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400" />
           </div>
           <div className="flex gap-4 w-full md:w-auto">
-            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 transition-colors">
+            <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-slate-50 rounded-2xl text-slate-700 font-bold hover:bg-slate-100 hover:text-primary transition-colors">
               <Filter size={18} /> {t('filters')}
             </button>
-            <button className="flex-1 md:flex-none bg-slate-900 text-white px-8 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
+            <button className="flex-1 md:flex-none bg-primary text-white px-8 py-4 rounded-2xl font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30 uppercase tracking-widest text-xs">
               {t('latest_reports')}
             </button>
           </div>
         </div>
 
         {/* Featured Report */}
-        <div className="bg-white border border-slate-200 p-8 mb-16 flex flex-col lg:flex-row gap-12 items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-full lg:w-48 h-64 bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-xl rotate-2 hover:rotate-0 transition-transform">
-            <FileText size={80} className="text-primary opacity-20" />
+        <div className="bg-white border text-left border-slate-100 p-8 lg:p-10 mb-16 flex flex-col lg:flex-row gap-12 items-center rounded-[2.5rem] shadow-2xl shadow-primary/5 hover:shadow-primary/10 transition-all">
+          <div className="w-full lg:w-64 h-80 bg-gradient-to-br from-slate-100 via-blue-50 to-primary/10 rounded-3xl flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden group">
+            <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-5 transition-opacity" />
+            <FileText size={80} className="text-primary opacity-40 group-hover:scale-110 transition-transform duration-500" />
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/40 blur-2xl rounded-full" />
           </div>
           <div className="flex-1 space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="bg-primary text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest">{t('premium_report')}</span>
-              <span className="text-slate-400 text-xs">{t('updated_time', { time: '2 ' + t('hours_ago') })}</span>
+            <div className="flex items-center gap-3">
+              <span className="bg-gradient-to-r from-primary to-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">
+                {t('premium_report')}
+              </span>
+              <span className="text-slate-400 text-xs font-medium">{t('updated_time', { time: '2 ' + t('hours_ago') })}</span>
             </div>
-            <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter leading-tight">Vietnam Manufacturing Outlook 2026: The Comprehensive Guide</h2>
-            <p className="text-slate-600 text-lg leading-relaxed">
+            <h2 className="text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tighter leading-tight">Vietnam Manufacturing Outlook 2026: The Comprehensive Guide</h2>
+            <p className="text-slate-500 text-lg leading-relaxed font-light">
               {t('featured_report_desc')}
             </p>
-            <div className="flex flex-wrap gap-8 text-sm font-bold text-slate-500">
-              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500" /> {t('verified_data')}</span>
-              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500" /> {t('expert_analysis')}</span>
-              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500" /> {t('pages_count', { count: 120 })}</span>
+            <div className="flex flex-wrap gap-6 text-sm font-bold text-slate-600 bg-slate-50 p-4 rounded-2xl w-fit">
+              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> {t('verified_data')}</span>
+              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> {t('expert_analysis')}</span>
+              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> {t('pages_count', { count: 120 })}</span>
             </div>
-            <div className="pt-4 flex gap-4">
-              <button className="bg-primary text-white px-10 py-4 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-sm shadow-xl shadow-primary/20 flex items-center gap-2">
+            <div className="pt-4 flex flex-col sm:flex-row gap-4">
+              <button className="bg-primary text-white px-10 py-4 rounded-2xl font-bold hover:bg-primary-dark transition-all transform hover:-translate-y-1 uppercase tracking-widest text-sm shadow-xl shadow-primary/30 flex items-center justify-center gap-2">
                 <Download size={18} /> {t('download_full_report')}
               </button>
-              <button className="bg-white text-slate-900 border-2 border-slate-200 px-10 py-4 font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest text-sm">
+              <button className="bg-slate-50 text-slate-700 px-10 py-4 rounded-2xl font-bold hover:bg-slate-100 hover:text-primary transition-colors uppercase tracking-widest text-sm text-center">
                 {t('view_sample')}
               </button>
             </div>
@@ -83,23 +87,23 @@ export function Reports() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reports.map((report) => (
-              <div key={report.id} className="bg-white p-6 border border-slate-200 hover:border-primary transition-all group cursor-pointer shadow-sm hover:shadow-md">
+              <div key={report.id} className="bg-white p-8 rounded-3xl border border-slate-100 hover:border-primary/30 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 flex flex-col h-full">
                 <div className="flex items-start justify-between mb-6">
-                  <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                    <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+                  <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                    <FileText size={28} className="text-slate-400 group-hover:text-primary transition-colors" />
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{report.category || 'Report'}</span>
+                  <span className="bg-slate-50 text-slate-500 group-hover:bg-primary/5 group-hover:text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors">{report.category || 'Report'}</span>
                 </div>
-                <h3 className="text-slate-900 font-bold group-hover:text-primary transition-colors mb-4 line-clamp-2">{report.title}</h3>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
-                  <span>{new Date(report.createdAt).toLocaleDateString()}</span>
-                  <span>{report.price === 0 ? 'Free' : `$${report.price}`}</span>
+                <h3 className="text-lg text-slate-900 font-bold group-hover:text-primary transition-colors mb-4 line-clamp-2 leading-tight flex-1">{report.title}</h3>
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-6 font-medium">
+                  <span className="bg-slate-50 px-2 py-1 rounded-md">{new Date(report.createdAt).toLocaleDateString()}</span>
+                  <span className="font-bold text-emerald-600">{report.price === 0 ? 'Free' : `$${report.price}`}</span>
                 </div>
                 <button 
-                  onClick={() => window.open(report.pdfUrl, '_blank')}
-                  className="w-full py-3 border border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all flex items-center justify-center gap-2"
+                  onClick={(e) => { e.stopPropagation(); window.open(report.pdfUrl, '_blank'); }}
+                  className="w-full py-4 rounded-xl bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-white transition-all flex items-center justify-center gap-2 shadow-inner"
                 >
-                  <Download size={14} /> {t('download_pdf')}
+                  <Download size={16} /> {t('download_pdf')}
                 </button>
               </div>
             ))}
@@ -108,7 +112,7 @@ export function Reports() {
 
         {/* Load More */}
         <div className="mt-16 text-center">
-          <button className="px-12 py-4 border-2 border-slate-200 text-slate-900 font-bold hover:bg-slate-100 hover:border-slate-300 transition-all uppercase tracking-widest text-sm">
+          <button className="px-10 py-4 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold hover:bg-slate-50 hover:text-primary hover:shadow-md transition-all uppercase tracking-widest text-sm">
             {t('browse_all_reports')}
           </button>
         </div>

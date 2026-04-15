@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu, Globe, ChevronDown, MessageSquare, ClipboardList, ShoppingCart, Smartphone, HelpCircle, ShieldCheck, X, ChevronRight, Home, Package, FileText, BarChart3, Shield, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
@@ -13,7 +13,7 @@ export function Header() {
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(false);
-  const [searchType, setSearchType] = React.useState(t('products'));
+  const [searchType, setSearchType] = React.useState('products');
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = React.useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = React.useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState(false);
@@ -22,11 +22,22 @@ export function Header() {
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [cartCount, setCartCount] = React.useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    // Always search products for now as requested
+    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+    setIsMobileSearchOpen(false);
+  };
 
   // Fetch notification unread count + inquiry basket count
   React.useEffect(() => {
     if (isAuthenticated && user?.id) {
-      api.get(`/notifications/${user.id}/unread-count`)
+      api.get(`/notifications/unread-count`)
         .then(res => setUnreadCount(res.data?.count || 0))
         .catch(() => {});
       api.get(`/inquiry-basket/${user.id}`)
@@ -38,7 +49,7 @@ export function Header() {
   const loadNotifications = async () => {
     if (!user?.id) return;
     try {
-      const res = await api.get(`/notifications/${user.id}`);
+      const res = await api.get(`/notifications`);
       setNotifications(res.data || []);
     } catch (e) {}
   };
@@ -53,10 +64,24 @@ export function Header() {
   const markAllRead = async () => {
     if (!user?.id) return;
     try {
-      await api.put(`/notifications/${user.id}/read-all`);
+      await api.patch(`/notifications/read-all`);
       setUnreadCount(0);
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
     } catch (e) {}
+  };
+
+  const markOneReadAndNavigate = async (notif: any) => {
+    if (!notif.isRead) {
+      try {
+        await api.patch(`/notifications/${notif.id}/read`);
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isRead: true } : n));
+      } catch (e) {}
+    }
+    if (notif.link) {
+      navigate(notif.link);
+      setIsNotifOpen(false);
+    }
   };
 
   // Close mobile menu on route change
@@ -75,7 +100,7 @@ export function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [isMenuOpen]);
 
-  const searchOptions = [t('products'), t('suppliers'), t('audited_factories')];
+  const searchOptions = ['products', 'suppliers', 'audited_factories'];
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -210,7 +235,7 @@ export function Header() {
                   }}
                   className="h-full flex items-center gap-2 px-5 text-sm font-bold text-[#1E293B] min-w-[140px] justify-between whitespace-nowrap border-r border-[#CBD5E1]/50 rounded-l-xl hover:bg-[#E2E8F0]/50 transition-colors"
                 >
-                  {searchType} <ChevronDown size={14} className={cn("transition-transform text-slate-400", isSearchDropdownOpen && "rotate-180")} />
+                  {t(searchType)} <ChevronDown size={14} className={cn("transition-transform text-slate-400", isSearchDropdownOpen && "rotate-180")} />
                 </button>
 
                 {isSearchDropdownOpen && (
@@ -223,25 +248,29 @@ export function Header() {
                           setIsSearchDropdownOpen(false);
                         }}
                         className={cn(
-                          "w-full text-left px-5 py-2.5 text-sm hover:bg-slate-50 transition-colors",
+                          "w-full text-left px-5 py-2.5 text-sm hover:bg-slate-50 transition-colors whitespace-nowrap",
                           searchType === option ? "text-[#A2875E] font-black bg-[#A2875E]/5" : "text-slate-600 font-medium"
                         )}
                       >
-                        {option}
+                        {t(option)}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="flex-1 flex items-center px-4 bg-transparent">
-                <Search size={22} className="text-[#9B7A4F] mr-3 shrink-0" strokeWidth={2.5} />
+              <form onSubmit={handleSearch} className="flex-1 flex items-center px-4 bg-transparent border-0 m-0 p-0 shadow-none">
+                <button type="submit" className="outline-none border-none bg-transparent m-0 p-0 shrink-0">
+                  <Search size={22} className="text-[#9B7A4F] mr-3" strokeWidth={2.5} />
+                </button>
                 <input
                   type="text"
-                  className="flex-1 h-full text-sm sm:text-base outline-none w-full min-w-0 bg-transparent text-slate-700 placeholder-slate-400/80 font-medium"
-                  placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 h-full text-sm sm:text-base outline-none w-full min-w-0 bg-transparent text-slate-700 placeholder-slate-400/80 font-medium border-0 m-0 p-0"
+                  placeholder={t('search_placeholder', { type: t(searchType).toLowerCase() })}
                 />
-              </div>
+              </form>
             </div>
           </div>
 
@@ -305,7 +334,7 @@ export function Header() {
                         {notifications.length === 0 ? (
                           <div className="p-8 text-center text-sm text-slate-400">Không có thông báo</div>
                         ) : notifications.slice(0, 10).map((notif: any) => (
-                          <div key={notif.id} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
+                          <div key={notif.id} onClick={() => markOneReadAndNavigate(notif)} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
                             <div className="text-sm font-bold text-slate-900">{notif.title}</div>
                             <div className="text-xs text-slate-500 mt-1 line-clamp-2">{notif.message}</div>
                             <div className="text-[10px] text-slate-400 mt-2">{new Date(notif.createdAt).toLocaleDateString()}</div>
@@ -394,15 +423,19 @@ export function Header() {
       {isMobileSearchOpen && (
         <div className="md:hidden border-t border-slate-100 px-3 py-3 bg-white">
           <div className="flex items-center h-12 bg-[#EEF2FC] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#A2875E]/30 focus-within:shadow-sm">
-            <div className="pl-4">
-              <Search size={20} className="text-[#9B7A4F]" strokeWidth={2.5} />
-            </div>
-            <input
-              type="text"
-              className="flex-1 px-3 bg-transparent h-full text-sm outline-none w-full min-w-0 text-slate-700 placeholder-slate-400/80 font-medium"
-              placeholder={t('search_placeholder', { type: searchType.toLowerCase() })}
-              autoFocus
-            />
+            <form onSubmit={handleSearch} className="flex-1 flex items-center bg-transparent m-0 p-0 border-0 h-full">
+              <button type="submit" className="outline-none border-none bg-transparent pl-4 m-0 p-0 shrink-0 transform translate-y-0.5">
+                <Search size={20} className="text-[#9B7A4F]" strokeWidth={2.5} />
+              </button>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 px-3 bg-transparent h-full text-sm outline-none w-full min-w-0 text-slate-700 placeholder-slate-400/80 font-medium border-0 m-0"
+                placeholder={t('search_placeholder', { type: t(searchType).toLowerCase() })}
+                autoFocus
+              />
+            </form>
           </div>
         </div>
       )}
@@ -427,10 +460,34 @@ export function Header() {
                 </div>
               )}
             </div>
-            <nav className="flex items-center gap-8 ml-8">
-              <Link to="/products" className="text-sm font-bold text-slate-700 hover:text-primary">{t('top_ranking_products')}</Link>
-              <Link to="/reports" className="text-sm font-bold text-slate-700 hover:text-primary">{t('audited_suppliers_reports')}</Link>
-              <Link to="/services" className="text-sm font-bold text-slate-700 hover:text-primary">{t('secured_trading_service')}</Link>
+            <nav className="flex items-center gap-8 ml-8 h-full">
+              <Link 
+                to="/products" 
+                className={cn(
+                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
+                  location.pathname.startsWith('/products') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                )}
+              >
+                {t('top_ranking_products')}
+              </Link>
+              <Link 
+                to="/reports" 
+                className={cn(
+                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
+                  location.pathname.startsWith('/reports') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                )}
+              >
+                {t('audited_suppliers_reports')}
+              </Link>
+              <Link 
+                to="/services" 
+                className={cn(
+                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
+                  location.pathname.startsWith('/services') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                )}
+              >
+                {t('secured_trading_service')}
+              </Link>
             </nav>
           </div>
           <div className="flex items-center h-full gap-6">

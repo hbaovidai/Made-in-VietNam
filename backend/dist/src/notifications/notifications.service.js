@@ -17,31 +17,29 @@ let NotificationsService = class NotificationsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async getNotifications(userId) {
+    async findAllForUser(userId) {
         return this.prisma.notification.findMany({
             where: { userId },
             orderBy: { createdAt: 'desc' },
-            take: 50,
+            take: 20,
         });
     }
-    async getUnreadCount(userId) {
-        const count = await this.prisma.notification.count({
+    async countUnread(userId) {
+        return this.prisma.notification.count({
             where: { userId, isRead: false },
         });
-        return { count };
     }
-    async markAsRead(id) {
-        return this.prisma.notification.update({
-            where: { id },
+    async markAsRead(id, userId) {
+        return this.prisma.notification.updateMany({
+            where: { id, userId },
             data: { isRead: true },
         });
     }
     async markAllAsRead(userId) {
-        await this.prisma.notification.updateMany({
+        return this.prisma.notification.updateMany({
             where: { userId, isRead: false },
             data: { isRead: true },
         });
-        return { success: true };
     }
     async createNotification(data) {
         return this.prisma.notification.create({
@@ -51,8 +49,22 @@ let NotificationsService = class NotificationsService {
                 message: data.message,
                 type: data.type || 'info',
                 link: data.link,
-            },
+            }
         });
+    }
+    async notifyAdmins(data) {
+        const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN', status: 'ACTIVE' }, select: { id: true } });
+        if (admins.length > 0) {
+            await this.prisma.notification.createMany({
+                data: admins.map(a => ({
+                    userId: a.id,
+                    title: data.title,
+                    message: data.message,
+                    type: data.type || 'info',
+                    link: data.link,
+                }))
+            });
+        }
     }
 };
 exports.NotificationsService = NotificationsService;

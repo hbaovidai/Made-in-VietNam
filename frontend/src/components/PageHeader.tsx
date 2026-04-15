@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface Breadcrumb {
   label: string;
@@ -16,50 +17,49 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, description, breadcrumbs, className }: PageHeaderProps) {
+  const { t } = useTranslation();
+
   return (
-    <div className={`relative overflow-hidden bg-slate-900 border-b border-slate-800 ${className}`}>
-      {/* Dynamic Backgound Patterns */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-900 to-primary/20 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] mix-blend-overlay pointer-events-none translate-x-1/3 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] mix-blend-overlay pointer-events-none -translate-x-1/4 translate-y-1/3" />
+    <div className={`bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden ${className}`}>
+      {/* Light Soft Glows */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-400/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/4 translate-y-1/3" />
+      <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-viet-gold/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
 
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik00MCAwaC00MHY0MGg0MHoiLz48L2c+PC9zdmc+')] opacity-20 pointer-events-none" />
-
-      <div className="relative z-10">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Breadcrumbs */}
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-2 text-xs text-slate-400">
-          <Link to="/" className="hover:text-white transition-colors flex items-center gap-1">
-            <Home size={12} /> Home
-          </Link>
-          {breadcrumbs.map((crumb, idx) => (
-            <React.Fragment key={idx}>
-              <ChevronRight size={12} className="text-slate-600" />
-              {crumb.href ? (
-                <Link to={crumb.href} className="hover:text-white transition-colors">
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className={idx === breadcrumbs.length - 1 ? "text-primary-light font-bold" : "text-slate-300 font-medium"}>
-                  {crumb.label}
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+        {breadcrumbs && (
+          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-8">
+            <Link to="/" className="hover:text-primary transition-colors flex items-center gap-1 outline-none">
+              <Home size={12} /> {t('home')}
+            </Link>
+            {breadcrumbs.map((crumb, idx) => (
+              <React.Fragment key={idx}>
+                <ChevronRight size={12} className="text-slate-400" />
+                {crumb.href ? (
+                  <Link to={crumb.href} className="hover:text-primary transition-colors">
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className={idx === breadcrumbs.length - 1 ? "text-primary font-bold" : "text-slate-600"}>
+                    {crumb.label}
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </nav>
+        )}
 
         {/* Hero Content */}
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="max-w-3xl space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight uppercase tracking-tighter">
-              {title}
-            </h1>
-            {description && (
-              <p className="text-slate-300 text-lg md:text-xl leading-relaxed max-w-2xl font-light">
-                {description}
-              </p>
-            )}
-          </div>
+        <div className="max-w-3xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
+              {description}
+            </p>
+          )}
         </div>
       </div>
     </div>

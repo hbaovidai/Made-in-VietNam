@@ -2,32 +2,19 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class NotificationsService {
     private prisma;
     constructor(prisma: PrismaService);
-    getNotifications(userId: string): Promise<{
+    findAllForUser(userId: string): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
-        message: string;
-        link: string | null;
-        type: string;
         title: string;
+        message: string;
+        type: string;
         isRead: boolean;
+        link: string | null;
+        createdAt: Date;
     }[]>;
-    getUnreadCount(userId: string): Promise<{
-        count: number;
-    }>;
-    markAsRead(id: string): Promise<{
-        id: string;
-        createdAt: Date;
-        userId: string;
-        message: string;
-        link: string | null;
-        type: string;
-        title: string;
-        isRead: boolean;
-    }>;
-    markAllAsRead(userId: string): Promise<{
-        success: boolean;
-    }>;
+    countUnread(userId: string): Promise<number>;
+    markAsRead(id: string, userId: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    markAllAsRead(userId: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
     createNotification(data: {
         userId: string;
         title: string;
@@ -36,12 +23,18 @@ export declare class NotificationsService {
         link?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
-        message: string;
-        link: string | null;
-        type: string;
         title: string;
+        message: string;
+        type: string;
         isRead: boolean;
+        link: string | null;
+        createdAt: Date;
     }>;
+    notifyAdmins(data: {
+        title: string;
+        message: string;
+        type?: string;
+        link?: string;
+    }): Promise<void>;
 }

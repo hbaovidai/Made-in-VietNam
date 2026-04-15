@@ -42,9 +42,11 @@ export class SuppliersService {
     };
   }
 
-  async findBySlug(slug: string) {
-    const supplier = await this.prisma.supplier.findUnique({
-      where: { slug },
+  async findBySlug(slugOrId: string) {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+    
+    const supplier = await this.prisma.supplier.findFirst({
+      where: isUUID ? { id: slugOrId } : { slug: slugOrId },
       include: {
         user: { select: { fullName: true, email: true } },
         industries: { select: { industry: true } },

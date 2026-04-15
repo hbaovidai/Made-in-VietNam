@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, LayoutGrid, Star, Factory, Shield, Loader2 } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, ChevronLeft, LayoutGrid, Star, Factory, Shield, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { CategorySidebar } from '../components/CategorySidebar';
@@ -16,6 +16,40 @@ export function Home() {
   const [products, setProducts] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroSlides = [
+    {
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200",
+      title: t('vietnam_top_hub'),
+      desc: t('source_directly')
+    },
+    {
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200",
+      title: t('top_ranking_products', 'Sản phẩm Xếp hạng Hàng đầu'),
+      desc: t('verified_status_desc', 'Những nhà cung cấp và sản phẩm đã qua kiểm định')
+    },
+    {
+      image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200",
+      title: t('secured_trading_service'),
+      desc: t('trade_assurance', 'Đảm bảo giao dịch an toàn xuyên quốc gia')
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -67,30 +101,66 @@ export function Home() {
 
           {/* Middle Column: Main Banner Carousel */}
           <div className="flex-1 relative group overflow-hidden bg-slate-200 border border-slate-200 rounded-xl sm:rounded-none">
-            <img
-              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200"
-              alt="Industrial Manufacturing"
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex flex-col justify-center px-6 sm:px-12 text-white">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-md space-y-2 sm:space-y-4"
+            {heroSlides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                }`}
               >
-                <h2 className="text-xl sm:text-3xl lg:text-4xl font-black leading-tight">{t('vietnam_top_hub')}</h2>
-                <p className="text-slate-200 text-xs sm:text-sm line-clamp-2 sm:line-clamp-none">{t('source_directly')}</p>
-                <Link to="/products" className="inline-block bg-primary text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold hover:bg-primary-dark transition-all">
-                  {t('source_now')}
-                </Link>
-              </motion.div>
-            </div>
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex flex-col justify-center px-6 sm:px-12 text-white">
+                  <motion.div
+                    key={`text-${idx}`}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="max-w-md space-y-2 sm:space-y-4"
+                  >
+                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black leading-tight drop-shadow-md">{slide.title}</h2>
+                    <p className="text-slate-200 text-xs sm:text-sm line-clamp-2 sm:line-clamp-none drop-shadow-sm">{slide.desc}</p>
+                    <Link to="/products" className="inline-block bg-primary text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold hover:bg-primary-dark transition-all shadow-xl shadow-primary/20">
+                      {t('source_now')}
+                    </Link>
+                  </motion.div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Arrow Navigation */}
+            <button 
+              onClick={prevSlide}
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft size={20} className="sm:hidden" />
+              <ChevronLeft size={24} className="hidden sm:block" />
+            </button>
+            <button 
+              onClick={nextSlide}
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+              aria-label="Next slide"
+            >
+              <ChevronRight size={20} className="sm:hidden" />
+              <ChevronRight size={24} className="hidden sm:block" />
+            </button>
+
             {/* Slider Dots */}
-            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white" />
-              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40" />
-              <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40" />
+            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {heroSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`transition-all duration-300 rounded-full outline-none ${
+                    idx === currentSlide ? 'w-6 h-2 sm:h-2.5 bg-primary' : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/50 hover:bg-white/80'
+                  }`}
+                />
+              ))}
             </div>
           </div>
 

@@ -19,15 +19,15 @@ export function ProductCard({ product }: ProductCardProps) {
   const reviewsDisplay = product.reviews || Math.floor(Math.random() * 500) + 50;
 
   return (
-    <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:border-[#1E293B]">
+    <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:border-viet-gold/50 shadow-viet-gold/5 hover:shadow-viet-gold/10">
       <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-slate-100">
         <img
           src={imageUrl}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur text-yellow-600 px-3 py-1 rounded drop-shadow flex items-center gap-1.5 text-[10px] font-black tracking-widest uppercase">
-          <ShieldCheck size={12} className="fill-yellow-600 text-white" />
+        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur text-viet-gold px-3 py-1 rounded drop-shadow-sm border border-viet-gold/20 flex items-center gap-1.5 text-[10px] font-black tracking-widest uppercase">
+          <ShieldCheck size={12} className="fill-viet-gold text-white" />
           VERIFIED
         </div>
       </Link>

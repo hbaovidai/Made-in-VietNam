@@ -119,10 +119,10 @@ export function ProductFormPage() {
       name: formData.name.trim(),
       description: formData.description.trim(),
       minPrice: Number(formData.minPrice),
-      maxPrice: Number(formData.maxPrice),
+      maxPrice: Number(formData.minPrice),
       unit: formData.unit,
       moq: Number(formData.moq),
-      moqUnit: formData.moqUnit,
+      moqUnit: formData.unit, // Use same unit
       categoryId: formData.categoryId,
       images: formData.images.filter(url => url.trim() !== ''),
     };
@@ -206,36 +206,24 @@ export function ProductFormPage() {
             </div>
           </div>
 
-          {/* Giá Min & Max */}
+          {/* Giá bán */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Giá tối thiểu (VNĐ) <span className="text-red-500">*</span></label>
+              <label className="text-sm font-bold text-slate-700">Giá bán (VNĐ) <span className="text-red-500">*</span></label>
               <input 
                 type="number" 
                 required
                 min="1"
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
-                placeholder="100000"
+                placeholder="Ví dụ: 100000"
                 value={formData.minPrice}
                 onChange={e => handleChange('minPrice', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Giá tối đa (VNĐ) <span className="text-red-500">*</span></label>
-              <input 
-                type="number" 
-                required
-                min="1"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
-                placeholder="500000"
-                value={formData.maxPrice}
-                onChange={e => handleChange('maxPrice', e.target.value)}
               />
             </div>
           </div>
 
           {/* Đơn vị & MOQ */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Đơn vị tính <span className="text-red-500">*</span></label>
               <select 
@@ -256,23 +244,10 @@ export function ProductFormPage() {
                 required
                 min="1"
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
-                placeholder="100"
+                placeholder="Ví dụ: 100"
                 value={formData.moq}
                 onChange={e => handleChange('moq', e.target.value)}
               />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Đơn vị MOQ <span className="text-red-500">*</span></label>
-              <select 
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
-                value={formData.moqUnit}
-                onChange={e => handleChange('moqUnit', e.target.value)}
-              >
-                {['cái', 'kg', 'tấn', 'bộ', 'hộp', 'lít', 'mét', 'cuộn', 'đôi', 'chiếc'].map(u => (
-                  <option key={u} value={u}>{u}</option>
-                ))}
-              </select>
             </div>
           </div>
 

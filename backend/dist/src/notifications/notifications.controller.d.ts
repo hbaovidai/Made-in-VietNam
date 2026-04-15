@@ -2,30 +2,23 @@ import { NotificationsService } from './notifications.service';
 export declare class NotificationsController {
     private readonly notificationsService;
     constructor(notificationsService: NotificationsService);
-    getUnreadCount(userId: string, currentUserId: string): Promise<{
+    getMyNotifications(userId: string): Promise<{
+        id: string;
+        userId: string;
+        title: string;
+        message: string;
+        type: string;
+        isRead: boolean;
+        link: string | null;
+        createdAt: Date;
+    }[]>;
+    getUnreadCount(userId: string): Promise<{
         count: number;
     }>;
-    getNotifications(userId: string, currentUserId: string): Promise<{
-        id: string;
-        createdAt: Date;
-        userId: string;
-        message: string;
-        link: string | null;
-        type: string;
-        title: string;
-        isRead: boolean;
-    }[]>;
-    markAllAsRead(userId: string, currentUserId: string): Promise<{
+    markAllAsRead(userId: string): Promise<{
         success: boolean;
     }>;
-    markAsRead(id: string): Promise<{
-        id: string;
-        createdAt: Date;
-        userId: string;
-        message: string;
-        link: string | null;
-        type: string;
-        title: string;
-        isRead: boolean;
+    markAsRead(id: string, userId: string): Promise<{
+        success: boolean;
     }>;
 }

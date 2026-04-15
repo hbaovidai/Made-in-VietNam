@@ -10,10 +10,14 @@ import {
   ProductQueryDto,
 } from './dto/product.dto';
 import { Prisma, ProductStatus } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   async findAll(query: ProductQueryDto) {
     const {
@@ -176,7 +180,7 @@ export class ProductsService {
       '-' +
       Date.now();
 
-    return this.prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         supplierId,
         name: dto.name,
@@ -195,6 +199,20 @@ export class ProductsService {
         category: { select: { name: true, slug: true } },
       },
     });
+
+    // Notify Admins
+    try {
+      await this.notificationsService.notifyAdmins({
+        title: 'Sản phẩm mới cần duyệt',
+        message: `Xưởng vừa đăng sản phẩm "${product.name}". Vui lòng kiểm duyệt nội dung.`,
+        link: '/dashboard/admin/products',
+        type: 'warning'
+      });
+    } catch (err) {
+      console.error('Failed to notify admins:', err);
+    }
+
+    return product;
   }
 
   async update(

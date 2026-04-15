@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Filter, ChevronDown, Search, SlidersHorizontal, LayoutGrid, List, X, Loader2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Filter, ChevronDown, ChevronRight, Search, SlidersHorizontal, LayoutGrid, List, X, Loader2 } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
 import { ALL_CATEGORIES_LIST, CATEGORY_GROUPS } from '../data/categories';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
@@ -31,9 +31,12 @@ export function ProductListing() {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-        if (categoryFilter) {
-          queryParams.append('category', categoryFilter);
-        }
+        
+        // Pass all valid searchParams to backend
+        searchParams.forEach((value, key) => {
+          queryParams.append(key, value);
+        });
+
         const res = await api.get(`/products?${queryParams.toString()}`);
         setProducts(res.data.data || []);
       } catch (err) {
@@ -43,7 +46,7 @@ export function ProductListing() {
       }
     }
     fetchProducts();
-  }, [categoryFilter]);
+  }, [searchParams]);
 
   const clearFilters = () => {
     setSearchParams({});
@@ -51,30 +54,54 @@ export function ProductListing() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
-      {/* Breadcrumbs & Header */}
-      <div className="bg-white px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-        <div className="max-w-[1600px] mx-auto">
-          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-            <Link to="/" className="hover:text-primary">{t('home')}</Link>
-            <span>›</span>
-            <span className="text-[#1E293B]">
+      {/* Premium Header */}
+      <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden">
+        {/* Soft Glows */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-400/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/4 translate-y-1/3" />
+        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-viet-gold/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-6">
+            <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
+            <ChevronRight size={12} className="text-slate-400" />
+            <span className="text-primary font-bold">
               {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('products_breadcrumb')}
             </span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black text-[#1E293B] tracking-tight mb-4">
+            <div className="max-w-4xl space-y-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
                 {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('all_products')}
               </h1>
             </div>
             
             <div className="flex bg-slate-50/80 rounded-lg items-center px-4 py-2 shrink-0 border border-slate-100">
                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-3">Sort by</span>
-               <select className="bg-transparent text-sm font-bold text-[#1E293B] outline-none appearance-none pr-6 cursor-pointer">
-                 <option>Popular</option>
-                 <option>Price: Low to High</option>
-                 <option>Price: High to Low</option>
+               <select 
+                 className="bg-transparent text-sm font-bold text-[#1E293B] outline-none appearance-none pr-6 cursor-pointer"
+                 value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : 'popular'}
+                 onChange={(e) => {
+                   const val = e.target.value;
+                   const newParams = new URLSearchParams(searchParams);
+                   if (val === 'price-asc') {
+                     newParams.set('sortBy', 'minPrice');
+                     newParams.set('sortOrder', 'asc');
+                   } else if (val === 'price-desc') {
+                     newParams.set('sortBy', 'minPrice');
+                     newParams.set('sortOrder', 'desc');
+                   } else {
+                     newParams.delete('sortBy');
+                     newParams.delete('sortOrder');
+                   }
+                   newParams.set('page', '1');
+                   setSearchParams(newParams);
+                 }}
+               >
+                 <option value="popular">Popular</option>
+                 <option value="price-asc">Price: Low to High</option>
+                 <option value="price-desc">Price: High to Low</option>
                </select>
                <div className="pointer-events-none -ml-4">
                  <ChevronDown size={14} className="text-slate-500" />
@@ -100,7 +127,7 @@ export function ProductListing() {
                     className={cn(
                       "w-full text-left px-5 py-3.5 rounded-xl text-sm font-bold transition-all",
                       !categoryFilter
-                        ? "bg-[#043365] text-white shadow-md"
+                        ? "bg-[#043365] text-white shadow-md ring-2 ring-offset-2 ring-[#043365]"
                         : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                     )}
                   >
@@ -113,7 +140,7 @@ export function ProductListing() {
                       className={cn(
                         "w-full text-left px-5 py-3.5 rounded-xl text-sm font-bold transition-all",
                         activeCategoryGroup === cat.slug
-                          ? "bg-[#043365] text-white shadow-md"
+                          ? "bg-[#043365] text-white shadow-md ring-2 ring-offset-2 ring-[#043365]"
                           : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                       )}
                     >

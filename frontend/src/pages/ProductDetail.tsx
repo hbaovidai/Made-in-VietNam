@@ -68,8 +68,8 @@ export function ProductDetail() {
         }
 
         try {
-          const relatedRes = await api.get(`/products?category=${p.category?.slug || ''}&limit=4`);
-          setRelatedProducts(relatedRes.data.data?.filter((ri: any) => ri.id !== id) || []);
+          const relatedRes = await api.get(`/products/${p.id}/related`);
+          setRelatedProducts(relatedRes.data || []);
         } catch (e) {
           console.error('Failed to load related products:', e);
         }
@@ -201,25 +201,23 @@ export function ProductDetail() {
               </div>
             </div>
 
-            {/* Pricing Tiers */}
-            <div className="flex bg-slate-50 border border-slate-100 p-1">
-              <div className="flex-1 text-center py-4 px-2">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{moqBaseline}-{moqBaseline*2}{product.moqUnit === 'unit' ? 'U' : 'M'}</div>
-                <div className="text-2xl font-black text-slate-900">${tier1Price}</div>
-                <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mt-1">Per {product.unit || 'Meter'}</div>
+            {/* Single Price & MOQ */}
+            <div className="bg-slate-50 border border-slate-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-lg">
+              <div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Giá bán</div>
+                <div className="flex items-end gap-2">
+                  <div className="text-3xl md:text-4xl font-black text-slate-900">{product.minPrice?.toLocaleString('vi-VN')} {product.currency || 'VNĐ'}</div>
+                  <div className="text-sm text-slate-500 font-bold mb-1">/ {product.unit || 'cái'}</div>
+                </div>
               </div>
-              <div className="flex-1 text-center py-4 px-2 bg-[#EEF2FC] shadow-sm transform scale-105 border border-blue-100 relative z-10">
-                <div className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">{moqBaseline*2}-{moqBaseline*10}{product.moqUnit === 'unit' ? 'U' : 'M'}</div>
-                <div className="text-2xl font-black text-slate-900">${tier2Price}</div>
-                <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mt-1">Per {product.unit || 'Meter'}</div>
-              </div>
-              <div className="flex-1 text-center py-4 px-2">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{moqBaseline*10}{product.moqUnit === 'unit' ? 'U' : 'M'}+</div>
-                <div className="text-2xl font-black text-slate-900">${tier3Price}</div>
-                <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mt-1">Per {product.unit || 'Meter'}</div>
+              <div className="h-12 w-px bg-slate-200 hidden md:block"></div>
+              <div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Yêu cầu tối thiểu (MOQ)</div>
+                <div className="text-xl font-bold text-slate-800">
+                  {moqBaseline} {product.unit || 'cái'}
+                </div>
               </div>
             </div>
-
             {/* Actions */}
             <div className="space-y-3">
               <button 
@@ -368,23 +366,9 @@ export function ProductDetail() {
                 </div>
               </Link>
             )) : (
-              // Fallback cards for visual matching
-              [
-                { img: 'https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?q=80&w=400&auto=format&fit=crop', name: 'Sustainable Bamboo Poplin', moq: '300m', price: '$5.20' },
-                { img: 'https://images.unsplash.com/photo-1596452290466-9a250325d0c7?q=80&w=400&auto=format&fit=crop', name: 'Recycled Polyester Blend', moq: '1000m', price: '$3.45' },
-                { img: 'https://images.unsplash.com/photo-1584282431713-79cd175113eb?q=80&w=400&auto=format&fit=crop', name: 'Premium Hemp Canvas', moq: '200m', price: '$7.80' },
-                { img: 'https://images.unsplash.com/photo-1550186983-05ecbac0c487?q=80&w=400&auto=format&fit=crop', name: 'Organic Indigo Denim', moq: '500m', price: '$6.10' }
-              ].map((fallback, idx) => (
-                <div key={idx} className="group cursor-pointer">
-                  <div className="aspect-square bg-slate-100 mb-4 overflow-hidden">
-                    <img src={fallback.img} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  </div>
-                  <h3 className="font-bold text-sm text-slate-900 mb-1 group-hover:text-primary transition-colors line-clamp-1">{fallback.name}</h3>
-                  <div className="text-[10px] text-slate-500 font-medium">
-                    MOQ: {fallback.moq} • {fallback.price}/m
-                  </div>
-                </div>
-              ))
+              <div className="col-span-full py-12 text-center text-slate-400 font-medium">
+                Chưa có sản phẩm liên quan trong cùng danh mục.
+              </div>
             )}
           </div>
         </div>

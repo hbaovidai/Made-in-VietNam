@@ -45,31 +45,36 @@ export function SupplierList() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       {/* Header Section */}
-      <div className="bg-slate-900 text-white py-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/10 skew-x-12 transform translate-x-32" />
+      <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden">
+        {/* Soft Glows */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-400/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/4 translate-y-1/3" />
+        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-viet-gold/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <nav className="flex items-center gap-2 text-xs text-slate-400 mb-6">
-            <Link to="/" className="hover:text-white">{t('home')}</Link>
-            <ChevronRight size={12} />
-            <span className="text-white font-medium">{t('suppliers')}</span>
+          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-6">
+            <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
+            <ChevronRight size={12} className="text-slate-400" />
+            <span className="text-primary font-bold">{t('suppliers')}</span>
           </nav>
-          <div className="max-w-2xl space-y-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+
+          <div className="max-w-4xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
+            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
               <Trans i18nKey="find_verified_manufacturers">
-                Find <span className="text-primary">Verified</span> Vietnamese Manufacturers
+                Find <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-viet-gold">Verified</span> Vietnamese Manufacturers
               </Trans>
             </h1>
-            <p className="text-slate-400 text-lg leading-relaxed">
+            <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
               {t('suppliers_desc')}
             </p>
-            <div className="relative max-w-xl group">
-              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
+            <div className="relative w-full max-w-2xl group shadow-2xl shadow-primary/5 rounded-2xl mt-4">
+              <Search size={22} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors z-10" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t('search_suppliers_placeholder')}
-                className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-500 outline-none focus:bg-white/20 focus:border-primary transition-all"
+                className="w-full pl-14 pr-6 py-5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm transition-all text-left"
               />
             </div>
           </div>
