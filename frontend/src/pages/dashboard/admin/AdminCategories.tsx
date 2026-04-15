@@ -114,49 +114,102 @@ export function AdminCategories() {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {categories.map(cat => (
-                    <tr key={cat.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                      <td className="p-4 pl-6 text-slate-400 font-mono text-xs">{cat.id.substring(0,8)}</td>
-                      <td className="p-4">
-                        {isEditing.id === cat.id ? (
-                          <div className="flex items-center gap-2">
-                            <input 
-                              className="input py-1.5 px-3 text-sm h-auto" 
-                              value={isEditing.name} 
-                              onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
-                            />
-                            <button onClick={() => handleUpdate(cat.id)} className="text-primary font-bold text-xs">Lưu</button>
-                            <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-500 font-bold text-xs">Hủy</button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 font-bold text-slate-900 group">
-                            <FolderTree size={16} className="text-slate-400" />
-                            {cat.name}
-                            <span className="text-xs font-normal text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">/{cat.slug}</span>
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-4 text-center font-bold text-slate-600">
-                        {cat._count?.products || 0}
-                      </td>
-                      <td className="p-4 pr-6 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => setIsEditing({ id: cat.id, name: cat.name })}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button 
-                            onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {categories.map(cat => {
+                    const childProductCount = (cat.children || []).reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0);
+                    const totalProducts = (cat._count?.products || 0) + childProductCount;
+                    return (
+                      <React.Fragment key={cat.id}>
+                        <tr className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                          <td className="p-4 pl-6 text-slate-400 font-mono text-xs">{cat.id.substring(0,8)}</td>
+                          <td className="p-4">
+                            {isEditing.id === cat.id ? (
+                              <div className="flex items-center gap-2">
+                                <input 
+                                  className="input py-1.5 px-3 text-sm h-auto" 
+                                  value={isEditing.name} 
+                                  onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
+                                />
+                                <button onClick={() => handleUpdate(cat.id)} className="text-primary font-bold text-xs">Lưu</button>
+                                <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-500 font-bold text-xs">Hủy</button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 font-bold text-slate-900 group">
+                                <FolderTree size={16} className="text-slate-400" />
+                                {cat.name}
+                                {cat.children?.length > 0 && (
+                                  <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                    {cat.children.length} con
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 text-center font-bold text-slate-600">
+                            {totalProducts}
+                          </td>
+                          <td className="p-4 pr-6 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button 
+                                onClick={() => setIsEditing({ id: cat.id, name: cat.name })}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button 
+                                onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        {/* Subcategories */}
+                        {(cat.children || []).map((sub: any) => (
+                          <tr key={sub.id} className="border-b border-slate-50 hover:bg-blue-50/30 transition-colors bg-slate-50/30">
+                            <td className="p-3 pl-10 text-slate-400 font-mono text-xs">{sub.id.substring(0,8)}</td>
+                            <td className="p-3 pl-10">
+                              {isEditing.id === sub.id ? (
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    className="input py-1.5 px-3 text-sm h-auto" 
+                                    value={isEditing.name} 
+                                    onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
+                                  />
+                                  <button onClick={() => handleUpdate(sub.id)} className="text-primary font-bold text-xs">Lưu</button>
+                                  <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-500 font-bold text-xs">Hủy</button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2 text-slate-600 font-medium">
+                                  <span className="text-slate-300">└</span>
+                                  {sub.name}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-3 text-center font-bold text-slate-500 text-xs">
+                              {sub._count?.products || 0}
+                            </td>
+                            <td className="p-3 pr-6 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => setIsEditing({ id: sub.id, name: sub.name })}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
+                                >
+                                  <Edit2 size={14} />
+                                </button>
+                                <button 
+                                  onClick={() => setConfirmDelete({ isOpen: true, category: sub })}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    );
+                  })}
                   {categories.length === 0 && (
                     <tr><td colSpan={4} className="p-12 text-center text-slate-400 font-medium">Chưa có danh mục nào</td></tr>
                   )}

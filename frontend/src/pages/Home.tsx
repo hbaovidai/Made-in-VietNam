@@ -78,12 +78,14 @@ export function Home() {
   }
 
   // Format price from real DB data
-  const getPriceRange = (product: any) => {
-    if (product.minPrice != null && product.maxPrice != null) {
-      return `$${product.minPrice} - $${product.maxPrice}`;
-    }
-    if (product.minPrice != null) return `$${product.minPrice}`;
-    return 'Contact for price';
+  const formatVND = (n: number) => {
+    return n.toLocaleString('vi-VN') + ' ₫';
+  };
+
+  const getPriceDisplay = (product: any) => {
+    const price = product.minPrice ?? product.price;
+    if (price != null) return `${formatVND(price)} / ${product.unit || 'cái'}`;
+    return 'Liên hệ báo giá';
   };
 
   return (
@@ -231,7 +233,7 @@ export function Home() {
                     <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                   <h3 className="text-xs sm:text-sm font-medium text-slate-800 line-clamp-2 mb-1 group-hover:text-primary h-8 sm:h-10">{product.name}</h3>
-                  <span className="text-primary font-bold text-xs sm:text-sm">{getPriceRange(product)}</span>
+                  <span className="text-primary font-bold text-xs sm:text-sm">{getPriceDisplay(product)}</span>
                   <div className="text-[10px] text-slate-400 mt-0.5">{t('min_order')}: {product.moq} {product.unit}</div>
                 </Link>
               ))}
@@ -245,7 +247,7 @@ export function Home() {
                 </div>
                 <h3 className="text-sm font-medium text-slate-800 line-clamp-2 mb-2 group-hover:text-primary h-10">{product.name}</h3>
                 <div className="flex flex-col">
-                  <span className="text-primary font-bold">{getPriceRange(product)}</span>
+                  <span className="text-primary font-bold">{getPriceDisplay(product)}</span>
                   <span className="text-[11px] text-slate-400 mt-1">{t('min_order')}: {product.moq} {product.unit}</span>
                 </div>
               </div>

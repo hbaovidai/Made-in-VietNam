@@ -13,10 +13,15 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const imageUrl = product.images?.[0] || product.image || 'https://via.placeholder.com/300';
   const categoryName = product.category?.name || product.category || 'Danh mục';
-  const priceDisplay = product.price != null ? `$${product.price} / ${product.unit || 'unit'}` : product.priceRange;
-  const ratingDisplay = product.rating || 4.9;
-  const moqDisplay = product.moq ? `${product.moq} ${product.unit || ''}` : '100 pieces';
-  const reviewsDisplay = product.reviews || Math.floor(Math.random() * 500) + 50;
+  
+  const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
+  const priceDisplay = (() => {
+    const price = product.minPrice ?? product.price;
+    if (price != null) return `${formatVND(price)} / ${product.unit || 'cái'}`;
+    return product.priceRange || 'Liên hệ';
+  })();
+  
+  const moqDisplay = product.moq ? `${product.moq.toLocaleString('vi-VN')} ${product.unit || ''}` : '100 pieces';
 
   return (
     <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:border-viet-gold/50 shadow-viet-gold/5 hover:shadow-viet-gold/10">

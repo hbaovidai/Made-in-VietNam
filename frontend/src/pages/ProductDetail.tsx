@@ -195,9 +195,7 @@ export function ProductDetail() {
                 {product.name}
               </h1>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest flex-wrap">
-                <span className="text-[#A2875E]">{supplier?.companyName || 'VietVibe Garment Factory'}</span>
-                <span className="w-1 h-1 bg-slate-300 rounded-full mx-1"></span>
-                <span>SKU: {product.slug || 'VT-OC-250-TW'}</span>
+                <Link to={`/suppliers/${product.supplierId || '#'}`} className="text-[#A2875E] hover:underline transition-colors">{supplier?.companyName || 'Nhà cung cấp'}</Link>
               </div>
             </div>
 
@@ -218,6 +216,15 @@ export function ProductDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Product Description */}
+            {product.description && (
+              <div className="space-y-3">
+                <h3 className="font-bold text-slate-900 text-sm uppercase tracking-widest">Mô tả sản phẩm</h3>
+                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="space-y-3">
               <button 
@@ -362,7 +369,7 @@ export function ProductDetail() {
                 </div>
                 <h3 className="font-bold text-sm text-slate-900 mb-1 group-hover:text-primary transition-colors line-clamp-1">{p.name}</h3>
                 <div className="text-[10px] text-slate-500 font-medium">
-                  MOQ: {p.moq || 300}{p.moqUnit || 'm'} • ${p.price || p.minPrice || '5.20'}/{p.unit || 'm'}
+                  MOQ: {(p.moq || 300).toLocaleString('vi-VN')} {p.moqUnit || p.unit || 'cái'} • {(p.price || p.minPrice || 0).toLocaleString('vi-VN')} ₫/{p.unit || 'cái'}
                 </div>
               </Link>
             )) : (

@@ -4,14 +4,19 @@ export declare class CategoriesController {
     private categoriesService;
     constructor(categoriesService: CategoriesService);
     findAll(): Promise<({
-        children: {
+        children: ({
+            _count: {
+                products: number;
+            };
+        } & {
             id: string;
             name: string;
             slug: string;
             parentId: string | null;
             createdAt: Date;
-        }[];
+        })[];
         _count: {
+            children: number;
             products: number;
         };
     } & {

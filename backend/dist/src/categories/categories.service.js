@@ -23,8 +23,11 @@ let CategoriesService = class CategoriesService {
             include: {
                 children: {
                     orderBy: { name: 'asc' },
+                    include: {
+                        _count: { select: { products: true } },
+                    },
                 },
-                _count: { select: { products: true } },
+                _count: { select: { products: true, children: true } },
             },
             orderBy: { name: 'asc' },
         });
