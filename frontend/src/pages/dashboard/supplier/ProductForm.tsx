@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { Tabs } from '../../../components/ui/Tabs';
 import { useToast } from '../../../components/ui/Toast';
-import { UploadCloud, Image as ImageIcon, X } from 'lucide-react';
+import { UploadCloud, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import { Product } from '../../../data/mockData';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../lib/api';
 
 interface ProductFormProps {
   isOpen: boolean;
@@ -63,12 +64,25 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
     onSave(formData);
   };
 
-  const handleImageMockUpload = () => {
-    addToast({ type: 'info', title: t('uploading_image') });
-    setTimeout(() => {
-      setFormData((prev) => ({ ...prev, image: 'https://placehold.co/600x600/e2e8f0/0f172a?text=Product+Image' }));
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.post('/uploads', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '');
+      const fullUrl = `${baseUrl}${res.data.url}`;
+      setFormData((prev) => ({ ...prev, image: fullUrl }));
       addToast({ type: 'success', title: t('complete'), message: t('upload_image_success') });
-    }, 1000);
+    } catch {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải ảnh lên' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -168,13 +182,27 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
             label: t('images'),
             content: (
               <div className="space-y-6">
-                <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer" onClick={handleImageMockUpload}>
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-primary mb-4">
-                    <UploadCloud size={32} />
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">{t('click_to_upload')}</h4>
+                <label className="border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer block">
+                  {uploading ? (
+                    <Loader2 size={32} className="animate-spin text-primary mb-4" />
+                  ) : (
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-primary mb-4">
+                      <UploadCloud size={32} />
+                    </div>
+                  )}
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">{uploading ? 'Đang tải lên...' : t('click_to_upload')}</h4>
                   <p className="text-xs text-slate-500">{t('upload_format')}</p>
-                </div>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
 
                 {formData.image && (
                   <div>

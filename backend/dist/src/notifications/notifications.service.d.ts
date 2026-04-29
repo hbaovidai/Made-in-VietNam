@@ -4,13 +4,13 @@ export declare class NotificationsService {
     constructor(prisma: PrismaService);
     findAllForUser(userId: string): Promise<{
         id: string;
+        createdAt: Date;
         userId: string;
-        title: string;
         message: string;
+        link: string | null;
+        title: string;
         type: string;
         isRead: boolean;
-        link: string | null;
-        createdAt: Date;
     }[]>;
     countUnread(userId: string): Promise<number>;
     markAsRead(id: string, userId: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
@@ -23,13 +23,13 @@ export declare class NotificationsService {
         link?: string;
     }): Promise<{
         id: string;
+        createdAt: Date;
         userId: string;
-        title: string;
         message: string;
+        link: string | null;
+        title: string;
         type: string;
         isRead: boolean;
-        link: string | null;
-        createdAt: Date;
     }>;
     notifyAdmins(data: {
         title: string;

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Loader2, Lock } from 'lucide-react';
+import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Loader2, Lock, BellRing, BellOff, Check, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 import { useToast } from '../../../components/ui/Toast';
+import { Modal } from '../../../components/ui/Modal';
 
 export function BuyerSettings() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { addToast } = useToast();
 
@@ -75,6 +76,67 @@ export function BuyerSettings() {
       setIsSavingPassword(false);
     }
   };
+
+  // Notification settings
+  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
+  const [notifSettings, setNotifSettings] = useState(() => {
+    const saved = localStorage.getItem('notif_settings_buyer');
+    return saved ? JSON.parse(saved) : {
+      orderUpdates: true,
+      rfqAlerts: true,
+      messageAlerts: true,
+      promotions: false,
+      weeklyReport: false,
+    };
+  });
+
+  // Language modal
+  const [isLangModalOpen, setIsLangModalOpen] = useState(false);
+  const [selectedLang, setSelectedLang] = useState(i18n.language || 'vi');
+
+  const handleSaveNotifSettings = () => {
+    localStorage.setItem('notif_settings_buyer', JSON.stringify(notifSettings));
+    setIsNotifModalOpen(false);
+    addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật cài đặt thông báo' });
+  };
+
+  const handleSaveLang = () => {
+    i18n.changeLanguage(selectedLang);
+    localStorage.setItem('i18nextLng', selectedLang);
+    setIsLangModalOpen(false);
+    addToast({ type: 'success', title: 'Thành công', message: selectedLang === 'vi' ? 'Đã chuyển sang Tiếng Việt' : 'Switched to English' });
+  };
+
+  const handleSettingClick = (idx: number) => {
+    // settingsSections: [Email, Security, Payment, Language]
+    switch (idx) {
+      case 0: // Email & Thông báo
+        setIsNotifModalOpen(true);
+        break;
+      case 1: // Bảo mật
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        break;
+      case 2: // Thanh toán
+        addToast({ type: 'info', title: 'Sắp ra mắt', message: 'Tính năng thanh toán sẽ được triển khai trong tương lai' });
+        break;
+      case 3: // Ngôn ngữ
+        setIsLangModalOpen(true);
+        break;
+    }
+  };
+
+  const notifOptions = [
+    { key: 'orderUpdates', icon: <Bell size={16} className="text-blue-500" />, label: 'Cập nhật đơn hàng', desc: 'Nhận thông báo khi có thay đổi đơn hàng' },
+    { key: 'rfqAlerts', icon: <BellRing size={16} className="text-amber-500" />, label: 'Báo giá (RFQ)', desc: 'Nhận thông báo khi nhà cung cấp phản hồi báo giá' },
+    { key: 'messageAlerts', icon: <Mail size={16} className="text-emerald-500" />, label: 'Tin nhắn mới', desc: 'Nhận thông báo khi có tin nhắn mới' },
+    { key: 'promotions', icon: <BellOff size={16} className="text-slate-400" />, label: 'Khuyến mãi & tin tức', desc: 'Nhận email về chương trình khuyến mãi' },
+    { key: 'weeklyReport', icon: <Mail size={16} className="text-purple-500" />, label: 'Báo cáo hàng tuần', desc: 'Nhận email tổng kết hoạt động mỗi tuần' },
+  ];
+
+  const languages = [
+    { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+  ];
 
   const settingsSections = [
     { icon: <User size={20} className="text-blue-500" />, title: t('setting_personal_info'), desc: t('setting_personal_info_desc') },
@@ -158,7 +220,11 @@ export function BuyerSettings() {
           <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight mb-6">{t('other_settings')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {settingsSections.slice(1).map((section, idx) => (
-              <div key={idx} className="p-6 border border-slate-100 hover:border-primary transition-all flex items-center justify-between group cursor-pointer">
+              <div
+                key={idx}
+                onClick={() => handleSettingClick(idx)}
+                className="p-6 border border-slate-100 hover:border-primary transition-all flex items-center justify-between group cursor-pointer rounded-xl"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     {section.icon}
@@ -174,6 +240,70 @@ export function BuyerSettings() {
           </div>
         </div>
       </div>
+
+      {/* Email & Notification Modal */}
+      <Modal isOpen={isNotifModalOpen} onClose={() => setIsNotifModalOpen(false)} title="Email & Thông báo">
+        <div className="space-y-1">
+          {notifOptions.map((opt) => (
+            <div key={opt.key} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">{opt.icon}</div>
+                <div>
+                  <div className="text-sm font-semibold text-slate-800">{opt.label}</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">{opt.desc}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setNotifSettings({ ...notifSettings, [opt.key]: !notifSettings[opt.key as keyof typeof notifSettings] })}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full border-2 border-transparent transition-colors focus:outline-none shrink-0 ${
+                  notifSettings[opt.key as keyof typeof notifSettings] ? 'bg-emerald-500' : 'bg-slate-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                    notifSettings[opt.key as keyof typeof notifSettings] ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
+          <button onClick={() => setIsNotifModalOpen(false)} className="btn-ghost">Hủy</button>
+          <button onClick={handleSaveNotifSettings} className="btn-primary flex items-center gap-2"><Check size={14} /> Lưu cài đặt</button>
+        </div>
+      </Modal>
+
+      {/* Language Modal */}
+      <Modal isOpen={isLangModalOpen} onClose={() => setIsLangModalOpen(false)} title="Ngôn ngữ & Khu vực">
+        <div className="space-y-3">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chọn ngôn ngữ hiển thị</label>
+          <div className="space-y-2">
+            {languages.map((lang) => (
+              <div
+                key={lang.code}
+                onClick={() => setSelectedLang(lang.code)}
+                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedLang === lang.code ? 'border-primary bg-primary/5' : 'border-slate-100 hover:border-slate-200'}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{lang.flag}</span>
+                  <div>
+                    <div className="text-sm font-bold text-slate-800">{lang.label}</div>
+                    <div className="text-[11px] text-slate-400">{lang.code === 'vi' ? 'Vietnamese' : 'English (US)'}</div>
+                  </div>
+                </div>
+                {selectedLang === lang.code && (
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center"><Check size={14} className="text-white" /></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
+          <button onClick={() => setIsLangModalOpen(false)} className="btn-ghost">Hủy</button>
+          <button onClick={handleSaveLang} className="btn-primary flex items-center gap-2"><Languages size={14} /> Áp dụng</button>
+        </div>
+      </Modal>
     </div>
   );
 }

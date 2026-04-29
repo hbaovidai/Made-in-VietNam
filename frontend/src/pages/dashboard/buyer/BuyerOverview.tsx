@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, MessageSquare, FileText, ArrowUpRight, Shield, Package, Inbox, Clock } from 'lucide-react';
+import { ShoppingCart, MessageSquare, FileText, ArrowUpRight, Shield, Package, Inbox } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 
 export function BuyerOverview() {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const [rfqCount, setRfqCount] = useState(0);
   const [rfqs, setRfqs] = useState<any[]>([]);

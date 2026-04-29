@@ -5,12 +5,12 @@ export declare class UsersService {
     findAll(query?: any): Promise<{
         data: {
             id: string;
+            createdAt: Date;
             email: string;
             role: import("@prisma/client").$Enums.Role;
             fullName: string;
             phone: string | null;
             status: import("@prisma/client").$Enums.UserStatus;
-            createdAt: Date;
             supplier: {
                 id: string;
                 companyName: string;

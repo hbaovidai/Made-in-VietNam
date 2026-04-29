@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Search, ChevronRight, Rocket, FileSearch, ShieldCheck, Ship, Lock, User, Plus, Minus, MessageCircle, Mail } from 'lucide-react';
+import { Search, ChevronRight, Rocket, FileSearch, ShieldCheck, Lock, User, Plus, Minus, MessageCircle, Mail } from 'lucide-react';
 
 export function HelpCenter() {
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const categories = [
-    { icon: <Rocket size={20} className="text-white" />, title: 'Bắt đầu sử dụng', desc: 'Lần đầu đến với VIEProduct? Tìm hiểu cách sử dụng nền tảng và kết nối với các nhà cung cấp uy tín.' },
-    { icon: <FileSearch size={20} className="text-white" />, title: 'Tìm nguồn hàng & RFQ', desc: 'Nắm bắt quy trình Yêu cầu Báo giá để có được mức giá tốt nhất và thời gian giao hàng chất lượng.' },
-    { icon: <ShieldCheck size={20} className="text-viet-gold" />, iconBg: 'bg-[#FDF8F0]', title: 'Chương trình Xác minh', desc: 'Tìm hiểu quy trình kiểm định 12 điểm của chúng tôi dành cho các nhà sản xuất công nghiệp hàng đầu Việt Nam.' },
-    { icon: <Ship size={20} className="text-white" />, title: 'Logistics Xuất khẩu', desc: 'Hướng dẫn về vận chuyển hàng hóa, thông quan, và vận hành cảng thương mại tại Việt Nam.' },
-    { icon: <Lock size={20} className="text-white" />, title: 'Thanh toán & Bảo mật', desc: 'Dịch vụ thanh toán bảo đảm và giao thức chuyển khoản an toàn cho thương mại toàn cầu.' },
-    { icon: <User size={20} className="text-white" />, title: 'Quản lý Tài khoản', desc: 'Quản lý hồ sơ doanh nghiệp, phân quyền số lượng người dùng cho nhóm, thiết lập thông báo.' }
+    { icon: <Rocket size={20} className="text-white" />, title: t('cat_getting_started'), desc: t('cat_getting_started_desc'), href: '/help/user-guide' },
+    { icon: <FileSearch size={20} className="text-white" />, title: t('cat_sourcing_rfq'), desc: t('cat_sourcing_rfq_desc'), href: '/help/user-guide' },
+    { icon: <ShieldCheck size={20} className="text-viet-gold" />, iconBg: 'bg-[#FDF8F0]', title: t('cat_qr_verify'), desc: t('cat_qr_verify_desc'), href: '/verify' },
+    { icon: <Search size={20} className="text-white" />, title: t('cat_product_mgmt'), desc: t('cat_product_mgmt_desc'), href: '/help/seller-guide' },
+    { icon: <Lock size={20} className="text-white" />, title: t('cat_account_security'), desc: t('cat_account_security_desc'), href: '/help/user-guide' },
+    { icon: <User size={20} className="text-white" />, title: t('cat_for_suppliers'), desc: t('cat_for_suppliers_desc'), href: '/help/seller-guide' },
   ];
 
   const faqs = [
-    { q: "Làm cách nào để xác minh uy tín của một nhà sản xuất?", a: "Hãy tìm huy hiệu Vàng 'Đã Xác thực' (Verified) trên hồ sơ nhà sản xuất. Điều này chứng tỏ họ đã vượt qua quy trình kiểm tra thực địa, chứng nhận chất lượng kinh doanh và xác minh khối lượng giao dịch. Bạn hoàn toàn có thể tải Báo cáo Xác thực trực tiếp từ hồ sơ nhà cung cấp." },
-    { q: "Yêu cầu Báo giá (RFQ) là gì và làm thế nào để sử dụng?", a: "RFQ (Request for Quotation) cho phép bạn đăng tải yêu cầu mua hàng một cách chính xác để các nhà sản xuất chuyên nghiệp báo giá cạnh tranh nhất và tiết kiệm thời gian nhất." },
-    { q: "Làm sao để tôi theo dõi lô hàng xuất khẩu của mình qua VIEProduct?", a: "Truy cập Bảng điều khiển > Quản lý Đơn hàng > Vận chuyển để xem trạng thái theo dõi trực tiếp từ quy trình liên kết vận tải của chúng tôi." },
-    { q: "Có phí thu phí thành viên hay đăng ký tài khoản cho người mua không?", a: "Không, VIEProduct hoàn toàn miễn phí cho người mua (Buyer) trên toàn cầu tham gia, tìm nguồn hàng và kết nối với mạng lưới nhà cung cấp." }
+    { q: "Làm cách nào để xác minh uy tín của một nhà sản xuất?", a: "Hãy tìm huy hiệu 'Đã Xác thực' (Verified) trên hồ sơ nhà sản xuất. Điều này chứng tỏ họ đã cung cấp chứng nhận kinh doanh và được hệ thống xác minh. Bạn có thể xem chứng nhận trực tiếp trên trang hồ sơ nhà cung cấp." },
+    { q: "Yêu cầu Báo giá (RFQ) là gì và làm thế nào để sử dụng?", a: "RFQ (Request for Quotation) cho phép bạn đăng yêu cầu mua hàng để các nhà cung cấp báo giá cạnh tranh. Truy cập trang RFQ, nhập thông tin sản phẩm cần mua, số lượng và thời hạn giao hàng." },
+    { q: "Làm sao để quét mã QR kiểm tra hàng thật?", a: "Truy cập trang Xác minh (/verify), nhập mã code trên sản phẩm hoặc quét QR bằng camera. Hệ thống sẽ hiển thị thông tin sản phẩm, lô sản xuất, hạn sử dụng và cảnh báo nếu mã bị quét bất thường." },
+    { q: "Có phí đăng ký tài khoản không?", a: "Không, VIEProduct hoàn toàn miễn phí cho cả Người mua và Nhà cung cấp. Bạn có thể đăng ký bằng email hoặc đăng nhập nhanh bằng Google." },
+    { q: "Sản phẩm mới đăng có hiển thị ngay không?", a: "Không, sản phẩm mới sẽ ở trạng thái 'Chờ duyệt'. Admin sẽ xét duyệt và phê duyệt trong thời gian sớm nhất. Sau khi được duyệt, sản phẩm sẽ hiển thị công khai trên trang sản phẩm." },
   ];
 
   return (
@@ -37,96 +39,113 @@ export function HelpCenter() {
           <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-6">
             <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
             <ChevronRight size={12} className="text-slate-400" />
-            <span className="text-primary font-bold">Trung tâm Trợ giúp</span>
+            <span className="text-primary font-bold">{t('help_center')}</span>
           </nav>
 
           <div className="max-w-4xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
             <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
-              Chúng tôi có thể hỗ trợ bạn điều gì?
+              {t('help_center_question')}
             </h1>
             <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
-              Tìm kiếm câu trả lời, hướng dẫn sử dụng, và hỗ trợ kỹ thuật cho nền tảng VIEProduct.
+              {t('help_center_subtitle')}
             </p>
 
             <div className="max-w-2xl w-full mx-auto relative mt-6">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
               <input 
                 type="text" 
-                placeholder="Tìm kiếm hướng dẫn, quy trình RFQ, hoặc quy trình vận tải..." 
+                placeholder={t('help_search_placeholder')} 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-full outline-none focus:border-primary transition-all shadow-lg shadow-slate-100/50 text-sm"
               />
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500 uppercase font-bold tracking-widest mt-4">
-              <span>TỪ KHÓA:</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">Chương trình Xác minh</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">Cước Vận chuyển</span>
-              <span className="hover:text-primary cursor-pointer transition-colors">RFQ Nhanh</span>
+              <span>{t('keywords')}</span>
+              {['QR', 'RFQ', 'Sản phẩm', 'Tài khoản'].map(kw => (
+                <span key={kw} onClick={() => setSearchTerm(kw)} className="hover:text-primary cursor-pointer transition-colors">{kw}</span>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
+      {(() => {
+        const q = searchTerm.toLowerCase().trim();
+        const filteredCats = q ? categories.filter(c => c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)) : categories;
+        const filteredFaqs = q ? faqs.filter(f => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q)) : faqs;
+        const noResults = q && filteredCats.length === 0 && filteredFaqs.length === 0;
+
+        return (
       <div className="max-w-[1200px] mx-auto px-6 py-20">
         
         {/* Knowledge Hub Categories */}
         <div className="mb-24">
           <div className="flex justify-between items-end mb-10">
             <div>
-              <div className="text-[10px] font-bold text-viet-gold uppercase tracking-widest mb-2">TRUNG TÂM KIẾN THỨC</div>
-              <h2 className="text-2xl font-black text-slate-900">Chia theo danh mục</h2>
+              <div className="text-[10px] font-bold text-viet-gold uppercase tracking-widest mb-2">{t('knowledge_center')}</div>
+              <h2 className="text-2xl font-black text-slate-900">{t('by_category')}</h2>
             </div>
             <Link to="#" className="text-sm font-bold text-primary flex items-center hover:underline">
-              Xem toàn bộ <ChevronRight size={16} />
+              {t('view_all')} <ChevronRight size={16} />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((cat, idx) => (
-              <div key={idx} className="bg-white p-8 rounded-xl border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all group cursor-pointer flex flex-col">
-                <div className={`w-12 h-12 ${cat.iconBg || 'bg-[#1E3A8A]'} rounded-xl flex items-center justify-center mb-6`}>
-                  {cat.icon}
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-3">{cat.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed flex-1 mb-8">{cat.desc}</p>
-                <div className="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-                  Khám phá <ChevronRight size={14} />
-                </div>
-              </div>
-            ))}
+            {filteredCats.map((cat, idx) => {
+              const Wrapper = (cat as any).href ? Link : 'div';
+              const wrapperProps = (cat as any).href ? { to: (cat as any).href } : {};
+              return (
+                <Wrapper key={idx} {...wrapperProps as any} className="bg-white p-8 rounded-xl border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all group cursor-pointer flex flex-col no-underline">
+                  <div className={`w-12 h-12 ${(cat as any).iconBg || 'bg-[#1E3A8A]'} rounded-xl flex items-center justify-center mb-6`}>
+                    {cat.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-3">{cat.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed flex-1 mb-8">{cat.desc}</p>
+                  <div className="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+                    {t('explore')} <ChevronRight size={14} />
+                  </div>
+                </Wrapper>
+              );
+            })}
           </div>
+          {filteredCats.length === 0 && q && (
+            <p className="text-center text-slate-400 text-sm mt-8">{t('no_category_match')} "{searchTerm}"</p>
+          )}
         </div>
 
         {/* FAQs */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24 items-start">
           <div className="lg:col-span-4">
-            <h2 className="text-2xl font-black text-slate-900 mb-4 leading-tight">Câu Hỏi<br/>Thường Gặp</h2>
+            <h2 className="text-2xl font-black text-slate-900 mb-4 leading-tight">{t('faq_title')}<br/>{t('faq_title_2')}</h2>
             <p className="text-slate-500 text-sm leading-relaxed mb-8">
-              Không tìm thấy câu hỏi của bạn? Hướng dẫn truy cập nhanh của chúng tôi bao quát hầu hết các tình huống gặp phải từ người mua toàn cầu khi tiến vào thị trường Việt Nam.
+              {t('faq_sidebar_desc')}
             </p>
             
             <div className="bg-[#FDF8F0] border-l-4 border-viet-gold p-6 rounded-r-xl">
               <p className="text-sm font-medium text-slate-900 italic mb-4">
-                "VIEProduct đã tối ưu hóa nguồn lực sản xuất công nghiệp tại Đông Nam Á của chúng tôi lên tới trên 40% chỉ trong Quý đầu tiên."
+                "{t('faq_testimonial')}"
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-200" />
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Giám đốc Tuyến vận tải</div>
-                  <div className="text-[10px] font-bold text-viet-gold uppercase tracking-widest">TẬP ĐOÀN EUROTECH</div>
+                  <div className="text-xs font-bold text-slate-900">{t('faq_testimonial_role')}</div>
+                  <div className="text-[10px] font-bold text-viet-gold uppercase tracking-widest">{t('faq_testimonial_company')}</div>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-8 flex flex-col gap-4">
-            {faqs.map((faq, idx) => {
-              const isOpen = openFaq === idx;
+            {filteredFaqs.map((faq, idx) => {
+              const realIdx = faqs.indexOf(faq);
+              const isOpen = openFaq === realIdx;
               return (
                 <div 
                   key={idx} 
                   className="bg-white rounded-xl border border-slate-100 overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow"
-                  onClick={() => setOpenFaq(isOpen ? null : idx)}
+                  onClick={() => setOpenFaq(isOpen ? null : realIdx)}
                 >
                   <div className="px-6 py-5 flex items-center justify-between">
                     <h4 className="text-sm font-bold text-[#1E293B]">{faq.q}</h4>
@@ -142,45 +161,57 @@ export function HelpCenter() {
                 </div>
               );
             })}
+            {filteredFaqs.length === 0 && q && (
+              <p className="text-center text-slate-400 text-sm py-8">{t('no_faq_match')} "{searchTerm}"</p>
+            )}
           </div>
         </div>
+
+        {noResults && (
+          <div className="text-center py-16">
+            <p className="text-slate-400 text-lg mb-2">{t('no_results_for')} "{searchTerm}"</p>
+            <p className="text-slate-400 text-sm">{t('try_other_keyword')} <Link to="/contact" className="text-primary font-bold hover:underline">{t('contact_support_link')}</Link></p>
+          </div>
+        )}
       </div>
+        );
+      })()}
 
       {/* Support CTA */}
       <div className="bg-[#0F172A] text-white py-24 px-6 relative overflow-hidden">
         <div className="max-w-[1000px] mx-auto text-center mb-16 relative z-10">
-          <h2 className="text-3xl font-black mb-4">Vẫn cần sự trợ giúp?</h2>
+          <h2 className="text-3xl font-black mb-4">{t('still_need_help_title')}</h2>
           <p className="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
-            Đội ngũ hỗ trợ đa ngôn ngữ của chúng tôi luôn trực 24/7 để hoàn thành các yêu cầu tìm kiếm chuỗi công nghiệp, kiểm soát chất lượng, hay nhu cầu vận tải.
+            {t('still_need_help_desc_v2')}
           </p>
         </div>
 
         <div className="max-w-[900px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-          <div className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group">
+          <Link to="/contact" className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group no-underline">
             <div className="w-12 h-12 bg-[#334155] rounded-xl flex items-center justify-center mb-6">
               <MessageCircle size={24} className="text-viet-gold" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Live Chat</h3>
+            <h3 className="text-xl font-bold mb-3 text-white">{t('send_support_message')}</h3>
             <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-1">
-              Nhận phản hồi ngay lập tức cho các câu hỏi mua sắm thiết yếu hay các trục trặc về kỹ thuật nền tảng.
+              {t('send_support_message_desc')}
             </p>
             <div className="text-viet-gold font-bold text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
-              BẮT ĐẦU TRÒ CHUYỆN <ChevronRight size={14} />
+              {t('send_now')} <ChevronRight size={14} />
             </div>
-          </div>
+          </Link>
 
-          <div className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group">
+          <a href="mailto:support@vieproduct.vn" className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group no-underline">
             <div className="w-12 h-12 bg-[#334155] rounded-xl flex items-center justify-center mb-6">
               <Mail size={24} className="text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Hỗ trợ qua Email</h3>
+            <h3 className="text-xl font-bold mb-3 text-white">{t('direct_email')}</h3>
             <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-1">
-              Các thắc mắc chuyên sâu hơn về hệ thống vận tải lớn, quy chế hóa đơn quốc tế, hay các thủ tục giấy tờ pháp lý.
+              {t('direct_email_desc')}
             </p>
             <div className="text-white font-bold text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
-              GỬI YÊU CẦU <ChevronRight size={14} />
+              {t('send_email')} <ChevronRight size={14} />
             </div>
-          </div>
+          </a>
         </div>
       </div>
 

@@ -19,9 +19,10 @@ export declare class SuppliersService {
             };
         } & {
             id: string;
-            userId: string;
-            companyName: string;
             slug: string;
+            createdAt: Date;
+            updatedAt: Date;
+            companyName: string;
             logo: string | null;
             banner: string | null;
             description: string | null;
@@ -33,8 +34,7 @@ export declare class SuppliersService {
             province: string | null;
             website: string | null;
             isVerified: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+            userId: string;
         })[];
         meta: {
             total: number;
@@ -44,40 +44,40 @@ export declare class SuppliersService {
         };
     }>;
     findBySlug(slugOrId: string): Promise<{
-        user: {
-            email: string;
-            fullName: string;
-        };
         products: ({
             category: {
-                slug: string;
                 name: string;
+                slug: string;
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            supplierId: string;
             name: string;
+            slug: string;
+            createdAt: Date;
             status: import("@prisma/client").$Enums.ProductStatus;
+            updatedAt: Date;
+            description: string | null;
+            supplierId: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
+            categoryId: string;
         })[];
+        user: {
+            email: string;
+            fullName: string;
+        };
         certifications: {
             id: string;
-            supplierId: string;
             name: string;
+            supplierId: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -94,9 +94,10 @@ export declare class SuppliersService {
         };
     } & {
         id: string;
-        userId: string;
-        companyName: string;
         slug: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyName: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -108,44 +109,43 @@ export declare class SuppliersService {
         province: string | null;
         website: string | null;
         isVerified: boolean;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
     }>;
     update(supplierId: string, dto: UpdateSupplierDto): Promise<{
-        user: {
-            email: string;
-            fullName: string;
-        };
         products: ({
             category: {
-                slug: string;
                 name: string;
+                slug: string;
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            supplierId: string;
             name: string;
+            slug: string;
+            createdAt: Date;
             status: import("@prisma/client").$Enums.ProductStatus;
+            updatedAt: Date;
+            description: string | null;
+            supplierId: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
+            categoryId: string;
         })[];
+        user: {
+            email: string;
+            fullName: string;
+        };
         certifications: {
             id: string;
-            supplierId: string;
             name: string;
+            supplierId: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -162,9 +162,10 @@ export declare class SuppliersService {
         };
     } & {
         id: string;
-        userId: string;
-        companyName: string;
         slug: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyName: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -176,8 +177,7 @@ export declare class SuppliersService {
         province: string | null;
         website: string | null;
         isVerified: boolean;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
     }>;
     addCertification(supplierId: string, data: {
         name: string;
@@ -185,8 +185,8 @@ export declare class SuppliersService {
         documentUrl?: string;
     }): Promise<{
         id: string;
-        supplierId: string;
         name: string;
+        supplierId: string;
         issuedBy: string | null;
         issuedDate: Date | null;
         expiryDate: Date | null;
@@ -197,9 +197,10 @@ export declare class SuppliersService {
     }>;
     verifySupplier(supplierId: string, isVerified: boolean): Promise<{
         id: string;
-        userId: string;
-        companyName: string;
         slug: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyName: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -211,13 +212,34 @@ export declare class SuppliersService {
         province: string | null;
         website: string | null;
         isVerified: boolean;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
     }>;
     getStats(supplierId: string): Promise<{
         products: number;
         batches: number;
         qrCodes: number;
         totalViews: number;
+    }>;
+    getAnalytics(supplierId: string): Promise<{
+        overview: {
+            totalViews: number;
+            totalProducts: number;
+            activeProducts: number;
+            avgViewsPerProduct: number;
+        };
+        dailyViews: {
+            date: string;
+            views: number;
+        }[];
+        monthlyViews: {
+            month: string;
+            views: number;
+        }[];
+        topProducts: {
+            id: string;
+            name: string;
+            views: number;
+            status: import("@prisma/client").$Enums.ProductStatus;
+        }[];
     }>;
 }

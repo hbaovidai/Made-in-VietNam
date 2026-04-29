@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -25,6 +27,11 @@ import { UploadsModule } from './uploads/uploads.module';
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
+    // Anti-Scraping Firewall: Giới hạn 60 request / 1 phút / 1 IP
+    ThrottlerModule.forRoot([{
+      ttl: 60000,   // 1 phút (milliseconds)
+      limit: 60,    // Tối đa 60 requests
+    }]),
     PrismaModule,
     AuthModule,
     CategoriesModule,
@@ -40,6 +47,13 @@ import { UploadsModule } from './uploads/uploads.module';
     MembershipsModule,
     ReportsModule,
     UploadsModule,
+  ],
+  providers: [
+    // Kích hoạt Rate Limiter toàn cục cho mọi endpoint
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

@@ -184,12 +184,12 @@ export function SupplierProfile() {
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {[
-                  { label: t('business_type'), value: t('manufacturer_exporter') },
+                  { label: t('business_type'), value: supplier.businessType || t('manufacturer_exporter') },
                   { label: t('main_products'), value: supplier.industries?.map((i: any) => i.industry || i).join(', ') || 'Various' },
-                  { label: t('total_employees'), value: t('employees_range') },
-                  { label: t('annual_revenue'), value: t('revenue_range') },
+                  { label: t('total_employees'), value: supplier.totalEmployees || t('employees_range') },
+                  { label: t('annual_revenue'), value: supplier.annualRevenue || t('revenue_range') },
                   { label: t('main_markets'), value: supplier.markets?.map((m: any) => m.market || m).join(', ') || 'Global' },
-                  { label: t('export_percentage'), value: t('export_range') }
+                  { label: t('export_percentage'), value: supplier.exportPercentage || t('export_range') }
                 ].map((item) => (
                   <div key={item.label} className="space-y-1">
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{item.label}</div>
@@ -198,6 +198,39 @@ export function SupplierProfile() {
                 ))}
               </div>
             </section>
+
+            {/* Production Capacity */}
+            <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+              <h2 className="text-2xl font-bold text-slate-900">Năng lực sản xuất</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  { label: 'Diện tích nhà xưởng', value: supplier.factoryArea || '5,000 m²', icon: '🏭' },
+                  { label: 'Dây chuyền sản xuất', value: supplier.productionLines || '3 dây chuyền', icon: '⚙️' },
+                  { label: 'Sản lượng / tháng', value: supplier.monthlyCapacity || '10,000 đơn vị', icon: '📦' },
+                  { label: 'Kiểm soát chất lượng', value: supplier.qcStaff || 'Đội QC 5 người', icon: '✅' },
+                ].map((stat) => (
+                  <div key={stat.label} className="text-center p-4 bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-xl border border-slate-100">
+                    <span className="text-3xl block mb-2">{stat.icon}</span>
+                    <div className="text-lg font-black text-slate-900">{stat.value}</div>
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Factory Gallery */}
+            {(supplier.galleryImages?.length > 0) && (
+              <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+                <h2 className="text-2xl font-bold text-slate-900">Hình ảnh nhà xưởng</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {supplier.galleryImages.map((img: string, i: number) => (
+                    <div key={i} className="aspect-video rounded-xl overflow-hidden border border-slate-100 group">
+                      <img src={img} alt={`Nhà xưởng ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Featured Products */}
             <section className="space-y-6">
@@ -224,11 +257,21 @@ export function SupplierProfile() {
                       <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-viet-gold shadow-sm border border-slate-100">
                         <Award size={24} />
                       </div>
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div className="font-bold text-slate-900">{cert.name || cert}</div>
-                        <div className="text-xs text-slate-500">{t('verified_valid')}</div>
+                        {cert.issuedBy && <div className="text-xs text-slate-500">Cấp bởi: {cert.issuedBy}</div>}
+                        {cert.documentUrl && (
+                          <a
+                            href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary font-bold hover:underline mt-0.5 inline-block"
+                          >
+                            📄 Xem chứng nhận
+                          </a>
+                        )}
                       </div>
-                      <CheckCircle2 size={20} className="ml-auto text-emerald-500" />
+                      <CheckCircle2 size={20} className="ml-auto text-emerald-500 shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -278,7 +321,7 @@ export function SupplierProfile() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{t('phone')}</div>
-                    <div className="text-sm font-bold text-slate-800">{supplier.phone || '+84 (28) 1234 5678'}</div>
+                    <div className="text-sm font-bold text-slate-800">{supplier.phone || '+84 899 123 456'}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

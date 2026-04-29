@@ -65,7 +65,7 @@ export function SellerGuide() {
           <div className="flex-1 space-y-8">
             <h2 className="text-4xl lg:text-5xl font-black text-slate-900 uppercase tracking-tighter leading-none">
               {t('why_sell_on')} <br className="hidden lg:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">Made in Vietnam</span>?
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">VIEProduct</span>?
             </h2>
             <p className="text-slate-500 text-xl font-light leading-relaxed max-w-2xl">
               {t('why_sell_on_desc')}

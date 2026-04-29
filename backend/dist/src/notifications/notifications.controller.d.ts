@@ -4,13 +4,13 @@ export declare class NotificationsController {
     constructor(notificationsService: NotificationsService);
     getMyNotifications(userId: string): Promise<{
         id: string;
+        createdAt: Date;
         userId: string;
-        title: string;
         message: string;
+        link: string | null;
+        title: string;
         type: string;
         isRead: boolean;
-        link: string | null;
-        createdAt: Date;
     }[]>;
     getUnreadCount(userId: string): Promise<{
         count: number;

@@ -7,8 +7,8 @@ export declare class ReportsController {
         createdAt: Date;
         category: string | null;
         description: string | null;
-        price: number;
         title: string;
+        price: number;
         coverImage: string | null;
         pdfUrl: string | null;
     }[]>;
@@ -17,8 +17,8 @@ export declare class ReportsController {
         createdAt: Date;
         category: string | null;
         description: string | null;
-        price: number;
         title: string;
+        price: number;
         coverImage: string | null;
         pdfUrl: string | null;
     } | null>;

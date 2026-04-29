@@ -110,7 +110,7 @@ export function Apps() {
           </div>
           <div className="w-48 h-48 bg-white p-4 rounded-2xl shadow-2xl shrink-0">
             <img 
-              src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://madeinvietnam.com/apps" 
+              src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://vieproduct.vn/apps" 
               alt="QR Code" 
               className="w-full h-full object-contain"
             />

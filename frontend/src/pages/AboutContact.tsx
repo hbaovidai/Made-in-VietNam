@@ -47,63 +47,8 @@ export function AboutContact() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { label: t('verified_suppliers'), value: "5,000+", icon: <ShieldCheck className="text-primary" /> },
-            { label: t('products_listed'), value: "100k+", icon: <Globe className="text-blue-400" /> },
-            { label: t('global_buyers'), value: "25k+", icon: <Users className="text-emerald-400" /> },
-            { label: t('export_markets'), value: "120+", icon: <Award className="text-viet-gold" /> }
-          ].map((stat, idx) => (
-            <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center text-center space-y-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center">
-                {stat.icon}
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-slate-900">{stat.value}</div>
-                <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Mission Section */}
-      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl font-bold text-slate-900">{t('our_mission')}</h2>
-            <p className="text-slate-600 text-lg leading-relaxed">
-              {t('mission_desc')}
-            </p>
-            <div className="space-y-4">
-              {[
-                t('mission_point_1'),
-                t('mission_point_2'),
-                t('mission_point_3'),
-                t('mission_point_4')
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2 size={24} className="text-primary" />
-                  <span className="text-slate-700 font-medium">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="relative">
-            <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
-              <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&q=80&w=1000" alt="Vietnamese Factory" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-            </div>
-            <div className="absolute -bottom-8 -left-8 bg-primary text-white p-8 rounded-3xl shadow-2xl max-w-xs">
-              <p className="text-xl font-bold italic">{t('mission_quote')}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      {/* Contact Section — đưa lên đầu */}
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-12 relative z-20">
         <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col lg:flex-row">
           <div className="lg:w-1/3 bg-slate-900 p-12 text-white space-y-12">
             <div className="space-y-4">
@@ -115,14 +60,14 @@ export function AboutContact() {
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0"><Phone size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('call_us')}</div>
-                  <div className="text-lg font-bold">+84 (28) 1234 5678</div>
+                  <div className="text-lg font-bold">+84 899 123 456</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-viet-gold shrink-0"><Mail size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('email_us')}</div>
-                  <div className="text-lg font-bold">support@madeinvietnam.com</div>
+                  <div className="text-lg font-bold">support@vieproduct.vn</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -159,6 +104,61 @@ export function AboutContact() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[
+            { label: t('verified_suppliers'), value: "50+", icon: <ShieldCheck className="text-primary" /> },
+            { label: t('products_listed'), value: "500+", icon: <Globe className="text-blue-400" /> },
+            { label: t('global_buyers'), value: "200+", icon: <Users className="text-emerald-400" /> },
+            { label: t('export_markets'), value: "10+", icon: <Award className="text-viet-gold" /> }
+          ].map((stat, idx) => (
+            <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center text-center space-y-4">
+              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center">
+                {stat.icon}
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-slate-900">{stat.value}</div>
+                <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <h2 className="text-4xl font-bold text-slate-900">{t('our_mission')}</h2>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              {t('mission_desc')}
+            </p>
+            <div className="space-y-4">
+              {[
+                t('mission_point_1'),
+                t('mission_point_2'),
+                t('mission_point_3'),
+                t('mission_point_4')
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <CheckCircle2 size={24} className="text-primary" />
+                  <span className="text-slate-700 font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&q=80&w=1000" alt="Vietnamese Factory" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            </div>
+            <div className="absolute -bottom-8 -left-8 bg-primary text-white p-8 rounded-3xl shadow-2xl max-w-xs">
+              <p className="text-xl font-bold italic">{t('mission_quote')}</p>
+            </div>
           </div>
         </div>
       </section>

@@ -47,9 +47,9 @@ export function AuthRequireModal({ isOpen, onClose, message }: AuthRequireModalP
           <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-primary mx-auto mb-4">
             <LogIn size={28} />
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mb-2">Đăng nhập để tiếp tục</h3>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">{t('login_to_continue')}</h3>
           <p className="text-sm text-slate-500">
-            {message || 'Vui lòng đăng nhập hoặc tạo tài khoản để thực hiện thao tác này.'}
+            {message || t('login_prompt_msg')}
           </p>
         </div>
 
@@ -58,14 +58,14 @@ export function AuthRequireModal({ isOpen, onClose, message }: AuthRequireModalP
             onClick={handleLogin}
             className="w-full flex items-center justify-center gap-2 py-3.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-colors shadow-sm"
           >
-            Đăng nhập ngay
+            {t('login_now')}
           </button>
           <button 
             onClick={handleRegister}
             className="w-full flex items-center justify-center gap-2 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold transition-colors shadow-sm"
           >
             <UserPlus size={18} />
-            Tạo tài khoản mới
+            {t('create_new_account')}
           </button>
         </div>
       </div>

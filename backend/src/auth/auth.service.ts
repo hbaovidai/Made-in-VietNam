@@ -4,7 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { OAuth2Client } from 'google-auth-library';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   RegisterDto,
@@ -15,10 +17,17 @@ import {
 
 @Injectable()
 export class AuthService {
+  private googleClient: OAuth2Client;
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.googleClient = new OAuth2Client(
+      this.configService.get('GOOGLE_CLIENT_ID'),
+    );
+  }
 
   /**
    * Tạo JWT token cho user
@@ -123,6 +132,56 @@ export class AuthService {
     const { passwordHash, ...userData } = user;
     return {
       message: 'Đăng nhập thành công',
+      user: userData,
+      token,
+    };
+  }
+
+  async googleLogin(data: { credential: string; email: string; name: string; picture?: string }) {
+    const { email, name, picture } = data;
+
+    if (!email) {
+      throw new UnauthorizedException('Không lấy được email từ Google');
+    }
+
+    // 1) Tìm user trong DB
+    let user = await this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        supplier: {
+          select: { id: true, companyName: true, slug: true, isVerified: true },
+        },
+      },
+    });
+
+    // 2) Nếu chưa có → tạo mới (mặc định BUYER)
+    if (!user) {
+      const randomPassword = await bcrypt.hash(
+        Math.random().toString(36).slice(-12),
+        10,
+      );
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          passwordHash: randomPassword,
+          fullName: name || email.split('@')[0],
+          role: 'BUYER',
+          avatar: picture || null,
+        },
+        include: {
+          supplier: {
+            select: { id: true, companyName: true, slug: true, isVerified: true },
+          },
+        },
+      });
+    }
+
+    // 3) Tạo JWT token
+    const token = this.generateToken(user);
+
+    const { passwordHash, ...userData } = user;
+    return {
+      message: 'Đăng nhập Google thành công',
       user: userData,
       token,
     };

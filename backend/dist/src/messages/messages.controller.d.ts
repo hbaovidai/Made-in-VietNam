@@ -18,9 +18,9 @@ export declare class MessagesController {
     } & {
         id: string;
         createdAt: Date;
+        type: import("@prisma/client").$Enums.MessageType;
         conversationId: string;
         content: string;
-        type: import("@prisma/client").$Enums.MessageType;
         attachments: string[];
         senderId: string;
     })[]>;

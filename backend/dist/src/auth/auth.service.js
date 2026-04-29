@@ -45,14 +45,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 const bcrypt = __importStar(require("bcrypt"));
+const google_auth_library_1 = require("google-auth-library");
 const prisma_service_1 = require("../prisma/prisma.service");
 let AuthService = class AuthService {
     prisma;
     jwtService;
-    constructor(prisma, jwtService) {
+    configService;
+    googleClient;
+    constructor(prisma, jwtService, configService) {
         this.prisma = prisma;
         this.jwtService = jwtService;
+        this.configService = configService;
+        this.googleClient = new google_auth_library_1.OAuth2Client(this.configService.get('GOOGLE_CLIENT_ID'));
     }
     generateToken(user) {
         const payload = { sub: user.id, email: user.email, role: user.role };
@@ -132,6 +138,44 @@ let AuthService = class AuthService {
             token,
         };
     }
+    async googleLogin(data) {
+        const { email, name, picture } = data;
+        if (!email) {
+            throw new common_1.UnauthorizedException('Không lấy được email từ Google');
+        }
+        let user = await this.prisma.user.findUnique({
+            where: { email },
+            include: {
+                supplier: {
+                    select: { id: true, companyName: true, slug: true, isVerified: true },
+                },
+            },
+        });
+        if (!user) {
+            const randomPassword = await bcrypt.hash(Math.random().toString(36).slice(-12), 10);
+            user = await this.prisma.user.create({
+                data: {
+                    email,
+                    passwordHash: randomPassword,
+                    fullName: name || email.split('@')[0],
+                    role: 'BUYER',
+                    avatar: picture || null,
+                },
+                include: {
+                    supplier: {
+                        select: { id: true, companyName: true, slug: true, isVerified: true },
+                    },
+                },
+            });
+        }
+        const token = this.generateToken(user);
+        const { passwordHash, ...userData } = user;
+        return {
+            message: 'Đăng nhập Google thành công',
+            user: userData,
+            token,
+        };
+    }
     async getProfile(userId) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
@@ -204,6 +248,7 @@ exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        config_1.ConfigService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

@@ -37,6 +37,13 @@ let SuppliersController = class SuppliersController {
     getStats(id) {
         return this.suppliersService.getStats(id);
     }
+    async getAnalytics(id, userId) {
+        const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
+        if (!supplier || supplier.id !== id) {
+            throw new common_1.ForbiddenException('Bạn chỉ có thể xem phân tích của chính mình');
+        }
+        return this.suppliersService.getAnalytics(id);
+    }
     verifySupplier(id, isVerified) {
         return this.suppliersService.verifySupplier(id, isVerified);
     }
@@ -96,6 +103,16 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "getStats", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
+    (0, common_1.Get)(':id/analytics'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "getAnalytics", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('ADMIN'),

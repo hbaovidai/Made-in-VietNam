@@ -29,6 +29,9 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
+    googleLogin(dto) {
+        return this.authService.googleLogin(dto);
+    }
     getProfile(id, currentUser) {
         if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
             throw new common_1.ForbiddenException('Bạn chỉ có thể xem hồ sơ của chính mình');
@@ -63,6 +66,13 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('google'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dto_1.GoogleLoginDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "googleLogin", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('profile/:id'),

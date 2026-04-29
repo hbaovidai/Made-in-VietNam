@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2 } from 'lucide-react';
+import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
 import { Modal } from '../../../components/ui/Modal';
 import { SupplierBadge } from '../../../components/ui/SupplierBadge';
@@ -20,6 +20,8 @@ export function SupplierProfile() {
 
   const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '' });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
+  const [certFile, setCertFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const supplierId = user?.supplier?.id;
 
@@ -66,14 +68,33 @@ export function SupplierProfile() {
 
   const handleAddCert = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
     try {
-      const res = await api.post(`/suppliers/${supplierId}/certifications`, certForm);
+      let documentUrl = '';
+
+      // Upload file trước (nếu có)
+      if (certFile) {
+        const formData = new FormData();
+        formData.append('file', certFile);
+        const uploadRes = await api.post('/uploads', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        documentUrl = uploadRes.data.url || uploadRes.data.path || '';
+      }
+
+      const res = await api.post(`/suppliers/${supplierId}/certifications`, {
+        ...certForm,
+        documentUrl,
+      });
       setCertifications([...certifications, res.data]);
       setIsCertModalOpen(false);
       setCertForm({ name: '', issuedBy: '' });
+      setCertFile(null);
       addToast({ type: 'success', title: t('add_cert_title'), message: t('add_cert_success') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm chứng nhận' });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -207,7 +228,20 @@ export function SupplierProfile() {
                     {cert.issuedBy && <div className="text-[10px] text-slate-400 font-medium mt-0.5">Cấp bởi: {cert.issuedBy}</div>}
                   </div>
                 </div>
-                <button onClick={() => handleDeleteCert(cert.id)} className="p-1.5 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={14} /></button>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {cert.documentUrl && (
+                    <a
+                      href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-slate-300 hover:text-blue-500 transition-colors"
+                      title="Xem chứng nhận"
+                    >
+                      <Eye size={14} />
+                    </a>
+                  )}
+                  <button onClick={() => handleDeleteCert(cert.id)} className="p-1.5 text-slate-300 hover:text-red-500 transition-colors" title="Xóa chứng nhận"><Trash2 size={14} /></button>
+                </div>
               </div>
             ))}
           </div>
@@ -274,9 +308,27 @@ export function SupplierProfile() {
             <label className="input-label">{t('cert_issuer_label')}</label>
             <input type="text" className="input" placeholder={t('cert_issuer_placeholder')} required value={certForm.issuedBy} onChange={(e) => setCertForm({...certForm, issuedBy: e.target.value})} />
           </div>
+          <div className="space-y-2">
+            <label className="input-label">Ảnh/File chứng nhận</label>
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                onChange={(e) => setCertFile(e.target.files?.[0] || null)}
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-slate-200 rounded-xl"
+              />
+            </div>
+            {certFile && (
+              <p className="text-xs text-emerald-600 font-medium">✓ Đã chọn: {certFile.name}</p>
+            )}
+            <p className="text-[11px] text-slate-400">Hỗ trợ: Ảnh (JPG, PNG) hoặc PDF. Tối đa 5MB.</p>
+          </div>
           <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
             <button type="button" onClick={() => setIsCertModalOpen(false)} className="btn-ghost">{t('cancel_btn')}</button>
-            <button type="submit" className="btn-primary">{t('upload_btn')}</button>
+            <button type="submit" disabled={uploading} className="btn-primary flex items-center gap-2">
+              {uploading && <Loader2 size={14} className="animate-spin" />}
+              {uploading ? 'Đang tải lên...' : t('upload_btn')}
+            </button>
           </div>
         </form>
       </Modal>

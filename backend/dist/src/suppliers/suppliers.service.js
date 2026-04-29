@@ -138,6 +138,86 @@ let SuppliersService = class SuppliersService {
             totalViews: totalViews._sum.viewCount || 0,
         };
     }
+    async getAnalytics(supplierId) {
+        const products = await this.prisma.product.findMany({
+            where: { supplierId },
+            select: { id: true, name: true, viewCount: true, status: true },
+        });
+        const productIds = products.map(p => p.id);
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const dailyViews = await this.prisma.viewHistory.groupBy({
+            by: ['viewedAt'],
+            where: {
+                productId: { in: productIds },
+                viewedAt: { gte: thirtyDaysAgo },
+            },
+            _count: { id: true },
+        });
+        const dailyMap = {};
+        for (let i = 0; i < 30; i++) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            dailyMap[d.toISOString().slice(0, 10)] = 0;
+        }
+        for (const row of dailyViews) {
+            const key = new Date(row.viewedAt).toISOString().slice(0, 10);
+            if (dailyMap[key] !== undefined) {
+                dailyMap[key] += row._count.id;
+            }
+        }
+        const dailyData = Object.entries(dailyMap)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([date, views]) => ({ date, views }));
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+        const monthlyViews = await this.prisma.viewHistory.groupBy({
+            by: ['viewedAt'],
+            where: {
+                productId: { in: productIds },
+                viewedAt: { gte: twelveMonthsAgo },
+            },
+            _count: { id: true },
+        });
+        const monthlyMap = {};
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            monthlyMap[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`] = 0;
+        }
+        for (const row of monthlyViews) {
+            const d = new Date(row.viewedAt);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            if (monthlyMap[key] !== undefined) {
+                monthlyMap[key] += row._count.id;
+            }
+        }
+        const monthlyData = Object.entries(monthlyMap)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([month, views]) => ({ month, views }));
+        const topProducts = products
+            .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+            .slice(0, 10)
+            .map(p => ({
+            id: p.id,
+            name: p.name,
+            views: p.viewCount || 0,
+            status: p.status,
+        }));
+        const totalViewsAll = products.reduce((sum, p) => sum + (p.viewCount || 0), 0);
+        const activeProducts = products.filter(p => p.status === 'ACTIVE').length;
+        return {
+            overview: {
+                totalViews: totalViewsAll,
+                totalProducts: products.length,
+                activeProducts,
+                avgViewsPerProduct: products.length > 0 ? Math.round(totalViewsAll / products.length) : 0,
+            },
+            dailyViews: dailyData,
+            monthlyViews: monthlyData,
+            topProducts,
+        };
+    }
 };
 exports.SuppliersService = SuppliersService;
 exports.SuppliersService = SuppliersService = __decorate([

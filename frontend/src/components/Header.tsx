@@ -29,8 +29,12 @@ export function Header() {
     if (e) e.preventDefault();
     if (!searchQuery.trim()) return;
     
-    // Always search products for now as requested
-    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+    const encodedQuery = encodeURIComponent(searchQuery);
+    if (searchType === 'suppliers') {
+      navigate(`/suppliers?search=${encodedQuery}`);
+    } else {
+      navigate(`/products?search=${encodedQuery}`);
+    }
     setIsMobileSearchOpen(false);
   };
 
@@ -100,7 +104,7 @@ export function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [isMenuOpen]);
 
-  const searchOptions = ['products', 'suppliers', 'audited_factories'];
+  const searchOptions = ['products', 'suppliers'];
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -138,7 +142,7 @@ export function Header() {
       title: t('service'),
       links: [
         { label: t('new_user_guide'), href: "/help/user-guide" },
-        { label: t('audited_suppliers_reports'), href: "/reports" },
+        // { label: t('audited_suppliers_reports'), href: "/reports" }, // Ẩn tạm — chưa có nội dung
         { label: t('secured_trading_service'), href: "/services/secured-trading" },
         { label: t('buyer_center'), href: "/dashboard/buyer" },
         { label: t('contact_us'), href: "/contact" },
@@ -313,7 +317,7 @@ export function Header() {
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
                     className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative"
-                    title="Thông báo"
+                    title={t('notifications')}
                   >
                     <Bell size={20} />
                     {unreadCount > 0 && (
@@ -325,14 +329,14 @@ export function Header() {
                   {isNotifOpen && (
                     <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden z-[100]" onClick={(e) => e.stopPropagation()}>
                       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                        <h4 className="font-bold text-sm text-slate-900">Thông báo</h4>
+                        <h4 className="font-bold text-sm text-slate-900">{t('notifications')}</h4>
                         {unreadCount > 0 && (
-                          <button onClick={markAllRead} className="text-xs text-primary font-bold hover:underline">Đánh dấu tất cả đã đọc</button>
+                          <button onClick={markAllRead} className="text-xs text-primary font-bold hover:underline">{t('mark_all_read')}</button>
                         )}
                       </div>
                       <div className="max-h-72 overflow-y-auto">
                         {notifications.length === 0 ? (
-                          <div className="p-8 text-center text-sm text-slate-400">Không có thông báo</div>
+                          <div className="p-8 text-center text-sm text-slate-400">{t('no_notifications')}</div>
                         ) : notifications.slice(0, 10).map((notif: any) => (
                           <div key={notif.id} onClick={() => markOneReadAndNavigate(notif)} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
                             <div className="text-sm font-bold text-slate-900">{notif.title}</div>
@@ -369,8 +373,8 @@ export function Header() {
                 </Link>
                 <div className="absolute top-full right-0 pt-2 hidden group-hover:block z-[100]">
                   <div className="w-48 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2">
-                    <Link to={`/dashboard/${user.role.toLowerCase()}`} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors block text-slate-700 font-medium">Bảng điều khiển</Link>
-                    <button onClick={logout} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors font-medium">Đăng xuất</button>
+                    <Link to={`/dashboard/${user.role.toLowerCase()}`} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors block text-slate-700 font-medium">{t('dashboard_link')}</Link>
+                    <button onClick={logout} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 transition-colors font-medium">{t('logout')}</button>
                   </div>
                 </div>
               </div>
@@ -470,6 +474,7 @@ export function Header() {
               >
                 {t('top_ranking_products')}
               </Link>
+              {/* Reports link - ẩn tạm
               <Link 
                 to="/reports" 
                 className={cn(
@@ -479,6 +484,7 @@ export function Header() {
               >
                 {t('audited_suppliers_reports')}
               </Link>
+              */}
               <Link 
                 to="/services" 
                 className={cn(

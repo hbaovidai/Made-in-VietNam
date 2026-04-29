@@ -92,7 +92,7 @@ export function Home() {
     <div className="bg-slate-50 min-h-screen pb-20">
       <SEOHead
         title="Trang chủ"
-        description="Made in VietNam - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế."
+        description="VIEProduct - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế."
       />
 
       {/* ═══ Top Section: Categories + Banner + Recommendations ═══ */}

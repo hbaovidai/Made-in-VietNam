@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Eye, TrendingUp, ArrowUpRight, Users, Award, Inbox, ShoppingBag, BarChart3 } from 'lucide-react';
+import { Package, Eye, ArrowUpRight, Users, Award, Inbox, ShoppingBag, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 
 export function SupplierOverview() {
-  const { t } = useTranslation();
   const { user } = useAuth();
 
   const [statsData, setStatsData] = useState({
@@ -43,12 +41,13 @@ export function SupplierOverview() {
   const calcProfileCompletion = () => {
     if (!user?.supplier) return 30;
     let score = 30;
-    if (user.supplier.companyNameEn) score += 10;
-    if (user.supplier.description) score += 15;
-    if (user.supplier.businessType) score += 10;
-    if (user.supplier.yearEstablished) score += 10;
-    if (user.supplier.mainMarkets) score += 10;
-    if (user.supplier.certifications?.length > 0) score += 15;
+    const supplierData = user.supplier as any;
+    if (supplierData.companyNameEn) score += 10;
+    if (supplierData.description) score += 15;
+    if (supplierData.businessType) score += 10;
+    if (supplierData.yearEstablished) score += 10;
+    if (supplierData.mainMarkets) score += 10;
+    if (supplierData.certifications?.length > 0) score += 15;
     return Math.min(score, 100);
   };
   const profileCompletion = calcProfileCompletion();

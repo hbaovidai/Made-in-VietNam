@@ -10,6 +10,8 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const serve_static_1 = require("@nestjs/serve-static");
+const throttler_1 = require("@nestjs/throttler");
+const core_1 = require("@nestjs/core");
 const path_1 = require("path");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
@@ -37,6 +39,10 @@ exports.AppModule = AppModule = __decorate([
                 rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
                 serveRoot: '/uploads',
             }),
+            throttler_1.ThrottlerModule.forRoot([{
+                    ttl: 60000,
+                    limit: 60,
+                }]),
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             categories_module_1.CategoriesModule,
@@ -52,6 +58,12 @@ exports.AppModule = AppModule = __decorate([
             memberships_module_1.MembershipsModule,
             reports_module_1.ReportsModule,
             uploads_module_1.UploadsModule,
+        ],
+        providers: [
+            {
+                provide: core_1.APP_GUARD,
+                useClass: throttler_1.ThrottlerGuard,
+            },
         ],
     })
 ], AppModule);

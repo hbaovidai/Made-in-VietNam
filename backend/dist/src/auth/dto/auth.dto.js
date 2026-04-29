@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChangePasswordDto = exports.UpdateProfileDto = exports.LoginDto = exports.RegisterDto = void 0;
+exports.GoogleLoginDto = exports.ChangePasswordDto = exports.UpdateProfileDto = exports.LoginDto = exports.RegisterDto = void 0;
 const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client");
 class RegisterDto {
@@ -99,4 +99,30 @@ __decorate([
     (0, class_validator_1.MinLength)(6, { message: 'Mật khẩu mới tối thiểu 6 ký tự' }),
     __metadata("design:type", String)
 ], ChangePasswordDto.prototype, "newPassword", void 0);
+class GoogleLoginDto {
+    credential;
+    email;
+    name;
+    picture;
+}
+exports.GoogleLoginDto = GoogleLoginDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], GoogleLoginDto.prototype, "credential", void 0);
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], GoogleLoginDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], GoogleLoginDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], GoogleLoginDto.prototype, "picture", void 0);
 //# sourceMappingURL=auth.dto.js.map

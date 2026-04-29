@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
@@ -15,8 +16,43 @@ export function Login() {
   const { loginUser } = useAuth();
   
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const googleLogin = useGoogleLogin({
+    flow: 'implicit',
+    onSuccess: async (tokenResponse) => {
+      setGoogleLoading(true);
+      try {
+        // Get user info from Google using access token
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        const userInfo = await userInfoRes.json();
+        
+        // Send to our backend
+        const res = await api.post('/auth/google', {
+          credential: tokenResponse.access_token,
+          email: userInfo.email,
+          name: userInfo.name,
+          picture: userInfo.picture,
+        });
+        loginUser(res.data.user, res.data.token);
+        addToast({ type: 'success', title: 'Thành công', message: 'Đăng nhập Google thành công' });
+        
+        const role = res.data.user.role;
+        navigate(role === 'BUYER' ? '/' : `/dashboard/${role.toLowerCase()}`);
+      } catch (err: any) {
+        addToast({ type: 'error', title: 'Thất bại', message: err.response?.data?.message || 'Đăng nhập Google thất bại' });
+      } finally {
+        setGoogleLoading(false);
+      }
+    },
+    onError: () => {
+      addToast({ type: 'error', title: 'Thất bại', message: 'Đăng nhập Google bị huỷ' });
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,14 +145,19 @@ export function Login() {
             <div className="flex-1 border-t border-slate-200/80" />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mt-6">
-            <button type="button" className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-bold text-slate-700">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
-              Google
-            </button>
-            <button type="button" className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-bold text-slate-700">
-              <img src="https://www.svgrepo.com/show/475661/linkedin-color.svg" alt="LinkedIn" className="w-4 h-4" />
-              LinkedIn
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => googleLogin()}
+              disabled={googleLoading}
+              className="w-full flex items-center justify-center gap-3 py-3.5 border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm font-bold text-slate-700 disabled:opacity-60"
+            >
+              {googleLoading ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+              )}
+              {googleLoading ? 'Đang xử lý...' : 'Đăng nhập bằng Google'}
             </button>
           </div>
         </div>

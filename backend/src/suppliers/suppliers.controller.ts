@@ -43,6 +43,21 @@ export class SuppliersController {
     return this.suppliersService.getStats(id);
   }
 
+  // PROTECTED: Analytics sâu — chỉ supplier chủ sở hữu
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER')
+  @Get(':id/analytics')
+  async getAnalytics(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
+    if (!supplier || supplier.id !== id) {
+      throw new ForbiddenException('Bạn chỉ có thể xem phân tích của chính mình');
+    }
+    return this.suppliersService.getAnalytics(id);
+  }
+
   // PROTECTED ADMIN: Verify/Unverify supplier
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')

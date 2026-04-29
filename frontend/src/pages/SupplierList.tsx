@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, Award, Globe, Loader2 } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import { categories } from '../data/mockData';
@@ -9,7 +9,8 @@ import { api } from '../lib/api';
 
 export function SupplierList() {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [urlParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   
   const [suppliers, setSuppliers] = useState<any[]>([]);

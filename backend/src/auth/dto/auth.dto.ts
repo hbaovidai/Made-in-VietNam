@@ -65,3 +65,20 @@ export class ChangePasswordDto {
   @MinLength(6, { message: 'Mật khẩu mới tối thiểu 6 ký tự' })
   newPassword: string;
 }
+
+export class GoogleLoginDto {
+  @IsString()
+  @IsNotEmpty()
+  credential: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  picture?: string;
+}

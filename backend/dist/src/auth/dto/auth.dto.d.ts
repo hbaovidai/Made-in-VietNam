@@ -20,3 +20,9 @@ export declare class ChangePasswordDto {
     oldPassword: string;
     newPassword: string;
 }
+export declare class GoogleLoginDto {
+    credential: string;
+    email: string;
+    name: string;
+    picture?: string;
+}

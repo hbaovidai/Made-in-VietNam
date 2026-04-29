@@ -153,4 +153,102 @@ export class SuppliersService {
       totalViews: totalViews._sum.viewCount || 0,
     };
   }
+
+  async getAnalytics(supplierId: string) {
+    // Lấy danh sách productIds thuộc supplier
+    const products = await this.prisma.product.findMany({
+      where: { supplierId },
+      select: { id: true, name: true, viewCount: true, status: true },
+    });
+    const productIds = products.map(p => p.id);
+
+    // 1) Lượt xem theo ngày (30 ngày gần nhất)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const dailyViews = await this.prisma.viewHistory.groupBy({
+      by: ['viewedAt'],
+      where: {
+        productId: { in: productIds },
+        viewedAt: { gte: thirtyDaysAgo },
+      },
+      _count: { id: true },
+    });
+
+    // Gom theo ngày (YYYY-MM-DD)
+    const dailyMap: Record<string, number> = {};
+    for (let i = 0; i < 30; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      dailyMap[d.toISOString().slice(0, 10)] = 0;
+    }
+    for (const row of dailyViews) {
+      const key = new Date(row.viewedAt).toISOString().slice(0, 10);
+      if (dailyMap[key] !== undefined) {
+        dailyMap[key] += row._count.id;
+      }
+    }
+
+    const dailyData = Object.entries(dailyMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, views]) => ({ date, views }));
+
+    // 2) Lượt xem theo tháng (12 tháng)
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+    const monthlyViews = await this.prisma.viewHistory.groupBy({
+      by: ['viewedAt'],
+      where: {
+        productId: { in: productIds },
+        viewedAt: { gte: twelveMonthsAgo },
+      },
+      _count: { id: true },
+    });
+
+    const monthlyMap: Record<string, number> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      monthlyMap[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`] = 0;
+    }
+    for (const row of monthlyViews) {
+      const d = new Date(row.viewedAt);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      if (monthlyMap[key] !== undefined) {
+        monthlyMap[key] += row._count.id;
+      }
+    }
+
+    const monthlyData = Object.entries(monthlyMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, views]) => ({ month, views }));
+
+    // 3) Hiệu suất sản phẩm (top 10 theo viewCount)
+    const topProducts = products
+      .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+      .slice(0, 10)
+      .map(p => ({
+        id: p.id,
+        name: p.name,
+        views: p.viewCount || 0,
+        status: p.status,
+      }));
+
+    // 4) Tổng quan nhanh
+    const totalViewsAll = products.reduce((sum, p) => sum + (p.viewCount || 0), 0);
+    const activeProducts = products.filter(p => p.status === 'ACTIVE').length;
+
+    return {
+      overview: {
+        totalViews: totalViewsAll,
+        totalProducts: products.length,
+        activeProducts,
+        avgViewsPerProduct: products.length > 0 ? Math.round(totalViewsAll / products.length) : 0,
+      },
+      dailyViews: dailyData,
+      monthlyViews: monthlyData,
+      topProducts,
+    };
+  }
 }
