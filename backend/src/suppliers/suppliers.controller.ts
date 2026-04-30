@@ -58,6 +58,17 @@ export class SuppliersController {
     return this.suppliersService.getAnalytics(id);
   }
 
+  // PROTECTED: Tạo mới profile nếu chưa có
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER')
+  @Post('me')
+  async createMyProfile(
+    @Body() dto: any,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.suppliersService.createProfile(userId, dto);
+  }
+
   // PROTECTED ADMIN: Verify/Unverify supplier
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')

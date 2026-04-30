@@ -7,7 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Security: Ẩn thông tin server, chống XSS, clickjacking
-  app.use(helmet());
+  // crossOriginResourcePolicy: 'cross-origin' cho phép frontend (port khác) tải ảnh từ /uploads
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }));
 
   // Global prefix
   app.setGlobalPrefix('api/v1');

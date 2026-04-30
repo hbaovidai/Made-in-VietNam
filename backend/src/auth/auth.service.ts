@@ -73,6 +73,7 @@ export class AuthService {
       },
     });
 
+    let supplierProfile = null;
     // If supplier, create supplier profile
     if (dto.role === 'SUPPLIER' && dto.companyName) {
       const slug = dto.companyName
@@ -80,7 +81,7 @@ export class AuthService {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
 
-      await this.prisma.supplier.create({
+      supplierProfile = await this.prisma.supplier.create({
         data: {
           userId: user.id,
           companyName: dto.companyName,
@@ -94,7 +95,10 @@ export class AuthService {
 
     return {
       message: 'Đăng ký thành công',
-      user,
+      user: {
+        ...user,
+        supplier: supplierProfile
+      },
       token,
     };
   }

@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin, Globe, MessageSquare, Send, CheckCircle2, Award, S
 import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../lib/api';
 import { useToast } from '../components/ui/Toast';
+import { SEOHead } from '../components/SEOHead';
 
 export function AboutContact() {
   const { t } = useTranslation();
@@ -30,6 +31,12 @@ export function AboutContact() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEOHead
+        title="Liên hệ & Giới thiệu"
+        description="Liên hệ với VIEProduct - Nền tảng B2B hàng đầu Việt Nam. Hỗ trợ tư vấn, hợp tác kinh doanh và giải đáp thắc mắc."
+        keywords="liên hệ VIEProduct, hỗ trợ, giới thiệu, B2B Việt Nam"
+        canonical="/contact"
+      />
       {/* Hero Section */}
       <section className="bg-slate-900 text-white py-24 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/10 skew-x-12 transform translate-x-32" />

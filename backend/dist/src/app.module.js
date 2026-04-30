@@ -38,6 +38,12 @@ exports.AppModule = AppModule = __decorate([
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
                 serveRoot: '/uploads',
+                serveStaticOptions: {
+                    setHeaders: (res) => {
+                        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                    },
+                },
             }),
             throttler_1.ThrottlerModule.forRoot([{
                     ttl: 60000,

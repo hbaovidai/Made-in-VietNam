@@ -7,11 +7,13 @@ import { Badge } from '../../../components/ui/Badge';
 import { api } from '../../../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export function SupplierProducts() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { user } = useAuth();
   
   const [productList, setProductList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +52,10 @@ export function SupplierProducts() {
   };
 
   const handleCreate = () => {
+    if (user?.supplier?.verificationStatus !== 'VERIFIED') {
+      addToast({ type: 'error', title: 'Chưa xác thực', message: 'Bạn phải nộp hồ sơ Xác thực Doanh nghiệp (KYB) và được duyệt mới có thể đăng sản phẩm.' });
+      return;
+    }
     navigate('/dashboard/supplier/products/add');
   };
 

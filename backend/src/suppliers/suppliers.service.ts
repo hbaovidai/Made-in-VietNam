@@ -68,6 +68,33 @@ export class SuppliersService {
     return supplier;
   }
 
+  async createProfile(userId: string, data: any) {
+    const existing = await this.prisma.supplier.findUnique({ where: { userId } });
+    if (existing) {
+      return existing; // already exists
+    }
+
+    const slug = data.companyName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const supplier = await this.prisma.supplier.create({
+      data: {
+        userId,
+        companyName: data.companyName,
+        businessType: data.businessType,
+        description: data.description,
+        taxCode: data.taxCode,
+        companyEmail: data.companyEmail,
+        companyPhone: data.companyPhone,
+        legalRepresentative: data.legalRepresentative,
+        slug: `${slug}-${Date.now()}`,
+      },
+    });
+    return supplier;
+  }
+
   async update(supplierId: string, dto: UpdateSupplierDto) {
     const supplier = await this.prisma.supplier.findUnique({
       where: { id: supplierId },
@@ -129,7 +156,10 @@ export class SuppliersService {
     // Update verified status
     const updated = await this.prisma.supplier.update({
       where: { id: supplierId },
-      data: { isVerified }
+      data: { 
+        isVerified,
+        verificationStatus: isVerified ? 'VERIFIED' : 'REJECTED'
+      }
     });
 
     return updated;

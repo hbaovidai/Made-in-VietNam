@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, ShieldCheck, ShieldAlert, CheckCircle2, X, Search, Filter } from 'lucide-react';
-import { ConfirmDialog } from '../../../components/ui/Modal';
+import { Loader2, ShieldCheck, ShieldAlert, CheckCircle2, X, Search, Filter, Eye } from 'lucide-react';
+import { ConfirmDialog, Modal } from '../../../components/ui/Modal';
 
 export function AdminSuppliers() {
   const { addToast } = useToast();
@@ -14,6 +14,7 @@ export function AdminSuppliers() {
   const [confirmVerify, setConfirmVerify] = useState<{isOpen: boolean, supplier: any, intent: boolean}>({
     isOpen: false, supplier: null, intent: true
   });
+  const [viewSupplier, setViewSupplier] = useState<any | null>(null);
 
   useEffect(() => {
     loadSuppliers();
@@ -144,21 +145,29 @@ export function AdminSuppliers() {
                     )}
                   </td>
                   <td className="py-4 pr-1 text-right">
-                    {!s.isVerified ? (
+                    <div className="flex justify-end items-center gap-2">
                       <button 
-                        onClick={() => setConfirmVerify({ isOpen: true, supplier: s, intent: true })}
-                        className="text-xs font-bold text-primary hover:text-primary-dark transition-colors inline-flex items-center gap-1"
+                        onClick={() => setViewSupplier(s)}
+                        className="text-xs font-bold text-slate-600 hover:text-primary transition-colors inline-flex items-center gap-1 bg-slate-100 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg"
                       >
-                        <CheckCircle2 size={13} /> Duyệt
+                        <Eye size={13} /> Xem hồ sơ
                       </button>
-                    ) : (
-                      <button 
-                        onClick={() => setConfirmVerify({ isOpen: true, supplier: s, intent: false })}
-                        className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center gap-1"
-                      >
-                        <X size={13} /> Hủy duyệt
-                      </button>
-                    )}
+                      {!s.isVerified ? (
+                        <button 
+                          onClick={() => setConfirmVerify({ isOpen: true, supplier: s, intent: true })}
+                          className="text-xs font-bold text-primary hover:text-white transition-colors inline-flex items-center gap-1 border border-primary hover:bg-primary px-2.5 py-1.5 rounded-lg"
+                        >
+                          <CheckCircle2 size={13} /> Duyệt
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => setConfirmVerify({ isOpen: true, supplier: s, intent: false })}
+                          className="text-xs font-bold text-red-500 hover:text-white transition-colors inline-flex items-center gap-1 border border-red-200 hover:bg-red-500 hover:border-red-500 px-2.5 py-1.5 rounded-lg"
+                        >
+                          <X size={13} /> Hủy duyệt
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -183,6 +192,79 @@ export function AdminSuppliers() {
         confirmText={confirmVerify.intent ? 'Xác nhận Duyệt' : 'Tiến hành Thu hồi'}
         variant={confirmVerify.intent ? 'info' : 'danger'}
       />
+
+      {viewSupplier && (
+        <Modal isOpen={!!viewSupplier} onClose={() => setViewSupplier(null)} title="Hồ sơ Pháp lý & Xác thực" size="lg">
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mã số thuế</p>
+                <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.taxCode || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Người đại diện</p>
+                <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.legalRepresentative || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">SĐT Liên hệ</p>
+                <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.companyPhone || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Email công ty</p>
+                <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.companyEmail || 'N/A'}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-100 pt-6">
+              <h4 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <ShieldCheck size={16} className="text-primary" />
+                Tài liệu đính kèm
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 border border-slate-200 rounded-xl bg-white hover:border-primary/30 transition-colors shadow-sm">
+                  <p className="text-xs font-bold text-slate-700 mb-3">Giấy Đăng Ký Kinh Doanh</p>
+                  {viewSupplier.businessLicenseUrl ? (
+                    <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${viewSupplier.businessLicenseUrl.replace('/api/v1', '')}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">
+                      <Eye size={14} /> Xem tài liệu gốc
+                    </a>
+                  ) : (
+                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">Chưa tải lên</p>
+                  )}
+                </div>
+                <div className="p-4 border border-slate-200 rounded-xl bg-white hover:border-primary/30 transition-colors shadow-sm">
+                  <p className="text-xs font-bold text-slate-700 mb-3">CCCD Người Đại Diện</p>
+                  {viewSupplier.identityCardUrl ? (
+                    <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${viewSupplier.identityCardUrl.replace('/api/v1', '')}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">
+                      <Eye size={14} /> Xem tài liệu gốc
+                    </a>
+                  ) : (
+                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">Chưa tải lên</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-100 pt-6 flex items-center justify-end gap-3">
+              <button className="btn-ghost" onClick={() => setViewSupplier(null)}>Đóng</button>
+              {!viewSupplier.isVerified ? (
+                <button 
+                  className="btn-primary" 
+                  onClick={() => { setViewSupplier(null); setConfirmVerify({ isOpen: true, supplier: viewSupplier, intent: true }); }}
+                >
+                  <CheckCircle2 size={16} className="inline-block mr-1"/> Phê Duyệt Hồ Sơ
+                </button>
+              ) : (
+                <button 
+                  className="px-4 py-2.5 bg-red-50 text-red-600 font-bold text-sm rounded-xl hover:bg-red-100 transition-colors inline-flex items-center gap-1.5" 
+                  onClick={() => { setViewSupplier(null); setConfirmVerify({ isOpen: true, supplier: viewSupplier, intent: false }); }}
+                >
+                  <X size={16} /> Thu Hồi Xác Thực
+                </button>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

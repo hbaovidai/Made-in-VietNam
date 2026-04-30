@@ -12,6 +12,32 @@ export declare class AuthService {
     register(dto: RegisterDto): Promise<{
         message: string;
         user: {
+            supplier: {
+                id: string;
+                userId: string;
+                companyName: string;
+                slug: string;
+                logo: string | null;
+                banner: string | null;
+                description: string | null;
+                businessType: string | null;
+                yearEstablished: number | null;
+                employeeCount: string | null;
+                address: string | null;
+                city: string | null;
+                province: string | null;
+                website: string | null;
+                taxCode: string | null;
+                companyEmail: string | null;
+                companyPhone: string | null;
+                legalRepresentative: string | null;
+                businessLicenseUrl: string | null;
+                identityCardUrl: string | null;
+                verificationStatus: string;
+                isVerified: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+            } | null;
             id: string;
             createdAt: Date;
             email: string;
@@ -26,19 +52,19 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                slug: string;
                 companyName: string;
+                slug: string;
                 isVerified: boolean;
             } | null;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
             role: import("@prisma/client").$Enums.Role;
             fullName: string;
             phone: string | null;
             avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
-            updatedAt: Date;
         };
         token: string;
     }>;
@@ -52,50 +78,50 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                slug: string;
                 companyName: string;
+                slug: string;
                 isVerified: boolean;
             } | null;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
             role: import("@prisma/client").$Enums.Role;
             fullName: string;
             phone: string | null;
             avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
-            updatedAt: Date;
         };
         token: string;
     }>;
     getProfile(userId: string): Promise<{
+        supplier: {
+            id: string;
+            companyName: string;
+            slug: string;
+            logo: string | null;
+            isVerified: boolean;
+        } | null;
         id: string;
         createdAt: Date;
+        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
         role: import("@prisma/client").$Enums.Role;
         fullName: string;
         phone: string | null;
         avatar: string | null;
-        status: import("@prisma/client").$Enums.UserStatus;
-        supplier: {
-            id: string;
-            slug: string;
-            companyName: string;
-            logo: string | null;
-            isVerified: boolean;
-        } | null;
     }>;
     updateProfile(userId: string, dto: UpdateProfileDto): Promise<{
         message: string;
         user: {
             id: string;
             createdAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
             role: import("@prisma/client").$Enums.Role;
             fullName: string;
             phone: string | null;
             avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
         };
     }>;
     changePassword(userId: string, dto: ChangePasswordDto): Promise<{

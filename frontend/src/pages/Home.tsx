@@ -93,6 +93,20 @@ export function Home() {
       <SEOHead
         title="Trang chủ"
         description="VIEProduct - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế."
+        canonical="/"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "VIEProduct",
+          "url": "https://vieproduct.com",
+          "description": "Nền tảng B2B hàng đầu kết nối nhà cung cấp Việt Nam với thị trường toàn cầu",
+          "sameAs": [],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "availableLanguage": ["Vietnamese", "English"]
+          }
+        }}
       />
 
       {/* ═══ Top Section: Categories + Banner + Recommendations ═══ */}

@@ -70,6 +70,30 @@ let SuppliersService = class SuppliersService {
             throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
         return supplier;
     }
+    async createProfile(userId, data) {
+        const existing = await this.prisma.supplier.findUnique({ where: { userId } });
+        if (existing) {
+            return existing;
+        }
+        const slug = data.companyName
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+        const supplier = await this.prisma.supplier.create({
+            data: {
+                userId,
+                companyName: data.companyName,
+                businessType: data.businessType,
+                description: data.description,
+                taxCode: data.taxCode,
+                companyEmail: data.companyEmail,
+                companyPhone: data.companyPhone,
+                legalRepresentative: data.legalRepresentative,
+                slug: `${slug}-${Date.now()}`,
+            },
+        });
+        return supplier;
+    }
     async update(supplierId, dto) {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id: supplierId },
@@ -117,7 +141,10 @@ let SuppliersService = class SuppliersService {
             throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
         const updated = await this.prisma.supplier.update({
             where: { id: supplierId },
-            data: { isVerified }
+            data: {
+                isVerified,
+                verificationStatus: isVerified ? 'VERIFIED' : 'REJECTED'
+            }
         });
         return updated;
     }

@@ -224,8 +224,12 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
                 <div className="text-sm font-bold text-slate-900">{user?.fullName || 'User'}</div>
                 <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'admin' ? 'ADMIN' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('account')}</div>
               </div>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm">
-                {user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm overflow-hidden">
+                {(user as any)?.avatar ? (
+                  <img src={(user as any).avatar.startsWith('http') ? (user as any).avatar : `${(import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '')}${(user as any).avatar}`} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'
+                )}
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@ import { categories } from '../data/mockData';
 import { SupplierCard } from '../components/SupplierCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
+import { SEOHead } from '../components/SEOHead';
 
 export function SupplierList() {
   const { t } = useTranslation();
@@ -45,6 +46,12 @@ export function SupplierList() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEOHead
+        title="Nhà cung cấp Việt Nam"
+        description="Danh sách nhà cung cấp, nhà sản xuất Việt Nam đã xác minh trên VIEProduct. Tìm đối tác cung cấp sỉ uy tín cho mọi ngành hàng."
+        keywords="nhà cung cấp Việt Nam, nhà sản xuất, xuất khẩu, B2B, đối tác thương mại"
+        canonical="/suppliers"
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden">
         {/* Soft Glows */}

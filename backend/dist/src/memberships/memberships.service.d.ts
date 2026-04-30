@@ -4,8 +4,8 @@ export declare class MembershipsService {
     constructor(prisma: PrismaService);
     getPlans(): Promise<{
         id: string;
-        name: string;
         createdAt: Date;
+        name: string;
         currency: string;
         price: number;
         billingCycle: string;
@@ -15,8 +15,8 @@ export declare class MembershipsService {
     getMySubscription(userId: string): Promise<({
         plan: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             currency: string;
             price: number;
             billingCycle: string;
@@ -25,8 +25,8 @@ export declare class MembershipsService {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         planId: string;
         startDate: Date;
         endDate: Date;
@@ -34,8 +34,8 @@ export declare class MembershipsService {
     subscribe(userId: string, planId: string): Promise<{
         plan: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             currency: string;
             price: number;
             billingCycle: string;
@@ -44,8 +44,8 @@ export declare class MembershipsService {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         planId: string;
         startDate: Date;
         endDate: Date;

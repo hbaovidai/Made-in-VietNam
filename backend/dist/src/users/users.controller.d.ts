@@ -4,18 +4,18 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     getAllUsers(query: any): Promise<{
         data: {
-            id: string;
-            createdAt: Date;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
             supplier: {
                 id: string;
                 companyName: string;
                 isVerified: boolean;
             } | null;
+            id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            role: import("@prisma/client").$Enums.Role;
+            fullName: string;
+            phone: string | null;
         }[];
         meta: {
             total: number;
@@ -26,10 +26,10 @@ export declare class UsersController {
     }>;
     toggleUserStatus(id: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
         role: import("@prisma/client").$Enums.Role;
         fullName: string;
-        status: import("@prisma/client").$Enums.UserStatus;
     }>;
     getSavedProducts(id: string, currentUser: {
         id: string;
@@ -37,8 +37,8 @@ export declare class UsersController {
     }): Promise<any[]>;
     saveProduct(id: string, productId: string, userId: string): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
+        createdAt: Date;
         productId: string;
     } | {
         success: boolean;

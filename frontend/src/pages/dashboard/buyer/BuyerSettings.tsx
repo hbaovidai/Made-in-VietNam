@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Loader2, Lock, BellRing, BellOff, Check, Languages } from 'lucide-react';
+import { User, Mail, Phone, Globe, Shield, Bell, CreditCard, ChevronRight, Save, Loader2, Lock, BellRing, BellOff, Check, Languages, Camera } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
@@ -8,7 +8,7 @@ import { Modal } from '../../../components/ui/Modal';
 
 export function BuyerSettings() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, loginUser, token } = useAuth();
   const { addToast } = useToast();
 
   const nameParts = (user?.fullName || '').split(' ');
@@ -19,6 +19,8 @@ export function BuyerSettings() {
   const [lastName, setLastName] = useState(defaultLastName);
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState((user as any)?.phone || '');
+  const [avatar, setAvatar] = useState((user as any)?.avatar || '');
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -33,22 +35,65 @@ export function BuyerSettings() {
       setFirstName(parts.join(' ') || '');
       setEmail(user.email || '');
       setPhone((user as any).phone || '');
+      setAvatar((user as any).avatar || '');
     }
   }, [user]);
+
+  // Fetch latest profile from server to ensure fresh data (avatar, phone, etc.)
+  useEffect(() => {
+    if (user?.id && token) {
+      api.get(`/auth/profile/${user.id}`).then(res => {
+        const fresh = res.data;
+        if (fresh.avatar) setAvatar(fresh.avatar);
+        if (fresh.phone) setPhone(fresh.phone);
+        // Also update context so header avatar updates too
+        loginUser({ ...user, ...fresh }, token);
+      }).catch(() => {});
+    }
+  }, []);
 
   const handleSaveProfile = async () => {
     if (!user) return;
     try {
       setIsSavingProfile(true);
       const fullName = `${firstName} ${lastName}`.trim();
-      const res = await api.put(`/auth/profile/${user.id}`, { fullName, phone });
+      const res = await api.put(`/auth/profile/${user.id}`, { fullName, phone, avatar });
+      // Update user in context and localStorage
+      const updatedUser = res.data.user || { ...user, fullName, phone, avatar };
+      if (token) loginUser(updatedUser, token);
       addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật thông tin cá nhân' });
-      // You might want to update the context here if it provides a method
     } catch (error: any) {
       console.error(error);
       addToast({ type: 'error', title: 'Lỗi', message: error.message || 'Không thể cập nhật thông tin' });
     } finally {
       setIsSavingProfile(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Ảnh không được vượt quá 5MB' });
+      return;
+    }
+
+    try {
+      setIsUploadingAvatar(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post('/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const avatarUrl = res.data.url;
+      setAvatar(avatarUrl);
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã upload ảnh đại diện. Nhấn "Lưu thông tin" để cập nhật.' });
+    } catch (err) {
+      console.error(err);
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể upload ảnh' });
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -159,6 +204,27 @@ export function BuyerSettings() {
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
               <User size={20} className="text-primary" /> {t('profile_details')}
             </h3>
+
+            {/* Avatar Upload */}
+            <div className="flex items-center gap-6">
+              <div className="relative group">
+                <div className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden flex items-center justify-center">
+                  {avatar ? (
+                    <img src={avatar.startsWith('http') ? avatar : `${(import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '')}${avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-black text-slate-400">{(firstName?.[0] || '') + (lastName?.[0] || '')}</span>
+                  )}
+                </div>
+                <label className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                  {isUploadingAvatar ? <Loader2 size={20} className="text-white animate-spin" /> : <Camera size={20} className="text-white" />}
+                  <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" disabled={isUploadingAvatar} />
+                </label>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-slate-800">Ảnh đại diện</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">JPG, PNG hoặc WEBP. Tối đa 5MB.</div>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('first_name')}</label>
@@ -178,6 +244,14 @@ export function BuyerSettings() {
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>
               <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+84 123 456 789" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
             </div>
+            <button 
+              onClick={handleSaveProfile}
+              disabled={isSavingProfile}
+              className="bg-primary text-white px-6 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs w-full disabled:opacity-50 flex justify-center items-center gap-2 rounded-lg mt-2"
+            >
+              {isSavingProfile ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              {t('save_profile', 'Lưu thông tin')}
+            </button>
           </div>
 
           <div className="space-y-6">

@@ -10,6 +10,13 @@ export declare class UpdateSupplierDto {
     city?: string;
     province?: string;
     website?: string;
+    taxCode?: string;
+    companyEmail?: string;
+    companyPhone?: string;
+    legalRepresentative?: string;
+    businessLicenseUrl?: string;
+    identityCardUrl?: string;
+    verificationStatus?: string;
     industries?: string[];
     markets?: string[];
 }

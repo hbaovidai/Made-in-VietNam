@@ -4,8 +4,8 @@ export declare class NotificationsController {
     constructor(notificationsService: NotificationsService);
     getMyNotifications(userId: string): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
+        createdAt: Date;
         message: string;
         link: string | null;
         title: string;

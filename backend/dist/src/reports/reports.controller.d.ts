@@ -4,9 +4,9 @@ export declare class ReportsController {
     constructor(reportsService: ReportsService);
     getReports(): Promise<{
         id: string;
+        description: string | null;
         createdAt: Date;
         category: string | null;
-        description: string | null;
         title: string;
         price: number;
         coverImage: string | null;
@@ -14,9 +14,9 @@ export declare class ReportsController {
     }[]>;
     getReportById(id: string): Promise<{
         id: string;
+        description: string | null;
         createdAt: Date;
         category: string | null;
-        description: string | null;
         title: string;
         price: number;
         coverImage: string | null;

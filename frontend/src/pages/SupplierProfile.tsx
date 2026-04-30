@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
+import { SEOHead } from '../components/SEOHead';
 
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -64,6 +65,29 @@ export function SupplierProfile() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEOHead
+        title={`${supplier.companyName || supplier.name} - Nhà cung cấp`}
+        description={supplier.description?.substring(0, 160) || `${supplier.companyName || supplier.name} - Nhà cung cấp, nhà sản xuất đã xác minh tại Việt Nam trên VIEProduct.`}
+        keywords={`${supplier.companyName || ''}, nhà cung cấp Việt Nam, nhà sản xuất, xuất khẩu`}
+        ogImage={supplier.logo}
+        canonical={`/suppliers/${supplier.id}`}
+        ogType="profile"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": supplier.companyName || supplier.name,
+          "description": supplier.description || '',
+          "image": supplier.logo || '',
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": supplier.city || '',
+            "addressRegion": supplier.province || '',
+            "addressCountry": "VN"
+          },
+          ...(supplier.website && { "url": supplier.website }),
+          "foundingDate": supplier.yearEstablished?.toString() || ''
+        }}
+      />
       {/* Banner & Logo */}
       <div className="relative h-72 md:h-96 bg-slate-200">
         <img src={supplier.banner || 'https://via.placeholder.com/1200x400'} alt={supplier.companyName || supplier.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />

@@ -108,11 +108,18 @@ model Supplier {
   businessType    String?  @map("business_type")
   yearEstablished Int?     @map("year_established")
   employeeCount   String?  @map("employee_count")
-  address         String?
-  city            String?
-  province        String?
-  website         String?
-  isVerified      Boolean  @default(false) @map("is_verified")
+  address             String?
+  city                String?
+  province            String?
+  website             String?
+  taxCode             String?  @map("tax_code")
+  companyEmail        String?  @map("company_email")
+  companyPhone        String?  @map("company_phone")
+  legalRepresentative String?  @map("legal_representative")
+  businessLicenseUrl  String?  @map("business_license_url")
+  identityCardUrl     String?  @map("identity_card_url")
+  verificationStatus  String   @default("UNVERIFIED") @map("verification_status")
+  isVerified          Boolean  @default(false) @map("is_verified")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 

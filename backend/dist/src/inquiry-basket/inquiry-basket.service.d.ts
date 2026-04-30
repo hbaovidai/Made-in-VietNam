@@ -6,12 +6,12 @@ export declare class InquiryBasketService {
     getBasket(userId: string): Promise<{
         items: ({
             product: {
-                id: string;
-                name: string;
-                slug: string;
                 supplier: {
                     companyName: string;
                 };
+                id: string;
+                slug: string;
+                name: string;
                 minPrice: number;
                 maxPrice: number;
                 unit: string;
@@ -21,22 +21,22 @@ export declare class InquiryBasketService {
             id: string;
             productId: string;
             quantity: number;
-            note: string | null;
             basketId: string;
+            note: string | null;
             addedAt: Date;
         })[];
     } & {
         id: string;
+        userId: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
     }>;
     addItem(userId: string, dto: AddInquiryItemDto): Promise<{
         id: string;
         productId: string;
         quantity: number;
-        note: string | null;
         basketId: string;
+        note: string | null;
         addedAt: Date;
     }>;
     removeItem(itemId: string, userId: string): Promise<{

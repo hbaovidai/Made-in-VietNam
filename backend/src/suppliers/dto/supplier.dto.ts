@@ -13,6 +13,13 @@ export class UpdateSupplierDto {
   @IsString() @IsOptional() city?: string;
   @IsString() @IsOptional() province?: string;
   @IsString() @IsOptional() website?: string;
+  @IsString() @IsOptional() taxCode?: string;
+  @IsString() @IsOptional() companyEmail?: string;
+  @IsString() @IsOptional() companyPhone?: string;
+  @IsString() @IsOptional() legalRepresentative?: string;
+  @IsString() @IsOptional() businessLicenseUrl?: string;
+  @IsString() @IsOptional() identityCardUrl?: string;
+  @IsString() @IsOptional() verificationStatus?: string;
   @IsArray() @IsString({ each: true }) @IsOptional() industries?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() markets?: string[];
 }

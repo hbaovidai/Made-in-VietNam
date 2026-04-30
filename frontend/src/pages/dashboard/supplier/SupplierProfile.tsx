@@ -10,7 +10,7 @@ import { api } from '../../../lib/api';
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, loginUser, token } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
@@ -18,15 +18,25 @@ export function SupplierProfile() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '' });
+  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '' });
+  const [isCreating, setIsCreating] = useState(false);
+
+  const [bizLicenseFile, setBizLicenseFile] = useState<File | null>(null);
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
+  const [isSubmittingVerification, setIsSubmittingVerification] = useState(false);
+
   const supplierId = user?.supplier?.id;
 
   useEffect(() => {
-    if (!supplierId) return;
+    if (!supplierId) {
+      setLoading(false);
+      return;
+    }
     async function loadData() {
       setLoading(true);
       try {
@@ -41,6 +51,11 @@ export function SupplierProfile() {
           companyName: s.companyName || '',
           businessType: s.businessType || '',
           description: s.description || '',
+          taxCode: s.taxCode || '',
+          companyEmail: s.companyEmail || '',
+          companyPhone: s.companyPhone || '',
+          legalRepresentative: s.legalRepresentative || '',
+          address: s.address || '',
         });
         setSupplierProducts(prodRes.data.data || []);
       } catch (err) {
@@ -51,6 +66,69 @@ export function SupplierProfile() {
     }
     loadData();
   }, [supplierId]);
+
+  const handleCreateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCreating(true);
+    try {
+      const res = await api.post('/suppliers/me', createForm);
+      if (token && user) {
+        loginUser({ ...user, supplier: res.data }, token);
+      }
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã tạo hồ sơ công ty' });
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: err.message || 'Không thể tạo hồ sơ' });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleSubmitVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bizLicenseFile && !supplier?.businessLicenseUrl) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng tải lên Giấy ĐKKD' });
+      return;
+    }
+    if (!idCardFile && !supplier?.identityCardUrl) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng tải lên CCCD' });
+      return;
+    }
+
+    setIsSubmittingVerification(true);
+    try {
+      let bizLicenseUrl = supplier?.businessLicenseUrl;
+      let idCardUrl = supplier?.identityCardUrl;
+
+      if (bizLicenseFile) {
+        const formData = new FormData();
+        formData.append('file', bizLicenseFile);
+        const res = await api.post('/uploads', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        bizLicenseUrl = res.data.url || res.data.path;
+      }
+
+      if (idCardFile) {
+        const formData = new FormData();
+        formData.append('file', idCardFile);
+        const res = await api.post('/uploads', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        idCardUrl = res.data.url || res.data.path;
+      }
+
+      const res = await api.put(`/suppliers/${supplierId}`, {
+        businessLicenseUrl: bizLicenseUrl,
+        identityCardUrl: idCardUrl,
+        verificationStatus: 'PENDING'
+      });
+
+      setSupplier(res.data);
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã nộp hồ sơ xác thực. Vui lòng chờ Admin duyệt.' });
+      setBizLicenseFile(null);
+      setIdCardFile(null);
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể nộp hồ sơ xác thực' });
+    } finally {
+      setIsSubmittingVerification(false);
+    }
+  };
 
   const handleLogoUpload = () => {
     addToast({ type: 'info', title: t('upload_logo_title'), message: t('upload_logo_success') });
@@ -124,6 +202,149 @@ export function SupplierProfile() {
     );
   }
 
+  if (!supplierId) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center py-10 px-4">
+        <div className="w-full max-w-2xl">
+          <div className="text-center mb-10">
+            <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+              <Building2 size={40} strokeWidth={1.5} />
+            </div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">Khởi tạo Hồ sơ Doanh nghiệp</h1>
+            <p className="text-base text-slate-500 max-w-md mx-auto">
+              Hồ sơ doanh nghiệp giúp bạn xây dựng uy tín, tiếp cận hàng ngàn người mua tiềm năng trên nền tảng MIVN.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+            <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-400 to-primary"></div>
+            <div className="p-8 sm:p-10">
+              <form onSubmit={handleCreateProfile} className="space-y-8">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Building2 size={14} className="text-primary" /> Tên công ty chính thức *
+                  </label>
+                  <input 
+                    type="text" 
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                    required 
+                    value={createForm.companyName} 
+                    onChange={e => setCreateForm({...createForm, companyName: e.target.value})} 
+                    placeholder="Ví dụ: Công ty TNHH Sản xuất MIVN" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Globe size={14} className="text-primary" /> Lĩnh vực hoạt động
+                    </label>
+                    <select 
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none" 
+                      value={createForm.businessType} 
+                      onChange={e => setCreateForm({...createForm, businessType: e.target.value})}
+                    >
+                      <option value="Manufacturer & Trading">{t('biz_type_manufacturer_trading')}</option>
+                      <option value="E-Commerce">{t('biz_type_ecommerce')}</option>
+                      <option value="Agriculture">{t('biz_type_agriculture')}</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Shield size={14} className="text-primary" /> Mã số thuế
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      value={createForm.taxCode} 
+                      onChange={e => setCreateForm({...createForm, taxCode: e.target.value})} 
+                      placeholder="Mã số thuế doanh nghiệp" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      Người đại diện
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      value={createForm.legalRepresentative} 
+                      onChange={e => setCreateForm({...createForm, legalRepresentative: e.target.value})} 
+                      placeholder="Người đại diện pháp luật" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      Email công ty
+                    </label>
+                    <input 
+                      type="email" 
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      value={createForm.companyEmail} 
+                      onChange={e => setCreateForm({...createForm, companyEmail: e.target.value})} 
+                      placeholder="Email liên hệ chính thức" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      Số điện thoại
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      value={createForm.companyPhone} 
+                      onChange={e => setCreateForm({...createForm, companyPhone: e.target.value})} 
+                      placeholder="Hotline / SĐT công ty" 
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Edit2 size={14} className="text-primary" /> Giới thiệu ngắn gọn
+                  </label>
+                  <textarea 
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[120px] resize-none" 
+                    value={createForm.description} 
+                    onChange={e => setCreateForm({...createForm, description: e.target.value})} 
+                    placeholder="Giới thiệu về thế mạnh, năng lực sản xuất và tầm nhìn của doanh nghiệp..."
+                  ></textarea>
+                </div>
+
+                <div className="pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={isCreating} 
+                    className="w-full relative group overflow-hidden bg-slate-900 text-white rounded-xl font-bold py-4 px-6 transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="relative flex items-center justify-center gap-3">
+                      {isCreating ? (
+                        <Loader2 size={20} className="animate-spin text-primary" />
+                      ) : (
+                        <CheckCircle2 size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                      )}
+                      <span className="text-base tracking-wide">
+                        {isCreating ? 'Đang khởi tạo...' : 'LƯU & BẮT ĐẦU KINH DOANH'}
+                      </span>
+                    </div>
+                  </button>
+                  <p className="text-center text-[11px] text-slate-400 mt-4 font-medium">
+                    Bằng việc tạo hồ sơ, bạn đồng ý với Điều khoản Dịch vụ của MIVN.
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -180,6 +401,118 @@ export function SupplierProfile() {
         </div>
       </div>
 
+      {/* Verification Center Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-slate-50 border-b border-slate-200 p-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+              <Shield size={20} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Trung tâm Xác thực (KYB)</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Xác minh danh tính doanh nghiệp để tăng uy tín với người mua.</p>
+            </div>
+          </div>
+          <div>
+            {supplier?.verificationStatus === 'VERIFIED' && (
+              <div className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs font-bold rounded-lg flex items-center gap-1.5">
+                <CheckCircle2 size={14} /> ĐÃ XÁC THỰC
+              </div>
+            )}
+            {supplier?.verificationStatus === 'PENDING' && (
+              <div className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold rounded-lg flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                ĐANG CHỜ DUYỆT
+              </div>
+            )}
+            {(!supplier?.verificationStatus || supplier?.verificationStatus === 'UNVERIFIED' || supplier?.verificationStatus === 'REJECTED') && (
+              <div className="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold rounded-lg">
+                CHƯA XÁC THỰC
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {supplier?.verificationStatus !== 'VERIFIED' && (
+          <div className="p-6">
+            {supplier?.verificationStatus === 'REJECTED' && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex gap-3">
+                <X size={18} className="shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold">Hồ sơ xác thực bị từ chối</p>
+                  <p className="mt-1 text-red-600/80">Vui lòng kiểm tra lại hình ảnh Giấy ĐKKD hoặc CCCD và gửi lại yêu cầu.</p>
+                </div>
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmitVerification} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Giấy ĐKKD */}
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                    <Building2 size={16} className="text-slate-400" />
+                    Giấy Chứng Nhận Đăng Ký Kinh Doanh
+                  </label>
+                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
+                    {supplier?.businessLicenseUrl && !bizLicenseFile ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <CheckCircle2 size={24} className="text-green-500" />
+                        <span className="text-xs font-medium text-slate-600">Đã tải lên tệp</span>
+                        <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${supplier.businessLicenseUrl.replace('/api/v1', '')}`} target="_blank" className="text-primary text-[11px] font-bold hover:underline">Xem tệp hiện tại</a>
+                      </div>
+                    ) : (
+                      <>
+                        <input type="file" id="bizLicense" className="hidden" accept="image/*,.pdf" onChange={e => setBizLicenseFile(e.target.files?.[0] || null)} />
+                        <label htmlFor="bizLicense" className="cursor-pointer flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><Camera size={18} /></div>
+                          <span className="text-xs font-bold text-primary hover:underline">{bizLicenseFile ? bizLicenseFile.name : 'Nhấn để tải lên bản scan (PDF/JPG)'}</span>
+                        </label>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* CCCD */}
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                    <Shield size={16} className="text-slate-400" />
+                    CCCD/CMND Người Đại Diện
+                  </label>
+                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
+                    {supplier?.identityCardUrl && !idCardFile ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <CheckCircle2 size={24} className="text-green-500" />
+                        <span className="text-xs font-medium text-slate-600">Đã tải lên tệp</span>
+                        <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${supplier.identityCardUrl.replace('/api/v1', '')}`} target="_blank" className="text-primary text-[11px] font-bold hover:underline">Xem tệp hiện tại</a>
+                      </div>
+                    ) : (
+                      <>
+                        <input type="file" id="idCard" className="hidden" accept="image/*,.pdf" onChange={e => setIdCardFile(e.target.files?.[0] || null)} />
+                        <label htmlFor="idCard" className="cursor-pointer flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><Camera size={18} /></div>
+                          <span className="text-xs font-bold text-primary hover:underline">{idCardFile ? idCardFile.name : 'Nhấn để tải lên ảnh (PDF/JPG)'}</span>
+                        </label>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4 border-t border-slate-100">
+                <button 
+                  type="submit" 
+                  disabled={isSubmittingVerification || supplier?.verificationStatus === 'PENDING'} 
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {isSubmittingVerification && <Loader2 size={16} className="animate-spin" />}
+                  {supplier?.verificationStatus === 'PENDING' ? 'Đã nộp hồ sơ' : 'Nộp Hồ Sơ Xác Thực'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+
       {/* Business Info + Certifications Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Business Info Card */}
@@ -191,6 +524,22 @@ export function SupplierProfile() {
             <div className="flex items-center justify-between py-3 border-b border-slate-100">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('year_established')}</span>
               <span className="text-sm font-semibold text-slate-800">{supplier?.yearEstablished || 'N/A'}</span>
+            </div>
+            <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Mã số thuế</span>
+              <span className="text-sm font-semibold text-slate-800">{supplier?.taxCode || 'N/A'}</span>
+            </div>
+            <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Người đại diện</span>
+              <span className="text-sm font-semibold text-slate-800">{supplier?.legalRepresentative || 'N/A'}</span>
+            </div>
+            <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email công ty</span>
+              <span className="text-sm font-semibold text-slate-800">{supplier?.companyEmail || 'N/A'}</span>
+            </div>
+            <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Số điện thoại</span>
+              <span className="text-sm font-semibold text-slate-800">{supplier?.companyPhone || 'N/A'}</span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-slate-100">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('total_employees')}</span>
@@ -284,6 +633,26 @@ export function SupplierProfile() {
                 <option value="E-Commerce">{t('biz_type_ecommerce')}</option>
                 <option value="Agriculture">{t('biz_type_agriculture')}</option>
               </select>
+            </div>
+            <div className="space-y-2">
+              <label className="input-label">Mã số thuế</label>
+              <input type="text" className="input" value={editForm.taxCode} onChange={(e) => setEditForm({...editForm, taxCode: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <label className="input-label">Người đại diện</label>
+              <input type="text" className="input" value={editForm.legalRepresentative} onChange={(e) => setEditForm({...editForm, legalRepresentative: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <label className="input-label">Email công ty</label>
+              <input type="email" className="input" value={editForm.companyEmail} onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <label className="input-label">Số điện thoại</label>
+              <input type="text" className="input" value={editForm.companyPhone} onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="input-label">Địa chỉ trụ sở</label>
+              <input type="text" className="input" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} />
             </div>
           </div>
           <div className="space-y-2">

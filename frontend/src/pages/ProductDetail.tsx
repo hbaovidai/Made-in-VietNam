@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2 } from 'lucide-react';
+import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { ProductCard } from '../components/ProductCard';
@@ -9,6 +9,7 @@ import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { products as mockProducts } from '../data/mockData';
+import { SEOHead } from '../components/SEOHead';
 
 export function ProductDetail() {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export function ProductDetail() {
   
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [quantity, setQuantity] = useState<number>(0);
   
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState('');
@@ -50,6 +52,25 @@ export function ProductDetail() {
     }
   };
 
+  const handleAddToInquiry = async () => {
+    if (!user) {
+      setAuthModalMessage('Vui lòng đăng nhập để thêm vào giỏ yêu cầu.');
+      setIsAuthModalOpen(true);
+      return;
+    }
+    
+    try {
+      await api.post('/inquiry-basket', { 
+        productId: product.id, 
+        quantity 
+      });
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào giỏ yêu cầu' });
+    } catch (e) {
+      console.error(e);
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm vào giỏ yêu cầu. Vui lòng kiểm tra lại quyền.' });
+    }
+  };
+
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -57,6 +78,7 @@ export function ProductDetail() {
         const prodRes = await api.get(`/products/${id}`);
         const p = prodRes.data;
         setProduct(p);
+        setQuantity(p.moq || 1);
 
         if (p.supplierId) {
           try {
@@ -124,6 +146,42 @@ export function ProductDetail() {
 
   return (
     <div className="bg-white min-h-screen pb-20">
+      <SEOHead
+        title={product.name}
+        description={product.description?.substring(0, 160) || `${product.name} - Mua sỉ giá tốt từ nhà cung cấp Việt Nam trên VIEProduct.`}
+        keywords={`${product.name}, ${product.category?.name || ''}, mua sỉ, B2B, nhà cung cấp Việt Nam`}
+        ogImage={product.images?.[0]}
+        canonical={`/products/${product.id}`}
+        ogType="product"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.images || [],
+          "description": product.description || '',
+          "brand": {
+            "@type": "Organization",
+            "name": supplier?.companyName || 'VIEProduct Supplier'
+          },
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": product.currency || 'VND',
+            "price": product.minPrice,
+            "availability": "https://schema.org/InStock",
+            "seller": {
+              "@type": "Organization",
+              "name": supplier?.companyName || 'VIEProduct Supplier'
+            }
+          },
+          ...(product.rating > 0 && {
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": product.rating,
+              "reviewCount": product.reviewCount || 1
+            }
+          })
+        }}
+      />
       {/* Breadcrumbs */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <nav className="flex items-center gap-1 sm:gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest overflow-x-auto no-scrollbar">
@@ -226,20 +284,54 @@ export function ProductDetail() {
             )}
 
             {/* Actions */}
-            <div className="space-y-3">
-              <button 
-                onClick={() => {
-                  if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
-                    setIsAuthModalOpen(true);
-                  } else {
-                    navigate(`/rfq?product=${product.id}`);
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 sm:py-5 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs md:text-sm"
-              >
-                Request Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              </button>
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-sm font-bold text-slate-700">Số lượng:</span>
+                <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden">
+                  <button 
+                    onClick={() => setQuantity(Math.max(moqBaseline, quantity - 1))}
+                    disabled={quantity <= moqBaseline}
+                    className="p-3 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <input 
+                    type="number" 
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(moqBaseline, parseInt(e.target.value) || moqBaseline))}
+                    className="w-16 text-center font-bold text-slate-900 border-x border-slate-200 py-3 outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="p-3 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors outline-none"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+                <span className="text-sm text-slate-500 font-medium">({product.unit || 'cái'})</span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button 
+                  onClick={handleAddToInquiry}
+                  className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-4 font-bold hover:bg-amber-600 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                >
+                  <ShoppingBag size={16} /> Thêm vào Giỏ Yêu cầu
+                </button>
+                <button 
+                  onClick={() => {
+                    if (!user) {
+                      setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
+                      setIsAuthModalOpen(true);
+                    } else {
+                      navigate(`/rfq?product=${product.id}&qty=${quantity}`);
+                    }
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                >
+                  Request Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+              </div>
               <button 
                 onClick={() => {
                   if (!user) {

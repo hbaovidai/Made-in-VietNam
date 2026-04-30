@@ -13,6 +13,7 @@ export interface User {
     companyName: string;
     slug: string;
     isVerified: boolean;
+    verificationStatus?: string;
   } | null;
 }
 

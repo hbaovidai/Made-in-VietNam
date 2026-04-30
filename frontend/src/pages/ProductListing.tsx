@@ -6,6 +6,7 @@ import { ALL_CATEGORIES_LIST, CATEGORY_GROUPS } from '../data/categories';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
+import { SEOHead } from '../components/SEOHead';
 
 export function ProductListing() {
   const { t } = useTranslation();
@@ -54,6 +55,12 @@ export function ProductListing() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEOHead
+        title={categoryFilter ? `${categoryFilter} - Sản phẩm` : 'Tất cả Sản phẩm'}
+        description={`Khám phá sản phẩm${categoryFilter ? ` ${categoryFilter}` : ''} chất lượng từ nhà cung cấp Việt Nam đã xác minh trên VIEProduct. Giá sỉ tốt, MOQ linh hoạt.`}
+        keywords={`sản phẩm Việt Nam, mua sỉ B2B, ${categoryFilter || 'xuất khẩu'}, nhà cung cấp`}
+        canonical="/products"
+      />
       {/* Premium Header */}
       <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden">
         {/* Soft Glows */}

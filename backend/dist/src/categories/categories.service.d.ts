@@ -4,51 +4,42 @@ export declare class CategoriesService {
     private prisma;
     constructor(prisma: PrismaService);
     findAll(): Promise<({
+        _count: {
+            products: number;
+            children: number;
+        };
         children: ({
             _count: {
                 products: number;
             };
         } & {
             id: string;
-            name: string;
             slug: string;
             createdAt: Date;
+            name: string;
             parentId: string | null;
         })[];
-        _count: {
-            children: number;
-            products: number;
-        };
     } & {
         id: string;
-        name: string;
         slug: string;
         createdAt: Date;
+        name: string;
         parentId: string | null;
     })[]>;
     findBySlug(slug: string): Promise<{
-        children: {
-            id: string;
-            name: string;
-            slug: string;
-            createdAt: Date;
-            parentId: string | null;
-        }[];
         products: ({
             supplier: {
-                slug: string;
                 companyName: string;
+                slug: string;
                 isVerified: boolean;
             };
         } & {
             id: string;
-            name: string;
             slug: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            updatedAt: Date;
             description: string | null;
-            supplierId: string;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -56,26 +47,35 @@ export declare class CategoriesService {
             moq: number;
             moqUnit: string;
             images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
+            supplierId: string;
             categoryId: string;
         })[];
         _count: {
             products: number;
         };
+        children: {
+            id: string;
+            slug: string;
+            createdAt: Date;
+            name: string;
+            parentId: string | null;
+        }[];
     } & {
         id: string;
-        name: string;
         slug: string;
         createdAt: Date;
+        name: string;
         parentId: string | null;
     }>;
     create(dto: CreateCategoryDto): Promise<{
         id: string;
-        name: string;
         slug: string;
         createdAt: Date;
+        name: string;
         parentId: string | null;
     }>;
     update(id: string, dto: {
@@ -83,9 +83,9 @@ export declare class CategoriesService {
         parentId?: string;
     }): Promise<{
         id: string;
-        name: string;
         slug: string;
         createdAt: Date;
+        name: string;
         parentId: string | null;
     }>;
     delete(id: string): Promise<{

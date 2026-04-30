@@ -5,11 +5,11 @@ export declare class RfqService {
     constructor(prisma: PrismaService);
     createRFQ(buyerId: string, dto: CreateRFQDto): Promise<{
         id: string;
+        description: string;
         createdAt: Date;
+        updatedAt: Date;
         category: string;
         status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -25,11 +25,11 @@ export declare class RfqService {
         };
     } & {
         id: string;
+        description: string;
         createdAt: Date;
+        updatedAt: Date;
         category: string;
         status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -42,9 +42,9 @@ export declare class RfqService {
     submitQuote(supplierId: string, dto: CreateQuoteDto): Promise<{
         id: string;
         createdAt: Date;
+        currency: string;
         status: import("@prisma/client").$Enums.QuoteStatus;
         supplierId: string;
-        currency: string;
         message: string | null;
         rfqId: string;
         price: number;
@@ -60,9 +60,9 @@ export declare class RfqService {
         } & {
             id: string;
             createdAt: Date;
+            currency: string;
             status: import("@prisma/client").$Enums.QuoteStatus;
             supplierId: string;
-            currency: string;
             message: string | null;
             rfqId: string;
             price: number;
@@ -75,11 +75,11 @@ export declare class RfqService {
         };
     } & {
         id: string;
+        description: string;
         createdAt: Date;
+        updatedAt: Date;
         category: string;
         status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -98,11 +98,11 @@ export declare class RfqService {
         };
     } & {
         id: string;
+        description: string;
         createdAt: Date;
+        updatedAt: Date;
         category: string;
         status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
         quantity: number;
         productName: string;
         quantityUnit: string;

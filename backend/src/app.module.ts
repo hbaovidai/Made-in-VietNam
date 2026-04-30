@@ -26,6 +26,12 @@ import { UploadsModule } from './uploads/uploads.module';
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
+      serveStaticOptions: {
+        setHeaders: (res) => {
+          res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+        },
+      },
     }),
     // Anti-Scraping Firewall: Giới hạn 60 request / 1 phút / 1 IP
     ThrottlerModule.forRoot([{

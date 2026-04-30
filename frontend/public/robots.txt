@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Crawlable Public Pages
+Allow: /products
+Allow: /suppliers
+Allow: /contact
+Allow: /about
+Allow: /help
+Allow: /verify
+Allow: /rfq
+Allow: /reports
+Allow: /services
+Allow: /privacy
+Allow: /terms
+
+# Block Dashboard & Auth Pages
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /inquiry-basket
+Disallow: /ui-test
+
+# Sitemap
+Sitemap: https://vieproduct.com/sitemap.xml

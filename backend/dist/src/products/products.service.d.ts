@@ -7,27 +7,25 @@ export declare class ProductsService {
     constructor(prisma: PrismaService, notificationsService: NotificationsService);
     findAll(query: ProductQueryDto): Promise<{
         data: ({
-            category: {
-                id: string;
-                name: string;
-                slug: string;
-            };
             supplier: {
                 id: string;
-                slug: string;
                 companyName: string;
+                slug: string;
                 logo: string | null;
                 isVerified: boolean;
             };
+            category: {
+                id: string;
+                slug: string;
+                name: string;
+            };
         } & {
             id: string;
-            name: string;
             slug: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            updatedAt: Date;
             description: string | null;
-            supplierId: string;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -35,9 +33,11 @@ export declare class ProductsService {
             moq: number;
             moqUnit: string;
             images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
+            supplierId: string;
             categoryId: string;
         })[];
         meta: {
@@ -48,15 +48,10 @@ export declare class ProductsService {
         };
     }>;
     findByIdOrSlug(idOrSlug: string): Promise<{
-        category: {
-            id: string;
-            name: string;
-            slug: string;
-        };
         supplier: {
             id: string;
-            slug: string;
             companyName: string;
+            slug: string;
             logo: string | null;
             description: string | null;
             city: string | null;
@@ -69,15 +64,18 @@ export declare class ProductsService {
                 market: string;
             }[];
         };
+        category: {
+            id: string;
+            slug: string;
+            name: string;
+        };
     } & {
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -85,25 +83,25 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     }>;
     findAllForSupplier(supplierId: string): Promise<({
         category: {
-            name: string;
             slug: string;
+            name: string;
         };
     } & {
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -111,25 +109,25 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     })[]>;
     create(supplierId: string, dto: CreateProductDto): Promise<{
         category: {
-            name: string;
             slug: string;
+            name: string;
         };
     } & {
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -137,25 +135,25 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     }>;
     update(productId: string, supplierId: string | null, dto: UpdateProductDto): Promise<{
         category: {
-            name: string;
             slug: string;
+            name: string;
         };
     } & {
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -163,9 +161,11 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     }>;
     delete(productId: string, supplierId: string | null): Promise<{
@@ -173,18 +173,16 @@ export declare class ProductsService {
     }>;
     findRelated(productId: string, limit?: number): Promise<({
         supplier: {
-            slug: string;
             companyName: string;
+            slug: string;
         };
     } & {
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -192,20 +190,20 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     })[]>;
     verifyProduct(productId: string, status: 'ACTIVE' | 'REJECTED'): Promise<{
         id: string;
-        name: string;
         slug: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.ProductStatus;
-        updatedAt: Date;
         description: string | null;
-        supplierId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -213,9 +211,11 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
+        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
+        supplierId: string;
         categoryId: string;
     }>;
 }

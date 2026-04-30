@@ -19,10 +19,9 @@ export declare class SuppliersService {
             };
         } & {
             id: string;
-            slug: string;
-            createdAt: Date;
-            updatedAt: Date;
+            userId: string;
             companyName: string;
+            slug: string;
             logo: string | null;
             banner: string | null;
             description: string | null;
@@ -33,8 +32,16 @@ export declare class SuppliersService {
             city: string | null;
             province: string | null;
             website: string | null;
+            taxCode: string | null;
+            companyEmail: string | null;
+            companyPhone: string | null;
+            legalRepresentative: string | null;
+            businessLicenseUrl: string | null;
+            identityCardUrl: string | null;
+            verificationStatus: string;
             isVerified: boolean;
-            userId: string;
+            createdAt: Date;
+            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -44,40 +51,40 @@ export declare class SuppliersService {
         };
     }>;
     findBySlug(slugOrId: string): Promise<{
+        user: {
+            email: string;
+            fullName: string;
+        };
         products: ({
             category: {
-                name: string;
                 slug: string;
+                name: string;
             };
         } & {
             id: string;
-            name: string;
             slug: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            updatedAt: Date;
             description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
             supplierId: string;
+            name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
-            categoryId: string;
         })[];
-        user: {
-            email: string;
-            fullName: string;
-        };
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -94,10 +101,9 @@ export declare class SuppliersService {
         };
     } & {
         id: string;
-        slug: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
+        slug: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -108,44 +114,78 @@ export declare class SuppliersService {
         city: string | null;
         province: string | null;
         website: string | null;
+        taxCode: string | null;
+        companyEmail: string | null;
+        companyPhone: string | null;
+        legalRepresentative: string | null;
+        businessLicenseUrl: string | null;
+        identityCardUrl: string | null;
+        verificationStatus: string;
         isVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    createProfile(userId: string, data: any): Promise<{
+        id: string;
         userId: string;
+        companyName: string;
+        slug: string;
+        logo: string | null;
+        banner: string | null;
+        description: string | null;
+        businessType: string | null;
+        yearEstablished: number | null;
+        employeeCount: string | null;
+        address: string | null;
+        city: string | null;
+        province: string | null;
+        website: string | null;
+        taxCode: string | null;
+        companyEmail: string | null;
+        companyPhone: string | null;
+        legalRepresentative: string | null;
+        businessLicenseUrl: string | null;
+        identityCardUrl: string | null;
+        verificationStatus: string;
+        isVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     update(supplierId: string, dto: UpdateSupplierDto): Promise<{
+        user: {
+            email: string;
+            fullName: string;
+        };
         products: ({
             category: {
-                name: string;
                 slug: string;
+                name: string;
             };
         } & {
             id: string;
-            name: string;
             slug: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            updatedAt: Date;
             description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
             supplierId: string;
+            name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
             viewCount: number;
-            categoryId: string;
         })[];
-        user: {
-            email: string;
-            fullName: string;
-        };
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -162,10 +202,9 @@ export declare class SuppliersService {
         };
     } & {
         id: string;
-        slug: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
+        slug: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -176,8 +215,16 @@ export declare class SuppliersService {
         city: string | null;
         province: string | null;
         website: string | null;
+        taxCode: string | null;
+        companyEmail: string | null;
+        companyPhone: string | null;
+        legalRepresentative: string | null;
+        businessLicenseUrl: string | null;
+        identityCardUrl: string | null;
+        verificationStatus: string;
         isVerified: boolean;
-        userId: string;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     addCertification(supplierId: string, data: {
         name: string;
@@ -185,8 +232,8 @@ export declare class SuppliersService {
         documentUrl?: string;
     }): Promise<{
         id: string;
-        name: string;
         supplierId: string;
+        name: string;
         issuedBy: string | null;
         issuedDate: Date | null;
         expiryDate: Date | null;
@@ -197,10 +244,9 @@ export declare class SuppliersService {
     }>;
     verifySupplier(supplierId: string, isVerified: boolean): Promise<{
         id: string;
-        slug: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
+        slug: string;
         logo: string | null;
         banner: string | null;
         description: string | null;
@@ -211,8 +257,16 @@ export declare class SuppliersService {
         city: string | null;
         province: string | null;
         website: string | null;
+        taxCode: string | null;
+        companyEmail: string | null;
+        companyPhone: string | null;
+        legalRepresentative: string | null;
+        businessLicenseUrl: string | null;
+        identityCardUrl: string | null;
+        verificationStatus: string;
         isVerified: boolean;
-        userId: string;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     getStats(supplierId: string): Promise<{
         products: number;

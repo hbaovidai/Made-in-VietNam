@@ -44,6 +44,9 @@ let SuppliersController = class SuppliersController {
         }
         return this.suppliersService.getAnalytics(id);
     }
+    async createMyProfile(dto, userId) {
+        return this.suppliersService.createProfile(userId, dto);
+    }
     verifySupplier(id, isVerified) {
         return this.suppliersService.verifySupplier(id, isVerified);
     }
@@ -113,6 +116,16 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], SuppliersController.prototype, "getAnalytics", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPPLIER'),
+    (0, common_1.Post)('me'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "createMyProfile", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('ADMIN'),

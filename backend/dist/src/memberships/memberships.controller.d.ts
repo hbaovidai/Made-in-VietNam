@@ -4,8 +4,8 @@ export declare class MembershipsController {
     constructor(membershipsService: MembershipsService);
     getPlans(): Promise<{
         id: string;
-        name: string;
         createdAt: Date;
+        name: string;
         currency: string;
         price: number;
         billingCycle: string;
@@ -15,8 +15,8 @@ export declare class MembershipsController {
     getMySubscription(userId: string, currentUserId: string): Promise<({
         plan: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             currency: string;
             price: number;
             billingCycle: string;
@@ -25,8 +25,8 @@ export declare class MembershipsController {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         planId: string;
         startDate: Date;
         endDate: Date;
@@ -36,8 +36,8 @@ export declare class MembershipsController {
     }, userId: string): Promise<{
         plan: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             currency: string;
             price: number;
             billingCycle: string;
@@ -46,8 +46,8 @@ export declare class MembershipsController {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         planId: string;
         startDate: Date;
         endDate: Date;

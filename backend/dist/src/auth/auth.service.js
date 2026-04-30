@@ -89,12 +89,13 @@ let AuthService = class AuthService {
                 createdAt: true,
             },
         });
+        let supplierProfile = null;
         if (dto.role === 'SUPPLIER' && dto.companyName) {
             const slug = dto.companyName
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)/g, '');
-            await this.prisma.supplier.create({
+            supplierProfile = await this.prisma.supplier.create({
                 data: {
                     userId: user.id,
                     companyName: dto.companyName,
@@ -105,7 +106,10 @@ let AuthService = class AuthService {
         const token = this.generateToken(user);
         return {
             message: 'Đăng ký thành công',
-            user,
+            user: {
+                ...user,
+                supplier: supplierProfile
+            },
             token,
         };
     }
