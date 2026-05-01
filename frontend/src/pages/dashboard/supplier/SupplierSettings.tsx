@@ -169,18 +169,18 @@ export function SupplierSettings() {
 
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Lock size={20} className="text-primary" /> Đổi mật khẩu
+              <Lock size={20} className="text-primary" /> {t('change_password')}
             </h3>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu hiện tại</label>
-              <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder="Nhập mật khẩu hiện tại" />
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('current_password')}</label>
+              <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder={t('current_password_placeholder')} />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu mới</label>
-              <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" />
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('new_password')}</label>
+              <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder={t('new_password_placeholder')} />
             </div>
             <button type="button" onClick={handleChangePassword} className="bg-slate-900 text-white px-6 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
-              Cập nhật mật khẩu
+              {t('update_password_btn')}
             </button>
           </div>
         </div>

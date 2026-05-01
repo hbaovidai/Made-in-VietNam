@@ -7,7 +7,9 @@ export declare class CreateRFQDto {
     description: string;
     budget?: string;
     destination: string;
+    contactName?: string;
     contactEmail?: string;
+    contactPhone?: string;
     expiresAt: string;
 }
 export declare class CreateQuoteDto {

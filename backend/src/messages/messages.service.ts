@@ -151,4 +151,20 @@ export class MessagesService {
       return message;
     });
   }
+
+  async deleteConversation(conversationId: string, userId: string) {
+    // Verify user is a participant
+    const participant = await this.prisma.conversationParticipant.findUnique({
+      where: { conversationId_userId: { conversationId, userId } },
+    });
+    if (!participant)
+      throw new ForbiddenException('Bạn không nằm trong hội thoại này');
+
+    // Delete conversation (cascade will remove participants + messages)
+    await this.prisma.conversation.delete({
+      where: { id: conversationId },
+    });
+
+    return { message: 'Đã xóa cuộc hội thoại' };
+  }
 }

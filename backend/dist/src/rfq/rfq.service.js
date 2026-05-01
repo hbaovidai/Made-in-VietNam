@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 let RfqService = class RfqService {
     prisma;
+    MAX_QUOTES_PER_RFQ = 10;
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -28,7 +29,9 @@ let RfqService = class RfqService {
                 description: dto.description,
                 budget: dto.budget,
                 destination: dto.destination,
+                contactName: dto.contactName,
                 contactEmail: dto.contactEmail,
+                contactPhone: dto.contactPhone,
                 expiresAt: new Date(dto.expiresAt),
             },
         });
@@ -43,11 +46,17 @@ let RfqService = class RfqService {
         });
     }
     async submitQuote(supplierId, dto) {
-        const rfq = await this.prisma.rFQ.findUnique({ where: { id: dto.rfqId } });
+        const rfq = await this.prisma.rFQ.findUnique({
+            where: { id: dto.rfqId },
+            include: { _count: { select: { quotes: true } } },
+        });
         if (!rfq)
             throw new common_1.NotFoundException('RFQ không tồn tại');
         if (rfq.status === 'CLOSED' || rfq.status === 'EXPIRED') {
             throw new common_1.ForbiddenException('Không thể báo giá cho RFQ này');
+        }
+        if (rfq._count.quotes >= this.MAX_QUOTES_PER_RFQ) {
+            throw new common_1.ForbiddenException(`RFQ này đã nhận đủ ${this.MAX_QUOTES_PER_RFQ} báo giá. Không thể gửi thêm.`);
         }
         const existingQuote = await this.prisma.quote.findFirst({
             where: { rfqId: dto.rfqId, supplierId },
@@ -64,10 +73,11 @@ let RfqService = class RfqService {
                 message: dto.message,
             },
         });
-        if (rfq.status === 'OPEN') {
+        const newQuoteCount = rfq._count.quotes + 1;
+        if (newQuoteCount >= this.MAX_QUOTES_PER_RFQ) {
             await this.prisma.rFQ.update({
                 where: { id: dto.rfqId },
-                data: { status: 'QUOTED' },
+                data: { status: 'CLOSED' },
             });
         }
         return quote;
@@ -76,11 +86,11 @@ let RfqService = class RfqService {
         const rfq = await this.prisma.rFQ.findUnique({
             where: { id },
             include: {
-                buyer: { select: { fullName: true, email: true, phone: true } },
+                buyer: { select: { id: true, fullName: true, email: true, phone: true } },
                 quotes: {
                     include: {
                         supplier: {
-                            select: { companyName: true, logo: true, isVerified: true },
+                            select: { id: true, companyName: true, logo: true, isVerified: true, userId: true },
                         },
                     },
                     orderBy: { price: 'asc' },
@@ -91,10 +101,39 @@ let RfqService = class RfqService {
             throw new common_1.NotFoundException('RFQ không tồn tại');
         return rfq;
     }
-    async getOpenRFQs() {
-        return this.prisma.rFQ.findMany({
+    async acceptQuote(quoteId, buyerId) {
+        const quote = await this.prisma.quote.findUnique({
+            where: { id: quoteId },
+            include: {
+                rfq: true,
+                supplier: { select: { userId: true, companyName: true } },
+            },
+        });
+        if (!quote)
+            throw new common_1.NotFoundException('Báo giá không tồn tại');
+        if (quote.rfq.buyerId !== buyerId)
+            throw new common_1.ForbiddenException('Bạn không có quyền thực hiện thao tác này');
+        await this.prisma.quote.update({
+            where: { id: quoteId },
+            data: { status: 'ACCEPTED' },
+        });
+        await this.prisma.quote.updateMany({
             where: {
-                status: { in: ['OPEN', 'QUOTED'] },
+                rfqId: quote.rfqId,
+                id: { not: quoteId },
+            },
+            data: { status: 'REJECTED' },
+        });
+        await this.prisma.rFQ.update({
+            where: { id: quote.rfqId },
+            data: { status: 'CLOSED' },
+        });
+        return { message: 'Đã chấp nhận báo giá', supplierUserId: quote.supplier.userId };
+    }
+    async getOpenRFQs(isVerified = true) {
+        const rfqs = await this.prisma.rFQ.findMany({
+            where: {
+                status: { in: ['OPEN'] },
                 expiresAt: { gt: new Date() },
             },
             orderBy: { createdAt: 'desc' },
@@ -104,6 +143,28 @@ let RfqService = class RfqService {
                 _count: { select: { quotes: true } },
             },
         });
+        if (!isVerified) {
+            return rfqs.map((rfq) => ({
+                id: rfq.id,
+                productName: rfq.productName,
+                category: rfq.category,
+                quantity: rfq.quantity,
+                quantityUnit: rfq.quantityUnit,
+                status: rfq.status,
+                expiresAt: rfq.expiresAt,
+                createdAt: rfq.createdAt,
+                _count: rfq._count,
+                description: null,
+                budget: null,
+                destination: null,
+                contactEmail: null,
+                contactName: null,
+                contactPhone: null,
+                buyer: { fullName: 'Ẩn danh' },
+                _restricted: true,
+            }));
+        }
+        return rfqs.map((rfq) => ({ ...rfq, _restricted: false }));
     }
 };
 exports.RfqService = RfqService;

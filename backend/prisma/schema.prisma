@@ -233,7 +233,9 @@ model RFQ {
   description  String
   budget       String?
   destination  String
+  contactName  String?   @map("contact_name")
   contactEmail String?   @map("contact_email")
+  contactPhone String?   @map("contact_phone")
   status       RFQStatus @default(OPEN)
   expiresAt    DateTime  @map("expires_at")
   createdAt    DateTime  @default(now()) @map("created_at")

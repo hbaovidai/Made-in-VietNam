@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Eye, ArrowUpRight, Users, Award, Inbox, ShoppingBag, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 
 export function SupplierOverview() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const [statsData, setStatsData] = useState({
@@ -80,23 +82,23 @@ export function SupplierOverview() {
   const productsMax = Math.max(...productsData, 1);
 
   const kpis = [
-    { label: 'Sản phẩm đang bán', value: statsData.products, icon: <Package size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/supplier/products' },
-    { label: 'Lượt xem hồ sơ', value: statsData.totalViews, icon: <Eye size={18} className="text-amber-500" />, bg: 'bg-amber-50', link: '/dashboard/supplier/profile' },
-    { label: 'Yêu cầu nhận được', value: recentInquiries.length, icon: <Users size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/supplier/inquiries' },
-    { label: 'Hoàn thiện hồ sơ', value: `${profileCompletion}%`, icon: <Award size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/supplier/profile' },
+    { label: t('sup_active_products'), value: statsData.products, icon: <Package size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/supplier/products' },
+    { label: t('sup_profile_views'), value: statsData.totalViews, icon: <Eye size={18} className="text-amber-500" />, bg: 'bg-amber-50', link: '/dashboard/supplier/profile' },
+    { label: t('sup_inquiries_received'), value: recentInquiries.length, icon: <Users size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/supplier/inquiries' },
+    { label: t('sup_profile_completion'), value: `${profileCompletion}%`, icon: <Award size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/supplier/profile' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome + Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">Xin chào, {user?.supplier?.companyName || user?.fullName || 'Nhà cung cấp'}</p>
+        <p className="text-sm text-slate-500">{t('sup_hello', { name: user?.supplier?.companyName || user?.fullName || '' })}</p>
         <div className="flex gap-2">
           <Link to="/dashboard/supplier/products" className="text-xs font-bold text-slate-600 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-            Quản lý sản phẩm
+            {t('sup_manage_products')}
           </Link>
           <Link to="/dashboard/supplier/profile" className="text-xs font-bold text-white bg-primary px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
-            Chỉnh sửa hồ sơ
+            {t('sup_edit_profile')}
           </Link>
         </div>
       </div>
@@ -124,9 +126,9 @@ export function SupplierOverview() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Eye size={16} className="text-amber-500" />
-              <h2 className="text-sm font-bold text-slate-900">Lượt xem hồ sơ</h2>
+              <h2 className="text-sm font-bold text-slate-900">{t('sup_profile_views_chart')}</h2>
             </div>
-            <span className="text-xs font-medium text-slate-400">12 tháng</span>
+            <span className="text-xs font-medium text-slate-400">{t('sup_months_12')}</span>
           </div>
           {statsData.totalViews > 0 ? (
             <>
@@ -153,7 +155,7 @@ export function SupplierOverview() {
             <div className="h-44 flex items-center justify-center">
               <div className="text-center">
                 <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Chưa có dữ liệu lượt xem</p>
+                <p className="text-xs text-slate-400">{t('sup_no_view_data')}</p>
               </div>
             </div>
           )}
@@ -164,9 +166,9 @@ export function SupplierOverview() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <ShoppingBag size={16} className="text-blue-500" />
-              <h2 className="text-sm font-bold text-slate-900">Sản phẩm đã đăng</h2>
+              <h2 className="text-sm font-bold text-slate-900">{t('sup_products_posted')}</h2>
             </div>
-            <span className="text-xs font-medium text-slate-400">12 tháng</span>
+            <span className="text-xs font-medium text-slate-400">{t('sup_months_12')}</span>
           </div>
           {statsData.products > 0 ? (
             <>
@@ -193,7 +195,7 @@ export function SupplierOverview() {
             <div className="h-44 flex items-center justify-center">
               <div className="text-center">
                 <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Chưa có sản phẩm nào</p>
+                <p className="text-xs text-slate-400">{t('sup_no_products_yet')}</p>
               </div>
             </div>
           )}
@@ -205,8 +207,8 @@ export function SupplierOverview() {
         {/* Recent Inquiries */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Yêu cầu gần đây</h2>
-            <Link to="/dashboard/supplier/inquiries" className="text-xs font-bold text-primary hover:underline">Xem tất cả</Link>
+            <h2 className="text-sm font-bold text-slate-900">{t('sup_recent_inquiries')}</h2>
+            <Link to="/dashboard/supplier/inquiries" className="text-xs font-bold text-primary hover:underline">{t('sup_view_all')}</Link>
           </div>
           {loading ? (
             <div className="p-12 text-center">
@@ -256,13 +258,13 @@ export function SupplierOverview() {
                 <Award size={18} className="text-purple-500" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Hồ sơ công ty</h3>
-                <p className="text-xs text-slate-400">Hoàn thiện để tăng uy tín</p>
+                <h3 className="text-sm font-bold text-slate-900">{t('sup_company_profile')}</h3>
+                <p className="text-xs text-slate-400">{t('sup_complete_to_trust')}</p>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-500">Tiến độ</span>
+                <span className="text-slate-500">{t('sup_progress')}</span>
                 <span className={profileCompletion >= 80 ? 'text-emerald-600' : 'text-amber-600'}>{profileCompletion}%</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -273,7 +275,7 @@ export function SupplierOverview() {
               </div>
               {profileCompletion < 80 && (
                 <Link to="/dashboard/supplier/profile" className="text-[10px] text-primary font-bold hover:underline inline-block mt-1">
-                  Hoàn thiện hồ sơ →
+                  {t('sup_complete_profile')}
                 </Link>
               )}
             </div>
@@ -286,9 +288,8 @@ export function SupplierOverview() {
               <h3 className="text-sm font-bold text-white mb-4">Phát triển kinh doanh</h3>
               <div className="space-y-3">
                 {[
-                  { label: 'Nâng cấp Premium', to: '/premium' },
-                  { label: 'Quyền lợi thành viên', to: '/services/membership' },
-                  { label: 'Hướng dẫn bán hàng', to: '/help/seller-guide' },
+                  { label: t('membership_benefits'), to: '/services/membership' },
+                  { label: t('seller_guide_link'), to: '/help/seller-guide' },
                 ].map((link, i) => (
                   <Link key={i} to={link.to} className="flex items-center justify-between group">
                     <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{link.label}</span>

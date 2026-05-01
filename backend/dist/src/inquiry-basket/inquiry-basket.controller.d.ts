@@ -21,8 +21,8 @@ export declare class InquiryBasketController {
             id: string;
             productId: string;
             quantity: number;
-            basketId: string;
             note: string | null;
+            basketId: string;
             addedAt: Date;
         })[];
     } & {
@@ -35,8 +35,8 @@ export declare class InquiryBasketController {
         id: string;
         productId: string;
         quantity: number;
-        basketId: string;
         note: string | null;
+        basketId: string;
         addedAt: Date;
     }>;
     removeItem(itemId: string, userId: string): Promise<{

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, MessageSquare, FileText, ArrowUpRight, Shield, Package, Inbox } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 
 export function BuyerOverview() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [rfqCount, setRfqCount] = useState(0);
   const [rfqs, setRfqs] = useState<any[]>([]);
@@ -30,27 +32,27 @@ export function BuyerOverview() {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins} phút trước`;
+    if (mins < 60) return t('admin_minutes_ago', { count: mins });
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} giờ trước`;
+    if (hours < 24) return t('admin_hours_ago', { count: hours });
     const days = Math.floor(hours / 24);
-    return `${days} ngày trước`;
+    return t('admin_days_ago', { count: days });
   };
 
   const kpis = [
-    { label: 'Yêu cầu báo giá', value: rfqCount, icon: <FileText size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/buyer/rfqs' },
-    { label: 'Tin nhắn', value: messages.length, icon: <MessageSquare size={18} className="text-orange-500" />, bg: 'bg-orange-50', link: '/dashboard/buyer/messages' },
-    { label: 'Giỏ hàng yêu cầu', value: 0, icon: <ShoppingCart size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/buyer/saved' },
-    { label: 'Sản phẩm đã lưu', value: 0, icon: <Package size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/buyer/saved' },
+    { label: t('buyer_kpi_rfqs'), value: rfqCount, icon: <FileText size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/buyer/rfqs' },
+    { label: t('buyer_kpi_messages'), value: messages.length, icon: <MessageSquare size={18} className="text-orange-500" />, bg: 'bg-orange-50', link: '/dashboard/buyer/messages' },
+    { label: t('buyer_kpi_inquiry_basket'), value: 0, icon: <ShoppingCart size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/buyer/saved' },
+    { label: t('buyer_kpi_saved'), value: 0, icon: <Package size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/buyer/saved' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome + Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">Xin chào, {user?.fullName || 'Người mua'}</p>
+        <p className="text-sm text-slate-500">{t('buyer_hello', { name: user?.fullName || '' })}</p>
         <Link to="/rfq" className="text-xs font-bold text-white bg-primary px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0 inline-flex items-center gap-2">
-          <FileText size={14} /> Đăng yêu cầu báo giá
+          <FileText size={14} /> {t('buyer_post_rfq_btn')}
         </Link>
       </div>
 
@@ -75,8 +77,8 @@ export function BuyerOverview() {
         {/* Recent RFQs */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Hoạt động gần đây</h2>
-            <Link to="/dashboard/buyer/history" className="text-xs font-bold text-primary hover:underline">Xem tất cả</Link>
+            <h2 className="text-sm font-bold text-slate-900">{t('buyer_recent_activity')}</h2>
+            <Link to="/dashboard/buyer/history" className="text-xs font-bold text-primary hover:underline">{t('buyer_view_all')}</Link>
           </div>
           {loading ? (
             <div className="p-12 text-center">
@@ -85,9 +87,9 @@ export function BuyerOverview() {
           ) : rfqs.length === 0 ? (
             <div className="p-12 text-center">
               <Inbox size={32} className="text-slate-200 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-400">Chưa có hoạt động nào</p>
-              <p className="text-xs text-slate-400 mt-1">Các hoạt động mua hàng, báo giá sẽ hiển thị tại đây.</p>
-              <Link to="/products" className="text-xs font-bold text-primary mt-3 inline-block hover:underline">Khám phá sản phẩm →</Link>
+              <p className="text-sm font-medium text-slate-400">{t('buyer_no_activity')}</p>
+              <p className="text-xs text-slate-400 mt-1">{t('buyer_no_activity_desc')}</p>
+              <Link to="/products" className="text-xs font-bold text-primary mt-3 inline-block hover:underline">{t('buyer_explore_products')}</Link>
             </div>
           ) : (
             <div>
@@ -101,11 +103,11 @@ export function BuyerOverview() {
                       <FileText size={16} className="text-blue-500" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold text-slate-800 truncate">{rfq.productName || 'Yêu cầu báo giá'}</div>
+                      <div className="text-sm font-semibold text-slate-800 truncate">{rfq.productName || t('buyer_rfq_label')}</div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-slate-400">SL: {rfq.quantity} {rfq.quantityUnit}</span>
+                        <span className="text-xs text-slate-400">{t('buyer_qty_label')} {rfq.quantity} {rfq.quantityUnit}</span>
                         {rfq._count?.quotes > 0 && (
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{rfq._count.quotes} báo giá</span>
+                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{t('buyer_quotes_count', { count: rfq._count.quotes })}</span>
                         )}
                       </div>
                     </div>
@@ -116,7 +118,7 @@ export function BuyerOverview() {
                       rfq.status === 'CLOSED' ? 'bg-slate-100 text-slate-500' : 
                       'bg-emerald-50 text-emerald-600'
                     }`}>
-                      {rfq.status === 'OPEN' ? 'Đang mở' : rfq.status === 'CLOSED' ? 'Đã đóng' : rfq.status}
+                      {rfq.status === 'OPEN' ? t('buyer_status_open') : rfq.status === 'CLOSED' ? t('buyer_status_closed') : rfq.status}
                     </span>
                   </div>
                 </div>
@@ -130,13 +132,13 @@ export function BuyerOverview() {
           {/* Recent Messages */}
           <div className="bg-white rounded-2xl border border-slate-200">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Tin nhắn</h2>
-              <Link to="/dashboard/buyer/messages" className="text-xs font-bold text-primary hover:underline">Tất cả</Link>
+              <h2 className="text-sm font-bold text-slate-900">{t('buyer_messages')}</h2>
+              <Link to="/dashboard/buyer/messages" className="text-xs font-bold text-primary hover:underline">{t('buyer_all')}</Link>
             </div>
             {messages.length === 0 ? (
               <div className="p-8 text-center">
                 <MessageSquare size={24} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Chưa có tin nhắn</p>
+                <p className="text-xs text-slate-400">{t('buyer_no_messages')}</p>
               </div>
             ) : (
               <div>
@@ -150,8 +152,8 @@ export function BuyerOverview() {
                       {(msg.otherUser?.fullName || '?')[0].toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-slate-800 truncate">{msg.otherUser?.fullName || 'Nhà cung cấp'}</div>
-                      <div className="text-[10px] text-slate-400 truncate">{msg.lastMessage || 'Tin nhắn mới'}</div>
+                      <div className="text-xs font-semibold text-slate-800 truncate">{msg.otherUser?.fullName || t('buyer_supplier_label')}</div>
+                      <div className="text-[10px] text-slate-400 truncate">{msg.lastMessage || t('buyer_new_message')}</div>
                     </div>
                   </Link>
                 ))}
@@ -163,12 +165,12 @@ export function BuyerOverview() {
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
             <div className="relative z-10">
-              <h3 className="text-sm font-bold text-white mb-4">Công cụ tìm nguồn</h3>
+              <h3 className="text-sm font-bold text-white mb-4">{t('buyer_sourcing_tools')}</h3>
               <div className="space-y-3">
                 {[
-                  { label: 'Đăng yêu cầu báo giá', to: '/rfq' },
-                  { label: 'Duyệt sản phẩm', to: '/products' },
-                  { label: 'Trung tâm hỗ trợ', to: '/help' },
+                  { label: t('buyer_post_rfq_link'), to: '/rfq' },
+                  { label: t('buyer_browse_products'), to: '/products' },
+                  { label: t('buyer_help_center'), to: '/help' },
                 ].map((link, i) => (
                   <Link key={i} to={link.to} className="flex items-center justify-between group">
                     <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{link.label}</span>
@@ -186,15 +188,15 @@ export function BuyerOverview() {
                 <Shield size={18} className="text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Trade Assurance</h3>
-                <p className="text-[10px] text-slate-400">Bảo vệ giao dịch an toàn</p>
+                <h3 className="text-sm font-bold text-slate-900">{t('buyer_trade_assurance')}</h3>
+                <p className="text-[10px] text-slate-400">{t('buyer_trade_desc')}</p>
               </div>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed mb-4">
-              Giao dịch được bảo vệ với đảm bảo hoàn tiền và chất lượng sản phẩm.
+              {t('buyer_trade_body')}
             </p>
             <Link to="/services/trade-assurance" className="text-xs font-bold text-primary hover:underline">
-              Tìm hiểu thêm →
+              {t('buyer_learn_more')}
             </Link>
           </div>
         </div>

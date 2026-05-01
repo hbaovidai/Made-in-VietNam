@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Param,
   UseGuards,
@@ -22,22 +23,19 @@ export class RfqController {
     private prisma: PrismaService,
   ) {}
 
-  // PROTECTED: Chỉ SUPPLIER đã verified mới xem RFQ marketplace
+  // Tất cả Supplier đều xem được RFQ, nhưng dữ liệu bị giới hạn nếu chưa xác thực
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPPLIER', 'ADMIN')
   @Get('open')
   async getOpenRFQs(@CurrentUser() currentUser: { id: string; role: string }) {
+    let isVerified = true;
     if (currentUser.role === 'SUPPLIER') {
       const supplier = await this.prisma.supplier.findUnique({
         where: { userId: currentUser.id },
       });
-      if (!supplier?.isVerified) {
-        throw new ForbiddenException(
-          'Tài khoản nhà cung cấp chưa được xác minh. Vui lòng hoàn thiện hồ sơ.',
-        );
-      }
+      isVerified = supplier?.isVerified ?? false;
     }
-    return this.rfqService.getOpenRFQs();
+    return this.rfqService.getOpenRFQs(isVerified);
   }
 
   // PROTECTED: Buyer chỉ xem RFQ của mình
@@ -68,7 +66,18 @@ export class RfqController {
     return this.rfqService.createRFQ(userId, dto);
   }
 
-  // PROTECTED: Chỉ SUPPLIER mới báo giá — supplierId lấy từ JWT
+  // PROTECTED: Buyer chấp nhận báo giá
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('BUYER')
+  @Put('quotes/:quoteId/accept')
+  acceptQuote(
+    @Param('quoteId') quoteId: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.rfqService.acceptQuote(quoteId, userId);
+  }
+
+  // PROTECTED: Chỉ SUPPLIER ĐÃ XÁC THỰC mới báo giá
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPPLIER')
   @Post('quotes')
@@ -81,6 +90,10 @@ export class RfqController {
     });
     if (!supplier)
       throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+    if (!supplier.isVerified)
+      throw new ForbiddenException(
+        'Chỉ nhà cung cấp đã xác thực mới được gửi báo giá. Vui lòng hoàn tất Xác thực Doanh nghiệp (KYB).',
+      );
     return this.rfqService.submitQuote(supplier.id, dto);
   }
 }

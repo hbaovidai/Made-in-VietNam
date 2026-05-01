@@ -123,6 +123,7 @@ let AuthService = class AuthService {
                         companyName: true,
                         slug: true,
                         isVerified: true,
+                        verificationStatus: true,
                     },
                 },
             },
@@ -151,7 +152,7 @@ let AuthService = class AuthService {
             where: { email },
             include: {
                 supplier: {
-                    select: { id: true, companyName: true, slug: true, isVerified: true },
+                    select: { id: true, companyName: true, slug: true, isVerified: true, verificationStatus: true },
                 },
             },
         });
@@ -167,7 +168,7 @@ let AuthService = class AuthService {
                 },
                 include: {
                     supplier: {
-                        select: { id: true, companyName: true, slug: true, isVerified: true },
+                        select: { id: true, companyName: true, slug: true, isVerified: true, verificationStatus: true },
                     },
                 },
             });
@@ -198,6 +199,7 @@ let AuthService = class AuthService {
                         companyName: true,
                         slug: true,
                         isVerified: true,
+                        verificationStatus: true,
                         logo: true,
                     },
                 },

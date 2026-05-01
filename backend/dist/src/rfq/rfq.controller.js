@@ -29,15 +29,14 @@ let RfqController = class RfqController {
         this.prisma = prisma;
     }
     async getOpenRFQs(currentUser) {
+        let isVerified = true;
         if (currentUser.role === 'SUPPLIER') {
             const supplier = await this.prisma.supplier.findUnique({
                 where: { userId: currentUser.id },
             });
-            if (!supplier?.isVerified) {
-                throw new common_1.ForbiddenException('Tài khoản nhà cung cấp chưa được xác minh. Vui lòng hoàn thiện hồ sơ.');
-            }
+            isVerified = supplier?.isVerified ?? false;
         }
-        return this.rfqService.getOpenRFQs();
+        return this.rfqService.getOpenRFQs(isVerified);
     }
     getBuyerRFQs(buyerId, currentUser) {
         if (currentUser.id !== buyerId && currentUser.role !== 'ADMIN') {
@@ -51,12 +50,17 @@ let RfqController = class RfqController {
     createRFQ(dto, userId) {
         return this.rfqService.createRFQ(userId, dto);
     }
+    acceptQuote(quoteId, userId) {
+        return this.rfqService.acceptQuote(quoteId, userId);
+    }
     async submitQuote(dto, userId) {
         const supplier = await this.prisma.supplier.findUnique({
             where: { userId },
         });
         if (!supplier)
             throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+        if (!supplier.isVerified)
+            throw new common_1.ForbiddenException('Chỉ nhà cung cấp đã xác thực mới được gửi báo giá. Vui lòng hoàn tất Xác thực Doanh nghiệp (KYB).');
         return this.rfqService.submitQuote(supplier.id, dto);
     }
 };
@@ -97,6 +101,16 @@ __decorate([
     __metadata("design:paramtypes", [rfq_dto_1.CreateRFQDto, String]),
     __metadata("design:returntype", void 0)
 ], RfqController.prototype, "createRFQ", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('BUYER'),
+    (0, common_1.Put)('quotes/:quoteId/accept'),
+    __param(0, (0, common_1.Param)('quoteId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], RfqController.prototype, "acceptQuote", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('SUPPLIER'),

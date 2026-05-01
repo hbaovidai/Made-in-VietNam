@@ -21,7 +21,9 @@ class CreateRFQDto {
     description;
     budget;
     destination;
+    contactName;
     contactEmail;
+    contactPhone;
     expiresAt;
 }
 exports.CreateRFQDto = CreateRFQDto;
@@ -60,7 +62,17 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
+], CreateRFQDto.prototype, "contactName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
 ], CreateRFQDto.prototype, "contactEmail", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateRFQDto.prototype, "contactPhone", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

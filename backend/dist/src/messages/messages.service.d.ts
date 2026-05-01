@@ -32,4 +32,7 @@ export declare class MessagesService {
         lastMessageAt: Date | null;
     }>;
     sendMessage(senderId: string, dto: SendMessageDto): Promise<any>;
+    deleteConversation(conversationId: string, userId: string): Promise<{
+        message: string;
+    }>;
 }

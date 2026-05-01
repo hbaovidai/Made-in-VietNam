@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, ChevronRight, Search, Filter, Clock, CheckCircle2, AlertCircle, Loader2, Send, X } from 'lucide-react';
+import { FileText, ChevronRight, Search, Filter, Clock, CheckCircle2, AlertCircle, Loader2, Send, X, Lock, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
+
+const MAX_QUOTES = 10;
 
 export function SupplierRFQs() {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ export function SupplierRFQs() {
   const [submittingQuote, setSubmittingQuote] = useState(false);
 
   const supplierId = user?.supplier?.id;
+  const isVerified = user?.supplier?.isVerified ?? false;
 
   useEffect(() => {
     loadRfqs();
@@ -103,16 +106,43 @@ export function SupplierRFQs() {
       </div>
 
       {/* Content */}
+
+      {/* Banner for unverified suppliers */}
+      {!isVerified && !loading && rfqs.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+              <Lock size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-amber-800">Tài khoản chưa xác thực</p>
+              <p className="text-xs text-amber-600 mt-0.5">Bạn chỉ thấy tiêu đề RFQ. Để xem chi tiết và gửi báo giá, hãy hoàn tất <strong>Xác thực Doanh nghiệp (KYB)</strong>.</p>
+            </div>
+          </div>
+          <Link to="/dashboard/supplier/profile" className="shrink-0 px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors inline-flex items-center gap-1.5">
+            <ShieldCheck size={14} /> Xác thực ngay
+          </Link>
+        </div>
+      )}
       <div className="space-y-3">
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
-        ) : rfqs.map((rfq) => (
-          <div key={rfq.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer">
+        ) : rfqs.map((rfq) => {
+          const quoteCount = rfq._count?.quotes || 0;
+          const isFull = quoteCount >= MAX_QUOTES;
+          const progressPct = Math.min((quoteCount / MAX_QUOTES) * 100, 100);
+          const isRestricted = rfq._restricted === true;
+          return (
+          <div key={rfq.id} className={`p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer ${isRestricted ? 'opacity-80' : ''}`}>
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
-                <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+                {isRestricted ? (
+                  <Lock size={24} className="text-slate-300" />
+                ) : (
+                  <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+                )}
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{rfq.productName}</div>
@@ -121,21 +151,42 @@ export function SupplierRFQs() {
                   <span className="text-slate-300">•</span>
                   <span className="font-bold text-[#A2875E]">SL: {rfq.quantity} {rfq.quantityUnit}</span>
                 </div>
+                {isRestricted && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Lock size={10} className="text-slate-300" />
+                    <span className="text-[10px] font-bold text-slate-400 italic">Mô tả chi tiết, ngân sách, địa điểm bị ẩn</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
                   <span>Hạn chót: {new Date(rfq.expiresAt).toLocaleDateString()}</span>
-                  {rfq._count?.quotes > 0 && <span>{rfq._count.quotes} báo giá</span>}
+                </div>
+                {/* Quote Progress Bar */}
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="w-28 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all ${isFull ? 'bg-red-400' : progressPct > 60 ? 'bg-amber-400' : 'bg-primary'}`}
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFull ? 'text-red-500' : 'text-slate-400'}`}>
+                    {quoteCount}/{MAX_QUOTES} báo giá
+                  </span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                {rfq.status === 'OPEN' ? (
+                {rfq.status === 'OPEN' && !isFull ? (
                   <span className="flex items-center gap-1.5 bg-blue-50 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
-                    <Clock size={12} /> {t('status_new')}
+                    <Clock size={12} /> Đang mở
                   </span>
-                ) : rfq.status === 'QUOTED' ? (
-                  <span className="flex items-center gap-1.5 bg-green-50 text-green-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-green-100">
-                    <CheckCircle2 size={12} /> {t('status_quoted')}
+                ) : rfq.status === 'OPEN' && isFull ? (
+                  <span className="flex items-center gap-1.5 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-red-100">
+                    <AlertCircle size={12} /> Đầy
+                  </span>
+                ) : rfq.status === 'CLOSED' ? (
+                  <span className="flex items-center gap-1.5 bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200">
+                    <CheckCircle2 size={12} /> Đã đóng
                   </span>
                 ) : (
                   <span className="flex items-center gap-1.5 bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200">
@@ -143,12 +194,26 @@ export function SupplierRFQs() {
                   </span>
                 )}
               </div>
-              {rfq.status === 'OPEN' ? (
+              {isRestricted ? (
+                <Link 
+                  to="/dashboard/supplier/profile"
+                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg transition-all flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                >
+                  <Lock size={14} /> Xác thực để báo giá
+                </Link>
+              ) : rfq.status === 'OPEN' && !isFull ? (
                 <button 
                   onClick={() => openQuoteModal(rfq)}
                   className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg transition-all flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20"
                 >
                   <Send size={14} /> Gửi báo giá
+                </button>
+              ) : rfq.status === 'OPEN' && isFull ? (
+                <button 
+                  disabled
+                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg flex items-center justify-center gap-2 bg-slate-100 text-slate-400 cursor-not-allowed"
+                >
+                  Đã đủ báo giá
                 </button>
               ) : (
                 <button 
@@ -160,7 +225,8 @@ export function SupplierRFQs() {
               )}
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
       {!loading && rfqs.length === 0 && (
         <div className="p-20 text-center space-y-4">

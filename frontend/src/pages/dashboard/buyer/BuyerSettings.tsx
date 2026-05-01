@@ -61,10 +61,10 @@ export function BuyerSettings() {
       // Update user in context and localStorage
       const updatedUser = res.data.user || { ...user, fullName, phone, avatar };
       if (token) loginUser(updatedUser, token);
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật thông tin cá nhân' });
+      addToast({ type: 'success', title: t('buyer_success'), message: t('buyer_profile_updated') });
     } catch (error: any) {
       console.error(error);
-      addToast({ type: 'error', title: 'Lỗi', message: error.message || 'Không thể cập nhật thông tin' });
+      addToast({ type: 'error', title: t('buyer_error'), message: error.message || t('buyer_update_error') });
     } finally {
       setIsSavingProfile(false);
     }
@@ -75,7 +75,7 @@ export function BuyerSettings() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Ảnh không được vượt quá 5MB' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('buyer_avatar_size_error') });
       return;
     }
 
@@ -88,10 +88,10 @@ export function BuyerSettings() {
       });
       const avatarUrl = res.data.url;
       setAvatar(avatarUrl);
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã upload ảnh đại diện. Nhấn "Lưu thông tin" để cập nhật.' });
+      addToast({ type: 'success', title: t('buyer_success'), message: t('buyer_avatar_uploaded') });
     } catch (err) {
       console.error(err);
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể upload ảnh' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('buyer_avatar_error') });
     } finally {
       setIsUploadingAvatar(false);
     }
@@ -100,23 +100,23 @@ export function BuyerSettings() {
   const handleChangePassword = async () => {
     if (!user) return;
     if (!oldPassword || !newPassword) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng nhập đầy đủ mật khẩu' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('buyer_pwd_required') });
       return;
     }
     if (newPassword.length < 6) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('buyer_pwd_min_length') });
       return;
     }
 
     try {
       setIsSavingPassword(true);
       await api.put(`/auth/password/${user.id}`, { oldPassword, newPassword });
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã đổi mật khẩu' });
+      addToast({ type: 'success', title: t('buyer_success'), message: t('buyer_pwd_changed') });
       setOldPassword('');
       setNewPassword('');
     } catch (error: any) {
       console.error(error);
-      addToast({ type: 'error', title: 'Lỗi', message: error.message || 'Mật khẩu cũ không đúng' });
+      addToast({ type: 'error', title: t('buyer_error'), message: error.message || t('buyer_pwd_wrong') });
     } finally {
       setIsSavingPassword(false);
     }
@@ -142,7 +142,7 @@ export function BuyerSettings() {
   const handleSaveNotifSettings = () => {
     localStorage.setItem('notif_settings_buyer', JSON.stringify(notifSettings));
     setIsNotifModalOpen(false);
-    addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật cài đặt thông báo' });
+    addToast({ type: 'success', title: t('buyer_success'), message: t('buyer_notif_saved') });
   };
 
   const handleSaveLang = () => {
@@ -162,7 +162,7 @@ export function BuyerSettings() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         break;
       case 2: // Thanh toán
-        addToast({ type: 'info', title: 'Sắp ra mắt', message: 'Tính năng thanh toán sẽ được triển khai trong tương lai' });
+        addToast({ type: 'info', title: t('buyer_coming_soon'), message: t('buyer_payment_coming') });
         break;
       case 3: // Ngôn ngữ
         setIsLangModalOpen(true);
@@ -171,11 +171,11 @@ export function BuyerSettings() {
   };
 
   const notifOptions = [
-    { key: 'orderUpdates', icon: <Bell size={16} className="text-blue-500" />, label: 'Cập nhật đơn hàng', desc: 'Nhận thông báo khi có thay đổi đơn hàng' },
-    { key: 'rfqAlerts', icon: <BellRing size={16} className="text-amber-500" />, label: 'Báo giá (RFQ)', desc: 'Nhận thông báo khi nhà cung cấp phản hồi báo giá' },
-    { key: 'messageAlerts', icon: <Mail size={16} className="text-emerald-500" />, label: 'Tin nhắn mới', desc: 'Nhận thông báo khi có tin nhắn mới' },
-    { key: 'promotions', icon: <BellOff size={16} className="text-slate-400" />, label: 'Khuyến mãi & tin tức', desc: 'Nhận email về chương trình khuyến mãi' },
-    { key: 'weeklyReport', icon: <Mail size={16} className="text-purple-500" />, label: 'Báo cáo hàng tuần', desc: 'Nhận email tổng kết hoạt động mỗi tuần' },
+    { key: 'orderUpdates', icon: <Bell size={16} className="text-blue-500" />, label: t('buyer_notif_order'), desc: t('buyer_notif_order_desc') },
+    { key: 'rfqAlerts', icon: <BellRing size={16} className="text-amber-500" />, label: t('buyer_notif_rfq'), desc: t('buyer_notif_rfq_desc') },
+    { key: 'messageAlerts', icon: <Mail size={16} className="text-emerald-500" />, label: t('buyer_notif_msg'), desc: t('buyer_notif_msg_desc') },
+    { key: 'promotions', icon: <BellOff size={16} className="text-slate-400" />, label: t('buyer_notif_promo'), desc: t('buyer_notif_promo_desc') },
+    { key: 'weeklyReport', icon: <Mail size={16} className="text-purple-500" />, label: t('buyer_notif_weekly'), desc: t('buyer_notif_weekly_desc') },
   ];
 
   const languages = [
@@ -221,8 +221,8 @@ export function BuyerSettings() {
                 </label>
               </div>
               <div>
-                <div className="text-sm font-bold text-slate-800">Ảnh đại diện</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">JPG, PNG hoặc WEBP. Tối đa 5MB.</div>
+                <div className="text-sm font-bold text-slate-800">{t('buyer_avatar_label')}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">{t('buyer_avatar_desc')}</div>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -238,7 +238,7 @@ export function BuyerSettings() {
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('email_address')}</label>
               <input type="email" value={email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 text-sm outline-none text-slate-500 cursor-not-allowed" />
-              <div className="text-[10px] text-slate-400">Email không thể thay đổi</div>
+              <div className="text-[10px] text-slate-400">{t('buyer_email_readonly')}</div>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>
@@ -256,11 +256,11 @@ export function BuyerSettings() {
 
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-              <Lock size={20} className="text-primary" /> Đổi mật khẩu
+              <Lock size={20} className="text-primary" /> {t('change_password')}
             </h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu hiện tại</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('current_password')}</label>
                 <input 
                   type="password" 
                   value={oldPassword} 
@@ -269,7 +269,7 @@ export function BuyerSettings() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mật khẩu mới</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('new_password')}</label>
                 <input 
                   type="password" 
                   value={newPassword} 
@@ -283,7 +283,7 @@ export function BuyerSettings() {
                 className="bg-slate-900 text-white px-6 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs w-full disabled:opacity-50 flex justify-center items-center gap-2"
               >
                 {isSavingPassword && <Loader2 size={14} className="animate-spin" />}
-                Cập nhật mật khẩu
+                {t('update_password_btn')}
               </button>
             </div>
           </div>
@@ -316,7 +316,7 @@ export function BuyerSettings() {
       </div>
 
       {/* Email & Notification Modal */}
-      <Modal isOpen={isNotifModalOpen} onClose={() => setIsNotifModalOpen(false)} title="Email & Thông báo">
+      <Modal isOpen={isNotifModalOpen} onClose={() => setIsNotifModalOpen(false)} title={t('setting_email_notif')}>
         <div className="space-y-1">
           {notifOptions.map((opt) => (
             <div key={opt.key} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors">
@@ -343,15 +343,15 @@ export function BuyerSettings() {
           ))}
         </div>
         <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
-          <button onClick={() => setIsNotifModalOpen(false)} className="btn-ghost">Hủy</button>
-          <button onClick={handleSaveNotifSettings} className="btn-primary flex items-center gap-2"><Check size={14} /> Lưu cài đặt</button>
+          <button onClick={() => setIsNotifModalOpen(false)} className="btn-ghost">{t('buyer_notif_cancel')}</button>
+          <button onClick={handleSaveNotifSettings} className="btn-primary flex items-center gap-2"><Check size={14} /> {t('buyer_notif_save')}</button>
         </div>
       </Modal>
 
       {/* Language Modal */}
-      <Modal isOpen={isLangModalOpen} onClose={() => setIsLangModalOpen(false)} title="Ngôn ngữ & Khu vực">
+      <Modal isOpen={isLangModalOpen} onClose={() => setIsLangModalOpen(false)} title={t('setting_lang_region')}>
         <div className="space-y-3">
-          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chọn ngôn ngữ hiển thị</label>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('buyer_lang_label')}</label>
           <div className="space-y-2">
             {languages.map((lang) => (
               <div
@@ -374,8 +374,8 @@ export function BuyerSettings() {
           </div>
         </div>
         <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
-          <button onClick={() => setIsLangModalOpen(false)} className="btn-ghost">Hủy</button>
-          <button onClick={handleSaveLang} className="btn-primary flex items-center gap-2"><Languages size={14} /> Áp dụng</button>
+          <button onClick={() => setIsLangModalOpen(false)} className="btn-ghost">{t('buyer_lang_cancel')}</button>
+          <button onClick={handleSaveLang} className="btn-primary flex items-center gap-2"><Languages size={14} /> {t('buyer_lang_apply')}</button>
         </div>
       </Modal>
     </div>

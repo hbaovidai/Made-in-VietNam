@@ -70,7 +70,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
     { icon: <Clock size={20} />, label: t('history', 'Lịch sử duyệt'), path: '/dashboard/buyer/history' },
-    { icon: <MessageSquare size={20} />, label: t('contact'), path: '/dashboard/buyer/messages' },
+    { icon: <MessageSquare size={20} />, label: t('msg_sidebar_label'), path: '/dashboard/buyer/messages' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
@@ -81,18 +81,19 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <QrCode size={20} />, label: t('qr_management'), path: '/dashboard/supplier/qr-management' },
     { icon: <ShieldAlert size={20} />, label: t('anti_counterfeit'), path: '/dashboard/supplier/anti-counterfeit' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/supplier/rfqs' },
+    { icon: <MessageSquare size={20} />, label: t('msg_sidebar_label'), path: '/dashboard/supplier/messages' },
     { icon: <BarChart3 size={20} />, label: t('analytics'), path: '/dashboard/supplier/analytics' },
     { icon: <User size={20} />, label: t('profile'), path: '/dashboard/supplier/profile' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/supplier/settings' },
   ];
 
   const adminLinks = [
-    { icon: <LayoutDashboard size={20} />, label: 'Tổng quan', path: '/dashboard/admin' },
-    { icon: <User size={20} />, label: 'Người dùng', path: '/dashboard/admin/users' },
-    { icon: <ShieldCheck size={20} />, label: 'Duyệt Doanh nghiệp', path: '/dashboard/admin/suppliers' },
-    { icon: <Package size={20} />, label: 'Sản phẩm', path: '/dashboard/admin/products' },
-    { icon: <Archive size={20} />, label: 'Danh mục', path: '/dashboard/admin/categories' },
-    { icon: <MessageSquare size={20} />, label: 'Liên hệ', path: '/dashboard/admin/contacts' },
+    { icon: <LayoutDashboard size={20} />, label: t('admin_menu_overview'), path: '/dashboard/admin' },
+    { icon: <User size={20} />, label: t('admin_menu_users'), path: '/dashboard/admin/users' },
+    { icon: <ShieldCheck size={20} />, label: t('admin_menu_suppliers'), path: '/dashboard/admin/suppliers' },
+    { icon: <Package size={20} />, label: t('admin_menu_products'), path: '/dashboard/admin/products' },
+    { icon: <Archive size={20} />, label: t('admin_menu_categories'), path: '/dashboard/admin/categories' },
+    { icon: <MessageSquare size={20} />, label: t('admin_menu_contacts'), path: '/dashboard/admin/contacts' },
   ];
 
   const links = type === 'admin' ? adminLinks : (type === 'buyer' ? buyerLinks : supplierLinks);
@@ -102,7 +103,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
-    { icon: <MessageSquare size={20} />, label: t('contact'), path: '/dashboard/buyer/messages' },
+    { icon: <MessageSquare size={20} />, label: t('msg_sidebar_label'), path: '/dashboard/buyer/messages' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
 
@@ -152,20 +153,13 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
       </div>
 
       <div className="p-4 lg:p-6 border-t border-slate-100">
+        {/* Go Premium button - hidden for now
         {type !== 'admin' && (
           <div className="bg-slate-900 rounded-2xl p-4 mb-4 lg:mb-6 relative overflow-hidden group cursor-pointer">
-            <div className="absolute top-0 right-0 w-12 h-12 bg-viet-gold/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl group-hover:scale-150 transition-transform" />
-            <div className="flex items-center gap-3 relative z-10">
-              <div className="w-8 h-8 bg-viet-gold rounded-lg flex items-center justify-center text-slate-900">
-                <ShieldCheck size={18} />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-white">{t('go_premium')}</div>
-                <div className="text-[10px] text-slate-400">{t('unlock_all_features')}</div>
-              </div>
-            </div>
+            ...
           </div>
         )}
+        */}
         <button
           onClick={() => logout()}
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"

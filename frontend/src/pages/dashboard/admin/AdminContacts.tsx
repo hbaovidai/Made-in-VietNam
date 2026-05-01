@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
 import { Loader2, Mail, Search } from 'lucide-react';
 
 export function AdminContacts() {
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ export function AdminContacts() {
       const res = await api.get('/contact');
       setContacts(res.data || []);
     } catch (err) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải danh sách liên hệ' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_contacts_load_error') });
     } finally {
       setLoading(false);
     }
@@ -35,8 +37,8 @@ export function AdminContacts() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900">Liên hệ</h1>
-        <p className="text-sm text-slate-500 mt-1">Các form liên hệ từ khách hàng — {contacts.length} tin nhắn</p>
+        <h1 className="text-xl font-bold text-slate-900">{t('admin_contacts_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('admin_contacts_subtitle')} — {contacts.length}</p>
       </div>
 
       {/* Toolbar */}
@@ -44,7 +46,7 @@ export function AdminContacts() {
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
-          placeholder="Tìm theo tên, email, tiêu đề..."
+          placeholder={t('admin_search_placeholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
@@ -86,13 +88,13 @@ export function AdminContacts() {
                     <div className="text-slate-500 text-xs leading-relaxed line-clamp-2">{contact.message}</div>
                   </td>
                   <td className="py-4 pr-1 text-right text-xs text-slate-400 font-medium whitespace-nowrap">
-                    <div>{new Date(contact.createdAt).toLocaleDateString('vi-VN')}</div>
-                    <div className="text-[10px] mt-0.5 opacity-70">{new Date(contact.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div>{new Date(contact.createdAt).toLocaleDateString()}</div>
+                    <div className="text-[10px] mt-0.5 opacity-70">{new Date(contact.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</div>
                   </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={4} className="py-16 text-center text-slate-400 text-sm">Chưa có liên hệ nào</td></tr>
+                <tr><td colSpan={4} className="py-16 text-center text-slate-400 text-sm">{t('admin_no_contacts_found')}</td></tr>
               )}
             </tbody>
           </table>

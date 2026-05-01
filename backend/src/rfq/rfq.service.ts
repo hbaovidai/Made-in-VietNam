@@ -13,6 +13,8 @@ import {
 
 @Injectable()
 export class RfqService {
+  private readonly MAX_QUOTES_PER_RFQ = 10;
+
   constructor(private prisma: PrismaService) {}
 
   // ================= RFQ (For Buyers) =================
@@ -28,7 +30,9 @@ export class RfqService {
         description: dto.description,
         budget: dto.budget,
         destination: dto.destination,
+        contactName: dto.contactName,
         contactEmail: dto.contactEmail,
+        contactPhone: dto.contactPhone,
         expiresAt: new Date(dto.expiresAt),
       },
     });
@@ -47,10 +51,20 @@ export class RfqService {
   // ================= QUOTES (For Suppliers) =================
 
   async submitQuote(supplierId: string, dto: CreateQuoteDto) {
-    const rfq = await this.prisma.rFQ.findUnique({ where: { id: dto.rfqId } });
+    const rfq = await this.prisma.rFQ.findUnique({
+      where: { id: dto.rfqId },
+      include: { _count: { select: { quotes: true } } },
+    });
     if (!rfq) throw new NotFoundException('RFQ không tồn tại');
     if (rfq.status === 'CLOSED' || rfq.status === 'EXPIRED') {
       throw new ForbiddenException('Không thể báo giá cho RFQ này');
+    }
+
+    // Check if max quotes reached
+    if (rfq._count.quotes >= this.MAX_QUOTES_PER_RFQ) {
+      throw new ForbiddenException(
+        `RFQ này đã nhận đủ ${this.MAX_QUOTES_PER_RFQ} báo giá. Không thể gửi thêm.`,
+      );
     }
 
     // Check if supplier already quoted
@@ -71,11 +85,12 @@ export class RfqService {
       },
     });
 
-    // Update RFQ status to QUOTED if it was OPEN
-    if (rfq.status === 'OPEN') {
+    // Auto-close RFQ if max quotes reached after this one
+    const newQuoteCount = rfq._count.quotes + 1;
+    if (newQuoteCount >= this.MAX_QUOTES_PER_RFQ) {
       await this.prisma.rFQ.update({
         where: { id: dto.rfqId },
-        data: { status: 'QUOTED' },
+        data: { status: 'CLOSED' },
       });
     }
 
@@ -86,14 +101,14 @@ export class RfqService {
     const rfq = await this.prisma.rFQ.findUnique({
       where: { id },
       include: {
-        buyer: { select: { fullName: true, email: true, phone: true } },
+        buyer: { select: { id: true, fullName: true, email: true, phone: true } },
         quotes: {
           include: {
             supplier: {
-              select: { companyName: true, logo: true, isVerified: true },
+              select: { id: true, companyName: true, logo: true, isVerified: true, userId: true },
             },
           },
-          orderBy: { price: 'asc' }, // Sort by price by default
+          orderBy: { price: 'asc' },
         },
       },
     });
@@ -101,20 +116,82 @@ export class RfqService {
     return rfq;
   }
 
+  async acceptQuote(quoteId: string, buyerId: string) {
+    const quote = await this.prisma.quote.findUnique({
+      where: { id: quoteId },
+      include: {
+        rfq: true,
+        supplier: { select: { userId: true, companyName: true } },
+      },
+    });
+    if (!quote) throw new NotFoundException('Báo giá không tồn tại');
+    if (quote.rfq.buyerId !== buyerId)
+      throw new ForbiddenException('Bạn không có quyền thực hiện thao tác này');
+
+    // Accept the chosen quote
+    await this.prisma.quote.update({
+      where: { id: quoteId },
+      data: { status: 'ACCEPTED' },
+    });
+
+    // Reject all other quotes for this RFQ
+    await this.prisma.quote.updateMany({
+      where: {
+        rfqId: quote.rfqId,
+        id: { not: quoteId },
+      },
+      data: { status: 'REJECTED' },
+    });
+
+    // Close the RFQ
+    await this.prisma.rFQ.update({
+      where: { id: quote.rfqId },
+      data: { status: 'CLOSED' },
+    });
+
+    return { message: 'Đã chấp nhận báo giá', supplierUserId: quote.supplier.userId };
+  }
+
   // ================= Public/Marketplace =================
 
-  async getOpenRFQs() {
-    return this.prisma.rFQ.findMany({
+  async getOpenRFQs(isVerified = true) {
+    const rfqs = await this.prisma.rFQ.findMany({
       where: {
-        status: { in: ['OPEN', 'QUOTED'] },
+        status: { in: ['OPEN'] },
         expiresAt: { gt: new Date() },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
       include: {
-        buyer: { select: { fullName: true } }, // limited info for privacy
+        buyer: { select: { fullName: true } },
         _count: { select: { quotes: true } },
       },
     });
+
+    // Unverified suppliers only see limited info (title, category, quantity)
+    if (!isVerified) {
+      return rfqs.map((rfq) => ({
+        id: rfq.id,
+        productName: rfq.productName,
+        category: rfq.category,
+        quantity: rfq.quantity,
+        quantityUnit: rfq.quantityUnit,
+        status: rfq.status,
+        expiresAt: rfq.expiresAt,
+        createdAt: rfq.createdAt,
+        _count: rfq._count,
+        // Hidden fields for free users
+        description: null,
+        budget: null,
+        destination: null,
+        contactEmail: null,
+        contactName: null,
+        contactPhone: null,
+        buyer: { fullName: 'Ẩn danh' },
+        _restricted: true,
+      }));
+    }
+
+    return rfqs.map((rfq) => ({ ...rfq, _restricted: false }));
   }
 }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
 import { Loader2, ShieldCheck, ShieldAlert, CheckCircle2, X, Search, Filter, Eye } from 'lucide-react';
 import { ConfirmDialog, Modal } from '../../../components/ui/Modal';
 
 export function AdminSuppliers() {
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,7 @@ export function AdminSuppliers() {
       const res = await api.get('/suppliers?limit=100');
       setSuppliers(Array.isArray(res.data) ? res.data : (res.data.data || []));
     } catch (err) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải danh sách Supplier' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_load_error') });
     } finally {
       setLoading(false);
     }
@@ -37,11 +39,11 @@ export function AdminSuppliers() {
     
     try {
       await api.put(`/suppliers/${supplier.id}/verify`, { isVerified: intent });
-      addToast({ type: 'success', title: 'Thành công', message: intent ? 'Cấp Tick xanh thành công!' : 'Đã thu hồi Tick xanh!' });
+      addToast({ type: 'success', title: t('admin_success'), message: intent ? t('admin_verify_success') : t('admin_revoke_success') });
       setConfirmVerify({ ...confirmVerify, isOpen: false });
       loadSuppliers();
     } catch (error) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Thao tác thất bại' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_action_failed') });
     }
   };
 
@@ -58,7 +60,7 @@ export function AdminSuppliers() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Duyệt Doanh nghiệp</h1>
+          <h1 className="text-xl font-bold text-slate-900">{t('admin_suppliers_title')}</h1>
           <p className="text-sm text-slate-500 mt-1">
             {suppliers.length} doanh nghiệp — 
             {pendingCount > 0 ? (
@@ -76,7 +78,7 @@ export function AdminSuppliers() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Tìm doanh nghiệp..."
+            placeholder={t('admin_search_suppliers')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
@@ -89,9 +91,9 @@ export function AdminSuppliers() {
             onChange={e => setStatusFilter(e.target.value)}
             className="bg-white border border-slate-200 rounded-xl text-sm px-3 py-2.5 outline-none focus:border-primary font-medium text-slate-700"
           >
-            <option value="ALL">Tất cả</option>
-            <option value="PENDING">Chờ duyệt</option>
-            <option value="VERIFIED">Đã duyệt</option>
+            <option value="ALL">{t('admin_all_status')}</option>
+            <option value="PENDING">{t('admin_filter_pending')}</option>
+            <option value="VERIFIED">{t('admin_filter_verified')}</option>
           </select>
         </div>
       </div>
@@ -136,11 +138,11 @@ export function AdminSuppliers() {
                   <td className="py-4">
                     {s.isVerified ? (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600">
-                        <ShieldCheck size={13} /> Đã duyệt
+                        <ShieldCheck size={13} /> {t('admin_verified')}
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600">
-                        <ShieldAlert size={13} /> Chờ duyệt
+                        <ShieldAlert size={13} /> {t('admin_pending')}
                       </span>
                     )}
                   </td>
@@ -183,13 +185,13 @@ export function AdminSuppliers() {
         isOpen={confirmVerify.isOpen}
         onClose={() => setConfirmVerify({ ...confirmVerify, isOpen: false })}
         onConfirm={handleVerifyToggle}
-        title={confirmVerify.intent ? 'Cấp huy hiệu xác minh?' : 'Thu hồi huy hiệu xác minh?'}
+        title={confirmVerify.intent ? t('admin_verify_badge') : t('admin_revoke_badge')}
         message={
           confirmVerify.intent 
-          ? `Bạn có chắc chắn muốn cấp Xác minh cho ${confirmVerify.supplier?.companyName}? Họ sẽ được hiển thị kèm Tick xanh uy tín trên các trang Public.` 
+          ? `Bạn có chắc chắn muốn cấp Xác minh cho ${confirmVerify.supplier?.companyName}?` 
           : `Thu hồi Tick xanh của ${confirmVerify.supplier?.companyName}?`
         }
-        confirmText={confirmVerify.intent ? 'Xác nhận Duyệt' : 'Tiến hành Thu hồi'}
+        confirmText={confirmVerify.intent ? t('admin_verify_confirm') : t('admin_revoke_confirm')}
         variant={confirmVerify.intent ? 'info' : 'danger'}
       />
 

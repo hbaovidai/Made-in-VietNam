@@ -26,7 +26,7 @@ export function BuyerHistory() {
       setHistoryProducts(res.data);
     } catch (error) {
       console.error(error);
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải lịch sử duyệt' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('buyer_update_error') });
     } finally {
       setLoading(false);
     }
@@ -42,11 +42,11 @@ export function BuyerHistory() {
   };
 
   const handleClearHistory = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử?')) return;
+    if (!window.confirm(t('buyer_history_confirm'))) return;
     try {
       await api.delete(`/users/${user?.id}/history`);
       setHistoryProducts([]);
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã xóa toàn bộ lịch sử' });
+      addToast({ type: 'success', title: t('buyer_success'), message: t('buyer_history_cleared') });
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +82,7 @@ export function BuyerHistory() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button onClick={() => handleDeleteItem(product.historyId)} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Xóa">
+              <button onClick={() => handleDeleteItem(product.historyId)} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title={t('buyer_history_delete')}>
                 <Trash2 size={18} />
               </button>
               <Link to={`/products/${product.id}`} className="bg-slate-900 text-white px-6 py-2 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-[10px] shadow-lg shadow-slate-900/20 flex items-center gap-2">

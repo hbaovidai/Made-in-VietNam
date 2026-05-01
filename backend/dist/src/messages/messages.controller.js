@@ -37,6 +37,9 @@ let MessagesController = class MessagesController {
     sendMessage(dto, senderId) {
         return this.messagesService.sendMessage(senderId, dto);
     }
+    deleteConversation(conversationId, userId) {
+        return this.messagesService.deleteConversation(conversationId, userId);
+    }
 };
 exports.MessagesController = MessagesController;
 __decorate([
@@ -76,6 +79,15 @@ __decorate([
     __metadata("design:paramtypes", [message_dto_1.SendMessageDto, String]),
     __metadata("design:returntype", void 0)
 ], MessagesController.prototype, "sendMessage", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)('conversations/:conversationId'),
+    __param(0, (0, common_1.Param)('conversationId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "deleteConversation", null);
 exports.MessagesController = MessagesController = __decorate([
     (0, common_1.Controller)('messages'),
     __metadata("design:paramtypes", [messages_service_1.MessagesService])

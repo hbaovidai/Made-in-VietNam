@@ -134,10 +134,10 @@ export default function App() {
               {/* New Public Routes */}
               <Route path="/reports" element={<Reports />} />
               <Route path="/apps" element={<Apps />} />
-              <Route path="/premium" element={<Membership />} />
+              {/* <Route path="/premium" element={<Membership />} /> */}
               <Route path="/services" element={<TradeAssurance />} />
               <Route path="/services/trade-assurance" element={<TradeAssurance />} />
-              <Route path="/services/membership" element={<Membership />} />
+              {/* <Route path="/services/membership" element={<Membership />} /> */}
               <Route path="/services/secured-trading" element={<SecuredTrading />} />
 
               <Route path="/help" element={<HelpCenter />} />

@@ -132,6 +132,17 @@ let MessagesService = class MessagesService {
             return message;
         });
     }
+    async deleteConversation(conversationId, userId) {
+        const participant = await this.prisma.conversationParticipant.findUnique({
+            where: { conversationId_userId: { conversationId, userId } },
+        });
+        if (!participant)
+            throw new common_1.ForbiddenException('Bạn không nằm trong hội thoại này');
+        await this.prisma.conversation.delete({
+            where: { id: conversationId },
+        });
+        return { message: 'Đã xóa cuộc hội thoại' };
+    }
 };
 exports.MessagesService = MessagesService;
 exports.MessagesService = MessagesService = __decorate([

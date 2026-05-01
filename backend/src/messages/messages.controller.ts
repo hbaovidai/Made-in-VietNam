@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Body,
   Param,
   Query,
@@ -62,5 +63,15 @@ export class MessagesController {
     @CurrentUser('id') senderId: string,
   ) {
     return this.messagesService.sendMessage(senderId, dto);
+  }
+
+  // PROTECTED: Xoá cuộc hội thoại
+  @UseGuards(JwtAuthGuard)
+  @Delete('conversations/:conversationId')
+  deleteConversation(
+    @Param('conversationId') conversationId: string,
+    @CurrentUser('id') userId: string,
+  ) {
+    return this.messagesService.deleteConversation(conversationId, userId);
   }
 }

@@ -8,14 +8,36 @@ export declare class RfqController {
     getOpenRFQs(currentUser: {
         id: string;
         role: string;
-    }): Promise<({
+    }): Promise<{
+        id: string;
+        productName: string;
+        category: string;
+        quantity: number;
+        quantityUnit: string;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        expiresAt: Date;
+        createdAt: Date;
+        _count: {
+            quotes: number;
+        };
+        description: null;
+        budget: null;
+        destination: null;
+        contactEmail: null;
+        contactName: null;
+        contactPhone: null;
+        buyer: {
+            fullName: string;
+        };
+        _restricted: boolean;
+    }[] | {
+        _restricted: boolean;
         _count: {
             quotes: number;
         };
         buyer: {
             fullName: string;
         };
-    } & {
         id: string;
         description: string;
         createdAt: Date;
@@ -27,10 +49,12 @@ export declare class RfqController {
         quantityUnit: string;
         budget: string | null;
         destination: string;
+        contactName: string | null;
         contactEmail: string | null;
+        contactPhone: string | null;
         expiresAt: Date;
         buyerId: string;
-    })[]>;
+    }[]>;
     getBuyerRFQs(buyerId: string, currentUser: {
         id: string;
         role: string;
@@ -50,13 +74,17 @@ export declare class RfqController {
         quantityUnit: string;
         budget: string | null;
         destination: string;
+        contactName: string | null;
         contactEmail: string | null;
+        contactPhone: string | null;
         expiresAt: Date;
         buyerId: string;
     })[]>;
     getRFQDetails(id: string): Promise<{
         quotes: ({
             supplier: {
+                id: string;
+                userId: string;
                 companyName: string;
                 logo: string | null;
                 isVerified: boolean;
@@ -73,6 +101,7 @@ export declare class RfqController {
             leadTime: string;
         })[];
         buyer: {
+            id: string;
             email: string;
             fullName: string;
             phone: string | null;
@@ -89,7 +118,9 @@ export declare class RfqController {
         quantityUnit: string;
         budget: string | null;
         destination: string;
+        contactName: string | null;
         contactEmail: string | null;
+        contactPhone: string | null;
         expiresAt: Date;
         buyerId: string;
     }>;
@@ -105,9 +136,15 @@ export declare class RfqController {
         quantityUnit: string;
         budget: string | null;
         destination: string;
+        contactName: string | null;
         contactEmail: string | null;
+        contactPhone: string | null;
         expiresAt: Date;
         buyerId: string;
+    }>;
+    acceptQuote(quoteId: string, userId: string): Promise<{
+        message: string;
+        supplierUserId: string;
     }>;
     submitQuote(dto: CreateQuoteDto, userId: string): Promise<{
         id: string;

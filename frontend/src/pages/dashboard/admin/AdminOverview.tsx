@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Package, ShieldCheck, MessageSquare, Loader2, TrendingUp, TrendingDown, ArrowUpRight, Building2, Clock, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 import { Link } from 'react-router-dom';
 
 export function AdminOverview() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     totalUsers: 0,
     pendingSuppliers: 0,
@@ -60,12 +62,12 @@ export function AdminOverview() {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins} phút trước`;
+    if (mins < 60) return t('admin_minutes_ago', { count: mins });
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} giờ trước`;
+    if (hours < 24) return t('admin_hours_ago', { count: hours });
     const days = Math.floor(hours / 24);
-    if (days < 30) return `${days} ngày trước`;
-    return new Date(dateStr).toLocaleDateString('vi-VN');
+    if (days < 30) return t('admin_days_ago', { count: days });
+    return new Date(dateStr).toLocaleDateString();
   };
 
   if (loading) {
@@ -78,36 +80,36 @@ export function AdminOverview() {
 
   const kpiCards = [
     {
-      label: 'Tổng người dùng',
+      label: t('admin_total_users'),
       value: stats.totalUsers,
       icon: <Users size={20} />,
       iconBg: 'bg-blue-50 text-blue-600',
-      meta: `${stats.totalSuppliers} nhà cung cấp đã đăng ký`,
+      meta: t('admin_suppliers_registered', { count: stats.totalSuppliers }),
       link: '/dashboard/admin/users',
     },
     {
-      label: 'Chờ xác minh',
+      label: t('admin_pending_verify'),
       value: stats.pendingSuppliers,
       icon: <ShieldCheck size={20} />,
       iconBg: stats.pendingSuppliers > 0 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600',
-      meta: stats.pendingSuppliers > 0 ? 'Cần xử lý ngay' : 'Không có yêu cầu mới',
+      meta: stats.pendingSuppliers > 0 ? t('admin_needs_action') : t('admin_no_new_requests'),
       highlight: stats.pendingSuppliers > 0,
       link: '/dashboard/admin/suppliers',
     },
     {
-      label: 'Tổng sản phẩm',
+      label: t('admin_total_products'),
       value: stats.totalProducts,
       icon: <Package size={20} />,
       iconBg: 'bg-emerald-50 text-emerald-600',
-      meta: 'Sản phẩm đang hoạt động',
+      meta: t('admin_products_active'),
       link: '/dashboard/admin/products',
     },
     {
-      label: 'SP chờ duyệt',
+      label: t('admin_pending_review'),
       value: stats.pendingProducts,
       icon: <Clock size={20} />,
       iconBg: stats.pendingProducts > 0 ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-400',
-      meta: stats.pendingProducts > 0 ? 'Sản phẩm cần kiểm duyệt' : 'Đã duyệt hết',
+      meta: stats.pendingProducts > 0 ? t('admin_products_need_review') : t('admin_all_reviewed'),
       highlight: stats.pendingProducts > 0,
       link: '/dashboard/admin/products',
     },
@@ -149,7 +151,7 @@ export function AdminOverview() {
               <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
             </div>
             <div className="text-3xl font-black text-slate-900 tracking-tight">
-              {card.value.toLocaleString('vi-VN')}
+              {card.value.toLocaleString()}
             </div>
             <div className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">
               {card.label}
@@ -163,16 +165,16 @@ export function AdminOverview() {
 
       {/* ── Row 2: Charts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Chart 1: Doanh nghiệp */}
+        {/* Chart 1: Suppliers */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Doanh nghiệp đăng ký</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Theo tháng trong năm {new Date().getFullYear()}</p>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_suppliers_chart')}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">{t('admin_by_month', { year: new Date().getFullYear() })}</p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
               <TrendingUp size={12} />
-              {stats.totalSuppliers} tổng
+              {stats.totalSuppliers} {t('admin_total_suffix')}
             </div>
           </div>
           <div className="h-48 flex items-end gap-2">
@@ -197,16 +199,16 @@ export function AdminOverview() {
           </div>
         </div>
 
-        {/* Chart 2: Sản phẩm */}
+        {/* Chart 2: Products */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Sản phẩm được đăng</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Theo tháng trong năm {new Date().getFullYear()}</p>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_products_chart')}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">{t('admin_by_month', { year: new Date().getFullYear() })}</p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
               <Package size={12} />
-              {stats.totalProducts} tổng
+              {stats.totalProducts} {t('admin_total_suffix')}
             </div>
           </div>
           <div className="h-48 flex items-end gap-2">
@@ -239,15 +241,15 @@ export function AdminOverview() {
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building2 size={16} className="text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Doanh nghiệp gần đây</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_recent_suppliers')}</h3>
             </div>
             <Link to="/dashboard/admin/suppliers" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              Xem tất cả <ChevronRight size={12} />
+              {t('admin_view_all')} <ChevronRight size={12} />
             </Link>
           </div>
           <div className="divide-y divide-slate-50">
             {recentSuppliers.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-400">Chưa có doanh nghiệp nào</div>
+              <div className="px-6 py-10 text-center text-sm text-slate-400">{t('admin_no_suppliers')}</div>
             ) : (
               recentSuppliers.map((s: any) => (
                 <div key={s.id} className="px-6 py-3.5 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
@@ -260,9 +262,9 @@ export function AdminOverview() {
                   </div>
                   <div>
                     {s.isVerified ? (
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Đã duyệt</span>
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{t('admin_verified')}</span>
                     ) : (
-                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Chờ duyệt</span>
+                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{t('admin_pending')}</span>
                     )}
                   </div>
                 </div>
@@ -276,15 +278,15 @@ export function AdminOverview() {
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageSquare size={16} className="text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Liên hệ mới nhất</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_recent_contacts')}</h3>
             </div>
             <Link to="/dashboard/admin/contacts" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              Xem tất cả <ChevronRight size={12} />
+              {t('admin_view_all')} <ChevronRight size={12} />
             </Link>
           </div>
           <div className="divide-y divide-slate-50">
             {recentContacts.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-400">Chưa có liên hệ nào</div>
+              <div className="px-6 py-10 text-center text-sm text-slate-400">{t('admin_no_contacts')}</div>
             ) : (
               recentContacts.map((c: any, idx: number) => (
                 <div key={c.id || idx} className="px-6 py-3.5 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
@@ -292,7 +294,7 @@ export function AdminOverview() {
                     <MessageSquare size={14} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-slate-800 truncate">{c.name || c.fullName || 'Khách hàng'}</div>
+                    <div className="text-sm font-bold text-slate-800 truncate">{c.name || c.fullName || t('admin_customer')}</div>
                     <div className="text-[11px] text-slate-400 truncate">{c.subject || c.message?.substring(0, 50) || c.email || ''}</div>
                   </div>
                   <div className="text-[10px] text-slate-400 font-medium shrink-0">
@@ -310,16 +312,16 @@ export function AdminOverview() {
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 lg:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
           <div className="relative z-10">
-            <h2 className="text-lg font-bold text-white mb-1">Hành động cần thiết</h2>
+            <h2 className="text-lg font-bold text-white mb-1">{t('admin_action_needed')}</h2>
             <p className="text-sm text-slate-400">
-              Có <span className="text-amber-400 font-bold">{stats.pendingSuppliers}</span> doanh nghiệp đang chờ xác minh. Duyệt sớm để họ tham gia marketplace.
+              {t('admin_action_desc', { count: stats.pendingSuppliers }).replace(/<strong>/g, '').replace(/<\/strong>/g, '')}
             </p>
           </div>
           <Link 
             to="/dashboard/admin/suppliers" 
             className="relative z-10 bg-white text-slate-900 px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-100 transition-colors shrink-0"
           >
-            Duyệt ngay →
+            {t('admin_review_now')}
           </Link>
         </div>
       )}

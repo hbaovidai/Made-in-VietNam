@@ -48,6 +48,7 @@ export declare class AuthController {
                 id: string;
                 companyName: string;
                 slug: string;
+                verificationStatus: string;
                 isVerified: boolean;
             } | null;
             id: string;
@@ -69,6 +70,7 @@ export declare class AuthController {
                 id: string;
                 companyName: string;
                 slug: string;
+                verificationStatus: string;
                 isVerified: boolean;
             } | null;
             id: string;
@@ -92,6 +94,7 @@ export declare class AuthController {
             companyName: string;
             slug: string;
             logo: string | null;
+            verificationStatus: string;
             isVerified: boolean;
         } | null;
         id: string;

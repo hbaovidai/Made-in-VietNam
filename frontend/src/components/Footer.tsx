@@ -49,7 +49,7 @@ export function Footer() {
               <li><Link to="/suppliers" className="hover:text-viet-gold transition-colors">{t('verified_suppliers')}</Link></li>
               <li><Link to="/rfq" className="hover:text-viet-gold transition-colors">{t('request_for_quotation')}</Link></li>
               <li><Link to="/products" className="hover:text-viet-gold transition-colors">{t('all_categories_footer')}</Link></li>
-              <li><Link to="/premium" className="hover:text-viet-gold transition-colors">{t('premium_membership')}</Link></li>
+              {/* <li><Link to="/premium" className="hover:text-viet-gold transition-colors">{t('premium_membership')}</Link></li> */}
             </ul>
           </div>
 

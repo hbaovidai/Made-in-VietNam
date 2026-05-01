@@ -34,7 +34,7 @@ export function SupplierProducts() {
       const res = await api.get('/products/me');
       setProductList(res.data || []);
     } catch (err) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể lấy dữ liệu Sản phẩm' });
+      addToast({ type: 'error', title: t('buyer_error'), message: t('supplier_load_error') });
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export function SupplierProducts() {
 
   const handleCreate = () => {
     if (user?.supplier?.verificationStatus !== 'VERIFIED') {
-      addToast({ type: 'error', title: 'Chưa xác thực', message: 'Bạn phải nộp hồ sơ Xác thực Doanh nghiệp (KYB) và được duyệt mới có thể đăng sản phẩm.' });
+      addToast({ type: 'error', title: t('supplier_unverified_title'), message: t('supplier_unverified_msg') });
       return;
     }
     navigate('/dashboard/supplier/products/add');
@@ -73,10 +73,10 @@ export function SupplierProducts() {
       try {
         await api.delete(`/products/${productToDelete.id}`);
         setProductList((prev) => prev.filter((p) => p.id !== productToDelete.id));
-        addToast({ type: 'success', title: 'Thành công', message: 'Đã xoá sản phẩm' });
+        addToast({ type: 'success', title: t('buyer_success'), message: t('supplier_delete_success') });
         setIsDeleteOpen(false);
       } catch (error) {
-        addToast({ type: 'error', title: 'Lỗi', message: 'Không thể xoá sản phẩm' });
+        addToast({ type: 'error', title: t('buyer_error'), message: t('supplier_delete_error') });
       }
     }
   };
@@ -116,10 +116,10 @@ export function SupplierProducts() {
             onChange={e => setStatusFilter(e.target.value)}
             className="bg-white border border-slate-200 rounded-xl text-sm px-3 py-2.5 outline-none focus:border-primary font-medium text-slate-700"
           >
-            <option value="">Tất cả trạng thái</option>
-            <option value="ACTIVE">Đang bán</option>
-            <option value="PENDING">Chờ duyệt</option>
-            <option value="REJECTED">Vi phạm</option>
+            <option value="">{t('supplier_status_all')}</option>
+            <option value="ACTIVE">{t('supplier_status_active')}</option>
+            <option value="PENDING">{t('supplier_status_pending')}</option>
+            <option value="REJECTED">{t('supplier_status_rejected')}</option>
           </select>
         </div>
       </div>
@@ -130,8 +130,8 @@ export function SupplierProducts() {
       ) : filteredProducts.length === 0 ? (
         <EmptyState 
           icon={<Box size={48} className="text-slate-300" />}
-          title={productList.length === 0 ? t('no_products') : "Không tìm thấy kết quả"}
-          description={productList.length === 0 ? t('no_products_desc') : "Thay đổi từ khóa hoặc bộ lọc để xem sản phẩm."}
+          title={productList.length === 0 ? t('no_products') : t('supplier_no_results')}
+          description={productList.length === 0 ? t('no_products_desc') : t('supplier_no_results_desc')}
           action={productList.length === 0 ? <button className="btn-primary mt-4" onClick={handleCreate}>{t('create_first_product')}</button> : undefined}
         />
       ) : (
@@ -147,9 +147,9 @@ export function SupplierProducts() {
                 <div className="font-semibold text-sm text-slate-900 truncate">{product.name}</div>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <span className="font-bold text-xs text-primary">{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
-                  {product.status === 'PENDING' && <Badge variant="warning">Chờ Duyệt</Badge>}
-                  {product.status === 'ACTIVE' && <Badge variant="success">Đang Bán</Badge>}
-                  {product.status === 'REJECTED' && <Badge variant="danger">Vi Phạm</Badge>}
+                  {product.status === 'PENDING' && <Badge variant="warning">{t('supplier_status_pending')}</Badge>}
+                  {product.status === 'ACTIVE' && <Badge variant="success">{t('supplier_status_active')}</Badge>}
+                  {product.status === 'REJECTED' && <Badge variant="danger">{t('supplier_status_rejected')}</Badge>}
                 </div>
                 <div className="flex items-center gap-1 mt-2">
                   <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handleEdit(product)}><Edit2 size={13} /></button>
@@ -193,19 +193,19 @@ export function SupplierProducts() {
                     <span className="font-semibold text-slate-900">{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
                   </td>
                   <td className="py-4">
-                    {product.status === 'PENDING' && <Badge variant="warning">Chờ Duyệt</Badge>}
-                    {product.status === 'ACTIVE' && <Badge variant="success">Đang Bán</Badge>}
-                    {product.status === 'REJECTED' && <Badge variant="danger">Vi Phạm</Badge>}
+                    {product.status === 'PENDING' && <Badge variant="warning">{t('supplier_status_pending')}</Badge>}
+                    {product.status === 'ACTIVE' && <Badge variant="success">{t('supplier_status_active')}</Badge>}
+                    {product.status === 'REJECTED' && <Badge variant="danger">{t('supplier_status_rejected')}</Badge>}
                   </td>
                   <td className="py-4 pr-1 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handleEdit(product)} title="Sửa">
+                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handleEdit(product)} title={t('supplier_action_edit')}>
                         <Edit2 size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-red-500 transition-colors" onClick={() => handleDeleteClick(product)} title="Xóa">
+                      <button className="p-1.5 text-slate-400 hover:text-red-500 transition-colors" onClick={() => handleDeleteClick(product)} title={t('supplier_action_delete')}>
                         <Trash2 size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handlePreview(product)} title="Xem trước">
+                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handlePreview(product)} title={t('supplier_action_preview')}>
                         <Eye size={14} />
                       </button>
                     </div>

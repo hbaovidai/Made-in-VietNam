@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
 import { Loader2, User as UserIcon, Lock, Unlock, Search, Filter } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminUsers() {
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,7 @@ export function AdminUsers() {
       const res = await api.get('/users?limit=100');
       setUsers(res.data.data || []);
     } catch (err) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải người dùng' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_load_error') });
     } finally {
       setLoading(false);
     }
@@ -38,21 +40,21 @@ export function AdminUsers() {
       await api.put(`/users/${user.id}/status`, { status: intent });
       addToast({
         type: 'success',
-        title: 'Thành công',
-        message: intent === 'SUSPENDED' ? `Đã khóa tài khoản ${user.fullName}` : `Đã mở khóa tài khoản ${user.fullName}`
+        title: t('admin_success'),
+        message: intent === 'SUSPENDED' ? t('admin_locked_msg', { name: user.fullName }) : t('admin_unlocked_msg', { name: user.fullName })
       });
       setConfirmLock({ ...confirmLock, isOpen: false });
       loadUsers();
     } catch (error) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Thao tác thất bại' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_action_failed') });
     }
   };
 
   const getRoleBadge = (role: string) => {
     switch(role) {
       case 'ADMIN': return <Badge variant="warning">ADMIN</Badge>;
-      case 'SUPPLIER': return <Badge variant="success">DOANH NGHIỆP</Badge>;
-      default: return <Badge variant="default">NGƯỜI MUA</Badge>;
+      case 'SUPPLIER': return <Badge variant="success">{t('admin_role_supplier')}</Badge>;
+      default: return <Badge variant="default">{t('admin_role_buyer')}</Badge>;
     }
   };
 
@@ -68,8 +70,8 @@ export function AdminUsers() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900">Quản lý Người dùng</h1>
-        <p className="text-sm text-slate-500 mt-1">Toàn bộ tài khoản đã đăng ký trên hệ thống — {users.length} người dùng</p>
+        <h1 className="text-xl font-bold text-slate-900">{t('admin_users_title')}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t('admin_all_users_desc', { count: users.length })}</p>
       </div>
 
       {/* Toolbar */}
@@ -78,7 +80,7 @@ export function AdminUsers() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Tìm theo tên hoặc email..."
+            placeholder={t('admin_search_placeholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
@@ -91,10 +93,10 @@ export function AdminUsers() {
             onChange={e => setRoleFilter(e.target.value)}
             className="bg-white border border-slate-200 rounded-xl text-sm px-3 py-2.5 outline-none focus:border-primary font-medium text-slate-700"
           >
-            <option value="ALL">Tất cả vai trò</option>
-            <option value="ADMIN">Admin</option>
-            <option value="SUPPLIER">Doanh nghiệp</option>
-            <option value="BUYER">Người mua</option>
+            <option value="ALL">{t('admin_all_roles')}</option>
+            <option value="ADMIN">{t('admin_role_admin')}</option>
+            <option value="SUPPLIER">{t('admin_role_supplier')}</option>
+            <option value="BUYER">{t('admin_role_buyer')}</option>
           </select>
         </div>
       </div>
@@ -107,11 +109,11 @@ export function AdminUsers() {
           <table className="w-full text-left min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
-                <th className="pb-3 pl-1">Thông tin</th>
-                <th className="pb-3">Vai trò</th>
-                <th className="pb-3">Trạng thái</th>
-                <th className="pb-3">Ngày tham gia</th>
-                <th className="pb-3 pr-1 text-right">Thao tác</th>
+                <th className="pb-3 pl-1">{t('admin_info')}</th>
+                <th className="pb-3">{t('admin_role')}</th>
+                <th className="pb-3">{t('admin_status')}</th>
+                <th className="pb-3">{t('admin_joined')}</th>
+                <th className="pb-3 pr-1 text-right">{t('admin_action')}</th>
               </tr>
             </thead>
             <tbody className="text-sm">
@@ -123,7 +125,7 @@ export function AdminUsers() {
                         {user.fullName ? user.fullName[0].toUpperCase() : <UserIcon size={14} />}
                       </div>
                       <div>
-                        <div className="font-semibold text-slate-900">{user.fullName || 'Chưa thiết lập'}</div>
+                        <div className="font-semibold text-slate-900">{user.fullName || t('admin_not_set')}</div>
                         <div className="text-xs text-slate-400 mt-0.5">{user.email}</div>
                       </div>
                     </div>
@@ -133,17 +135,17 @@ export function AdminUsers() {
                     {(user.status || 'ACTIVE') === 'ACTIVE' ? (
                       <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        Hoạt động
+                        {t('admin_status_active')}
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-500">
                         <Lock size={11} />
-                        Bị khóa
+                        {t('admin_status_locked')}
                       </span>
                     )}
                   </td>
                   <td className="py-4 text-slate-400 text-xs font-medium">
-                    {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                    {new Date(user.createdAt).toLocaleDateString()}
                   </td>
                   <td className="py-4 pr-1 text-right">
                     {user.role !== 'ADMIN' && (
@@ -152,14 +154,14 @@ export function AdminUsers() {
                           onClick={() => setConfirmLock({ isOpen: true, user, intent: 'SUSPENDED' })}
                           className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center gap-1"
                         >
-                          <Lock size={12} /> Khóa
+                          <Lock size={12} /> {t('admin_lock')}
                         </button>
                       ) : (
                         <button
                           onClick={() => setConfirmLock({ isOpen: true, user, intent: 'ACTIVE' })}
                           className="text-xs font-bold text-primary hover:text-primary-dark transition-colors inline-flex items-center gap-1"
                         >
-                          <Unlock size={12} /> Mở khóa
+                          <Unlock size={12} /> {t('admin_unlock')}
                         </button>
                       )
                     )}
@@ -167,7 +169,7 @@ export function AdminUsers() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">Không tìm thấy người dùng nào</td></tr>
+                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">{t('admin_no_users_found')}</td></tr>
               )}
             </tbody>
           </table>
@@ -178,13 +180,13 @@ export function AdminUsers() {
         isOpen={confirmLock.isOpen}
         onClose={() => setConfirmLock({ ...confirmLock, isOpen: false })}
         onConfirm={handleToggleStatus}
-        title={confirmLock.intent === 'SUSPENDED' ? 'Khóa tài khoản?' : 'Mở khóa tài khoản?'}
+        title={confirmLock.intent === 'SUSPENDED' ? t('admin_lock_account') : t('admin_unlock_account')}
         message={
           confirmLock.intent === 'SUSPENDED'
-            ? `Tài khoản "${confirmLock.user?.fullName}" (${confirmLock.user?.email}) sẽ bị khóa và không thể đăng nhập.`
-            : `Mở khóa tài khoản "${confirmLock.user?.fullName}" (${confirmLock.user?.email})?`
+            ? t('admin_lock_msg', { name: confirmLock.user?.fullName, email: confirmLock.user?.email })
+            : t('admin_unlock_msg', { name: confirmLock.user?.fullName, email: confirmLock.user?.email })
         }
-        confirmText={confirmLock.intent === 'SUSPENDED' ? 'Khóa tài khoản' : 'Mở khóa'}
+        confirmText={confirmLock.intent === 'SUSPENDED' ? t('admin_lock_btn') : t('admin_unlock_btn')}
         variant={confirmLock.intent === 'SUSPENDED' ? 'danger' : 'info'}
       />
     </div>

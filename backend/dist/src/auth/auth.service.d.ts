@@ -54,6 +54,7 @@ export declare class AuthService {
                 id: string;
                 companyName: string;
                 slug: string;
+                verificationStatus: string;
                 isVerified: boolean;
             } | null;
             id: string;
@@ -80,6 +81,7 @@ export declare class AuthService {
                 id: string;
                 companyName: string;
                 slug: string;
+                verificationStatus: string;
                 isVerified: boolean;
             } | null;
             id: string;
@@ -100,6 +102,7 @@ export declare class AuthService {
             companyName: string;
             slug: string;
             logo: string | null;
+            verificationStatus: string;
             isVerified: boolean;
         } | null;
         id: string;

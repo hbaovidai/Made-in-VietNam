@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
 import { Loader2, Plus, Edit2, Trash2, FolderTree, Search } from 'lucide-react';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminCategories() {
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ export function AdminCategories() {
       const res = await api.get('/categories');
       setCategories(res.data || []);
     } catch (err) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải danh sách danh mục' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_load_error') });
     } finally {
       setLoading(false);
     }
@@ -37,12 +39,12 @@ export function AdminCategories() {
     if (!newName.trim()) return;
     try {
       await api.post('/categories', { name: newName });
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã tạo danh mục' });
+      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_created') });
       setNewName('');
       setIsAdding(false);
       loadCategories();
     } catch (error) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tạo danh mục' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_cat_create_error') });
     }
   };
 
@@ -50,11 +52,11 @@ export function AdminCategories() {
     if (!isEditing.name.trim()) return;
     try {
       await api.put(`/categories/${id}`, { name: isEditing.name });
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật danh mục' });
+      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_updated') });
       setIsEditing({ id: null, name: '' });
       loadCategories();
     } catch (error) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật danh mục' });
+      addToast({ type: 'error', title: t('admin_error'), message: t('admin_cat_update_error') });
     }
   };
 
@@ -62,12 +64,12 @@ export function AdminCategories() {
     if (!confirmDelete.category) return;
     try {
       await api.delete(`/categories/${confirmDelete.category.id}`);
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã xóa danh mục' });
+      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_deleted') });
       setConfirmDelete({ isOpen: false, category: null });
       loadCategories();
     } catch (error: any) {
-      const msg = error?.response?.data?.message || error?.message || 'Không thể xóa danh mục';
-      addToast({ type: 'error', title: 'Thất bại', message: msg });
+      const msg = error?.response?.data?.message || error?.message || t('admin_cat_delete_error');
+      addToast({ type: 'error', title: t('admin_cat_failed'), message: msg });
       setConfirmDelete({ isOpen: false, category: null });
     }
   };
@@ -79,8 +81,8 @@ export function AdminCategories() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Danh mục</h1>
-          <p className="text-sm text-slate-500 mt-1">Quản lý danh mục ngành hàng — {categories.length} danh mục</p>
+          <h1 className="text-xl font-bold text-slate-900">{t('admin_categories_title')}</h1>
+          <p className="text-sm text-slate-500 mt-1">{t('admin_categories_subtitle')} — {categories.length}</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)} 
