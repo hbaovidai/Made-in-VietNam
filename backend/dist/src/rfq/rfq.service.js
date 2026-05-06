@@ -12,14 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RfqService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 let RfqService = class RfqService {
     prisma;
+    notificationsService;
     MAX_QUOTES_PER_RFQ = 10;
-    constructor(prisma) {
+    constructor(prisma, notificationsService) {
         this.prisma = prisma;
+        this.notificationsService = notificationsService;
     }
     async createRFQ(buyerId, dto) {
-        return this.prisma.rFQ.create({
+        const rfq = await this.prisma.rFQ.create({
             data: {
                 buyerId,
                 productName: dto.productName,
@@ -35,6 +38,27 @@ let RfqService = class RfqService {
                 expiresAt: new Date(dto.expiresAt),
             },
         });
+        try {
+            const verifiedSuppliers = await this.prisma.supplier.findMany({
+                where: { verificationStatus: 'VERIFIED' },
+                select: { userId: true },
+            });
+            if (verifiedSuppliers.length > 0) {
+                await this.prisma.notification.createMany({
+                    data: verifiedSuppliers.map(s => ({
+                        userId: s.userId,
+                        title: 'New RFQ Available',
+                        message: `A buyer is looking for "${dto.productName}" (${dto.quantity} ${dto.quantityUnit}). Submit your quote now!`,
+                        type: 'info',
+                        link: `/dashboard/supplier/rfqs`,
+                    })),
+                });
+            }
+        }
+        catch (err) {
+            console.error('Failed to notify suppliers about new RFQ:', err);
+        }
+        return rfq;
     }
     async getBuyerRFQs(buyerId) {
         return this.prisma.rFQ.findMany({
@@ -79,6 +103,22 @@ let RfqService = class RfqService {
                 where: { id: dto.rfqId },
                 data: { status: 'CLOSED' },
             });
+        }
+        try {
+            const supplier = await this.prisma.supplier.findUnique({
+                where: { id: supplierId },
+                select: { companyName: true },
+            });
+            await this.notificationsService.createNotification({
+                userId: rfq.buyerId,
+                title: 'New Quote Received',
+                message: `${supplier?.companyName || 'A supplier'} submitted a quote for your RFQ "${rfq.productName}".`,
+                type: 'success',
+                link: `/dashboard/buyer/rfqs`,
+            });
+        }
+        catch (err) {
+            console.error('Failed to notify buyer about new quote:', err);
         }
         return quote;
     }
@@ -128,6 +168,18 @@ let RfqService = class RfqService {
             where: { id: quote.rfqId },
             data: { status: 'CLOSED' },
         });
+        try {
+            await this.notificationsService.createNotification({
+                userId: quote.supplier.userId,
+                title: 'Quote Accepted!',
+                message: `Your quote for RFQ "${quote.rfq.productName}" has been accepted by the buyer. Contact them to finalize the deal.`,
+                type: 'success',
+                link: `/dashboard/supplier/rfqs`,
+            });
+        }
+        catch (err) {
+            console.error('Failed to notify supplier about accepted quote:', err);
+        }
         return { message: 'Đã chấp nhận báo giá', supplierUserId: quote.supplier.userId };
     }
     async getOpenRFQs(isVerified = true) {
@@ -170,6 +222,7 @@ let RfqService = class RfqService {
 exports.RfqService = RfqService;
 exports.RfqService = RfqService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        notifications_service_1.NotificationsService])
 ], RfqService);
 //# sourceMappingURL=rfq.service.js.map

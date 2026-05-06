@@ -534,7 +534,7 @@ export function Header() {
                       {user.fullName}
                     </Link>
                     <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-xs font-medium text-red-500 hover:text-red-700 text-left">
-                      Đăng xuất
+                      {t('mobile_logout')}
                     </button>
                   </div>
                 ) : (

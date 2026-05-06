@@ -62,7 +62,7 @@ export function RFQ() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || user.role !== 'BUYER') {
-      setErrorMsg('Bạn phải đăng nhập tài khoản Buyer mới có thể đăng RFQ.');
+      setErrorMsg(t('rfq_buyer_only'));
       return;
     }
     
@@ -81,7 +81,7 @@ export function RFQ() {
       setSubmitted(true);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.');
+      setErrorMsg(err.response?.data?.message || t('rfq_generic_error'));
     } finally {
       setLoading(false);
     }
@@ -122,7 +122,7 @@ export function RFQ() {
         
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
           <div className="max-w-3xl space-y-4 flex flex-col items-center">
-            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
               {t('rfq_title')}
             </h1>
             <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
@@ -140,7 +140,7 @@ export function RFQ() {
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                     <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">A</div>
-                    <h2 className="text-xl font-bold text-slate-900">Thông tin sản phẩm</h2>
+                    <h2 className="text-xl font-bold text-slate-900">{t('rfq_section_product_info')}</h2>
                   </div>
                   {errorMsg && (
                     <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-bold border border-red-100 flex items-center justify-center">
@@ -149,7 +149,7 @@ export function RFQ() {
                   )}
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Tên sản phẩm *</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_product_name')}</label>
                       <input 
                         type="text"
                         required
@@ -157,7 +157,7 @@ export function RFQ() {
                         name="productName"
                         value={formData.productName}
                         onChange={handleChange}
-                        placeholder="VD: Áo thun cotton nam... (Hoặc chọn từ danh sách)"
+                        placeholder={t('rfq_placeholder_product_name')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                       <datalist id="product-suggestions">
@@ -171,21 +171,21 @@ export function RFQ() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Danh mục</label>
+                        <label className="text-sm font-bold text-slate-700">{t('rfq_label_category')}</label>
                         <select
                           name="category"
                           value={formData.category}
                           onChange={handleChange}
                           className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                         >
-                          <option value="General">-- Chọn danh mục --</option>
+                          <option value="General">{t('rfq_placeholder_category')}</option>
                           {Array.from(new Set(products.map(p => p.category?.name).filter(Boolean))).map((catName: any) => (
                              <option key={catName} value={catName}>{catName}</option>
                           ))}
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Số lượng & Đơn vị *</label>
+                        <label className="text-sm font-bold text-slate-700">{t('rfq_label_quantity_unit')}</label>
                         <div className="flex gap-2">
                           <input
                             required
@@ -194,7 +194,7 @@ export function RFQ() {
                             onChange={handleChange}
                             type="number"
                             min="1"
-                            placeholder="Nhập số lượng..."
+                            placeholder={t('rfq_placeholder_quantity')}
                             className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                           />
                           <select 
@@ -203,11 +203,11 @@ export function RFQ() {
                             onChange={handleChange}
                             className="w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                           >
-                            <option value="pieces">Cái / Chiếc</option>
-                            <option value="kg">Kg</option>
-                            <option value="tons">Tấn</option>
-                            <option value="meters">Mét</option>
-                            <option value="sets">Bộ</option>
+                            <option value="pieces">{t('rfq_unit_pieces')}</option>
+                            <option value="kg">{t('rfq_unit_kg')}</option>
+                            <option value="tons">{t('rfq_unit_tons')}</option>
+                            <option value="meters">{t('rfq_unit_meters')}</option>
+                            <option value="sets">{t('rfq_unit_sets')}</option>
                           </select>
                         </div>
                       </div>
@@ -219,17 +219,17 @@ export function RFQ() {
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                     <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">B</div>
-                    <h2 className="text-xl font-bold text-slate-900">Yêu cầu kỹ thuật</h2>
+                    <h2 className="text-xl font-bold text-slate-900">{t('rfq_section_tech_requirements')}</h2>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700">Mô tả chi tiết *</label>
+                    <label className="text-sm font-bold text-slate-700">{t('rfq_label_description')}</label>
                     <textarea
                       required
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
                       rows={6}
-                      placeholder="Ghi rõ các yêu cầu về Chất liệu, Kích thước, Màu sắc, Tiêu chuẩn chất lượng, hoặc Quy cách đóng gói bạn mong muốn..."
+                      placeholder={t('rfq_placeholder_description')}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none leading-relaxed"
                     />
                   </div>
@@ -239,29 +239,29 @@ export function RFQ() {
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                     <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">C</div>
-                    <h2 className="text-xl font-bold text-slate-900">Yêu cầu thương mại</h2>
+                    <h2 className="text-xl font-bold text-slate-900">{t('rfq_section_commercial')}</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Khoảng giá mục tiêu / Ngân sách</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_budget')}</label>
                       <input
                         type="text"
                         name="budget"
                         value={formData.budget}
                         onChange={handleChange}
-                        placeholder="VD: 50.000 - 80.000 VNĐ/cái"
+                        placeholder={t('rfq_placeholder_budget')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Địa điểm giao hàng *</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_destination')}</label>
                       <input
                         required
                         type="text"
                         name="destination"
                         value={formData.destination}
                         onChange={handleChange}
-                        placeholder="VD: Cảng Cát Lái, HCM"
+                        placeholder={t('rfq_placeholder_destination')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
@@ -272,40 +272,40 @@ export function RFQ() {
                 <section className="space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                     <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold">D</div>
-                    <h2 className="text-xl font-bold text-slate-900">Thông tin liên hệ</h2>
+                    <h2 className="text-xl font-bold text-slate-900">{t('rfq_section_contact')}</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Tên người liên hệ</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_contact_name')}</label>
                       <input
                         type="text"
                         name="contactName"
                         value={formData.contactName}
                         onChange={handleChange}
-                        placeholder="Họ và tên..."
+                        placeholder={t('rfq_placeholder_contact_name')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Số điện thoại</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_phone')}</label>
                       <input
                         type="text"
                         name="contactPhone"
                         value={formData.contactPhone}
                         onChange={handleChange}
-                        placeholder="VD: 0987..."
+                        placeholder={t('rfq_placeholder_phone')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-bold text-slate-700">Email nhận báo giá *</label>
+                      <label className="text-sm font-bold text-slate-700">{t('rfq_label_email')}</label>
                       <input
                         required
                         type="email"
                         name="contactEmail"
                         value={formData.contactEmail}
                         onChange={handleChange}
-                        placeholder="VD: buyer@example.com"
+                        placeholder={t('rfq_placeholder_email')}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       />
                     </div>

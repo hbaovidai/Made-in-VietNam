@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
+import compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Compression: Nén response giảm ~70-80% bandwidth
+  app.use(compression());
 
   // Security: Ẩn thông tin server, chống XSS, clickjacking
   // crossOriginResourcePolicy: 'cross-origin' cho phép frontend (port khác) tải ảnh từ /uploads

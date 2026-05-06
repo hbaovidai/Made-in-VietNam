@@ -56,9 +56,9 @@ export function ProductListing() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <SEOHead
-        title={categoryFilter ? `${categoryFilter} - Sản phẩm` : 'Tất cả Sản phẩm'}
-        description={`Khám phá sản phẩm${categoryFilter ? ` ${categoryFilter}` : ''} chất lượng từ nhà cung cấp Việt Nam đã xác minh trên VIEProduct. Giá sỉ tốt, MOQ linh hoạt.`}
-        keywords={`sản phẩm Việt Nam, mua sỉ B2B, ${categoryFilter || 'xuất khẩu'}, nhà cung cấp`}
+        title={categoryFilter ? t('seo_products_title_category', { category: categoryFilter }) : t('seo_products_title_all')}
+        description={categoryFilter ? t('seo_products_desc', { category: categoryFilter }) : t('seo_products_desc_all')}
+        keywords={t('seo_products_keywords', { category: categoryFilter || 'export' })}
         canonical="/products"
       />
       {/* Premium Header */}
@@ -79,13 +79,13 @@ export function ProductListing() {
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-4xl space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
                 {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('all_products')}
               </h1>
             </div>
             
             <div className="flex bg-slate-50/80 rounded-lg items-center px-4 py-2 shrink-0 border border-slate-100">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-3">Sort by</span>
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-3">{t('sort_by')}</span>
                <select 
                  className="bg-transparent text-sm font-bold text-[#1E293B] outline-none appearance-none pr-6 cursor-pointer"
                  value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : 'popular'}
@@ -106,9 +106,9 @@ export function ProductListing() {
                    setSearchParams(newParams);
                  }}
                >
-                 <option value="popular">Popular</option>
-                 <option value="price-asc">Price: Low to High</option>
-                 <option value="price-desc">Price: High to Low</option>
+                 <option value="popular">{t('sort_popular')}</option>
+                 <option value="price-asc">{t('sort_price_low_high')}</option>
+                 <option value="price-desc">{t('sort_price_high_low')}</option>
                </select>
                <div className="pointer-events-none -ml-4">
                  <ChevronDown size={14} className="text-slate-500" />

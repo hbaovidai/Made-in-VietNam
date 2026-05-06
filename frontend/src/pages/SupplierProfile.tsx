@@ -66,9 +66,9 @@ export function SupplierProfile() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <SEOHead
-        title={`${supplier.companyName || supplier.name} - Nhà cung cấp`}
-        description={supplier.description?.substring(0, 160) || `${supplier.companyName || supplier.name} - Nhà cung cấp, nhà sản xuất đã xác minh tại Việt Nam trên VIEProduct.`}
-        keywords={`${supplier.companyName || ''}, nhà cung cấp Việt Nam, nhà sản xuất, xuất khẩu`}
+        title={t('seo_supplier_title', { name: supplier.companyName || supplier.name })}
+        description={supplier.description?.substring(0, 160) || t('seo_supplier_desc', { name: supplier.companyName || supplier.name })}
+        keywords={t('seo_supplier_keywords', { name: supplier.companyName || '' })}
         ogImage={supplier.logo}
         canonical={`/suppliers/${supplier.id}`}
         ogType="profile"
@@ -134,7 +134,7 @@ export function SupplierProfile() {
               <button 
                 onClick={() => {
                   if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập để trao đổi trực tiếp với nhà cung cấp.');
+                    setAuthModalMessage(t('auth_login_chat'));
                     setIsAuthModalOpen(true);
                   } else {
                     window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
@@ -148,7 +148,7 @@ export function SupplierProfile() {
               <button 
                 onClick={() => {
                   if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
+                    setAuthModalMessage(t('auth_login_rfq'));
                     setIsAuthModalOpen(true);
                   } else {
                     navigate('/rfq');
@@ -225,13 +225,13 @@ export function SupplierProfile() {
 
             {/* Production Capacity */}
             <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900">Năng lực sản xuất</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t('production_capacity')}</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                  { label: 'Diện tích nhà xưởng', value: supplier.factoryArea || '5,000 m²', icon: '🏭' },
-                  { label: 'Dây chuyền sản xuất', value: supplier.productionLines || '3 dây chuyền', icon: '⚙️' },
-                  { label: 'Sản lượng / tháng', value: supplier.monthlyCapacity || '10,000 đơn vị', icon: '📦' },
-                  { label: 'Kiểm soát chất lượng', value: supplier.qcStaff || 'Đội QC 5 người', icon: '✅' },
+                  { label: t('factory_area_label'), value: supplier.factoryArea || '5,000 m²', icon: '🏭' },
+                  { label: t('production_lines_label'), value: supplier.productionLines || '3', icon: '⚙️' },
+                  { label: t('monthly_output_label'), value: supplier.monthlyCapacity || '10,000', icon: '📦' },
+                  { label: t('quality_control_label'), value: supplier.qcStaff || 'QC Team', icon: '✅' },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center p-4 bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-xl border border-slate-100">
                     <span className="text-3xl block mb-2">{stat.icon}</span>
@@ -245,11 +245,11 @@ export function SupplierProfile() {
             {/* Factory Gallery */}
             {(supplier.galleryImages?.length > 0) && (
               <section className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
-                <h2 className="text-2xl font-bold text-slate-900">Hình ảnh nhà xưởng</h2>
+                <h2 className="text-2xl font-bold text-slate-900">{t('factory_gallery')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {supplier.galleryImages.map((img: string, i: number) => (
                     <div key={i} className="aspect-video rounded-xl overflow-hidden border border-slate-100 group">
-                      <img src={img} alt={`Nhà xưởng ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={img} alt={t('factory_image_alt', { num: i + 1 })} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                   ))}
                 </div>
@@ -283,7 +283,7 @@ export function SupplierProfile() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-slate-900">{cert.name || cert}</div>
-                        {cert.issuedBy && <div className="text-xs text-slate-500">Cấp bởi: {cert.issuedBy}</div>}
+                        {cert.issuedBy && <div className="text-xs text-slate-500">{t('issued_by')} {cert.issuedBy}</div>}
                         {cert.documentUrl && (
                           <a
                             href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
@@ -291,7 +291,7 @@ export function SupplierProfile() {
                             rel="noopener noreferrer"
                             className="text-xs text-primary font-bold hover:underline mt-0.5 inline-block"
                           >
-                            📄 Xem chứng nhận
+                            📄 {t('view_certificate')}
                           </a>
                         )}
                       </div>

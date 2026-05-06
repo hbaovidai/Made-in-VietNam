@@ -65,7 +65,7 @@ export function SellerGuide() {
           <div className="flex-1 space-y-8">
             <h2 className="text-4xl lg:text-5xl font-black text-slate-900 uppercase tracking-tighter leading-none">
               {t('why_sell_on')} <br className="hidden lg:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">VIEProduct</span>?
+              <span className="text-primary">VIEProduct</span>?
             </h2>
             <p className="text-slate-500 text-xl font-light leading-relaxed max-w-2xl">
               {t('why_sell_on_desc')}
@@ -81,7 +81,7 @@ export function SellerGuide() {
               ))}
             </div>
             <div className="pt-8">
-              <Link to="/register" className="bg-gradient-to-r from-primary to-blue-600 text-white px-12 py-5 rounded-2xl font-black hover:shadow-2xl hover:shadow-primary/40 transition-all uppercase tracking-widest text-sm inline-block transform hover:-translate-y-1">
+              <Link to="/register" className="bg-primary text-white px-12 py-5 rounded-2xl font-black hover:shadow-2xl hover:shadow-primary/40 transition-all uppercase tracking-widest text-sm inline-block transform hover:-translate-y-1">
                 {t('join_as_supplier_now')}
               </Link>
             </div>

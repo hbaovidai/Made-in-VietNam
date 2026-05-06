@@ -52,7 +52,7 @@ export function PageHeader({ title, description, breadcrumbs, className }: PageH
 
         {/* Hero Content */}
         <div className="max-w-3xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
             {title}
           </h1>
           {description && (

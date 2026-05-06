@@ -1,7 +1,9 @@
 export declare class UploadsController {
-    uploadFile(file: Express.Multer.File): {
+    private supabase;
+    constructor();
+    uploadFile(file: Express.Multer.File): Promise<{
         url: string;
         filename: string;
         size: number;
-    };
+    }>;
 }

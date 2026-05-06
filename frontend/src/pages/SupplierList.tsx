@@ -47,9 +47,9 @@ export function SupplierList() {
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <SEOHead
-        title="Nhà cung cấp Việt Nam"
-        description="Danh sách nhà cung cấp, nhà sản xuất Việt Nam đã xác minh trên VIEProduct. Tìm đối tác cung cấp sỉ uy tín cho mọi ngành hàng."
-        keywords="nhà cung cấp Việt Nam, nhà sản xuất, xuất khẩu, B2B, đối tác thương mại"
+        title={t('seo_suppliers_title')}
+        description={t('seo_suppliers_desc')}
+        keywords={t('seo_suppliers_keywords')}
         canonical="/suppliers"
       />
       {/* Header Section */}
@@ -67,9 +67,9 @@ export function SupplierList() {
           </nav>
 
           <div className="max-w-4xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
-            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
               <Trans i18nKey="find_verified_manufacturers">
-                Find <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-viet-gold">Verified</span> Vietnamese Manufacturers
+                Find <span className="text-primary">Verified</span> Vietnamese Manufacturers
               </Trans>
             </h1>
             <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">

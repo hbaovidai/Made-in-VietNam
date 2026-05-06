@@ -18,11 +18,11 @@ export function HelpCenter() {
   ];
 
   const faqs = [
-    { q: "Làm cách nào để xác minh uy tín của một nhà sản xuất?", a: "Hãy tìm huy hiệu 'Đã Xác thực' (Verified) trên hồ sơ nhà sản xuất. Điều này chứng tỏ họ đã cung cấp chứng nhận kinh doanh và được hệ thống xác minh. Bạn có thể xem chứng nhận trực tiếp trên trang hồ sơ nhà cung cấp." },
-    { q: "Yêu cầu Báo giá (RFQ) là gì và làm thế nào để sử dụng?", a: "RFQ (Request for Quotation) cho phép bạn đăng yêu cầu mua hàng để các nhà cung cấp báo giá cạnh tranh. Truy cập trang RFQ, nhập thông tin sản phẩm cần mua, số lượng và thời hạn giao hàng." },
-    { q: "Làm sao để quét mã QR kiểm tra hàng thật?", a: "Truy cập trang Xác minh (/verify), nhập mã code trên sản phẩm hoặc quét QR bằng camera. Hệ thống sẽ hiển thị thông tin sản phẩm, lô sản xuất, hạn sử dụng và cảnh báo nếu mã bị quét bất thường." },
-    { q: "Có phí đăng ký tài khoản không?", a: "Không, VIEProduct hoàn toàn miễn phí cho cả Người mua và Nhà cung cấp. Bạn có thể đăng ký bằng email hoặc đăng nhập nhanh bằng Google." },
-    { q: "Sản phẩm mới đăng có hiển thị ngay không?", a: "Không, sản phẩm mới sẽ ở trạng thái 'Chờ duyệt'. Admin sẽ xét duyệt và phê duyệt trong thời gian sớm nhất. Sau khi được duyệt, sản phẩm sẽ hiển thị công khai trên trang sản phẩm." },
+    { q: t('faq_q1'), a: t('faq_a1') },
+    { q: t('faq_q2'), a: t('faq_a2') },
+    { q: t('faq_q3'), a: t('faq_a3') },
+    { q: t('faq_q4'), a: t('faq_a4') },
+    { q: t('faq_q5'), a: t('faq_a5') },
   ];
 
   return (
@@ -43,7 +43,7 @@ export function HelpCenter() {
           </nav>
 
           <div className="max-w-4xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
-            <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-primary to-blue-600 leading-tight tracking-tight drop-shadow-sm pb-1">
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
               {t('help_center_question')}
             </h1>
             <p className="text-slate-500 text-base md:text-lg leading-relaxed max-w-2xl font-medium mt-2">
@@ -63,7 +63,7 @@ export function HelpCenter() {
             
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500 uppercase font-bold tracking-widest mt-4">
               <span>{t('keywords')}</span>
-              {['QR', 'RFQ', 'Sản phẩm', 'Tài khoản'].map(kw => (
+              {[t('help_keywords_products'), t('help_keywords_account')].map(kw => (
                 <span key={kw} onClick={() => setSearchTerm(kw)} className="hover:text-primary cursor-pointer transition-colors">{kw}</span>
               ))}
             </div>
@@ -225,11 +225,11 @@ export function HelpCenter() {
         />
         <div className="relative z-20 text-center">
           <h2 className="text-2xl md:text-4xl font-black text-white italic mb-6">
-            Kết nối Việt Nam tới Thế Giới
+            {t('help_bridging_title')}
           </h2>
           <div className="w-16 h-1 bg-viet-gold mx-auto mb-6" />
           <p className="text-slate-300 text-xs md:text-sm uppercase tracking-widest font-medium">
-            Cửa ngõ điện tử hàng đầu cho các quan hệ đối tác sản xuất chuẩn mực.
+            {t('help_bridging_desc')}
           </p>
         </div>
       </div>

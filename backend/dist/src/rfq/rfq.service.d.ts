@@ -1,9 +1,11 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRFQDto, CreateQuoteDto } from './dto/rfq.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 export declare class RfqService {
     private prisma;
+    private notificationsService;
     private readonly MAX_QUOTES_PER_RFQ;
-    constructor(prisma: PrismaService);
+    constructor(prisma: PrismaService, notificationsService: NotificationsService);
     createRFQ(buyerId: string, dto: CreateRFQDto): Promise<{
         id: string;
         description: string;

@@ -283,12 +283,31 @@ export class ProductsService {
   async verifyProduct(productId: string, status: 'ACTIVE' | 'REJECTED') {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
+      include: { supplier: { select: { userId: true, companyName: true } } },
     });
     if (!product) throw new NotFoundException('Sản phẩm không tồn tại');
 
-    return this.prisma.product.update({
+    const updated = await this.prisma.product.update({
       where: { id: productId },
       data: { status },
     });
+
+    // Notify the supplier about product approval/rejection
+    try {
+      const isApproved = status === 'ACTIVE';
+      await this.notificationsService.createNotification({
+        userId: product.supplier.userId,
+        title: isApproved ? 'Product Approved' : 'Product Rejected',
+        message: isApproved
+          ? `Your product "${product.name}" has been approved and is now live on the marketplace.`
+          : `Your product "${product.name}" has been rejected by admin. Please review and resubmit.`,
+        type: isApproved ? 'success' : 'warning',
+        link: '/dashboard/supplier/products',
+      });
+    } catch (err) {
+      console.error('Failed to notify supplier about product verification:', err);
+    }
+
+    return updated;
   }
 }

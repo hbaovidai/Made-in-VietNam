@@ -10,17 +10,21 @@ import {
   UpdateRFQStatusDto,
   UpdateQuoteStatusDto,
 } from './dto/rfq.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class RfqService {
   private readonly MAX_QUOTES_PER_RFQ = 10;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   // ================= RFQ (For Buyers) =================
 
   async createRFQ(buyerId: string, dto: CreateRFQDto) {
-    return this.prisma.rFQ.create({
+    const rfq = await this.prisma.rFQ.create({
       data: {
         buyerId,
         productName: dto.productName,
@@ -36,6 +40,29 @@ export class RfqService {
         expiresAt: new Date(dto.expiresAt),
       },
     });
+
+    // Notify all verified suppliers about the new RFQ
+    try {
+      const verifiedSuppliers = await this.prisma.supplier.findMany({
+        where: { verificationStatus: 'VERIFIED' },
+        select: { userId: true },
+      });
+      if (verifiedSuppliers.length > 0) {
+        await this.prisma.notification.createMany({
+          data: verifiedSuppliers.map(s => ({
+            userId: s.userId,
+            title: 'New RFQ Available',
+            message: `A buyer is looking for "${dto.productName}" (${dto.quantity} ${dto.quantityUnit}). Submit your quote now!`,
+            type: 'info',
+            link: `/dashboard/supplier/rfqs`,
+          })),
+        });
+      }
+    } catch (err) {
+      console.error('Failed to notify suppliers about new RFQ:', err);
+    }
+
+    return rfq;
   }
 
   async getBuyerRFQs(buyerId: string) {
@@ -94,6 +121,23 @@ export class RfqService {
       });
     }
 
+    // Notify the buyer that a new quote was received
+    try {
+      const supplier = await this.prisma.supplier.findUnique({
+        where: { id: supplierId },
+        select: { companyName: true },
+      });
+      await this.notificationsService.createNotification({
+        userId: rfq.buyerId,
+        title: 'New Quote Received',
+        message: `${supplier?.companyName || 'A supplier'} submitted a quote for your RFQ "${rfq.productName}".`,
+        type: 'success',
+        link: `/dashboard/buyer/rfqs`,
+      });
+    } catch (err) {
+      console.error('Failed to notify buyer about new quote:', err);
+    }
+
     return quote;
   }
 
@@ -148,6 +192,19 @@ export class RfqService {
       where: { id: quote.rfqId },
       data: { status: 'CLOSED' },
     });
+
+    // Notify the winning supplier
+    try {
+      await this.notificationsService.createNotification({
+        userId: quote.supplier.userId,
+        title: 'Quote Accepted!',
+        message: `Your quote for RFQ "${quote.rfq.productName}" has been accepted by the buyer. Contact them to finalize the deal.`,
+        type: 'success',
+        link: `/dashboard/supplier/rfqs`,
+      });
+    } catch (err) {
+      console.error('Failed to notify supplier about accepted quote:', err);
+    }
 
     return { message: 'Đã chấp nhận báo giá', supplierUserId: quote.supplier.userId };
   }

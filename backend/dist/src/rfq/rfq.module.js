@@ -10,11 +10,13 @@ exports.RfqModule = void 0;
 const common_1 = require("@nestjs/common");
 const rfq_controller_1 = require("./rfq.controller");
 const rfq_service_1 = require("./rfq.service");
+const notifications_module_1 = require("../notifications/notifications.module");
 let RfqModule = class RfqModule {
 };
 exports.RfqModule = RfqModule;
 exports.RfqModule = RfqModule = __decorate([
     (0, common_1.Module)({
+        imports: [notifications_module_1.NotificationsModule],
         controllers: [rfq_controller_1.RfqController],
         providers: [rfq_service_1.RfqService],
         exports: [rfq_service_1.RfqService],

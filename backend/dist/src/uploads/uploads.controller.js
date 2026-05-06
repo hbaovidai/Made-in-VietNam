@@ -19,13 +19,8 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const multer_1 = require("multer");
 const path_1 = require("path");
 const crypto_1 = require("crypto");
-const storage = (0, multer_1.diskStorage)({
-    destination: (0, path_1.join)(process.cwd(), 'uploads'),
-    filename: (_req, file, cb) => {
-        const uniqueName = `${(0, crypto_1.randomUUID)()}${(0, path_1.extname)(file.originalname)}`;
-        cb(null, uniqueName);
-    },
-});
+const supabase_js_1 = require("@supabase/supabase-js");
+const storage = (0, multer_1.memoryStorage)();
 const imageFileFilter = (_req, file, cb) => {
     if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
         return cb(new common_1.BadRequestException('Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF)'), false);
@@ -33,15 +28,40 @@ const imageFileFilter = (_req, file, cb) => {
     cb(null, true);
 };
 let UploadsController = class UploadsController {
-    uploadFile(file) {
+    supabase;
+    constructor() {
+        this.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL || '', process.env.SUPABASE_SERVICE_KEY || '');
+    }
+    async uploadFile(file) {
         if (!file) {
             throw new common_1.BadRequestException('Vui lòng chọn file ảnh để tải lên');
         }
-        return {
-            url: `/uploads/${file.filename}`,
-            filename: file.filename,
-            size: file.size,
-        };
+        const uniqueName = `${(0, crypto_1.randomUUID)()}${(0, path_1.extname)(file.originalname)}`;
+        try {
+            const { data, error } = await this.supabase.storage
+                .from('uploads')
+                .upload(uniqueName, file.buffer, {
+                contentType: file.mimetype,
+                cacheControl: '3600',
+                upsert: false,
+            });
+            if (error) {
+                console.error('Supabase upload error:', error);
+                throw new common_1.InternalServerErrorException('Lỗi tải ảnh lên cloud');
+            }
+            const { data: publicUrlData } = this.supabase.storage
+                .from('uploads')
+                .getPublicUrl(uniqueName);
+            return {
+                url: publicUrlData.publicUrl,
+                filename: uniqueName,
+                size: file.size,
+            };
+        }
+        catch (err) {
+            console.error('Upload failed:', err);
+            throw new common_1.InternalServerErrorException('Lỗi hệ thống khi tải ảnh');
+        }
     }
 };
 exports.UploadsController = UploadsController;
@@ -56,9 +76,10 @@ __decorate([
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UploadsController.prototype, "uploadFile", null);
 exports.UploadsController = UploadsController = __decorate([
-    (0, common_1.Controller)('uploads')
+    (0, common_1.Controller)('uploads'),
+    __metadata("design:paramtypes", [])
 ], UploadsController);
 //# sourceMappingURL=uploads.controller.js.map

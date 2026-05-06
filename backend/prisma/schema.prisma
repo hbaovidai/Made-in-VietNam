@@ -132,6 +132,10 @@ model Supplier {
   batches        Batch[]
   quotes         Quote[]
 
+  // Indexes for fast queries
+  @@index([isVerified])                // Verified suppliers filter
+  @@index([verificationStatus])        // Admin verification filter
+  @@index([companyName])               // Search by company name
   @@map("suppliers")
 }
 
@@ -218,6 +222,12 @@ model Product {
   savedBy      SavedProduct[]
   viewedBy     ViewHistory[]
 
+  // Indexes for fast queries
+  @@index([status, createdAt])       // Product listing (filter active + sort by date)
+  @@index([categoryId, status])      // Category page filter
+  @@index([supplierId, status])      // Supplier's product page
+  @@index([name])                    // Search by product name
+  @@index([minPrice])                // Sort by price
   @@map("products")
 }
 
@@ -245,6 +255,9 @@ model RFQ {
   buyer  User    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   quotes Quote[]
 
+  // Indexes for fast queries
+  @@index([status, expiresAt])         // Open RFQs marketplace listing
+  @@index([buyerId, createdAt])        // Buyer's RFQ history
   @@map("rfqs")
 }
 
@@ -410,6 +423,7 @@ model SavedProduct {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+  @@index([userId])                    // User's saved products page
   @@map("saved_products")
 }
 
@@ -424,6 +438,7 @@ model ViewHistory {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  @@index([userId, viewedAt])          // User's browsing history
   @@map("view_history")
 }
 
