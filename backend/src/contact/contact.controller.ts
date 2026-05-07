@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Delete, Param, UseGuards } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -28,5 +28,21 @@ export class ContactController {
   @Get()
   async findAll() {
     return this.contactService.findAll();
+  }
+
+  // PROTECTED: Đánh dấu đã đọc / chưa đọc
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Patch(':id/read')
+  async markAsRead(@Param('id') id: string, @Body() body: { isRead: boolean }) {
+    return this.contactService.markAsRead(id, body.isRead);
+  }
+
+  // PROTECTED: Xóa liên hệ
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.contactService.delete(id);
   }
 }

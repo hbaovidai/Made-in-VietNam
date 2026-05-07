@@ -130,14 +130,35 @@ export function SupplierProfile() {
     }
   };
 
-  const handleLogoUpload = () => {
-    addToast({ type: 'info', title: t('upload_logo_title'), message: t('upload_logo_success') });
-  };
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
+    setUploading(true);
+    try {
+      // 1. Upload ảnh
+      const formData = new FormData();
+      formData.append('file', file);
+      const uploadRes = await api.post('/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const logoUrl = uploadRes.data.url;
+
+      // 2. Cập nhật hồ sơ
+      const res = await api.put(`/suppliers/${supplierId}`, { logo: logoUrl });
+      setSupplier(res.data);
+      
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật logo doanh nghiệp' });
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật logo' });
+    } finally {
+      setUploading(false);
+    }
+  };
   const handleDeleteCert = async (certId: string) => {
     try {
       await api.delete(`/suppliers/${supplierId}/certifications/${certId}`);
-      setCertifications(certifications.filter(c => c.id !== certId));
+      setCertifications(certifications.filter((c: any) => c.id !== certId));
       addToast({ type: 'success', title: t('delete_cert_title'), message: t('delete_cert_success') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể xóa chứng nhận' });
@@ -355,19 +376,22 @@ export function SupplierProfile() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="relative group">
-            <div className="w-20 h-20 sm:w-28 sm:h-28 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden relative">
+              {uploading && (
+                <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+                  <Loader2 className="animate-spin text-primary" size={24} />
+                </div>
+              )}
               {supplier?.logo ? (
                 <img src={supplier.logo} alt="Company Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
               ) : (
                 <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
               )}
             </div>
-            <button 
-              onClick={handleLogoUpload}
-              className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors"
-            >
+            <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors cursor-pointer">
               <Camera size={16} />
-            </button>
+              <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
+            </label>
           </div>
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-3">

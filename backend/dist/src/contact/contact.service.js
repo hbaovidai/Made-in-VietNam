@@ -25,6 +25,17 @@ let ContactService = class ContactService {
             orderBy: { createdAt: 'desc' },
         });
     }
+    async markAsRead(id, isRead) {
+        return this.prisma.contactSubmission.update({
+            where: { id },
+            data: { isRead },
+        });
+    }
+    async delete(id) {
+        return this.prisma.contactSubmission.delete({
+            where: { id },
+        });
+    }
 };
 exports.ContactService = ContactService;
 exports.ContactService = ContactService = __decorate([

@@ -19,4 +19,17 @@ export class ContactService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  async markAsRead(id: string, isRead: boolean) {
+    return this.prisma.contactSubmission.update({
+      where: { id },
+      data: { isRead },
+    });
+  }
+
+  async delete(id: string) {
+    return this.prisma.contactSubmission.delete({
+      where: { id },
+    });
+  }
 }

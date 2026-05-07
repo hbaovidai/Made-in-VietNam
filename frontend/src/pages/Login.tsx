@@ -62,12 +62,17 @@ export function Login() {
       const res = await api.post('/auth/login', { email, password });
       loginUser(res.data.user, res.data.token);
       
-      const mappedRole = res.data.user.role === 'BUYER' ? t('login_as_buyer') : t('login_as_supplier');
-      addToast({ type: 'success', title: t('success') || 'Thành công', message: mappedRole });
+      const role = res.data.user.role;
+      const roleMessages: Record<string, string> = {
+        BUYER: t('login_as_buyer'),
+        SUPPLIER: t('login_as_supplier'),
+        ADMIN: 'Đăng nhập với vai trò Quản trị viên',
+      };
+      addToast({ type: 'success', title: t('success') || 'Thành công', message: roleMessages[role] || 'Đăng nhập thành công' });
       
       let from = (location.state as any)?.from?.pathname;
-      if (!from || (res.data.user.role === 'SUPPLIER' && from.startsWith('/dashboard/buyer')) || (res.data.user.role === 'BUYER' && from.startsWith('/dashboard/supplier'))) {
-        from = res.data.user.role === 'BUYER' ? '/' : `/dashboard/${res.data.user.role.toLowerCase()}`;
+      if (!from || (role === 'SUPPLIER' && from.startsWith('/dashboard/buyer')) || (role === 'BUYER' && from.startsWith('/dashboard/supplier'))) {
+        from = role === 'BUYER' ? '/' : `/dashboard/${role.toLowerCase()}`;
       }
       navigate(from);
     } catch (err: any) {
