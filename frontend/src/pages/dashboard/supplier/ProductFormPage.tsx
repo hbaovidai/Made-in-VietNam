@@ -31,6 +31,7 @@ export function ProductFormPage() {
     moqUnit: 'cái',
     categoryId: '',
     images: [''] as string[],
+    rfqMinQuantity: '',
   });
 
   // Load danh mục từ DB
@@ -58,6 +59,7 @@ export function ProductFormPage() {
           moqUnit: p.moqUnit || 'cái',
           categoryId: p.categoryId || '',
           images: p.images?.length ? p.images : [''],
+          rfqMinQuantity: p.rfqMinQuantity ? String(p.rfqMinQuantity) : '',
         });
       }).catch(() => {
         addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải thông tin sản phẩm' });
@@ -125,6 +127,7 @@ export function ProductFormPage() {
       moqUnit: formData.unit, // Use same unit
       categoryId: formData.categoryId,
       images: formData.images.filter(url => url.trim() !== ''),
+      rfqMinQuantity: formData.rfqMinQuantity ? Number(formData.rfqMinQuantity) : null,
     };
 
     try {
@@ -244,10 +247,26 @@ export function ProductFormPage() {
                 required
                 min="1"
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
-                placeholder="Ví dụ: 100"
+                placeholder="Ví dụ: 1"
                 value={formData.moq}
                 onChange={e => handleChange('moq', e.target.value)}
               />
+            </div>
+          </div>
+
+          {/* Ngưỡng báo giá */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">Ngưỡng báo giá (đơn hàng lớn)</label>
+              <input 
+                type="number" 
+                min="1"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+                placeholder="Ví dụ: 100 (để trống nếu không cần)"
+                value={formData.rfqMinQuantity}
+                onChange={e => handleChange('rfqMinQuantity', e.target.value)}
+              />
+              <p className="text-xs text-slate-400">Khi người mua đặt số lượng ≥ ngưỡng này, hệ thống sẽ yêu cầu gửi báo giá thay vì mua trực tiếp. Để trống nếu không áp dụng.</p>
             </div>
           </div>
 

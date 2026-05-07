@@ -55,6 +55,11 @@ export class CreateProductDto {
   @IsString({ each: true })
   @IsOptional()
   images?: string[];
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  rfqMinQuantity?: number;
 }
 
 export class UpdateProductDto {
@@ -104,6 +109,11 @@ export class UpdateProductDto {
   @IsEnum(ProductStatus)
   @IsOptional()
   status?: ProductStatus;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  rfqMinQuantity?: number;
 }
 
 export class ProductQueryDto {

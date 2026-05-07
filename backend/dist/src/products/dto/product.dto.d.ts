@@ -10,6 +10,7 @@ export declare class CreateProductDto {
     moqUnit: string;
     categoryId: string;
     images?: string[];
+    rfqMinQuantity?: number;
 }
 export declare class UpdateProductDto {
     name?: string;
@@ -22,6 +23,7 @@ export declare class UpdateProductDto {
     categoryId?: string;
     images?: string[];
     status?: ProductStatus;
+    rfqMinQuantity?: number;
 }
 export declare class ProductQueryDto {
     search?: string;

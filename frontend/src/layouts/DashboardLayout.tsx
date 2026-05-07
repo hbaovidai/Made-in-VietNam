@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock } from 'lucide-react';
+import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../contexts/AuthContext';
@@ -67,6 +67,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
 
   const buyerLinks = [
     { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
+    { icon: <ShoppingBag size={20} />, label: t('my_orders', 'Đơn mua'), path: '/dashboard/buyer/orders' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
     { icon: <Clock size={20} />, label: t('history', 'Lịch sử duyệt'), path: '/dashboard/buyer/history' },
@@ -80,6 +81,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <Archive size={20} />, label: t('batch_management'), path: '/dashboard/supplier/batches' },
     { icon: <QrCode size={20} />, label: t('qr_management'), path: '/dashboard/supplier/qr-management' },
     { icon: <ShieldAlert size={20} />, label: t('anti_counterfeit'), path: '/dashboard/supplier/anti-counterfeit' },
+    { icon: <ShoppingBag size={20} />, label: t('retail_orders', 'Đơn hàng lẻ'), path: '/dashboard/supplier/orders' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/supplier/rfqs' },
     { icon: <MessageSquare size={20} />, label: t('msg_sidebar_label'), path: '/dashboard/supplier/messages' },
     { icon: <BarChart3 size={20} />, label: t('analytics'), path: '/dashboard/supplier/analytics' },

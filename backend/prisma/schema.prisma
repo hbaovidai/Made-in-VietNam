@@ -60,6 +60,27 @@ enum QRStatus {
   EXPIRED
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentMethod {
+  COD
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
 enum MessageType {
   TEXT
   IMAGE
@@ -84,13 +105,15 @@ model User {
   // Relations
   supplier      Supplier?
   rfqs          RFQ[]
-  inquiryBasket InquiryBasket?
+
   sentMessages  Message[]                  @relation("MessageSender")
   conversations ConversationParticipant[]
   savedProducts SavedProduct[]
   viewHistory   ViewHistory[]
   notifications Notification[]
   subscriptions UserSubscription[]
+  cart          Cart?
+  buyerOrders   Order[]                    @relation("BuyerOrders")
 
   @@map("users")
 }
@@ -131,6 +154,7 @@ model Supplier {
   markets        SupplierMarket[]
   batches        Batch[]
   quotes         Quote[]
+  orders         Order[]
 
   // Indexes for fast queries
   @@index([isVerified])                // Verified suppliers filter
@@ -211,6 +235,7 @@ model Product {
   rating      Float         @default(0)
   reviewCount Int           @default(0) @map("review_count")
   viewCount   Int           @default(0) @map("view_count")
+  rfqMinQuantity Int?       @map("rfq_min_quantity") // Ngưỡng số lượng để chuyển sang báo giá
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
@@ -218,9 +243,11 @@ model Product {
   supplier     Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   category     Category      @relation(fields: [categoryId], references: [id])
   batches      Batch[]
-  inquiryItems InquiryItem[]
+
   savedBy      SavedProduct[]
   viewedBy     ViewHistory[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
 
   // Indexes for fast queries
   @@index([status, createdAt])       // Product listing (filter active + sort by date)
@@ -381,35 +408,7 @@ model ScanEvent {
   @@map("scan_events")
 }
 
-// ==================== INQUIRY BASKET ====================
 
-model InquiryBasket {
-  id        String   @id @default(uuid())
-  userId    String   @unique @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items InquiryItem[]
-
-  @@map("inquiry_baskets")
-}
-
-model InquiryItem {
-  id        String   @id @default(uuid())
-  basketId  String   @map("basket_id")
-  productId String   @map("product_id")
-  quantity  Int
-  note      String?
-  addedAt   DateTime @default(now()) @map("added_at")
-
-  // Relations
-  basket  InquiryBasket @relation(fields: [basketId], references: [id], onDelete: Cascade)
-  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@map("inquiry_items")
-}
 
 // ==================== SAVED PRODUCTS ====================
 
@@ -518,4 +517,78 @@ model Report {
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("reports")
+}
+
+// ==================== CART ====================
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique @map("user_id")
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String   @map("cart_id")
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+// ==================== ORDERS ====================
+
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique @map("order_number")
+  buyerId         String        @map("buyer_id")
+  buyer           User          @relation("BuyerOrders", fields: [buyerId], references: [id])
+  supplierId      String        @map("supplier_id")
+  supplier        Supplier      @relation(fields: [supplierId], references: [id])
+
+  recipientName   String        @map("recipient_name")
+  recipientPhone  String        @map("recipient_phone")
+  shippingAddress String        @map("shipping_address")
+  note            String?
+
+  paymentMethod   PaymentMethod @default(COD) @map("payment_method")
+  paymentStatus   PaymentStatus @default(UNPAID) @map("payment_status")
+
+  subtotal        Float         @default(0)
+  shippingFee     Float         @default(0) @map("shipping_fee")
+  totalAmount     Float         @default(0) @map("total_amount")
+
+  status          OrderStatus   @default(PENDING)
+
+  items           OrderItem[]
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@index([buyerId, status])
+  @@index([supplierId, status])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String  @id @default(uuid())
+  orderId      String  @map("order_id")
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String  @map("product_id")
+  product      Product @relation(fields: [productId], references: [id])
+  productName  String  @map("product_name")
+  productImage String? @map("product_image")
+  unitPrice    Float   @map("unit_price")
+  quantity     Int
+  totalPrice   Float   @map("total_price")
+
+  @@map("order_items")
 }

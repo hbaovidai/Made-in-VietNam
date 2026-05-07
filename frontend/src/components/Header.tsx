@@ -44,7 +44,7 @@ export function Header() {
       api.get(`/notifications/unread-count`)
         .then(res => setUnreadCount(res.data?.count || 0))
         .catch(() => {});
-      api.get(`/inquiry-basket/${user.id}`)
+      api.get(`/cart`)
         .then(res => setCartCount(res.data?.items?.length || 0))
         .catch(() => {});
     }
@@ -188,7 +188,7 @@ export function Header() {
         { icon: <Package size={18} />, label: t('products'), href: "/products" },
         { icon: <User size={18} />, label: t('suppliers'), href: "/suppliers" },
         { icon: <Menu size={18} />, label: t('all_categories'), href: "/products" },
-        { icon: <ShoppingCart size={18} />, label: t('inquiry_basket'), href: "/inquiry-basket" },
+        { icon: <ShoppingCart size={18} />, label: t('inquiry_basket', 'Giỏ hàng'), href: "/cart" },
       ]
     },
     {
@@ -350,7 +350,7 @@ export function Header() {
                 </div>
               )}
 
-              <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket')}>
+              <Link to="/cart" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket', 'Giỏ hàng')}>
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">{cartCount}</span>
@@ -406,7 +406,7 @@ export function Header() {
               <Search size={22} />
             </button>
             {/* Cart icon */}
-            <Link to="/inquiry-basket" className="p-2 text-slate-600 hover:text-primary transition-colors relative">
+            <Link to="/cart" className="p-2 text-slate-600 hover:text-primary transition-colors relative">
               <ShoppingCart size={22} />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>

@@ -80,6 +80,7 @@ export declare class SuppliersController {
             rating: number;
             reviewCount: number;
             viewCount: number;
+            rfqMinQuantity: number | null;
             supplierId: string;
             categoryId: string;
         })[];
@@ -238,6 +239,7 @@ export declare class SuppliersController {
             rating: number;
             reviewCount: number;
             viewCount: number;
+            rfqMinQuantity: number | null;
             supplierId: string;
             categoryId: string;
         })[];

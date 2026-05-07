@@ -27,6 +27,7 @@ export function ProductDetail() {
   
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState('');
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
   const { addToast } = useToast();
 
@@ -54,20 +55,37 @@ export function ProductDetail() {
 
   const handleAddToInquiry = async () => {
     if (!user) {
-      setAuthModalMessage('Vui lòng đăng nhập để thêm vào giỏ yêu cầu.');
+      setAuthModalMessage('Vui lòng đăng nhập để gửi Yêu cầu Báo giá.');
       setIsAuthModalOpen(true);
       return;
     }
+
+    if (product.rfqMinQuantity && quantity < product.rfqMinQuantity) {
+      addToast({ type: 'warning', title: 'Lưu ý', message: `Yêu cầu số lượng đạt tối thiểu ${product.rfqMinQuantity} ${product.unit} để sử dụng tính năng Báo giá.` });
+      return;
+    }
     
+    // Chuyển đến trang RFQ với thông tin sản phẩm
+    navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}&quantity=${quantity}`);
+  };
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      setAuthModalMessage('Vui lòng đăng nhập để thêm vào giỏ hàng.');
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (product.rfqMinQuantity && quantity >= product.rfqMinQuantity) {
+      addToast({ type: 'warning', title: 'Lưu ý', message: `Số lượng đơn hàng lớn (>= ${product.rfqMinQuantity}), vui lòng sử dụng tính năng Yêu cầu Báo giá.` });
+      return;
+    }
+
     try {
-      await api.post('/inquiry-basket', { 
-        productId: product.id, 
-        quantity 
-      });
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào giỏ yêu cầu' });
+      await api.post('/cart/items', { productId: product.id, quantity });
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào giỏ hàng' });
     } catch (e) {
-      console.error(e);
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm vào giỏ yêu cầu. Vui lòng kiểm tra lại quyền.' });
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm vào giỏ hàng' });
     }
   };
 
@@ -78,7 +96,7 @@ export function ProductDetail() {
         const prodRes = await api.get(`/products/${id}`);
         const p = prodRes.data;
         setProduct(p);
-        setQuantity(p.moq || 1);
+        setQuantity(1);
 
         if (p.supplierId) {
           try {
@@ -142,7 +160,7 @@ export function ProductDetail() {
   const tier1Price = product.maxPrice;
   const tier2Price = product.price || ((product.minPrice + product.maxPrice) / 2).toFixed(2);
   const tier3Price = product.minPrice;
-  const moqBaseline = product.moq || 500;
+  const moqBaseline = 1;
 
   return (
     <div className="bg-white min-h-screen pb-20">
@@ -266,13 +284,6 @@ export function ProductDetail() {
                   <div className="text-sm text-slate-500 font-bold mb-1">/ {product.unit || 'cái'}</div>
                 </div>
               </div>
-              <div className="h-12 w-px bg-slate-200 hidden md:block"></div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Yêu cầu tối thiểu (MOQ)</div>
-                <div className="text-xl font-bold text-slate-800">
-                  {moqBaseline} {product.unit || 'cái'}
-                </div>
-              </div>
             </div>
 
             {/* Product Description */}
@@ -311,52 +322,69 @@ export function ProductDetail() {
                 <span className="text-sm text-slate-500 font-medium">({product.unit || 'cái'})</span>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button 
-                  onClick={handleAddToInquiry}
-                  className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-4 font-bold hover:bg-amber-600 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
-                >
-                  <ShoppingBag size={16} /> Thêm vào Giỏ Yêu cầu
-                </button>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button 
+                    onClick={handleAddToCart}
+                    className="w-full flex items-center justify-center gap-2 bg-white border-2 border-emerald-600 text-emerald-600 py-3.5 font-bold hover:bg-emerald-50 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                  >
+                    <ShoppingCart size={16} /> Thêm vào giỏ
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      if (!user) {
+                        setAuthModalMessage('Vui lòng đăng nhập để mua hàng.');
+                        setIsAuthModalOpen(true);
+                        return;
+                      }
+                      if (product.rfqMinQuantity && quantity >= product.rfqMinQuantity) {
+                        addToast({ type: 'warning', title: 'Lưu ý', message: `Số lượng đơn hàng lớn (>= ${product.rfqMinQuantity}), vui lòng sử dụng tính năng Yêu cầu Báo giá.` });
+                        return;
+                      }
+                      try {
+                        // Mua ngay = Xóa giỏ hàng cũ -> Thêm sản phẩm này -> Vào checkout
+                        await api.delete('/cart');
+                        await api.post('/cart/items', { productId: product.id, quantity });
+                        navigate('/checkout');
+                      } catch (e) {
+                        addToast({ type: 'error', title: 'Lỗi', message: 'Có lỗi xảy ra khi xử lý đơn hàng' });
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 font-bold hover:bg-emerald-700 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                  >
+                    Mua Ngay
+                  </button>
+                </div>
                 <button 
                   onClick={() => {
                     if (!user) {
                       setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
                       setIsAuthModalOpen(true);
-                    } else {
-                      navigate(`/rfq?product=${product.id}&qty=${quantity}`);
+                      return;
                     }
+                    if (product.rfqMinQuantity && quantity < product.rfqMinQuantity) {
+                      addToast({ type: 'warning', title: 'Lưu ý', message: `Yêu cầu số lượng đạt tối thiểu ${product.rfqMinQuantity} ${product.unit} để gửi Báo giá.` });
+                      return;
+                    }
+                    navigate(`/rfq?product=${product.id}&qty=${quantity}`);
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
                 >
-                  Request Quote <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  Yêu cầu Báo giá <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
               </div>
               <button 
                 onClick={() => {
                   if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập để trao đổi trực tiếp với nhà cung cấp.');
+                    setAuthModalMessage('Vui lòng đăng nhập để liên hệ với nhà cung cấp.');
                     setIsAuthModalOpen(true);
                   } else {
-                    window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-[#0068FF] text-white py-4 font-bold hover:bg-[#0055DD] transition-colors uppercase tracking-widest text-xs rounded-lg"
-              >
-                Liên hệ qua Zalo <MessageSquare size={14} />
-              </button>
-              <button 
-                onClick={() => {
-                  if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập để gửi email cho nhà cung cấp.');
-                    setIsAuthModalOpen(true);
-                  } else {
-                    window.location.href = `mailto:${supplier?.email || ''}`;
+                    setIsContactModalOpen(true);
                   }
                 }}
                 className="w-full flex items-center justify-center gap-2 bg-white border border-[#021833] text-[#021833] py-4 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs rounded-lg"
               >
-                Gửi Email <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Liên hệ Nhà cung cấp <MessageSquare size={14} />
               </button>
             </div>
 
@@ -477,6 +505,49 @@ export function ProductDetail() {
         onClose={() => setIsAuthModalOpen(false)} 
         message={authModalMessage} 
       />
+
+      {/* Contact Modal */}
+      {isContactModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 text-center space-y-2">
+              <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Liên hệ Nhà cung cấp</h3>
+              <p className="text-sm text-slate-500">Chọn phương thức bạn muốn sử dụng để trao đổi với nhà cung cấp.</p>
+            </div>
+            <div className="p-4 space-y-3 bg-slate-50 border-t border-slate-100">
+              <button 
+                onClick={() => {
+                  window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
+                  setIsContactModalOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-[#0068FF] text-white py-3 font-bold hover:bg-[#0055DD] transition-colors rounded-lg"
+              >
+                Liên hệ qua Zalo <MessageSquare size={16} />
+              </button>
+              <button 
+                onClick={() => {
+                  window.location.href = `mailto:${supplier?.email || ''}`;
+                  setIsContactModalOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 py-3 font-bold hover:bg-slate-50 transition-colors rounded-lg shadow-sm"
+              >
+                Gửi Email <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </button>
+            </div>
+            <div className="p-3 border-t border-slate-100 text-center">
+              <button 
+                onClick={() => setIsContactModalOpen(false)}
+                className="text-sm font-bold text-slate-500 hover:text-slate-700 p-2"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

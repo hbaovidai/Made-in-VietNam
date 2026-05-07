@@ -194,6 +194,7 @@ export class ProductsService {
         moqUnit: dto.moqUnit,
         categoryId: dto.categoryId,
         images: dto.images || [],
+        rfqMinQuantity: dto.rfqMinQuantity || null,
       },
       include: {
         category: { select: { name: true, slug: true } },

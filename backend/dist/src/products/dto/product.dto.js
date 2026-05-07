@@ -24,6 +24,7 @@ class CreateProductDto {
     moqUnit;
     categoryId;
     images;
+    rfqMinQuantity;
 }
 exports.CreateProductDto = CreateProductDto;
 __decorate([
@@ -80,6 +81,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateProductDto.prototype, "images", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "rfqMinQuantity", void 0);
 class UpdateProductDto {
     name;
     description;
@@ -91,6 +98,7 @@ class UpdateProductDto {
     categoryId;
     images;
     status;
+    rfqMinQuantity;
 }
 exports.UpdateProductDto = UpdateProductDto;
 __decorate([
@@ -150,6 +158,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateProductDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], UpdateProductDto.prototype, "rfqMinQuantity", void 0);
 class ProductQueryDto {
     search;
     category;

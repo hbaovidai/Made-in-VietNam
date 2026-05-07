@@ -11,7 +11,6 @@ import { ProductsModule } from './products/products.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { RfqModule } from './rfq/rfq.module';
 import { MessagesModule } from './messages/messages.module';
-import { InquiryBasketModule } from './inquiry-basket/inquiry-basket.module';
 import { BatchesModule } from './batches/batches.module';
 import { UsersModule } from './users/users.module';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -19,6 +18,8 @@ import { ContactModule } from './contact/contact.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { ReportsModule } from './reports/reports.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -45,7 +46,6 @@ import { UploadsModule } from './uploads/uploads.module';
     SuppliersModule,
     RfqModule,
     MessagesModule,
-    InquiryBasketModule,
     BatchesModule,
     UsersModule,
     NotificationsModule,
@@ -53,6 +53,8 @@ import { UploadsModule } from './uploads/uploads.module';
     MembershipsModule,
     ReportsModule,
     UploadsModule,
+    CartModule,
+    OrdersModule,
   ],
   providers: [
     // Kích hoạt Rate Limiter toàn cục cho mọi endpoint

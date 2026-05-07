@@ -9,40 +9,40 @@ export declare class ContactController {
         message: string;
     }): Promise<{
         id: string;
-        fullName: string;
+        createdAt: Date;
         email: string;
-        subject: string;
+        fullName: string;
         message: string;
         isRead: boolean;
-        createdAt: Date;
+        subject: string;
     }>;
     findAll(): Promise<{
         id: string;
-        fullName: string;
+        createdAt: Date;
         email: string;
-        subject: string;
+        fullName: string;
         message: string;
         isRead: boolean;
-        createdAt: Date;
+        subject: string;
     }[]>;
     markAsRead(id: string, body: {
         isRead: boolean;
     }): Promise<{
         id: string;
-        fullName: string;
+        createdAt: Date;
         email: string;
-        subject: string;
+        fullName: string;
         message: string;
         isRead: boolean;
-        createdAt: Date;
+        subject: string;
     }>;
     delete(id: string): Promise<{
         id: string;
-        fullName: string;
+        createdAt: Date;
         email: string;
-        subject: string;
+        fullName: string;
         message: string;
         isRead: boolean;
-        createdAt: Date;
+        subject: string;
     }>;
 }

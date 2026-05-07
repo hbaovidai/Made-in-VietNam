@@ -51,6 +51,7 @@ export declare class CategoriesService {
             rating: number;
             reviewCount: number;
             viewCount: number;
+            rfqMinQuantity: number | null;
             supplierId: string;
             categoryId: string;
         })[];

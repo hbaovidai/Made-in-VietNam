@@ -10,8 +10,6 @@ async function main() {
   await prisma.scanEvent.deleteMany();
   await prisma.qRCode.deleteMany();
   await prisma.batch.deleteMany();
-  await prisma.inquiryItem.deleteMany();
-  await prisma.inquiryBasket.deleteMany();
   await prisma.message.deleteMany();
   await prisma.conversationParticipant.deleteMany();
   await prisma.conversation.deleteMany();

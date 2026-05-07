@@ -23,10 +23,6 @@ async function main() {
   await prisma.viewHistory.deleteMany({});
   await prisma.savedProduct.deleteMany({});
   
-  console.log('Deleting Inquiry Baskets...');
-  await prisma.inquiryItem.deleteMany({});
-  await prisma.inquiryBasket.deleteMany({});
-  
   console.log('Deleting Anti-counterfeit data (Scans, QR, Batches)...');
   await prisma.scanEvent.deleteMany({});
   await prisma.qRCode.deleteMany({});

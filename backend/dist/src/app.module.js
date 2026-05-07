@@ -20,7 +20,6 @@ const products_module_1 = require("./products/products.module");
 const suppliers_module_1 = require("./suppliers/suppliers.module");
 const rfq_module_1 = require("./rfq/rfq.module");
 const messages_module_1 = require("./messages/messages.module");
-const inquiry_basket_module_1 = require("./inquiry-basket/inquiry-basket.module");
 const batches_module_1 = require("./batches/batches.module");
 const users_module_1 = require("./users/users.module");
 const notifications_module_1 = require("./notifications/notifications.module");
@@ -28,6 +27,8 @@ const contact_module_1 = require("./contact/contact.module");
 const memberships_module_1 = require("./memberships/memberships.module");
 const reports_module_1 = require("./reports/reports.module");
 const uploads_module_1 = require("./uploads/uploads.module");
+const cart_module_1 = require("./cart/cart.module");
+const orders_module_1 = require("./orders/orders.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -56,7 +57,6 @@ exports.AppModule = AppModule = __decorate([
             suppliers_module_1.SuppliersModule,
             rfq_module_1.RfqModule,
             messages_module_1.MessagesModule,
-            inquiry_basket_module_1.InquiryBasketModule,
             batches_module_1.BatchesModule,
             users_module_1.UsersModule,
             notifications_module_1.NotificationsModule,
@@ -64,6 +64,8 @@ exports.AppModule = AppModule = __decorate([
             memberships_module_1.MembershipsModule,
             reports_module_1.ReportsModule,
             uploads_module_1.UploadsModule,
+            cart_module_1.CartModule,
+            orders_module_1.OrdersModule,
         ],
         providers: [
             {

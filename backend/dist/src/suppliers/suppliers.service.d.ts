@@ -78,6 +78,7 @@ export declare class SuppliersService {
             rating: number;
             reviewCount: number;
             viewCount: number;
+            rfqMinQuantity: number | null;
             supplierId: string;
             categoryId: string;
         })[];
@@ -179,6 +180,7 @@ export declare class SuppliersService {
             rating: number;
             reviewCount: number;
             viewCount: number;
+            rfqMinQuantity: number | null;
             supplierId: string;
             categoryId: string;
         })[];

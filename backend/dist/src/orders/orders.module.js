@@ -6,18 +6,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InquiryBasketModule = void 0;
+exports.OrdersModule = void 0;
 const common_1 = require("@nestjs/common");
-const inquiry_basket_controller_1 = require("./inquiry-basket.controller");
-const inquiry_basket_service_1 = require("./inquiry-basket.service");
-let InquiryBasketModule = class InquiryBasketModule {
+const orders_controller_1 = require("./orders.controller");
+const orders_service_1 = require("./orders.service");
+const prisma_module_1 = require("../prisma/prisma.module");
+const cart_module_1 = require("../cart/cart.module");
+let OrdersModule = class OrdersModule {
 };
-exports.InquiryBasketModule = InquiryBasketModule;
-exports.InquiryBasketModule = InquiryBasketModule = __decorate([
+exports.OrdersModule = OrdersModule;
+exports.OrdersModule = OrdersModule = __decorate([
     (0, common_1.Module)({
-        controllers: [inquiry_basket_controller_1.InquiryBasketController],
-        providers: [inquiry_basket_service_1.InquiryBasketService],
-        exports: [inquiry_basket_service_1.InquiryBasketService],
+        imports: [prisma_module_1.PrismaModule, cart_module_1.CartModule],
+        controllers: [orders_controller_1.OrdersController],
+        providers: [orders_service_1.OrdersService],
     })
-], InquiryBasketModule);
-//# sourceMappingURL=inquiry-basket.module.js.map
+], OrdersModule);
+//# sourceMappingURL=orders.module.js.map
