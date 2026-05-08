@@ -106,7 +106,7 @@ export function UserGuide() {
             t('guide_buyer_s2_d3'),
             t('guide_buyer_s2_d4'),
           ],
-          path: '/inquiry-basket',
+          path: '/cart',
         },
         {
           icon: <FileText size={20} className="text-green-500" />,

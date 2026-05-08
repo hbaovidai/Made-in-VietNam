@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, ShieldCheck, ShieldAlert, CheckCircle2, X, Search, Filter, Eye } from 'lucide-react';
+import { Loader2, ShieldCheck, ShieldAlert, CheckCircle2, X, Search, Filter, Eye, FileWarning } from 'lucide-react';
 import { ConfirmDialog, Modal } from '../../../components/ui/Modal';
 
 export function AdminSuppliers() {
@@ -48,6 +48,8 @@ export function AdminSuppliers() {
   };
 
   const pendingCount = suppliers.filter(s => !s.isVerified).length;
+
+  const hasKyb = (s: any) => !!(s.businessLicenseUrl && s.identityCardUrl);
 
   const filtered = suppliers.filter(s => {
     const matchSearch = !search || s.companyName?.toLowerCase().includes(search.toLowerCase());
@@ -108,6 +110,7 @@ export function AdminSuppliers() {
               <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
                 <th className="pb-3 pl-1">Công ty</th>
                 <th className="pb-3 hidden sm:table-cell">Ngành</th>
+                <th className="pb-3">KYB</th>
                 <th className="pb-3">Trạng thái</th>
                 <th className="pb-3 pr-1 text-right">Thao tác</th>
               </tr>
@@ -136,6 +139,17 @@ export function AdminSuppliers() {
                     </div>
                   </td>
                   <td className="py-4">
+                    {hasKyb(s) ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+                        <CheckCircle2 size={12} /> Đã đăng
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-50 px-2 py-1 rounded-lg">
+                        <FileWarning size={12} /> Chưa đăng
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-4">
                     {s.isVerified ? (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600">
                         <ShieldCheck size={13} /> {t('admin_verified')}
@@ -156,8 +170,18 @@ export function AdminSuppliers() {
                       </button>
                       {!s.isVerified ? (
                         <button 
-                          onClick={() => setConfirmVerify({ isOpen: true, supplier: s, intent: true })}
-                          className="text-xs font-bold text-primary hover:text-white transition-colors inline-flex items-center gap-1 border border-primary hover:bg-primary px-2.5 py-1.5 rounded-lg"
+                          onClick={() => {
+                            if (!hasKyb(s)) {
+                              addToast({ type: 'error', title: 'Doanh nghiệp này', message: `${s.companyName} chưa nộp hồ sơ xác thực KYB (Giấy ĐKKD & CCCD)` });
+                              return;
+                            }
+                            setConfirmVerify({ isOpen: true, supplier: s, intent: true });
+                          }}
+                          className={`text-xs font-bold transition-colors inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border ${
+                            hasKyb(s) 
+                              ? 'text-primary hover:text-white border-primary hover:bg-primary' 
+                              : 'text-slate-400 border-slate-200 cursor-not-allowed'
+                          }`}
                         >
                           <CheckCircle2 size={13} /> Duyệt
                         </button>
@@ -174,7 +198,7 @@ export function AdminSuppliers() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={4} className="py-16 text-center text-slate-400 text-sm">Không tìm thấy doanh nghiệp nào</td></tr>
+                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">Không tìm thấy doanh nghiệp nào</td></tr>
               )}
             </tbody>
           </table>
@@ -250,10 +274,18 @@ export function AdminSuppliers() {
               <button className="btn-ghost" onClick={() => setViewSupplier(null)}>Đóng</button>
               {!viewSupplier.isVerified ? (
                 <button 
-                  className="btn-primary" 
-                  onClick={() => { setViewSupplier(null); setConfirmVerify({ isOpen: true, supplier: viewSupplier, intent: true }); }}
+                  className={`btn-primary ${!hasKyb(viewSupplier) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={() => { 
+                    if (!hasKyb(viewSupplier)) {
+                      addToast({ type: 'error', title: 'Chưa đăng KYB', message: `${viewSupplier.companyName} chưa nộp hồ sơ xác thực KYB. Yêu cầu doanh nghiệp nộp Giấy ĐKKD & CCCD trước khi duyệt.` });
+                      return;
+                    }
+                    setViewSupplier(null); 
+                    setConfirmVerify({ isOpen: true, supplier: viewSupplier, intent: true }); 
+                  }}
                 >
-                  <CheckCircle2 size={16} className="inline-block mr-1"/> Phê Duyệt Hồ Sơ
+                  <CheckCircle2 size={16} className="inline-block mr-1"/>
+                  {hasKyb(viewSupplier) ? 'Phê Duyệt Hồ Sơ' : 'Cần đăng KYB trước'}
                 </button>
               ) : (
                 <button 

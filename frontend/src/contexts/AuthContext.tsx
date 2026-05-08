@@ -22,6 +22,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   loginUser: (userData: User, token: string) => void;
+  updateUser: (userData: User) => void;
   logout: () => void;
 }
 
@@ -77,8 +78,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = '/login';
   };
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('mivn5_user', JSON.stringify(userData));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user && !!token, loginUser, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user && !!token, loginUser, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

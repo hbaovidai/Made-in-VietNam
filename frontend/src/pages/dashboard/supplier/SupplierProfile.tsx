@@ -10,7 +10,7 @@ import { api } from '../../../lib/api';
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { addToast } = useToast();
-  const { user, loginUser, token } = useAuth();
+  const { user, loginUser, updateUser, token } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
@@ -46,6 +46,18 @@ export function SupplierProfile() {
         ]);
         const s = suppRes.data;
         setSupplier(s);
+        
+        if (user && s.verificationStatus !== user.supplier?.verificationStatus) {
+          updateUser({
+            ...user,
+            supplier: {
+              ...user.supplier!,
+              verificationStatus: s.verificationStatus,
+              isVerified: s.verificationStatus === 'VERIFIED'
+            }
+          });
+        }
+        
         setCertifications(s.certifications || []);
         setEditForm({
           companyName: s.companyName || '',
