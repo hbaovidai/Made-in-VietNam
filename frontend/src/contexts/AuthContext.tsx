@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     localStorage.removeItem('mivn5_user');
     localStorage.removeItem('mivn5_token');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   const updateUser = (userData: User) => {

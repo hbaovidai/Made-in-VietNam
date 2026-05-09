@@ -109,7 +109,6 @@ export function AdminSuppliers() {
             <thead>
               <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
                 <th className="pb-3 pl-1">Công ty</th>
-                <th className="pb-3 hidden sm:table-cell">Ngành</th>
                 <th className="pb-3">KYB</th>
                 <th className="pb-3">Trạng thái</th>
                 <th className="pb-3 pr-1 text-right">Thao tác</th>
@@ -127,15 +126,6 @@ export function AdminSuppliers() {
                         <div className="font-semibold text-slate-900">{s.companyName}</div>
                         <div className="text-xs text-slate-400 mt-0.5">{s.city ? `${s.city}, ${s.province}` : 'Việt Nam'}</div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-4 hidden sm:table-cell">
-                    <div className="flex flex-wrap gap-1">
-                      {s.industries?.slice(0, 2).map((ind: any, i: number) => (
-                        <span key={i} className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md font-medium">
-                          {ind.industry}
-                        </span>
-                      ))}
                     </div>
                   </td>
                   <td className="py-4">
@@ -166,7 +156,7 @@ export function AdminSuppliers() {
                         onClick={() => setViewSupplier(s)}
                         className="text-xs font-bold text-slate-600 hover:text-primary transition-colors inline-flex items-center gap-1 bg-slate-100 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg"
                       >
-                        <Eye size={13} /> Xem hồ sơ
+                        <Eye size={13} /> 
                       </button>
                       {!s.isVerified ? (
                         <button 

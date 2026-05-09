@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
 import { AuthLayout } from '../layouts/AuthLayout';
-import { Factory, Loader2 } from 'lucide-react';
+import { Factory, Loader2, ShieldCheck } from 'lucide-react';
 
 export function Login() {
   const { t } = useTranslation();
@@ -19,6 +19,12 @@ export function Login() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [searchParams] = useSearchParams();
+  const redirect_to = searchParams.get('redirect_to');
+
+  // Check if user came from /admin, /wp-admin, or is literally on /wp-login
+  const isAdminPortal = location.pathname === '/wp-login' || (location.state as any)?.from?.pathname === '/dashboard/admin';
 
   const googleLogin = useGoogleLogin({
     flow: 'implicit',
@@ -38,10 +44,17 @@ export function Login() {
           name: userInfo.name,
           picture: userInfo.picture,
         });
+        const role = res.data.user.role;
+        let from = redirect_to || (location.state as any)?.from?.pathname;
+
+        // Admin Restriction
+        if (role === 'ADMIN' && !isAdminPortal) {
+          throw new Error('Quản trị viên vui lòng đăng nhập qua đường dẫn /admin hoặc /wp-admin');
+        }
+
         loginUser(res.data.user, res.data.token);
         addToast({ type: 'success', title: 'Thành công', message: 'Đăng nhập Google thành công' });
         
-        const role = res.data.user.role;
         navigate(role === 'BUYER' ? '/' : `/dashboard/${role.toLowerCase()}`);
       } catch (err: any) {
         addToast({ type: 'error', title: 'Thất bại', message: err.response?.data?.message || 'Đăng nhập Google thất bại' });
@@ -60,9 +73,17 @@ export function Login() {
 
     try {
       const res = await api.post('/auth/login', { email, password });
-      loginUser(res.data.user, res.data.token);
       
       const role = res.data.user.role;
+      let from = redirect_to || (location.state as any)?.from?.pathname;
+
+      // Admin Restriction
+      if (role === 'ADMIN' && !isAdminPortal) {
+        throw new Error('Đăng nhập thất bại');
+      }
+
+      loginUser(res.data.user, res.data.token);
+      
       const roleMessages: Record<string, string> = {
         BUYER: t('login_as_buyer'),
         SUPPLIER: t('login_as_supplier'),
@@ -70,7 +91,6 @@ export function Login() {
       };
       addToast({ type: 'success', title: t('success') || 'Thành công', message: roleMessages[role] || 'Đăng nhập thành công' });
       
-      let from = (location.state as any)?.from?.pathname;
       if (!from || (role === 'SUPPLIER' && from.startsWith('/dashboard/buyer')) || (role === 'BUYER' && from.startsWith('/dashboard/supplier'))) {
         from = role === 'BUYER' ? '/' : `/dashboard/${role.toLowerCase()}`;
       }
@@ -87,15 +107,22 @@ export function Login() {
   };
 
   return (
-    <AuthLayout rightActionText="Register" rightActionLink="/register">
+    <AuthLayout 
+      rightActionText={isAdminPortal ? "Go to Homepage" : "Register"} 
+      rightActionLink={isAdminPortal ? "/" : "/register"}
+    >
       <div className="w-full max-w-[440px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden flex flex-col">
         {/* Top Icon & Titles */}
         <div className="px-10 pt-12 pb-8 flex flex-col items-center text-center">
           <div className="w-14 h-14 bg-[#0F172A] rounded-xl flex items-center justify-center text-white mb-6 shadow-md">
-            <Factory size={28} strokeWidth={1.5} />
+            {isAdminPortal ? <ShieldCheck size={28} strokeWidth={1.5} /> : <Factory size={28} strokeWidth={1.5} />}
           </div>
-          <h1 className="text-2xl font-black text-[#0F172A] mb-2 tracking-tight">Welcome Back</h1>
-          <p className="text-[13px] text-slate-500 font-medium">Access the Global Gateway for Vietnamese Excellence</p>
+          <h1 className="text-2xl font-black text-[#0F172A] mb-2 tracking-tight">
+            {isAdminPortal ? "Admin Portal" : "Welcome Back"}
+          </h1>
+          <p className="text-[13px] text-slate-500 font-medium">
+            {isAdminPortal ? "Secure login for system administrators" : "Access the Global Gateway for Vietnamese Excellence"}
+          </p>
         </div>
 
         {/* Form Body */}
@@ -144,38 +171,44 @@ export function Login() {
             </button>
           </form>
 
-          <div className="mt-8 flex items-center">
-            <div className="flex-1 border-t border-slate-200/80" />
-            <span className="px-4 text-[11px] font-medium text-slate-400 uppercase tracking-widest">Or continue with</span>
-            <div className="flex-1 border-t border-slate-200/80" />
-          </div>
+          {!isAdminPortal && (
+            <>
+              <div className="mt-8 flex items-center">
+                <div className="flex-1 border-t border-slate-200/80" />
+                <span className="px-4 text-[11px] font-medium text-slate-400 uppercase tracking-widest">Or continue with</span>
+                <div className="flex-1 border-t border-slate-200/80" />
+              </div>
 
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => googleLogin()}
-              disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-3 py-3.5 border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm font-bold text-slate-700 disabled:opacity-60"
-            >
-              {googleLoading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-              )}
-              {googleLoading ? 'Đang xử lý...' : 'Đăng nhập bằng Google'}
-            </button>
-          </div>
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={() => googleLogin()}
+                  disabled={googleLoading}
+                  className="w-full flex items-center justify-center gap-3 py-3.5 border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm font-bold text-slate-700 disabled:opacity-60"
+                >
+                  {googleLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+                  )}
+                  {googleLoading ? 'Đang xử lý...' : 'Đăng nhập bằng Google'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Card Footer */}
-        <div className="bg-[#F8FAFC] p-6 text-center border-t border-slate-100 flex flex-col items-center justify-center">
-          <p className="text-[13px] text-slate-500 font-medium mb-1">Don't have an account?</p>
-          <div className="flex items-center gap-2 text-[13px] font-bold text-[#9B7A4F]">
-            <Link to="/register?role=buyer" className="hover:text-[#7A5F3A] transition-colors">Register as Buyer</Link>
-            <span className="text-slate-300">|</span>
-            <Link to="/register?role=supplier" className="hover:text-[#7A5F3A] transition-colors">Register as Manufacturer</Link>
+        {!isAdminPortal && (
+          <div className="bg-[#F8FAFC] p-6 text-center border-t border-slate-100 flex flex-col items-center justify-center">
+            <p className="text-[13px] text-slate-500 font-medium mb-1">Don't have an account?</p>
+            <div className="flex items-center gap-2 text-[13px] font-bold text-[#9B7A4F]">
+              <Link to="/register?role=buyer" className="hover:text-[#7A5F3A] transition-colors">Register as Buyer</Link>
+              <span className="text-slate-300">|</span>
+              <Link to="/register?role=supplier" className="hover:text-[#7A5F3A] transition-colors">Register as Manufacturer</Link>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </AuthLayout>
   );

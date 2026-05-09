@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  IsIn,
 } from 'class-validator';
 import { Role } from '@prisma/client';
 
@@ -20,7 +21,7 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Tên không được để trống' })
   fullName: string;
 
-  @IsEnum(Role, { message: 'Role phải là BUYER hoặc SUPPLIER' })
+  @IsIn(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' })
   role: Role;
 
   @IsString()

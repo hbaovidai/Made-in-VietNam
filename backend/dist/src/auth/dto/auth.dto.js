@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "fullName", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(client_1.Role, { message: 'Role phải là BUYER hoặc SUPPLIER' }),
+    (0, class_validator_1.IsIn)(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "role", void 0);
 __decorate([

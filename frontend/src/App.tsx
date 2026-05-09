@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -160,6 +160,7 @@ export default function App() {
 
             {/* Standalone Auth Routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/wp-login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
             {/* Dashboard Root Redirect */}
@@ -168,6 +169,10 @@ export default function App() {
                 <DashboardRedirect />
               </ProtectedRoute>
             } />
+
+            {/* Admin Shortcuts (like WordPress) */}
+            <Route path="/admin" element={<Navigate to="/wp-login?redirect_to=/dashboard/admin" replace />} />
+            <Route path="/wp-admin" element={<Navigate to="/wp-login?redirect_to=/dashboard/admin" replace />} />
 
             {/* Dashboard Routes - Protected */}
             <Route path="/dashboard/buyer" element={
