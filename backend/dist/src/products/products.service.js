@@ -14,12 +14,15 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
 const notifications_service_1 = require("../notifications/notifications.service");
+const translation_service_1 = require("../translation/translation.service");
 let ProductsService = class ProductsService {
     prisma;
     notificationsService;
-    constructor(prisma, notificationsService) {
+    translationService;
+    constructor(prisma, notificationsService, translationService) {
         this.prisma = prisma;
         this.notificationsService = notificationsService;
+        this.translationService = translationService;
     }
     async findAll(query) {
         const { search, category, supplierId, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
@@ -166,6 +169,19 @@ let ProductsService = class ProductsService {
                 category: { select: { name: true, slug: true } },
             },
         });
+        this.translationService.translateProduct(dto.name, dto.description)
+            .then(async (translated) => {
+            if (translated.nameEn || translated.descriptionEn) {
+                await this.prisma.product.update({
+                    where: { id: product.id },
+                    data: {
+                        nameEn: translated.nameEn,
+                        descriptionEn: translated.descriptionEn,
+                    },
+                });
+            }
+        })
+            .catch(err => console.error('Auto-translate product failed:', err));
         try {
             await this.notificationsService.notifyAdmins({
                 title: 'Sản phẩm mới cần duyệt',
@@ -194,13 +210,29 @@ let ProductsService = class ProductsService {
         if (supplierId && newStatus === client_1.ProductStatus.ACTIVE && product.status !== client_1.ProductStatus.ACTIVE) {
             newStatus = client_1.ProductStatus.PENDING;
         }
-        return this.prisma.product.update({
+        const updated = await this.prisma.product.update({
             where: { id: productId },
             data: { ...dto, status: newStatus },
             include: {
                 category: { select: { name: true, slug: true } },
             },
         });
+        if (dto.name || dto.description) {
+            this.translationService.translateProduct(dto.name || product.name, dto.description || product.description || undefined)
+                .then(async (translated) => {
+                if (translated.nameEn || translated.descriptionEn) {
+                    await this.prisma.product.update({
+                        where: { id: productId },
+                        data: {
+                            ...(translated.nameEn && { nameEn: translated.nameEn }),
+                            ...(translated.descriptionEn && { descriptionEn: translated.descriptionEn }),
+                        },
+                    });
+                }
+            })
+                .catch(err => console.error('Auto-translate product update failed:', err));
+        }
+        return updated;
     }
     async delete(productId, supplierId) {
         const product = await this.prisma.product.findUnique({
@@ -264,6 +296,7 @@ exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        notifications_service_1.NotificationsService])
+        notifications_service_1.NotificationsService,
+        translation_service_1.TranslationService])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

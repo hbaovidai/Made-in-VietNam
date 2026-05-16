@@ -123,7 +123,7 @@ export function Cart() {
                   
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
                     {/* Price */}
-                    <div className="text-lg font-black text-emerald-600">
+                    <div className="text-lg font-black text-primary">
                       {((item.product?.minPrice || item.product?.price || 0)).toLocaleString()} {item.product?.currency || 'VND'}
                     </div>
 
@@ -168,13 +168,13 @@ export function Cart() {
                 </div>
                 <div className="border-t border-slate-100 pt-4 flex justify-between">
                   <span className="font-bold text-slate-900">Tổng cộng</span>
-                  <span className="text-xl font-black text-emerald-600">{calculateTotal().toLocaleString()} VND</span>
+                  <span className="text-xl font-black text-primary">{calculateTotal().toLocaleString()} VND</span>
                 </div>
               </div>
 
               <Link 
                 to="/checkout"
-                className="w-full py-4 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors uppercase tracking-widest text-sm shadow-sm flex items-center justify-center gap-2"
+                className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase tracking-widest text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 Tiến hành Thanh toán <ArrowRight size={16} />
               </Link>

@@ -15,10 +15,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly auditLogService: AuditLogService,
+  ) {}
 
   // PROTECTED ADMIN: Xem tất cả người dùng
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -32,11 +36,39 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Put(':id/status')
-  toggleUserStatus(
+  async toggleUserStatus(
     @Param('id') id: string,
     @Body('status') status: 'ACTIVE' | 'SUSPENDED',
+    @CurrentUser('id') adminId: string,
   ) {
-    return this.usersService.toggleUserStatus(id, status);
+    const result = await this.usersService.toggleUserStatus(id, status);
+    await this.auditLogService.log({
+      userId: adminId,
+      action: status === 'SUSPENDED' ? 'LOCK_USER' : 'UNLOCK_USER',
+      targetType: 'User',
+      targetId: id,
+      targetName: result.fullName || result.email,
+    });
+    return result;
+  }
+
+  // PROTECTED ADMIN: Xóa người dùng
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  async deleteUser(
+    @Param('id') id: string,
+    @CurrentUser('id') adminId: string,
+  ) {
+    const result = await this.usersService.deleteUser(id);
+    await this.auditLogService.log({
+      userId: adminId,
+      action: 'DELETE_USER',
+      targetType: 'User',
+      targetId: id,
+      targetName: `${result.fullName} (${result.email})`,
+    });
+    return { message: `Đã xóa người dùng ${result.fullName}` };
   }
 
   // PROTECTED: Chỉ xem sản phẩm đã lưu của mình

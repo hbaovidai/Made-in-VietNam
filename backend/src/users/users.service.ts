@@ -46,6 +46,34 @@ export class UsersService {
     return updated;
   }
 
+  // ADMIN: Xóa người dùng hoàn toàn
+  async deleteUser(userId: string) {
+    const user = await this.prisma.user.findUnique({ 
+      where: { id: userId },
+      include: { supplier: { select: { id: true } } },
+    });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại');
+    if (user.role === 'ADMIN') throw new NotFoundException('Không thể xóa tài khoản Admin');
+
+    // Xóa tất cả dữ liệu liên quan trước
+    await this.prisma.$transaction([
+      this.prisma.savedProduct.deleteMany({ where: { userId } }),
+      this.prisma.viewHistory.deleteMany({ where: { userId } }),
+      this.prisma.notification.deleteMany({ where: { userId } }),
+      this.prisma.auditLog.deleteMany({ where: { userId } }),
+      // Xóa cart + items
+      this.prisma.cartItem.deleteMany({ where: { cart: { userId } } }),
+      this.prisma.cart.deleteMany({ where: { userId } }),
+      // Xóa messages & conversations
+      this.prisma.message.deleteMany({ where: { senderId: userId } }),
+      this.prisma.conversationParticipant.deleteMany({ where: { userId } }),
+      // Xóa user (cascade sẽ xóa supplier nếu có)
+      this.prisma.user.delete({ where: { id: userId } }),
+    ]);
+
+    return { id: userId, fullName: user.fullName, email: user.email };
+  }
+
   // ==================== SAVED PRODUCTS ====================
 
   async getSavedProducts(userId: string) {

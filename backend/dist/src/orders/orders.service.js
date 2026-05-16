@@ -181,6 +181,52 @@ let OrdersService = class OrdersService {
             data: { status: 'CANCELLED' },
         });
     }
+    async getAllOrders(query) {
+        const page = Number(query.page) || 1;
+        const limit = Math.min(Number(query.limit) || 50, 100);
+        const skip = (page - 1) * limit;
+        const where = {};
+        if (query.status && query.status !== 'ALL') {
+            where.status = query.status;
+        }
+        const [data, total] = await Promise.all([
+            this.prisma.order.findMany({
+                where,
+                include: {
+                    items: {
+                        include: {
+                            product: { select: { id: true, slug: true, images: true } },
+                        },
+                    },
+                    buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+                    supplier: { select: { id: true, companyName: true, logo: true } },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit,
+            }),
+            this.prisma.order.count({ where }),
+        ]);
+        return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    }
+    async adminUpdateOrderStatus(orderId, status) {
+        const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+        if (!order)
+            throw new common_1.NotFoundException('Đơn hàng không tồn tại');
+        const updateData = { status };
+        if (status === 'DELIVERED' && order.paymentMethod === 'COD') {
+            updateData.paymentStatus = 'PAID';
+        }
+        return this.prisma.order.update({
+            where: { id: orderId },
+            data: updateData,
+            include: {
+                items: true,
+                buyer: { select: { id: true, fullName: true, email: true } },
+                supplier: { select: { id: true, companyName: true } },
+            },
+        });
+    }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([

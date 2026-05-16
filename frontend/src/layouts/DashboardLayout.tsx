@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock, ShoppingBag, ClipboardList, ScrollText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../contexts/AuthContext';
@@ -96,6 +96,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <Package size={20} />, label: t('admin_menu_products'), path: '/dashboard/admin/products' },
     { icon: <Archive size={20} />, label: t('admin_menu_categories'), path: '/dashboard/admin/categories' },
     { icon: <MessageSquare size={20} />, label: t('admin_menu_contacts'), path: '/dashboard/admin/contacts' },
+    { icon: <ClipboardList size={20} />, label: t('admin_menu_orders'), path: '/dashboard/admin/orders' },
+    { icon: <ScrollText size={20} />, label: t('admin_menu_audit_log'), path: '/dashboard/admin/audit-log' },
   ];
 
   const links = type === 'admin' ? adminLinks : (type === 'buyer' ? buyerLinks : supplierLinks);

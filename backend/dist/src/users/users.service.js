@@ -54,6 +54,28 @@ let UsersService = class UsersService {
         });
         return updated;
     }
+    async deleteUser(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { supplier: { select: { id: true } } },
+        });
+        if (!user)
+            throw new common_1.NotFoundException('Người dùng không tồn tại');
+        if (user.role === 'ADMIN')
+            throw new common_1.NotFoundException('Không thể xóa tài khoản Admin');
+        await this.prisma.$transaction([
+            this.prisma.savedProduct.deleteMany({ where: { userId } }),
+            this.prisma.viewHistory.deleteMany({ where: { userId } }),
+            this.prisma.notification.deleteMany({ where: { userId } }),
+            this.prisma.auditLog.deleteMany({ where: { userId } }),
+            this.prisma.cartItem.deleteMany({ where: { cart: { userId } } }),
+            this.prisma.cart.deleteMany({ where: { userId } }),
+            this.prisma.message.deleteMany({ where: { senderId: userId } }),
+            this.prisma.conversationParticipant.deleteMany({ where: { userId } }),
+            this.prisma.user.delete({ where: { id: userId } }),
+        ]);
+        return { id: userId, fullName: user.fullName, email: user.email };
+    }
     async getSavedProducts(userId) {
         const saved = await this.prisma.savedProduct.findMany({
             where: { userId },

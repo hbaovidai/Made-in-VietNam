@@ -67,6 +67,8 @@ export declare class SuppliersService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -169,6 +171,8 @@ export declare class SuppliersService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;

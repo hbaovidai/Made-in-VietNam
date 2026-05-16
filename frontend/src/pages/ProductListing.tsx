@@ -7,9 +7,11 @@ import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
+import { useLocalized } from '../hooks/useLocalized';
 
 export function ProductListing() {
   const { t } = useTranslation();
+  const localized = useLocalized();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -73,14 +75,14 @@ export function ProductListing() {
             <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
             <ChevronRight size={12} className="text-slate-400" />
             <span className="text-primary font-bold">
-              {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('products_breadcrumb')}
+              {activeCategoryGroup ? localized(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup), 'name') : t('products_breadcrumb')}
             </span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-4xl space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
-                {activeCategoryGroup ? t(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup)?.name || '') : t('all_products')}
+                {activeCategoryGroup ? localized(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup), 'name') : t('all_products')}
               </h1>
             </div>
             
@@ -151,7 +153,7 @@ export function ProductListing() {
                           : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                       )}
                     >
-                      {cat.name}
+                      {localized(cat, 'name')}
                     </button>
                   ))}
                 </div>
@@ -279,7 +281,7 @@ export function ProductListing() {
                         activeCategoryGroup === cat.slug ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100"
                       )}
                     >
-                      {t(cat.name)}
+                      {localized(cat, 'name')}
                     </button>
                   ))}
                 </div>

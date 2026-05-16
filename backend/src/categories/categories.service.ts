@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/category.dto';
+import { TranslationService } from '../translation/translation.service';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private translationService: TranslationService,
+  ) {}
 
   async findAll() {
     return this.prisma.category.findMany({
@@ -53,13 +57,27 @@ export class CategoriesService {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
-    return this.prisma.category.create({
+    const category = await this.prisma.category.create({
       data: {
         name: dto.name,
         slug,
         parentId: dto.parentId || null,
       },
     });
+
+    // Auto-translate category name (non-blocking)
+    this.translationService.translateCategory(dto.name)
+      .then(async (nameEn) => {
+        if (nameEn) {
+          await this.prisma.category.update({
+            where: { id: category.id },
+            data: { nameEn },
+          });
+        }
+      })
+      .catch(err => console.error('Auto-translate category failed:', err));
+
+    return category;
   }
 
   async update(id: string, dto: { name?: string; parentId?: string }) {
@@ -79,7 +97,23 @@ export class CategoriesService {
     }
     if (dto.parentId !== undefined) data.parentId = dto.parentId || null;
 
-    return this.prisma.category.update({ where: { id }, data });
+    const updated = await this.prisma.category.update({ where: { id }, data });
+
+    // Re-translate if name changed (non-blocking)
+    if (dto.name) {
+      this.translationService.translateCategory(dto.name)
+        .then(async (nameEn) => {
+          if (nameEn) {
+            await this.prisma.category.update({
+              where: { id },
+              data: { nameEn },
+            });
+          }
+        })
+        .catch(err => console.error('Auto-translate category update failed:', err));
+    }
+
+    return updated;
   }
 
   async delete(id: string) {

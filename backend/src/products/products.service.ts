@@ -11,12 +11,14 @@ import {
 } from './dto/product.dto';
 import { Prisma, ProductStatus } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
+import { TranslationService } from '../translation/translation.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private translationService: TranslationService,
   ) {}
 
   async findAll(query: ProductQueryDto) {
@@ -201,6 +203,21 @@ export class ProductsService {
       },
     });
 
+    // Auto-translate to English (non-blocking)
+    this.translationService.translateProduct(dto.name, dto.description)
+      .then(async (translated) => {
+        if (translated.nameEn || translated.descriptionEn) {
+          await this.prisma.product.update({
+            where: { id: product.id },
+            data: {
+              nameEn: translated.nameEn,
+              descriptionEn: translated.descriptionEn,
+            },
+          });
+        }
+      })
+      .catch(err => console.error('Auto-translate product failed:', err));
+
     // Notify Admins
     try {
       await this.notificationsService.notifyAdmins({
@@ -239,13 +256,35 @@ export class ProductsService {
       newStatus = ProductStatus.PENDING;
     }
 
-    return this.prisma.product.update({
+    const updated = await this.prisma.product.update({
       where: { id: productId },
       data: { ...dto, status: newStatus as ProductStatus },
       include: {
         category: { select: { name: true, slug: true } },
       },
     });
+
+    // Re-translate if name or description changed
+    if (dto.name || dto.description) {
+      this.translationService.translateProduct(
+        dto.name || product.name,
+        dto.description || product.description || undefined,
+      )
+        .then(async (translated) => {
+          if (translated.nameEn || translated.descriptionEn) {
+            await this.prisma.product.update({
+              where: { id: productId },
+              data: {
+                ...(translated.nameEn && { nameEn: translated.nameEn }),
+                ...(translated.descriptionEn && { descriptionEn: translated.descriptionEn }),
+              },
+            });
+          }
+        })
+        .catch(err => console.error('Auto-translate product update failed:', err));
+    }
+
+    return updated;
   }
 
   async delete(productId: string, supplierId: string | null) {

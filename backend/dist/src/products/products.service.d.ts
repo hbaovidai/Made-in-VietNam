@@ -1,10 +1,12 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto, ProductQueryDto } from './dto/product.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { TranslationService } from '../translation/translation.service';
 export declare class ProductsService {
     private prisma;
     private notificationsService;
-    constructor(prisma: PrismaService, notificationsService: NotificationsService);
+    private translationService;
+    constructor(prisma: PrismaService, notificationsService: NotificationsService, translationService: TranslationService);
     findAll(query: ProductQueryDto): Promise<{
         data: ({
             supplier: {
@@ -26,6 +28,8 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -77,6 +81,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -104,6 +110,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -131,6 +139,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -158,6 +168,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -188,6 +200,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -210,6 +224,8 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        nameEn: string | null;
+        descriptionEn: string | null;
         minPrice: number;
         maxPrice: number;
         currency: string;

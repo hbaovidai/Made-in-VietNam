@@ -4,90 +4,98 @@ export declare class CategoriesController {
     private categoriesService;
     constructor(categoriesService: CategoriesService);
     findAll(): Promise<({
-        _count: {
-            products: number;
-            children: number;
-        };
         children: ({
             _count: {
                 products: number;
             };
         } & {
             id: string;
-            slug: string;
-            createdAt: Date;
             name: string;
+            nameEn: string | null;
+            slug: string;
             parentId: string | null;
+            createdAt: Date;
         })[];
+        _count: {
+            children: number;
+            products: number;
+        };
     } & {
         id: string;
-        slug: string;
-        createdAt: Date;
         name: string;
+        nameEn: string | null;
+        slug: string;
         parentId: string | null;
+        createdAt: Date;
     })[]>;
     findBySlug(slug: string): Promise<{
+        children: {
+            id: string;
+            name: string;
+            nameEn: string | null;
+            slug: string;
+            parentId: string | null;
+            createdAt: Date;
+        }[];
         products: ({
             supplier: {
-                companyName: string;
                 slug: string;
+                companyName: string;
                 isVerified: boolean;
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            slug: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
+            description: string | null;
+            updatedAt: Date;
+            supplierId: string;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
             rfqMinQuantity: number | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         _count: {
             products: number;
         };
-        children: {
-            id: string;
-            slug: string;
-            createdAt: Date;
-            name: string;
-            parentId: string | null;
-        }[];
     } & {
         id: string;
-        slug: string;
-        createdAt: Date;
         name: string;
+        nameEn: string | null;
+        slug: string;
         parentId: string | null;
+        createdAt: Date;
     }>;
     create(dto: CreateCategoryDto): Promise<{
         id: string;
-        slug: string;
-        createdAt: Date;
         name: string;
+        nameEn: string | null;
+        slug: string;
         parentId: string | null;
+        createdAt: Date;
     }>;
     update(id: string, dto: {
         name?: string;
         parentId?: string;
     }): Promise<{
         id: string;
-        slug: string;
-        createdAt: Date;
         name: string;
+        nameEn: string | null;
+        slug: string;
         parentId: string | null;
+        createdAt: Date;
     }>;
     delete(id: string): Promise<{
         message: string;

@@ -17,12 +17,14 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 @Controller('suppliers')
 export class SuppliersController {
   constructor(
     private suppliersService: SuppliersService,
     private prisma: PrismaService,
+    private auditLogService: AuditLogService,
   ) {}
 
   // PUBLIC
@@ -73,8 +75,20 @@ export class SuppliersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Put(':id/verify')
-  verifySupplier(@Param('id') id: string, @Body('isVerified') isVerified: boolean) {
-    return this.suppliersService.verifySupplier(id, isVerified);
+  async verifySupplier(
+    @Param('id') id: string, 
+    @Body('isVerified') isVerified: boolean,
+    @CurrentUser('id') adminId: string,
+  ) {
+    const result = await this.suppliersService.verifySupplier(id, isVerified);
+    await this.auditLogService.log({
+      userId: adminId,
+      action: isVerified ? 'VERIFY_SUPPLIER' : 'UNVERIFY_SUPPLIER',
+      targetType: 'Supplier',
+      targetId: id,
+      targetName: result.companyName,
+    });
+    return result;
   }
 
   // PROTECTED: Chỉ supplier chủ sở hữu mới sửa được, hoặc ADMIN

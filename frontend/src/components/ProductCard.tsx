@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocalized } from '../hooks/useLocalized';
 
 interface ProductCardProps {
   key?: string;
@@ -10,9 +11,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { t } = useTranslation();
+  const localized = useLocalized();
 
   const imageUrl = product.images?.[0] || product.image || 'https://via.placeholder.com/300';
-  const categoryName = product.category?.name || product.category || 'Danh mục';
+  const categoryName = localized(product.category, 'name') || product.category || 'Danh mục';
   
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
   const priceDisplay = (() => {
@@ -43,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {categoryName}
           </span>
           <h3 className="text-base font-black text-[#1E293B] mb-1 line-clamp-2 leading-tight">
-            {product.name}
+            {localized(product, 'name')}
           </h3>
           <p className="text-sm font-medium text-slate-500 mb-6 line-clamp-1">
             {product.supplier?.companyName || 'Công ty TNHH MIVN'}

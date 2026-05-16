@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const translation_service_1 = require("../translation/translation.service");
 let CategoriesService = class CategoriesService {
     prisma;
-    constructor(prisma) {
+    translationService;
+    constructor(prisma, translationService) {
         this.prisma = prisma;
+        this.translationService = translationService;
     }
     async findAll() {
         return this.prisma.category.findMany({
@@ -61,13 +64,24 @@ let CategoriesService = class CategoriesService {
             .replace(/đ/g, 'd')
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)/g, '');
-        return this.prisma.category.create({
+        const category = await this.prisma.category.create({
             data: {
                 name: dto.name,
                 slug,
                 parentId: dto.parentId || null,
             },
         });
+        this.translationService.translateCategory(dto.name)
+            .then(async (nameEn) => {
+            if (nameEn) {
+                await this.prisma.category.update({
+                    where: { id: category.id },
+                    data: { nameEn },
+                });
+            }
+        })
+            .catch(err => console.error('Auto-translate category failed:', err));
+        return category;
     }
     async update(id, dto) {
         const category = await this.prisma.category.findUnique({ where: { id } });
@@ -86,7 +100,20 @@ let CategoriesService = class CategoriesService {
         }
         if (dto.parentId !== undefined)
             data.parentId = dto.parentId || null;
-        return this.prisma.category.update({ where: { id }, data });
+        const updated = await this.prisma.category.update({ where: { id }, data });
+        if (dto.name) {
+            this.translationService.translateCategory(dto.name)
+                .then(async (nameEn) => {
+                if (nameEn) {
+                    await this.prisma.category.update({
+                        where: { id },
+                        data: { nameEn },
+                    });
+                }
+            })
+                .catch(err => console.error('Auto-translate category update failed:', err));
+        }
+        return updated;
     }
     async delete(id) {
         const category = await this.prisma.category.findUnique({
@@ -108,6 +135,7 @@ let CategoriesService = class CategoriesService {
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        translation_service_1.TranslationService])
 ], CategoriesService);
 //# sourceMappingURL=categories.service.js.map

@@ -29,6 +29,8 @@ const reports_module_1 = require("./reports/reports.module");
 const uploads_module_1 = require("./uploads/uploads.module");
 const cart_module_1 = require("./cart/cart.module");
 const orders_module_1 = require("./orders/orders.module");
+const audit_log_module_1 = require("./audit-log/audit-log.module");
+const translation_module_1 = require("./translation/translation.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -66,6 +68,8 @@ exports.AppModule = AppModule = __decorate([
             uploads_module_1.UploadsModule,
             cart_module_1.CartModule,
             orders_module_1.OrdersModule,
+            audit_log_module_1.AuditLogModule,
+            translation_module_1.TranslationModule,
         ],
         providers: [
             {

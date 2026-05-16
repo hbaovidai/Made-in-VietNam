@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocalized } from '../hooks/useLocalized';
 import { cn } from '../utils/cn';
 import { ProductCard } from '../components/ProductCard';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
@@ -13,6 +14,7 @@ import { SEOHead } from '../components/SEOHead';
 
 export function ProductDetail() {
   const { t } = useTranslation();
+  const localized = useLocalized();
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -268,7 +270,7 @@ export function ProductDetail() {
             {/* Header */}
             <div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F172A] leading-[1.1] tracking-tight mb-4">
-                {product.name}
+                {localized(product, 'name')}
               </h1>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest flex-wrap">
                 <Link to={`/suppliers/${product.supplierId || '#'}`} className="text-[#A2875E] hover:underline transition-colors">{supplier?.companyName || 'Nhà cung cấp'}</Link>
@@ -290,7 +292,7 @@ export function ProductDetail() {
             {product.description && (
               <div className="space-y-3">
                 <h3 className="font-bold text-slate-900 text-sm uppercase tracking-widest">Mô tả sản phẩm</h3>
-                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
+                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{localized(product, 'description')}</p>
               </div>
             )}
 
@@ -326,7 +328,7 @@ export function ProductDetail() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button 
                     onClick={handleAddToCart}
-                    className="w-full flex items-center justify-center gap-2 bg-white border-2 border-emerald-600 text-emerald-600 py-3.5 font-bold hover:bg-emerald-50 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 bg-white border-2 border-primary text-primary py-3.5 font-bold hover:bg-primary/5 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
                   >
                     <ShoppingCart size={16} /> Thêm vào giỏ
                   </button>
@@ -350,7 +352,7 @@ export function ProductDetail() {
                         addToast({ type: 'error', title: 'Lỗi', message: 'Có lỗi xảy ra khi xử lý đơn hàng' });
                       }
                     }}
-                    className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 font-bold hover:bg-emerald-700 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 bg-primary text-white py-4 font-bold hover:bg-primary-dark transition-all uppercase tracking-widest text-xs rounded-lg shadow-lg shadow-primary/20 active:scale-[0.98]"
                   >
                     Mua Ngay
                   </button>

@@ -12,6 +12,7 @@ export interface CategoryGroup {
   id: string;
   slug: string;
   name: string;
+  nameEn?: string;
   image: string;
   sections: CategorySection[];
 }
@@ -21,6 +22,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'nong-san',
     slug: 'nong-san',
     name: 'Nông sản',
+    nameEn: 'Agricultural Products',
     image: 'https://picsum.photos/seed/agriculture/400/600',
     sections: [
       {
@@ -39,6 +41,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'det-may-may-mac',
     slug: 'det-may-may-mac',
     name: 'Dệt may & May mặc',
+    nameEn: 'Textiles & Garments',
     image: 'https://picsum.photos/seed/apparel/400/600',
     sections: [
       {
@@ -57,6 +60,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'noi-that-trang-tri',
     slug: 'noi-that-trang-tri',
     name: 'Nội thất & Trang trí',
+    nameEn: 'Furniture & Decor',
     image: 'https://picsum.photos/seed/furniture/400/600',
     sections: [
       {
@@ -75,6 +79,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'thu-cong-my-nghe',
     slug: 'thu-cong-my-nghe',
     name: 'Thủ công mỹ nghệ',
+    nameEn: 'Handicrafts',
     image: 'https://picsum.photos/seed/handicrafts/400/600',
     sections: [
       {
@@ -93,6 +98,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'dien-tu',
     slug: 'dien-tu',
     name: 'Điện tử',
+    nameEn: 'Electronics',
     image: 'https://picsum.photos/seed/electronics/400/600',
     sections: [
       {
@@ -111,6 +117,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: 'thuc-pham-do-uong',
     slug: 'thuc-pham-do-uong',
     name: 'Thực phẩm & Đồ uống',
+    nameEn: 'Food & Beverages',
     image: 'https://picsum.photos/seed/food/400/600',
     sections: [
       {
@@ -127,10 +134,10 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
 ];
 
 export const ALL_CATEGORIES_LIST = [
-  { name: "Nông sản", slug: "nong-san" },
-  { name: "Dệt may & May mặc", slug: "det-may-may-mac" },
-  { name: "Nội thất & Trang trí", slug: "noi-that-trang-tri" },
-  { name: "Thủ công mỹ nghệ", slug: "thu-cong-my-nghe" },
-  { name: "Điện tử", slug: "dien-tu" },
-  { name: "Thực phẩm & Đồ uống", slug: "thuc-pham-do-uong" }
+  { name: "Nông sản", nameEn: "Agricultural Products", slug: "nong-san" },
+  { name: "Dệt may & May mặc", nameEn: "Textiles & Garments", slug: "det-may-may-mac" },
+  { name: "Nội thất & Trang trí", nameEn: "Furniture & Decor", slug: "noi-that-trang-tri" },
+  { name: "Thủ công mỹ nghệ", nameEn: "Handicrafts", slug: "thu-cong-my-nghe" },
+  { name: "Điện tử", nameEn: "Electronics", slug: "dien-tu" },
+  { name: "Thực phẩm & Đồ uống", nameEn: "Food & Beverages", slug: "thuc-pham-do-uong" }
 ];

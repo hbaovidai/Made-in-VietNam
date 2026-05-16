@@ -1,10 +1,12 @@
 import { SuppliersService } from './suppliers.service';
 import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 export declare class SuppliersController {
     private suppliersService;
     private prisma;
-    constructor(suppliersService: SuppliersService, prisma: PrismaService);
+    private auditLogService;
+    constructor(suppliersService: SuppliersService, prisma: PrismaService, auditLogService: AuditLogService);
     findAll(query: SupplierQueryDto): Promise<{
         data: ({
             certifications: {
@@ -69,6 +71,8 @@ export declare class SuppliersController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -182,7 +186,7 @@ export declare class SuppliersController {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    verifySupplier(id: string, isVerified: boolean): Promise<{
+    verifySupplier(id: string, isVerified: boolean, adminId: string): Promise<{
         id: string;
         userId: string;
         companyName: string;
@@ -228,6 +232,8 @@ export declare class SuppliersController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
             currency: string;

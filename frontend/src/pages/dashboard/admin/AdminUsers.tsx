@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, User as UserIcon, Lock, Unlock, Search, Filter } from 'lucide-react';
+import { Loader2, User as UserIcon, Lock, Unlock, Search, Filter, Trash2 } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
@@ -16,6 +16,10 @@ export function AdminUsers() {
 
   const [confirmLock, setConfirmLock] = useState<{ isOpen: boolean; user: any; intent: 'ACTIVE' | 'SUSPENDED' }>({
     isOpen: false, user: null, intent: 'SUSPENDED'
+  });
+
+  const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; user: any }>({
+    isOpen: false, user: null
   });
 
   useEffect(() => {
@@ -47,6 +51,23 @@ export function AdminUsers() {
       loadUsers();
     } catch (error) {
       addToast({ type: 'error', title: t('admin_error'), message: t('admin_action_failed') });
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    const { user } = confirmDelete;
+    if (!user) return;
+    try {
+      await api.delete(`/users/${user.id}`);
+      addToast({
+        type: 'success',
+        title: t('admin_success'),
+        message: `Đã xóa người dùng ${user.fullName} (${user.email})`
+      });
+      setConfirmDelete({ isOpen: false, user: null });
+      loadUsers();
+    } catch (error) {
+      addToast({ type: 'error', title: t('admin_error'), message: 'Không thể xóa người dùng. Có thể người dùng còn đơn hàng hoặc dữ liệu liên quan.' });
     }
   };
 
@@ -149,21 +170,29 @@ export function AdminUsers() {
                   </td>
                   <td className="py-4 pr-1 text-right">
                     {user.role !== 'ADMIN' && (
-                      (user.status || 'ACTIVE') === 'ACTIVE' ? (
+                      <div className="flex justify-end items-center gap-2">
+                        {(user.status || 'ACTIVE') === 'ACTIVE' ? (
+                          <button
+                            onClick={() => setConfirmLock({ isOpen: true, user, intent: 'SUSPENDED' })}
+                            className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center gap-1"
+                          >
+                            <Lock size={12} /> {t('admin_lock')}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmLock({ isOpen: true, user, intent: 'ACTIVE' })}
+                            className="text-xs font-bold text-primary hover:text-primary-dark transition-colors inline-flex items-center gap-1"
+                          >
+                            <Unlock size={12} /> {t('admin_unlock')}
+                          </button>
+                        )}
                         <button
-                          onClick={() => setConfirmLock({ isOpen: true, user, intent: 'SUSPENDED' })}
-                          className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center gap-1"
+                          onClick={() => setConfirmDelete({ isOpen: true, user })}
+                          className="text-xs font-bold text-slate-400 hover:text-red-600 transition-colors inline-flex items-center gap-1"
                         >
-                          <Lock size={12} /> {t('admin_lock')}
+                          <Trash2 size={12} /> Xóa
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => setConfirmLock({ isOpen: true, user, intent: 'ACTIVE' })}
-                          className="text-xs font-bold text-primary hover:text-primary-dark transition-colors inline-flex items-center gap-1"
-                        >
-                          <Unlock size={12} /> {t('admin_unlock')}
-                        </button>
-                      )
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -188,6 +217,16 @@ export function AdminUsers() {
         }
         confirmText={confirmLock.intent === 'SUSPENDED' ? t('admin_lock_btn') : t('admin_unlock_btn')}
         variant={confirmLock.intent === 'SUSPENDED' ? 'danger' : 'info'}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        onClose={() => setConfirmDelete({ isOpen: false, user: null })}
+        onConfirm={handleDeleteUser}
+        title="Xóa người dùng vĩnh viễn?"
+        message={`Bạn chắc chắn muốn xóa tài khoản "${confirmDelete.user?.fullName}" (${confirmDelete.user?.email})? Hành động này không thể hoàn tác. Toàn bộ dữ liệu của người dùng sẽ bị xóa vĩnh viễn.`}
+        confirmText="Xác nhận Xóa"
+        variant="danger"
       />
     </div>
   );

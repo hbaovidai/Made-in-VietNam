@@ -1,7 +1,103 @@
 import { OrdersService } from './orders.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 export declare class OrdersController {
     private ordersService;
-    constructor(ordersService: OrdersService);
+    private auditLogService;
+    constructor(ordersService: OrdersService, auditLogService: AuditLogService);
+    getAllOrders(query: any): Promise<{
+        data: ({
+            supplier: {
+                id: string;
+                companyName: string;
+                logo: string | null;
+            };
+            buyer: {
+                id: string;
+                email: string;
+                fullName: string;
+                phone: string | null;
+            };
+            items: ({
+                product: {
+                    id: string;
+                    slug: string;
+                    images: string[];
+                };
+            } & {
+                id: string;
+                productId: string;
+                quantity: number;
+                productName: string;
+                productImage: string | null;
+                unitPrice: number;
+                totalPrice: number;
+                orderId: string;
+            })[];
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.OrderStatus;
+            supplierId: string;
+            buyerId: string;
+            orderNumber: string;
+            recipientName: string;
+            recipientPhone: string;
+            shippingAddress: string;
+            note: string | null;
+            paymentMethod: import("@prisma/client").$Enums.PaymentMethod;
+            paymentStatus: import("@prisma/client").$Enums.PaymentStatus;
+            subtotal: number;
+            shippingFee: number;
+            totalAmount: number;
+        })[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    adminUpdateStatus(req: any, id: string, body: {
+        status: string;
+    }): Promise<{
+        supplier: {
+            id: string;
+            companyName: string;
+        };
+        buyer: {
+            id: string;
+            email: string;
+            fullName: string;
+        };
+        items: {
+            id: string;
+            productId: string;
+            quantity: number;
+            productName: string;
+            productImage: string | null;
+            unitPrice: number;
+            totalPrice: number;
+            orderId: string;
+        }[];
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        supplierId: string;
+        buyerId: string;
+        orderNumber: string;
+        recipientName: string;
+        recipientPhone: string;
+        shippingAddress: string;
+        note: string | null;
+        paymentMethod: import("@prisma/client").$Enums.PaymentMethod;
+        paymentStatus: import("@prisma/client").$Enums.PaymentStatus;
+        subtotal: number;
+        shippingFee: number;
+        totalAmount: number;
+    }>;
     createOrder(req: any, body: {
         recipientName: string;
         recipientPhone: string;

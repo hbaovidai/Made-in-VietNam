@@ -19,16 +19,38 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const audit_log_service_1 = require("../audit-log/audit-log.service");
 let UsersController = class UsersController {
     usersService;
-    constructor(usersService) {
+    auditLogService;
+    constructor(usersService, auditLogService) {
         this.usersService = usersService;
+        this.auditLogService = auditLogService;
     }
     getAllUsers(query) {
         return this.usersService.findAll(query);
     }
-    toggleUserStatus(id, status) {
-        return this.usersService.toggleUserStatus(id, status);
+    async toggleUserStatus(id, status, adminId) {
+        const result = await this.usersService.toggleUserStatus(id, status);
+        await this.auditLogService.log({
+            userId: adminId,
+            action: status === 'SUSPENDED' ? 'LOCK_USER' : 'UNLOCK_USER',
+            targetType: 'User',
+            targetId: id,
+            targetName: result.fullName || result.email,
+        });
+        return result;
+    }
+    async deleteUser(id, adminId) {
+        const result = await this.usersService.deleteUser(id);
+        await this.auditLogService.log({
+            userId: adminId,
+            action: 'DELETE_USER',
+            targetType: 'User',
+            targetId: id,
+            targetName: `${result.fullName} (${result.email})`,
+        });
+        return { message: `Đã xóa người dùng ${result.fullName}` };
     }
     getSavedProducts(id, currentUser) {
         if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
@@ -89,10 +111,21 @@ __decorate([
     (0, common_1.Put)(':id/status'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('status')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "toggleUserStatus", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "toggleUserStatus", null);
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteUser", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id/saved'),
@@ -171,6 +204,7 @@ __decorate([
 ], UsersController.prototype, "clearHistory", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        audit_log_service_1.AuditLogService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

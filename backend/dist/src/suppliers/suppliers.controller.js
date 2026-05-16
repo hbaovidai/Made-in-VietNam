@@ -21,12 +21,15 @@ const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const prisma_service_1 = require("../prisma/prisma.service");
+const audit_log_service_1 = require("../audit-log/audit-log.service");
 let SuppliersController = class SuppliersController {
     suppliersService;
     prisma;
-    constructor(suppliersService, prisma) {
+    auditLogService;
+    constructor(suppliersService, prisma, auditLogService) {
         this.suppliersService = suppliersService;
         this.prisma = prisma;
+        this.auditLogService = auditLogService;
     }
     findAll(query) {
         return this.suppliersService.findAll(query);
@@ -47,8 +50,16 @@ let SuppliersController = class SuppliersController {
     async createMyProfile(dto, userId) {
         return this.suppliersService.createProfile(userId, dto);
     }
-    verifySupplier(id, isVerified) {
-        return this.suppliersService.verifySupplier(id, isVerified);
+    async verifySupplier(id, isVerified, adminId) {
+        const result = await this.suppliersService.verifySupplier(id, isVerified);
+        await this.auditLogService.log({
+            userId: adminId,
+            action: isVerified ? 'VERIFY_SUPPLIER' : 'UNVERIFY_SUPPLIER',
+            targetType: 'Supplier',
+            targetId: id,
+            targetName: result.companyName,
+        });
+        return result;
     }
     async update(id, dto, currentUser) {
         if (currentUser.role !== 'ADMIN') {
@@ -132,9 +143,10 @@ __decorate([
     (0, common_1.Put)(':id/verify'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('isVerified')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Boolean]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Boolean, String]),
+    __metadata("design:returntype", Promise)
 ], SuppliersController.prototype, "verifySupplier", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -172,6 +184,7 @@ __decorate([
 exports.SuppliersController = SuppliersController = __decorate([
     (0, common_1.Controller)('suppliers'),
     __metadata("design:paramtypes", [suppliers_service_1.SuppliersService,
-        prisma_service_1.PrismaService])
+        prisma_service_1.PrismaService,
+        audit_log_service_1.AuditLogService])
 ], SuppliersController);
 //# sourceMappingURL=suppliers.controller.js.map

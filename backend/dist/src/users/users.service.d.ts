@@ -31,6 +31,11 @@ export declare class UsersService {
         role: import("@prisma/client").$Enums.Role;
         fullName: string;
     }>;
+    deleteUser(userId: string): Promise<{
+        id: string;
+        fullName: string;
+        email: string;
+    }>;
     getSavedProducts(userId: string): Promise<any[]>;
     saveProduct(userId: string, productId: string): Promise<{
         id: string;

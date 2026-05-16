@@ -20,6 +20,8 @@ import { ReportsModule } from './reports/reports.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
+import { AuditLogModule } from './audit-log/audit-log.module';
+import { TranslationModule } from './translation/translation.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { OrdersModule } from './orders/orders.module';
     UploadsModule,
     CartModule,
     OrdersModule,
+    AuditLogModule,
+    TranslationModule,
   ],
   providers: [
     // Kích hoạt Rate Limiter toàn cục cho mọi endpoint

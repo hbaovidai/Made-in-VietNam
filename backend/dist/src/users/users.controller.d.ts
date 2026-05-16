@@ -1,7 +1,9 @@
 import { UsersService } from './users.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 export declare class UsersController {
     private readonly usersService;
-    constructor(usersService: UsersService);
+    private readonly auditLogService;
+    constructor(usersService: UsersService, auditLogService: AuditLogService);
     getAllUsers(query: any): Promise<{
         data: {
             supplier: {
@@ -24,12 +26,15 @@ export declare class UsersController {
             totalPages: number;
         };
     }>;
-    toggleUserStatus(id: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<{
+    toggleUserStatus(id: string, status: 'ACTIVE' | 'SUSPENDED', adminId: string): Promise<{
         id: string;
         status: import("@prisma/client").$Enums.UserStatus;
         email: string;
         role: import("@prisma/client").$Enums.Role;
         fullName: string;
+    }>;
+    deleteUser(id: string, adminId: string): Promise<{
+        message: string;
     }>;
     getSavedProducts(id: string, currentUser: {
         id: string;

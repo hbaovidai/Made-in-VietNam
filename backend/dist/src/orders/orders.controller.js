@@ -16,10 +16,30 @@ exports.OrdersController = void 0;
 const common_1 = require("@nestjs/common");
 const orders_service_1 = require("./orders.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const audit_log_service_1 = require("../audit-log/audit-log.service");
 let OrdersController = class OrdersController {
     ordersService;
-    constructor(ordersService) {
+    auditLogService;
+    constructor(ordersService, auditLogService) {
         this.ordersService = ordersService;
+        this.auditLogService = auditLogService;
+    }
+    async getAllOrders(query) {
+        return this.ordersService.getAllOrders(query);
+    }
+    async adminUpdateStatus(req, id, body) {
+        const result = await this.ordersService.adminUpdateOrderStatus(id, body.status);
+        await this.auditLogService.log({
+            userId: req.user.id,
+            action: 'UPDATE_ORDER_STATUS',
+            targetType: 'Order',
+            targetId: id,
+            targetName: result.orderNumber,
+            details: JSON.stringify({ newStatus: body.status }),
+        });
+        return result;
     }
     async createOrder(req, body) {
         return this.ordersService.createOrder(req.user.id, body);
@@ -41,6 +61,26 @@ let OrdersController = class OrdersController {
     }
 };
 exports.OrdersController = OrdersController;
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Get)('admin/all'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "getAllOrders", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Patch)('admin/:id/status'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "adminUpdateStatus", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Request)()),
@@ -91,6 +131,7 @@ __decorate([
 exports.OrdersController = OrdersController = __decorate([
     (0, common_1.Controller)('orders'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __metadata("design:paramtypes", [orders_service_1.OrdersService])
+    __metadata("design:paramtypes", [orders_service_1.OrdersService,
+        audit_log_service_1.AuditLogService])
 ], OrdersController);
 //# sourceMappingURL=orders.controller.js.map
