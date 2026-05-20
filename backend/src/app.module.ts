@@ -22,6 +22,7 @@ import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { TranslationModule } from './translation/translation.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { TranslationModule } from './translation/translation.module';
     OrdersModule,
     AuditLogModule,
     TranslationModule,
+    SettingsModule,
   ],
   providers: [
     // Kích hoạt Rate Limiter toàn cục cho mọi endpoint

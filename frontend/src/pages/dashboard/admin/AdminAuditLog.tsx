@@ -67,11 +67,6 @@ export function AdminAuditLog() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('admin_audit_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('admin_audit_subtitle')}</p>
-      </div>
-
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">

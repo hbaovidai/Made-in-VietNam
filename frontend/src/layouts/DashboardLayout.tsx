@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock, ShoppingBag, ClipboardList, ScrollText } from 'lucide-react';
+import { LayoutDashboard, FileText, Heart, MessageSquare, Settings, LogOut, Globe, User, Package, BarChart3, ShieldCheck, Archive, QrCode, ShieldAlert, Menu, X, Clock, ShoppingBag, ClipboardList, ScrollText, Wrench } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { useAuth } from '../contexts/AuthContext';
@@ -98,9 +98,27 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
     { icon: <MessageSquare size={20} />, label: t('admin_menu_contacts'), path: '/dashboard/admin/contacts' },
     { icon: <ClipboardList size={20} />, label: t('admin_menu_orders'), path: '/dashboard/admin/orders' },
     { icon: <ScrollText size={20} />, label: t('admin_menu_audit_log'), path: '/dashboard/admin/audit-log' },
+    { icon: <Wrench size={20} />, label: t('admin_menu_settings'), path: '/dashboard/admin/settings' },
   ];
 
   const links = type === 'admin' ? adminLinks : (type === 'buyer' ? buyerLinks : supplierLinks);
+
+  // Page title & subtitle mapping for header
+  const pageTitles: Record<string, { title: string; subtitle?: string }> = {
+    '/dashboard/admin': { title: t('admin_menu_overview') },
+    '/dashboard/admin/users': { title: t('admin_users_title'), subtitle: t('admin_users_subtitle') },
+    '/dashboard/admin/suppliers': { title: t('admin_suppliers_title'), subtitle: t('admin_suppliers_subtitle') },
+    '/dashboard/admin/products': { title: t('admin_products_title'), subtitle: t('admin_products_subtitle') },
+    '/dashboard/admin/categories': { title: t('admin_categories_title'), subtitle: t('admin_categories_subtitle') },
+    '/dashboard/admin/contacts': { title: t('admin_contacts_title'), subtitle: t('admin_contacts_subtitle') },
+    '/dashboard/admin/orders': { title: t('admin_orders_title'), subtitle: t('admin_orders_subtitle') },
+    '/dashboard/admin/audit-log': { title: t('admin_audit_title'), subtitle: t('admin_audit_subtitle') },
+    '/dashboard/admin/settings': { title: t('admin_settings_title'), subtitle: t('admin_settings_subtitle') },
+  };
+
+  const currentPage = pageTitles[location.pathname];
+  const pageTitle = currentPage?.title || links.find(l => l.path === location.pathname)?.label || t('dashboard');
+  const pageSubtitle = currentPage?.subtitle;
 
   // Bottom nav: show only the most important 5 items
   const buyerBottomNav = [
@@ -212,9 +230,14 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
             >
               <Menu size={22} />
             </button>
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">
-              {links.find(l => l.path === location.pathname)?.label || t('dashboard')}
-            </h2>
+            <div>
+              <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">
+                {pageTitle}
+              </h2>
+              {pageSubtitle && (
+                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-none">{pageSubtitle}</p>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-3">

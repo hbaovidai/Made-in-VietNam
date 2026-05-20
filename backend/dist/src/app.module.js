@@ -31,6 +31,7 @@ const cart_module_1 = require("./cart/cart.module");
 const orders_module_1 = require("./orders/orders.module");
 const audit_log_module_1 = require("./audit-log/audit-log.module");
 const translation_module_1 = require("./translation/translation.module");
+const settings_module_1 = require("./settings/settings.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -70,6 +71,7 @@ exports.AppModule = AppModule = __decorate([
             orders_module_1.OrdersModule,
             audit_log_module_1.AuditLogModule,
             translation_module_1.TranslationModule,
+            settings_module_1.SettingsModule,
         ],
         providers: [
             {

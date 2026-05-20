@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { api } from '../lib/api';
 
 export function Footer() {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+
+  const [settings, setSettings] = useState<Record<string, string>>({
+    contact_email: 'contact@vieproduct.com',
+    contact_phone: '+84 899 123 456',
+    contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
+    facebook_url: '',
+    twitter_url: '',
+    linkedin_url: '',
+    instagram_url: '',
+  });
+
+  useEffect(() => {
+    api.get('/settings')
+      .then(res => setSettings(prev => ({ ...prev, ...res.data })))
+      .catch(() => {/* use defaults */});
+  }, []);
 
   return (
     <footer className="bg-[#043365] text-slate-300 pt-16 pb-8 border-t border-[#03254A]">
@@ -26,18 +43,35 @@ export function Footer() {
               {t('footer_description')}
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                <Facebook size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                <Linkedin size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                <Instagram size={18} />
-              </a>
+              {settings.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
+                  <Facebook size={18} />
+                </a>
+              )}
+              {settings.twitter_url && (
+                <a href={settings.twitter_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
+                  <Twitter size={18} />
+                </a>
+              )}
+              {settings.linkedin_url && (
+                <a href={settings.linkedin_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
+                  <Linkedin size={18} />
+                </a>
+              )}
+              {settings.instagram_url && (
+                <a href={settings.instagram_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
+                  <Instagram size={18} />
+                </a>
+              )}
+              {/* Show placeholders if no social links set */}
+              {!settings.facebook_url && !settings.twitter_url && !settings.linkedin_url && !settings.instagram_url && (
+                <>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Facebook size={18} /></a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Twitter size={18} /></a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Linkedin size={18} /></a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Instagram size={18} /></a>
+                </>
+              )}
             </div>
           </div>
 
@@ -49,7 +83,6 @@ export function Footer() {
               <li><Link to="/suppliers" className="hover:text-viet-gold transition-colors">{t('verified_suppliers')}</Link></li>
               <li><Link to="/rfq" className="hover:text-viet-gold transition-colors">{t('request_for_quotation')}</Link></li>
               <li><Link to="/products" className="hover:text-viet-gold transition-colors">{t('all_categories_footer')}</Link></li>
-              {/* <li><Link to="/premium" className="hover:text-viet-gold transition-colors">{t('premium_membership')}</Link></li> */}
             </ul>
           </div>
 
@@ -65,21 +98,21 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info — dynamic from admin settings */}
           <div>
             <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('contact_us')}</h3>
             <ul className="space-y-4 text-sm text-slate-400">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-viet-gold shrink-0" />
-                <span>{t('footer_address')}</span>
+                <span>{settings.contact_address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-viet-gold shrink-0" />
-                <span>+84 899 123 456</span>
+                <span>{settings.contact_phone}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-viet-gold shrink-0" />
-                <span>contact@vieproduct.com</span>
+                <span>{settings.contact_email}</span>
               </li>
             </ul>
           </div>

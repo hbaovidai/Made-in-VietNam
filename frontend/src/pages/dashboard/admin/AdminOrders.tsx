@@ -74,11 +74,6 @@ export function AdminOrders() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('admin_orders_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('admin_orders_subtitle')}</p>
-      </div>
-
       {/* Tabs */}
       <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl">
         {statusTabs.map(tab => (

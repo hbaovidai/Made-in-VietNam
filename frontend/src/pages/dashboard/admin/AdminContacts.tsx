@@ -68,18 +68,12 @@ export function AdminContacts() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('admin_contacts_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          {t('admin_contacts_subtitle')} — {contacts.length} liên hệ
-          {unreadCount > 0 && (
-            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-600 text-xs font-bold rounded-full">
-              <Circle size={6} fill="currentColor" /> {unreadCount} chưa đọc
-            </span>
-          )}
-        </p>
-      </div>
+      {/* Unread indicator */}
+      {unreadCount > 0 && (
+        <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full">
+          <Circle size={6} fill="currentColor" /> {unreadCount} {t('admin_contacts_unread')}
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3">

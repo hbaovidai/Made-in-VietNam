@@ -59,20 +59,12 @@ export function AdminSuppliers() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">{t('admin_suppliers_title')}</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {suppliers.length} doanh nghiệp — 
-            {pendingCount > 0 ? (
-              <span className="text-amber-600 font-semibold"> {pendingCount} chờ duyệt</span>
-            ) : (
-              <span className="text-emerald-600"> tất cả đã duyệt</span>
-            )}
-          </p>
+      {/* Pending indicator */}
+      {pendingCount > 0 && (
+        <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full">
+          {pendingCount} {t('admin_suppliers_pending_label')}
         </div>
-      </div>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

@@ -110,12 +110,8 @@ export function AdminCategories() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">{t('admin_categories_title')}</h1>
-          <p className="text-sm text-slate-500 mt-1">{t('admin_categories_subtitle')} — {categories.length}</p>
-        </div>
+      {/* Action Bar */}
+      <div className="flex justify-end">
         <button 
           onClick={() => setIsAdding(true)} 
           className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0"
