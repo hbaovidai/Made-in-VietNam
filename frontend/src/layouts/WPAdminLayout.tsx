@@ -61,6 +61,9 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: MessageSquare, label: t('msg_menu_label'), path: '/dashboard/admin/messages',
   },
   {
+    icon: Shield, label: 'Xác minh DN', path: '/dashboard/admin/verifications',
+  },
+  {
     icon: Settings, label: 'Settings', path: '/dashboard/admin/settings',
   },
 ];
