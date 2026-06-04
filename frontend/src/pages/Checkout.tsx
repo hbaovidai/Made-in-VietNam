@@ -103,26 +103,26 @@ export function Checkout() {
       <div className="max-w-[1100px] mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Thanh toán & Đặt hàng</h1>
-          <p className="text-sm text-slate-500 mt-1">Kiểm tra thông tin và xác nhận đơn hàng của bạn</p>
+          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Gửi yêu cầu Báo giá hàng loạt</h1>
+          <p className="text-sm text-slate-500 mt-1">Kiểm tra thông tin liên hệ và danh sách sản phẩm cần gửi báo giá</p>
         </div>
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* LEFT: Shipping + Payment (3 cols) */}
+          {/* LEFT: Contact + B2B Info (3 cols) */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Shipping Info */}
+            {/* Contact Info */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
               <h2 className="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Truck size={16} className="text-primary" />
                 </div>
-                Thông tin Giao hàng
+                Thông tin Liên hệ & Địa chỉ nhận hàng
               </h2>
               
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Họ tên người nhận <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Họ tên người liên hệ <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       required
@@ -133,7 +133,7 @@ export function Checkout() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Số điện thoại <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Số điện thoại liên hệ <span className="text-red-500">*</span></label>
                     <input
                       type="tel"
                       required
@@ -146,7 +146,7 @@ export function Checkout() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Địa chỉ giao hàng <span className="text-red-500">*</span></label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Địa chỉ nhận hàng dự kiến <span className="text-red-500">*</span></label>
                   <textarea
                     required
                     rows={3}
@@ -158,59 +158,45 @@ export function Checkout() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ghi chú (Tùy chọn)</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ghi chú / Yêu cầu đặc biệt (Tùy chọn)</label>
                   <textarea
                     rows={2}
                     value={formData.note}
                     onChange={(e) => setFormData({...formData, note: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium resize-none"
-                    placeholder="Lưu ý giao hàng cho shipper..."
+                    placeholder="Ví dụ: Yêu cầu chứng chỉ CO/CQ, đóng gói xuất khẩu, yêu cầu thời gian giao hàng gấp..."
                   />
                 </div>
               </div>
             </div>
 
-            {/* Payment Method */}
+            {/* B2B Process Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
-              <h2 className="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <CreditCard size={16} className="text-primary" />
+                  <ShieldCheck size={16} className="text-primary" />
                 </div>
-                Phương thức Thanh toán
+                Quy trình giao dịch B2B
               </h2>
               
-              <div className="space-y-3">
-                <label className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${formData.paymentMethod === 'COD' ? 'border-primary bg-primary/5 shadow-sm' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}>
-                  <input 
-                    type="radio" 
-                    name="paymentMethod" 
-                    value="COD" 
-                    checked={formData.paymentMethod === 'COD'}
-                    onChange={(e) => setFormData({...formData, paymentMethod: e.target.value})}
-                    className="w-5 h-5 text-primary focus:ring-primary"
-                  />
-                  <div className="flex-1">
-                    <div className={`text-sm font-bold ${formData.paymentMethod === 'COD' ? 'text-primary' : 'text-slate-900'}`}>Thanh toán khi nhận hàng (COD)</div>
-                    <div className="text-xs text-slate-500 mt-0.5">Nhận hàng rồi thanh toán tiền mặt cho shipper</div>
+              <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p>
+                  Yêu cầu hỏi giá sỉ của bạn sẽ được chuyển tiếp trực tiếp đến các nhà cung cấp tương ứng để phản hồi báo giá.
+                </p>
+                <div className="flex gap-3 p-4 bg-slate-50 rounded-xl border border-slate-250 text-xs">
+                  <div className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold">1</div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 mb-0.5">Xác nhận yêu cầu</h4>
+                    <p>Nhà cung cấp sẽ kiểm tra số lượng tồn kho, thời gian sản xuất và liên hệ lại với bạn.</p>
                   </div>
-                  {formData.paymentMethod === 'COD' && <CheckCircle2 size={20} className="text-primary shrink-0" />}
-                </label>
-
-                <label className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${formData.paymentMethod === 'BANK_TRANSFER' ? 'border-primary bg-primary/5 shadow-sm' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}>
-                  <input 
-                    type="radio" 
-                    name="paymentMethod" 
-                    value="BANK_TRANSFER" 
-                    checked={formData.paymentMethod === 'BANK_TRANSFER'}
-                    onChange={(e) => setFormData({...formData, paymentMethod: e.target.value})}
-                    className="w-5 h-5 text-primary focus:ring-primary"
-                  />
-                  <div className="flex-1">
-                    <div className={`text-sm font-bold ${formData.paymentMethod === 'BANK_TRANSFER' ? 'text-primary' : 'text-slate-900'}`}>Chuyển khoản Ngân hàng</div>
-                    <div className="text-xs text-slate-500 mt-0.5">Mã QR sẽ hiển thị sau khi đặt hàng</div>
+                </div>
+                <div className="flex gap-3 p-4 bg-slate-50 rounded-xl border border-slate-250 text-xs">
+                  <div className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold">2</div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 mb-0.5">Thỏa thuận thương mại</h4>
+                    <p>Hai bên tự do đàm phán phương thức thanh toán doanh nghiệp (L/C, T/T, bảo lãnh...) và phương thức vận chuyển phù hợp.</p>
                   </div>
-                  {formData.paymentMethod === 'BANK_TRANSFER' && <CheckCircle2 size={20} className="text-primary shrink-0" />}
-                </label>
+                </div>
               </div>
             </div>
           </div>
@@ -222,7 +208,7 @@ export function Checkout() {
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <ShoppingCart size={16} className="text-primary" />
                 </div>
-                Đơn hàng của bạn
+                Sản phẩm gửi hỏi giá
               </h2>
 
               {/* Product list with unit price × qty */}
@@ -252,9 +238,9 @@ export function Checkout() {
                   <thead>
                     <tr className="text-slate-400 font-bold uppercase tracking-wider">
                       <th className="text-left pb-2">Sản phẩm</th>
-                      <th className="text-center pb-2">Đơn giá</th>
+                      <th className="text-center pb-2">Giá sỉ tham khảo</th>
                       <th className="text-center pb-2">SL</th>
-                      <th className="text-right pb-2">Thành tiền</th>
+                      <th className="text-right pb-2">Tạm tính</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -271,17 +257,17 @@ export function Checkout() {
 
                 <div className="border-t border-slate-200 pt-3 space-y-2">
                   <div className="flex justify-between text-sm text-slate-500">
-                    <span>Tạm tính ({cartItems.length} sản phẩm)</span>
+                    <span>Tạm tính ({cartItems.length} mặt hàng)</span>
                     <span className="font-bold text-slate-700">{formatCurrency(calculateTotal())}₫</span>
                   </div>
                   <div className="flex justify-between text-sm text-slate-500">
-                    <span>Phí vận chuyển</span>
-                    <span className="text-primary font-bold text-xs bg-primary/5 px-2 py-0.5 rounded-full">Thỏa thuận</span>
+                    <span>Vận chuyển & Thuế</span>
+                    <span className="text-primary font-bold text-xs bg-primary/5 px-2 py-0.5 rounded-full">Thương lượng sau</span>
                   </div>
                 </div>
 
                 <div className="border-t-2 border-primary/20 pt-3 flex justify-between items-center">
-                  <span className="font-bold text-slate-900">Tổng thanh toán</span>
+                  <span className="font-bold text-slate-900">Tổng giá trị tham khảo</span>
                   <span className="text-xl font-black text-primary">{formatCurrency(calculateTotal())}₫</span>
                 </div>
               </div>
@@ -293,22 +279,22 @@ export function Checkout() {
                 className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark disabled:opacity-50 transition-all uppercase tracking-widest text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 {submitting ? (
-                  <><Loader2 size={16} className="animate-spin" /> Đang xử lý...</>
+                  <><Loader2 size={16} className="animate-spin" /> Đang gửi yêu cầu...</>
                 ) : (
-                  <>ĐẶT HÀNG NGAY <ArrowRight size={16} /></>
+                  <>GỬI YÊU CẦU BÁO GIÁ HÀNG LOẠT <ArrowRight size={16} /></>
                 )}
               </button>
               
               {/* Trust badges */}
               <div className="mt-4 flex items-center justify-center gap-4 text-[10px] text-slate-400 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck size={12} /> Bảo mật SSL</span>
+                <span className="flex items-center gap-1"><ShieldCheck size={12} /> Thông tin bảo mật</span>
                 <span>•</span>
-                <span className="flex items-center gap-1"><CheckCircle2 size={12} /> Đảm bảo chất lượng</span>
+                <span className="flex items-center gap-1"><CheckCircle2 size={12} /> Kết nối trực tiếp</span>
               </div>
 
               <div className="mt-3 flex items-start gap-2 text-xs text-slate-500 p-3 bg-blue-50 rounded-xl border border-blue-100">
                 <AlertCircle size={14} className="text-primary shrink-0 mt-0.5" />
-                <p>Vì đây là nền tảng B2B, cước vận chuyển sẽ được nhà cung cấp liên hệ thông báo sau khi xác nhận đơn.</p>
+                <p>Nền tảng Made in Vietnam đóng vai trò trung gian kết nối B2B, không thu phí giao dịch hay xử lý thanh toán trực tuyến.</p>
               </div>
             </div>
           </div>

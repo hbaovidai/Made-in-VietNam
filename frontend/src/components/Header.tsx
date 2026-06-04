@@ -188,7 +188,7 @@ export function Header() {
         { icon: <Package size={18} />, label: t('products'), href: "/products" },
         { icon: <User size={18} />, label: t('suppliers'), href: "/suppliers" },
         { icon: <Menu size={18} />, label: t('all_categories'), href: "/products" },
-        { icon: <ShoppingCart size={18} />, label: t('inquiry_basket', 'Giỏ hàng'), href: "/cart" },
+        { icon: <ShoppingCart size={18} />, label: t('inquiry_basket', 'Giỏ yêu cầu'), href: "/cart" },
       ]
     },
     {
@@ -288,13 +288,13 @@ export function Header() {
                 className="flex items-center gap-1 text-slate-600 hover:text-primary"
               >
                 <Globe size={20} />
-                <span className="text-sm font-bold uppercase">{i18n.language || 'vi'}</span>
+                <span className="text-sm font-bold uppercase">{i18n.language?.startsWith('vi') ? 'Tiếng Việt' : 'English'}</span>
                 <ChevronDown size={14} className={cn("transition-transform", isLangDropdownOpen && "rotate-180")} />
               </button>
               {isLangDropdownOpen && (
                 <div className="absolute top-full right-0 mt-4 w-40 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 z-[100]">
-                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'vi' ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇻🇳 Tiếng Việt</button>
-                  <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language === 'en' ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇬🇧 English</button>
+                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('vi') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇻🇳 Tiếng Việt</button>
+                  <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('en') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇬🇧 English</button>
                 </div>
               )}
             </div>
@@ -350,7 +350,7 @@ export function Header() {
                 </div>
               )}
 
-              <Link to="/cart" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket', 'Giỏ hàng')}>
+              <Link to="/cart" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket', 'Giỏ yêu cầu')}>
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">{cartCount}</span>
@@ -406,7 +406,7 @@ export function Header() {
               <Search size={22} />
             </button>
             {/* Cart icon */}
-            <Link to="/cart" className="p-2 text-slate-600 hover:text-primary transition-colors relative">
+            <Link to="/cart" className="p-2 text-slate-600 hover:text-primary transition-colors relative" title={t('inquiry_basket', 'Giỏ yêu cầu')}>
               <ShoppingCart size={22} />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>
@@ -459,7 +459,7 @@ export function Header() {
               </Link>
 
               {isCategoriesOpen && (
-                <div className="absolute top-full left-0 z-[100] w-[1200px]">
+                <div className="absolute top-full left-0 z-[100] max-w-[calc(100vw-2rem)]">
                   <CategoryMegaMenu />
                 </div>
               )}
@@ -581,13 +581,13 @@ export function Header() {
                 <Globe size={16} className="text-slate-400" />
                 <button
                   onClick={() => changeLanguage('vi')}
-                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'vi' ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
+                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language?.startsWith('vi') ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
                 >
                   🇻🇳 VI
                 </button>
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language === 'en' ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
+                  className={cn("text-sm px-3 py-1.5 rounded-full font-bold transition-colors", i18n.language?.startsWith('en') ? "bg-primary text-white" : "bg-slate-100 text-slate-600")}
                 >
                   🇬🇧 EN
                 </button>

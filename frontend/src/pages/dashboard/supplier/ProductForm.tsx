@@ -7,6 +7,12 @@ import { Product } from '../../../data/mockData';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 
+interface CategoryOption {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface ProductFormProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,7 +25,7 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
-    category: 'Nông sản',
+    category: '',
     priceRange: '',
     moq: '',
     description: '',
@@ -28,6 +34,20 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
     image: '',
   });
 
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await api.get('/categories');
+        setCategoryOptions(res.data.filter((c: any) => !c.parentId));
+      } catch (err) {
+        console.error('Failed to fetch categories', err);
+      }
+    }
+    fetchCategories();
+  }, []);
+
   // Reset form when modal opens
   useEffect(() => {
     if (product) {
@@ -35,7 +55,7 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
     } else {
       setFormData({
         name: '',
-        category: 'Nông sản',
+        category: '',
         priceRange: '',
         moq: '',
         description: '',
@@ -129,12 +149,10 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
                       value={formData.category}
                       onChange={handleChange}
                     >
-                      <option value="Nông sản">{t('category_agriculture')}</option>
-                      <option value="Dệt may & May mặc">{t('category_textile')}</option>
-                      <option value="Nội thất & Trang trí">{t('category_furniture')}</option>
-                      <option value="Thủ công mỹ nghệ">{t('category_handicraft')}</option>
-                      <option value="Điện tử">{t('category_electronics')}</option>
-                      <option value="Thực phẩm & Đồ uống">{t('category_food')}</option>
+                      <option value="">{t('select_category', 'Chọn danh mục')}</option>
+                      {categoryOptions.map((cat) => (
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

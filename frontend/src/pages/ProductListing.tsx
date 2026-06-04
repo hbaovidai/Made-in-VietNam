@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Filter, ChevronDown, ChevronRight, Search, SlidersHorizontal, LayoutGrid, List, X, Loader2 } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
-import { ALL_CATEGORIES_LIST, CATEGORY_GROUPS } from '../data/categories';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
@@ -16,15 +15,26 @@ export function ProductListing() {
   const categoryFilter = searchParams.get('category');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [categories, setCategories] = useState<any[]>([]);
+
+  // Fetch categories from API
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await api.get('/categories');
+        setCategories(res.data.filter((c: any) => !c.parentId));
+      } catch (err) {
+        console.error('Failed to fetch categories', err);
+      }
+    }
+    fetchCategories();
+  }, []);
 
   const activeCategoryGroup = React.useMemo(() => {
     if (!categoryFilter) return null;
-    const group = CATEGORY_GROUPS.find(g => 
-      g.slug === categoryFilter || 
-      g.sections.some(s => s.subcategories.some(sub => sub.href.includes(categoryFilter)))
-    );
+    const group = categories.find(g => g.slug === categoryFilter);
     return group ? group.slug : categoryFilter;
-  }, [categoryFilter]);
+  }, [categoryFilter, categories]);
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,14 +85,14 @@ export function ProductListing() {
             <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
             <ChevronRight size={12} className="text-slate-400" />
             <span className="text-primary font-bold">
-              {activeCategoryGroup ? localized(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup), 'name') : t('products_breadcrumb')}
+              {activeCategoryGroup ? (categories.find(g => g.slug === activeCategoryGroup)?.name || activeCategoryGroup) : t('products_breadcrumb')}
             </span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-4xl space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">
-                {activeCategoryGroup ? localized(CATEGORY_GROUPS.find(g => g.slug === activeCategoryGroup), 'name') : t('all_products')}
+                {activeCategoryGroup ? (categories.find(g => g.slug === activeCategoryGroup)?.name || activeCategoryGroup) : t('all_products')}
               </h1>
             </div>
             
@@ -142,7 +152,7 @@ export function ProductListing() {
                   >
                     {t('all_categories')}
                   </button>
-                  {ALL_CATEGORIES_LIST.map((cat) => (
+                  {categories.map((cat) => (
                     <button
                       key={cat.slug}
                       onClick={() => setSearchParams({ category: cat.slug })}
@@ -153,7 +163,7 @@ export function ProductListing() {
                           : "bg-white text-slate-700 border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md"
                       )}
                     >
-                      {localized(cat, 'name')}
+                      {cat.name}
                     </button>
                   ))}
                 </div>
@@ -272,7 +282,7 @@ export function ProductListing() {
               <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">{t('categories')}</h3>
                 <div className="grid grid-cols-1 gap-2">
-                  {ALL_CATEGORIES_LIST.map((cat) => (
+                  {categories.map((cat) => (
                     <button
                       key={cat.slug}
                       onClick={() => { setSearchParams({ category: cat.slug }); setIsSidebarOpen(false); }}
@@ -281,7 +291,7 @@ export function ProductListing() {
                         activeCategoryGroup === cat.slug ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100"
                       )}
                     >
-                      {localized(cat, 'name')}
+                      {cat.name}
                     </button>
                   ))}
                 </div>

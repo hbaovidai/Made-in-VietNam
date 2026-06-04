@@ -1,227 +1,223 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import { WPPagination } from '../../../components/admin/WPPagination';
 import { api } from '../../../lib/api';
-import { useTranslation } from 'react-i18next';
-import { useToast } from '../../../components/ui/Toast';
-import { Loader2, User as UserIcon, Lock, Unlock, Search, Filter, Trash2 } from 'lucide-react';
-import { Badge } from '../../../components/ui/Badge';
-import { ConfirmDialog } from '../../../components/ui/Modal';
+import { useAuth } from '../../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 export function AdminUsers() {
-  const { t } = useTranslation();
-  const { addToast } = useToast();
+  const { user: me } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('ALL');
-
-  const [confirmLock, setConfirmLock] = useState<{ isOpen: boolean; user: any; intent: 'ACTIVE' | 'SUSPENDED' }>({
-    isOpen: false, user: null, intent: 'SUSPENDED'
-  });
-
-  const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; user: any }>({
-    isOpen: false, user: null
-  });
+  const [filterRole, setFilterRole] = useState('all');
+  const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const perPage = 20;
 
   useEffect(() => {
-    loadUsers();
+    const fetchUsers = async () => {
+      try {
+        const res = await api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const data = res.data;
+        setUsers(Array.isArray(data) ? data : (data?.users || data?.data || []));
+      } catch { /* silent */ }
+      setLoading(false);
+    };
+    fetchUsers();
   }, []);
 
-  const loadUsers = async () => {
-    try {
-      const res = await api.get('/users?limit=100');
-      setUsers(res.data.data || []);
-    } catch (err) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_load_error') });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleStatus = async () => {
-    const { user, intent } = confirmLock;
-    if (!user) return;
-    try {
-      await api.put(`/users/${user.id}/status`, { status: intent });
-      addToast({
-        type: 'success',
-        title: t('admin_success'),
-        message: intent === 'SUSPENDED' ? t('admin_locked_msg', { name: user.fullName }) : t('admin_unlocked_msg', { name: user.fullName })
-      });
-      setConfirmLock({ ...confirmLock, isOpen: false });
-      loadUsers();
-    } catch (error) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_action_failed') });
-    }
-  };
-
-  const handleDeleteUser = async () => {
-    const { user } = confirmDelete;
-    if (!user) return;
-    try {
-      await api.delete(`/users/${user.id}`);
-      addToast({
-        type: 'success',
-        title: t('admin_success'),
-        message: `Đã xóa người dùng ${user.fullName} (${user.email})`
-      });
-      setConfirmDelete({ isOpen: false, user: null });
-      loadUsers();
-    } catch (error) {
-      addToast({ type: 'error', title: t('admin_error'), message: 'Không thể xóa người dùng. Có thể người dùng còn đơn hàng hoặc dữ liệu liên quan.' });
-    }
-  };
-
-  const getRoleBadge = (role: string) => {
-    switch(role) {
-      case 'ADMIN': return <Badge variant="warning">ADMIN</Badge>;
-      case 'SUPPLIER': return <Badge variant="success">{t('admin_role_supplier')}</Badge>;
-      default: return <Badge variant="default">{t('admin_role_buyer')}</Badge>;
-    }
-  };
-
   const filtered = users.filter(u => {
-    const matchSearch = !search || 
-      u.fullName?.toLowerCase().includes(search.toLowerCase()) || 
+    const matchSearch = !search ||
+      u.fullName?.toLowerCase().includes(search.toLowerCase()) ||
       u.email?.toLowerCase().includes(search.toLowerCase());
-    const matchRole = roleFilter === 'ALL' || u.role === roleFilter;
+    const matchRole = filterRole === 'all' || u.role === filterRole;
     return matchSearch && matchRole;
   });
 
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+
+  const roleCounts = {
+    all: users.length,
+    ADMIN: users.filter(u => u.role === 'ADMIN').length,
+    SUPPLIER: users.filter(u => u.role === 'SUPPLIER').length,
+    BUYER: users.filter(u => u.role === 'BUYER').length,
+  };
+
+  const roleLabels: Record<string, string> = {
+    all: 'Tất cả',
+    ADMIN: 'Quản trị viên',
+    SUPPLIER: 'Doanh nghiệp',
+    BUYER: 'Khách hàng',
+  };
+
+  const handleStatusChange = async (userId: string, status: string) => {
+    try {
+      await api.put(`/users/${userId}/status`, { status }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, status } : u));
+    } catch { /* silent */ }
+  };
+
+  const handleDelete = async (userId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
+    try {
+      await api.delete(`/users/${userId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      setUsers(prev => prev.filter(u => u.id !== userId));
+    } catch { /* silent */ }
+  };
+
+  const toggleAll = () => {
+    if (selectedIds.length === paginated.length) setSelectedIds([]);
+    else setSelectedIds(paginated.map(u => u.id));
+  };
+
+  const toggleOne = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const getAvatarColor = (role: string) => {
+    switch (role) {
+      case 'ADMIN': return '#2271b1';
+      case 'SUPPLIER': return '#00a32a';
+      default: return '#646970';
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+    <div>
+      {/* Breadcrumb */}
+      <div className="wp-breadcrumb">
+        <Link to="/dashboard/admin">Dashboard</Link>
+        <span className="wp-breadcrumb-sep">›</span>
+        <span>Users</span>
+        <span className="wp-breadcrumb-sep">›</span>
+        <span className="wp-breadcrumb-current">Tất cả người dùng</span>
+      </div>
+
+      <div className="wp-page-header">
+        <h1 className="wp-page-title">
+          Tất cả người dùng
+          <Link to="/dashboard/admin/users/add" className="wp-page-title-btn">Thêm người dùng</Link>
+        </h1>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="wp-filter-tabs">
+        {Object.entries(roleCounts).map(([role, count], idx) => (
+          <React.Fragment key={role}>
+            {idx > 0 && <span className="wp-filter-sep">|</span>}
+            <button
+              className={`wp-filter-tab ${filterRole === role ? 'active' : ''}`}
+              onClick={() => { setFilterRole(role); setPage(1); }}
+            >
+              {roleLabels[role]} <span className="count">({count})</span>
+            </button>
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* Search + Bulk Actions */}
+      <div className="wp-table-top">
+        <div className="wp-bulk-actions">
+          <select className="wp-bulk-select">
+            <option>Thao tác hàng loạt</option>
+            <option>Xóa</option>
+            <option>Khóa tài khoản</option>
+          </select>
+          <button className="wp-btn">Áp dụng</button>
+        </div>
+        <div className="wp-table-search">
           <input
             type="text"
-            placeholder={t('admin_search_placeholder')}
+            placeholder="Tìm người dùng..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
-        </div>
-        <div className="flex items-center gap-2">
-          <Filter size={14} className="text-slate-400 shrink-0" />
-          <select
-            value={roleFilter}
-            onChange={e => setRoleFilter(e.target.value)}
-            className="bg-white border border-slate-200 rounded-xl text-sm px-3 py-2.5 outline-none focus:border-primary font-medium text-slate-700"
-          >
-            <option value="ALL">{t('admin_all_roles')}</option>
-            <option value="ADMIN">{t('admin_role_admin')}</option>
-            <option value="SUPPLIER">{t('admin_role_supplier')}</option>
-            <option value="BUYER">{t('admin_role_buyer')}</option>
-          </select>
+          <button className="wp-btn"><Search size={14} /> Tìm kiếm</button>
         </div>
       </div>
 
       {/* Table */}
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="animate-spin text-primary" size={28} /></div>
+        <div className="wp-loading">Đang tải dữ liệu người dùng...</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[700px]">
+        <div className="wp-table-wrap">
+          <table className="wp-table">
             <thead>
-              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
-                <th className="pb-3 pl-1">{t('admin_info')}</th>
-                <th className="pb-3">{t('admin_role')}</th>
-                <th className="pb-3">{t('admin_status')}</th>
-                <th className="pb-3">{t('admin_joined')}</th>
-                <th className="pb-3 pr-1 text-right">{t('admin_action')}</th>
+              <tr>
+                <th style={{ width: 30 }}>
+                  <input type="checkbox" checked={selectedIds.length === paginated.length && paginated.length > 0} onChange={toggleAll} />
+                </th>
+                <th>Username</th>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
               </tr>
             </thead>
-            <tbody className="text-sm">
-              {filtered.map(user => (
-                <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors">
-                  <td className="py-4 pl-1">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs shrink-0">
-                        {user.fullName ? user.fullName[0].toUpperCase() : <UserIcon size={14} />}
-                      </div>
+            <tbody>
+              {paginated.length === 0 ? (
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không tìm thấy người dùng nào.</td></tr>
+              ) : paginated.map(u => (
+                <tr key={u.id}>
+                  <td><input type="checkbox" checked={selectedIds.includes(u.id)} onChange={() => toggleOne(u.id)} /></td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {u.avatar ? (
+                        <img
+                          src={u.avatar}
+                          alt={u.fullName}
+                          style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: 32, height: 32, borderRadius: '50%',
+                          background: getAvatarColor(u.role),
+                          color: '#fff', fontSize: 12, fontWeight: 700,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                        }}>
+                          {u.fullName?.charAt(0) || '?'}
+                        </div>
+                      )}
                       <div>
-                        <div className="font-semibold text-slate-900">{user.fullName || t('admin_not_set')}</div>
-                        <div className="text-xs text-slate-400 mt-0.5">{user.email}</div>
+                        <span className="wp-row-title">{u.email?.split('@')[0]}</span>
+                        <div className="wp-row-actions">
+                        <Link to={`/dashboard/admin/profile?id=${u.id}`}>Edit</Link>
+                          <span className="sep">|</span>
+                          <Link to={`/dashboard/admin/profile?id=${u.id}`}>View Profile</Link>
+                          <span className="sep">|</span>
+                          {u.id !== me?.id && (
+                            <button className="delete" onClick={() => handleDelete(u.id)}>Delete</button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td className="py-4">{getRoleBadge(user.role)}</td>
-                  <td className="py-4">
-                    {(user.status || 'ACTIVE') === 'ACTIVE' ? (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        {t('admin_status_active')}
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-500">
-                        <Lock size={11} />
-                        {t('admin_status_locked')}
-                      </span>
-                    )}
+                  <td style={{ fontWeight: 500 }}>{u.fullName}</td>
+                  <td><a href={`mailto:${u.email}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{u.email}</a></td>
+                  <td>
+                    <span className={`wp-badge ${u.role === 'ADMIN' ? 'wp-badge-published' : u.role === 'SUPPLIER' ? 'wp-badge-pending' : 'wp-badge-draft'}`}>
+                      {roleLabels[u.role] || u.role}
+                    </span>
                   </td>
-                  <td className="py-4 text-slate-400 text-xs font-medium">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                  <td>
+                    <span className={`wp-badge ${u.status === 'ACTIVE' ? 'wp-badge-approved' : 'wp-badge-rejected'}`}>
+                      {u.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa'}
+                    </span>
                   </td>
-                  <td className="py-4 pr-1 text-right">
-                    {user.role !== 'ADMIN' && (
-                      <div className="flex justify-end items-center gap-2">
-                        {(user.status || 'ACTIVE') === 'ACTIVE' ? (
-                          <button
-                            onClick={() => setConfirmLock({ isOpen: true, user, intent: 'SUSPENDED' })}
-                            className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors inline-flex items-center gap-1"
-                          >
-                            <Lock size={12} /> {t('admin_lock')}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => setConfirmLock({ isOpen: true, user, intent: 'ACTIVE' })}
-                            className="text-xs font-bold text-primary hover:text-primary-dark transition-colors inline-flex items-center gap-1"
-                          >
-                            <Unlock size={12} /> {t('admin_unlock')}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => setConfirmDelete({ isOpen: true, user })}
-                          className="text-xs font-bold text-slate-400 hover:text-red-600 transition-colors inline-flex items-center gap-1"
-                        >
-                          <Trash2 size={12} /> Xóa
-                        </button>
-                      </div>
-                    )}
+                  <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>
+                    {new Date(u.createdAt).toLocaleDateString('vi-VN')}
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && (
-                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">{t('admin_no_users_found')}</td></tr>
-              )}
             </tbody>
           </table>
         </div>
       )}
 
-      <ConfirmDialog
-        isOpen={confirmLock.isOpen}
-        onClose={() => setConfirmLock({ ...confirmLock, isOpen: false })}
-        onConfirm={handleToggleStatus}
-        title={confirmLock.intent === 'SUSPENDED' ? t('admin_lock_account') : t('admin_unlock_account')}
-        message={
-          confirmLock.intent === 'SUSPENDED'
-            ? t('admin_lock_msg', { name: confirmLock.user?.fullName, email: confirmLock.user?.email })
-            : t('admin_unlock_msg', { name: confirmLock.user?.fullName, email: confirmLock.user?.email })
-        }
-        confirmText={confirmLock.intent === 'SUSPENDED' ? t('admin_lock_btn') : t('admin_unlock_btn')}
-        variant={confirmLock.intent === 'SUSPENDED' ? 'danger' : 'info'}
-      />
-
-      <ConfirmDialog
-        isOpen={confirmDelete.isOpen}
-        onClose={() => setConfirmDelete({ isOpen: false, user: null })}
-        onConfirm={handleDeleteUser}
-        title="Xóa người dùng vĩnh viễn?"
-        message={`Bạn chắc chắn muốn xóa tài khoản "${confirmDelete.user?.fullName}" (${confirmDelete.user?.email})? Hành động này không thể hoàn tác. Toàn bộ dữ liệu của người dùng sẽ bị xóa vĩnh viễn.`}
-        confirmText="Xác nhận Xóa"
-        variant="danger"
-      />
+      <WPPagination page={page} perPage={perPage} total={filtered.length} onPageChange={setPage} />
     </div>
   );
 }

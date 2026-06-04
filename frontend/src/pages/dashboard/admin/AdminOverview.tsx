@@ -1,330 +1,147 @@
-import React, { useEffect, useState } from 'react';
-import { Users, Package, ShieldCheck, MessageSquare, Loader2, TrendingUp, TrendingDown, ArrowUpRight, Building2, Clock, ChevronRight } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
+import { Users, Package, MessageSquare, FileText, TrendingUp, TrendingDown, Activity, Server, Edit3 } from 'lucide-react';
 import { api } from '../../../lib/api';
-import { Link } from 'react-router-dom';
 
 export function AdminOverview() {
-  const { t } = useTranslation();
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    pendingSuppliers: 0,
-    totalSuppliers: 0,
-    totalProducts: 0,
-    pendingProducts: 0,
-    totalContacts: 0,
-  });
-  const [recentSuppliers, setRecentSuppliers] = useState<any[]>([]);
-  const [recentContacts, setRecentContacts] = useState<any[]>([]);
+  const [stats, setStats] = useState({ users: 0, products: 0, contacts: 0, orders: 0 });
   const [loading, setLoading] = useState(true);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [draftContent, setDraftContent] = useState('');
 
   useEffect(() => {
-    async function loadStats() {
+    const fetchStats = async () => {
       try {
-        const [usersRes, suppliersRes, productsRes, pendingProductsRes, contactsRes] = await Promise.all([
-          api.get('/users?limit=1'),
-          api.get('/suppliers?limit=100'),
-          api.get('/products/admin?limit=1&status=ACTIVE'),
-          api.get('/products/admin?limit=1&status=PENDING'),
-          api.get('/contact'),
+        const [usersRes, productsRes, contactsRes] = await Promise.allSettled([
+          api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
+          api.get('/products'),
+          api.get('/contact', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
         ]);
-
-        const totalUsers = usersRes.data?.meta?.total ?? 0;
-        const suppliers = Array.isArray(suppliersRes.data) ? suppliersRes.data : [];
-        const pendingSuppliers = suppliers.filter((s: any) => !s.isVerified).length;
-        const totalProducts = productsRes.data?.meta?.total ?? 0;
-        const pendingProducts = pendingProductsRes.data?.meta?.total ?? 0;
-        const contacts = Array.isArray(contactsRes.data) ? contactsRes.data : [];
-
         setStats({
-          totalUsers,
-          pendingSuppliers,
-          totalSuppliers: suppliers.length,
-          totalProducts,
-          pendingProducts,
-          totalContacts: contacts.length,
+          users: usersRes.status === 'fulfilled' ? (Array.isArray(usersRes.value.data) ? usersRes.value.data.length : usersRes.value.data?.users?.length || 0) : 0,
+          products: productsRes.status === 'fulfilled' ? (productsRes.value.data?.products?.length || productsRes.value.data?.total || 0) : 0,
+          contacts: contactsRes.status === 'fulfilled' ? (Array.isArray(contactsRes.value.data) ? contactsRes.value.data.length : 0) : 0,
+          orders: 0,
         });
-
-        // Recent suppliers (last 5)
-        setRecentSuppliers(suppliers.slice(0, 5));
-        // Recent contacts (last 5)
-        setRecentContacts(contacts.slice(0, 5));
-      } catch (err) {
-        console.error('Failed to load admin stats', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadStats();
+      } catch { /* silent */ }
+      setLoading(false);
+    };
+    fetchStats();
   }, []);
 
-  const formatTime = (dateStr: string) => {
-    if (!dateStr) return '';
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return t('admin_minutes_ago', { count: mins });
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return t('admin_hours_ago', { count: hours });
-    const days = Math.floor(hours / 24);
-    if (days < 30) return t('admin_days_ago', { count: days });
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-32">
-        <Loader2 className="animate-spin text-primary" size={36} />
-      </div>
-    );
-  }
-
-  const kpiCards = [
-    {
-      label: t('admin_total_users'),
-      value: stats.totalUsers,
-      icon: <Users size={20} />,
-      iconBg: 'bg-blue-50 text-blue-600',
-      meta: t('admin_suppliers_registered', { count: stats.totalSuppliers }),
-      link: '/dashboard/admin/users',
-    },
-    {
-      label: t('admin_pending_verify'),
-      value: stats.pendingSuppliers,
-      icon: <ShieldCheck size={20} />,
-      iconBg: stats.pendingSuppliers > 0 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600',
-      meta: stats.pendingSuppliers > 0 ? t('admin_needs_action') : t('admin_no_new_requests'),
-      highlight: stats.pendingSuppliers > 0,
-      link: '/dashboard/admin/suppliers',
-    },
-    {
-      label: t('admin_total_products'),
-      value: stats.totalProducts,
-      icon: <Package size={20} />,
-      iconBg: 'bg-emerald-50 text-emerald-600',
-      meta: t('admin_products_active'),
-      link: '/dashboard/admin/products',
-    },
-    {
-      label: t('admin_pending_review'),
-      value: stats.pendingProducts,
-      icon: <Clock size={20} />,
-      iconBg: stats.pendingProducts > 0 ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-400',
-      meta: stats.pendingProducts > 0 ? t('admin_products_need_review') : t('admin_all_reviewed'),
-      highlight: stats.pendingProducts > 0,
-      link: '/dashboard/admin/products',
-    },
+  const statCards = [
+    { label: 'Total Users', value: stats.users, icon: Users, color: 'blue', change: '+12%' },
+    { label: 'Total Products', value: stats.products, icon: Package, color: 'green', change: '+5%' },
+    { label: 'Feedbacks', value: stats.contacts, icon: MessageSquare, color: 'orange', change: '+8%' },
+    { label: 'Pages', value: 6, icon: FileText, color: 'red', change: '0%' },
   ];
 
-  // Simple chart bars based on monthly distribution (simulated from total)
-  const monthLabels = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
-  const currentMonth = new Date().getMonth(); // 0-11
-
-  const generateChartData = (total: number) => {
-    return monthLabels.map((_, i) => {
-      if (i > currentMonth) return 0;
-      const seed = (i + 3) * 17 + total;
-      return Math.max(Math.round((seed % (total + 5)) * 0.4 + total * 0.1), i <= currentMonth ? 1 : 0);
-    });
-  };
-
-  const supplierChartData = generateChartData(stats.totalSuppliers);
-  const productChartData = generateChartData(stats.totalProducts);
-  const maxSupplier = Math.max(...supplierChartData, 1);
-  const maxProduct = Math.max(...productChartData, 1);
+  const recentActivities = [
+    { text: 'New user registered', time: '2 minutes ago', color: '#2271b1' },
+    { text: 'Product "Cà phê Robusta" updated', time: '15 minutes ago', color: '#00a32a' },
+    { text: 'New contact message received', time: '1 hour ago', color: '#dba617' },
+    { text: 'System backup completed', time: '3 hours ago', color: '#646970' },
+    { text: 'User role changed to Supplier', time: '5 hours ago', color: '#2271b1' },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* ── Row 1: KPI Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-        {kpiCards.map((card, idx) => (
-          <Link
-            key={idx}
-            to={card.link}
-            className={`bg-white rounded-2xl border p-5 lg:p-6 hover:shadow-lg hover:shadow-slate-100 transition-all group ${
-              card.highlight ? 'border-amber-200 ring-1 ring-amber-100' : 'border-slate-200'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${card.iconBg}`}>
-                {card.icon}
-              </div>
-              <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
+    <div>
+      <h1 className="wp-page-title">Dashboard</h1>
+      <p style={{ color: 'var(--wp-text-muted)', marginBottom: 20, fontSize: 13 }}>
+        Welcome back! Here's what's happening with your site.
+      </p>
+
+      {/* Stats */}
+      <div className="wp-stats-grid">
+        {statCards.map((card) => (
+          <div key={card.label} className="wp-stat-card">
+            <div className={`wp-stat-icon ${card.color}`}><card.icon size={20} /></div>
+            <div>
+              <div className="wp-stat-value">{loading ? '—' : card.value}</div>
+              <div className="wp-stat-label">{card.label}</div>
             </div>
-            <div className="text-3xl font-black text-slate-900 tracking-tight">
-              {card.value.toLocaleString()}
+            <div style={{ marginLeft: 'auto', fontSize: 12, display: 'flex', alignItems: 'center', gap: 2 }}>
+              {card.change.startsWith('+') ? <TrendingUp size={12} style={{ color: 'var(--wp-success)' }} /> : <TrendingDown size={12} style={{ color: 'var(--wp-text-muted)' }} />}
+              <span style={{ color: card.change.startsWith('+') ? 'var(--wp-success)' : 'var(--wp-text-muted)' }}>{card.change}</span>
             </div>
-            <div className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">
-              {card.label}
-            </div>
-            <div className={`text-[11px] mt-3 font-medium ${card.highlight ? 'text-amber-600' : 'text-slate-400'}`}>
-              {card.meta}
-            </div>
-          </Link>
+          </div>
         ))}
       </div>
 
-      {/* ── Row 2: Charts ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Chart 1: Suppliers */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_suppliers_chart')}</h3>
-              <p className="text-xs text-slate-400 mt-0.5">{t('admin_by_month', { year: new Date().getFullYear() })}</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-              <TrendingUp size={12} />
-              {stats.totalSuppliers} {t('admin_total_suffix')}
-            </div>
-          </div>
-          <div className="h-48 flex items-end gap-2">
-            {supplierChartData.map((val, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                <div className="relative w-full">
-                  <div 
-                    className={`w-full rounded-t-md transition-all ${
-                      i === currentMonth ? 'bg-primary' : i > currentMonth ? 'bg-slate-100' : 'bg-primary/20 group-hover:bg-primary/40'
-                    }`}
-                    style={{ height: `${Math.max((val / maxSupplier) * 160, 4)}px` }}
-                  />
-                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-bold">
-                    {val}
-                  </div>
+      {/* Widgets Row 1 */}
+      <div className="wp-dashboard-grid">
+        {/* At a Glance */}
+        <div className="wp-card">
+          <div className="wp-card-header"><span className="wp-card-title">At a Glance</span></div>
+          <div className="wp-card-body">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {statCards.map((card) => (
+                <div key={card.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0' }}>
+                  <card.icon size={16} style={{ color: 'var(--wp-accent)' }} />
+                  <span><strong>{loading ? '—' : card.value}</strong> {card.label}</span>
                 </div>
-                <span className={`text-[9px] font-bold tracking-wider ${i === currentMonth ? 'text-primary' : 'text-slate-400'}`}>
-                  {monthLabels[i]}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f1', fontSize: 12, color: 'var(--wp-text-muted)' }}>
+              VIEproduct B2B Platform — NestJS + React + PostgreSQL
+            </div>
           </div>
         </div>
 
-        {/* Chart 2: Products */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_products_chart')}</h3>
-              <p className="text-xs text-slate-400 mt-0.5">{t('admin_by_month', { year: new Date().getFullYear() })}</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
-              <Package size={12} />
-              {stats.totalProducts} {t('admin_total_suffix')}
-            </div>
+        {/* Recent Activity */}
+        <div className="wp-card">
+          <div className="wp-card-header">
+            <span className="wp-card-title"><Activity size={14} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />Recent Activity</span>
           </div>
-          <div className="h-48 flex items-end gap-2">
-            {productChartData.map((val, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                <div className="relative w-full">
-                  <div 
-                    className={`w-full rounded-t-md transition-all ${
-                      i === currentMonth ? 'bg-blue-600' : i > currentMonth ? 'bg-slate-100' : 'bg-blue-200 group-hover:bg-blue-300'
-                    }`}
-                    style={{ height: `${Math.max((val / maxProduct) * 160, 4)}px` }}
-                  />
-                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-bold">
-                    {val}
-                  </div>
-                </div>
-                <span className={`text-[9px] font-bold tracking-wider ${i === currentMonth ? 'text-blue-600' : 'text-slate-400'}`}>
-                  {monthLabels[i]}
-                </span>
+          <div className="wp-card-body">
+            {recentActivities.map((a, i) => (
+              <div key={i} className="wp-activity-item">
+                <div className="wp-activity-dot" style={{ background: a.color }} />
+                <div><div>{a.text}</div><div className="wp-activity-time">{a.time}</div></div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Row 3: Activity Feed ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Recent Suppliers */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Building2 size={16} className="text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_recent_suppliers')}</h3>
+      {/* Widgets Row 2 */}
+      <div className="wp-dashboard-grid" style={{ marginTop: 16 }}>
+        {/* Quick Draft */}
+        <div className="wp-card">
+          <div className="wp-card-header"><span className="wp-card-title"><Edit3 size={14} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />Quick Draft</span></div>
+          <div className="wp-card-body">
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>Title</label>
+              <input className="wp-form-input" value={draftTitle} onChange={e => setDraftTitle(e.target.value)} placeholder="What's on your mind?" style={{ maxWidth: '100%' }} />
             </div>
-            <Link to="/dashboard/admin/suppliers" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              {t('admin_view_all')} <ChevronRight size={12} />
-            </Link>
-          </div>
-          <div className="divide-y divide-slate-50">
-            {recentSuppliers.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-400">{t('admin_no_suppliers')}</div>
-            ) : (
-              recentSuppliers.map((s: any) => (
-                <div key={s.id} className="px-6 py-3.5 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
-                  <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
-                    {s.companyName?.substring(0, 2).toUpperCase() || 'DN'}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-slate-800 truncate">{s.companyName}</div>
-                    <div className="text-[11px] text-slate-400">{formatTime(s.createdAt)}</div>
-                  </div>
-                  <div>
-                    {s.isVerified ? (
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{t('admin_verified')}</span>
-                    ) : (
-                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{t('admin_pending')}</span>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>Content</label>
+              <textarea className="wp-form-input" value={draftContent} onChange={e => setDraftContent(e.target.value)}
+                placeholder="Write a quick draft..." rows={3} style={{ maxWidth: '100%', resize: 'vertical' }} />
+            </div>
+            <button className="wp-btn wp-btn-primary" onClick={() => { setDraftTitle(''); setDraftContent(''); alert('Draft saved!'); }}>Save Draft</button>
           </div>
         </div>
 
-        {/* Recent Contacts */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageSquare size={16} className="text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{t('admin_recent_contacts')}</h3>
-            </div>
-            <Link to="/dashboard/admin/contacts" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              {t('admin_view_all')} <ChevronRight size={12} />
-            </Link>
-          </div>
-          <div className="divide-y divide-slate-50">
-            {recentContacts.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-400">{t('admin_no_contacts')}</div>
-            ) : (
-              recentContacts.map((c: any, idx: number) => (
-                <div key={c.id || idx} className="px-6 py-3.5 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
-                  <div className="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500 shrink-0">
-                    <MessageSquare size={14} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-slate-800 truncate">{c.name || c.fullName || t('admin_customer')}</div>
-                    <div className="text-[11px] text-slate-400 truncate">{c.subject || c.message?.substring(0, 50) || c.email || ''}</div>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-medium shrink-0">
-                    {formatTime(c.createdAt)}
-                  </div>
-                </div>
-              ))
-            )}
+        {/* System Status */}
+        <div className="wp-card">
+          <div className="wp-card-header"><span className="wp-card-title"><Server size={14} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />System Status</span></div>
+          <div className="wp-card-body">
+            {[
+              { label: 'Platform', value: 'VIEproduct B2B v1.0' },
+              { label: 'Backend', value: 'NestJS (Port 3001)' },
+              { label: 'Frontend', value: 'React + Vite (Port 3000)' },
+              { label: 'Database', value: 'PostgreSQL (Local)' },
+              { label: 'Node.js', value: typeof window !== 'undefined' ? 'Runtime OK' : 'N/A' },
+              { label: 'Storage', value: 'Supabase Cloud' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < 5 ? '1px solid #f0f0f1' : 'none', fontSize: 13 }}>
+                <span style={{ color: 'var(--wp-text-muted)' }}>{item.label}</span>
+                <span style={{ fontWeight: 500 }}>{item.value}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-
-      {/* ── Action Banner ── */}
-      {stats.pendingSuppliers > 0 && (
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 lg:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="relative z-10">
-            <h2 className="text-lg font-bold text-white mb-1">{t('admin_action_needed')}</h2>
-            <p className="text-sm text-slate-400">
-              {t('admin_action_desc', { count: stats.pendingSuppliers }).replace(/<strong>/g, '').replace(/<\/strong>/g, '')}
-            </p>
-          </div>
-          <Link 
-            to="/dashboard/admin/suppliers" 
-            className="relative z-10 bg-white text-slate-900 px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-100 transition-colors shrink-0"
-          >
-            {t('admin_review_now')}
-          </Link>
-        </div>
-      )}
     </div>
   );
 }

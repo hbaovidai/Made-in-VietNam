@@ -94,11 +94,11 @@ export declare class RfqController {
             createdAt: Date;
             currency: string;
             status: import("@prisma/client").$Enums.QuoteStatus;
+            leadTime: string;
             supplierId: string;
             message: string | null;
             rfqId: string;
             price: number;
-            leadTime: string;
         })[];
         buyer: {
             id: string;
@@ -151,10 +151,10 @@ export declare class RfqController {
         createdAt: Date;
         currency: string;
         status: import("@prisma/client").$Enums.QuoteStatus;
+        leadTime: string;
         supplierId: string;
         message: string | null;
         rfqId: string;
         price: number;
-        leadTime: string;
     }>;
 }

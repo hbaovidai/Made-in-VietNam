@@ -2,348 +2,425 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../../../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../../components/ui/Toast';
-import { Loader2, Plus, Edit2, Trash2, FolderTree, Search, CornerDownRight } from 'lucide-react';
+import { Loader2, Edit2, Trash2, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { ConfirmDialog } from '../../../components/ui/Modal';
-import { useLocalized } from '../../../hooks/useLocalized';
 
 export function AdminCategories() {
   const { t } = useTranslation();
-  const localized = useLocalized();
   const { addToast } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [saving, setSaving] = useState(false);
 
+  // Form state (left side)
+  const [formName, setFormName] = useState('');
+  const [formSlug, setFormSlug] = useState('');
+  const [formParent, setFormParent] = useState('');
+  const [formDesc, setFormDesc] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Delete confirm
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; category: any }>({
     isOpen: false, category: null
   });
 
-  const [isEditing, setIsEditing] = useState<{ id: string | null; name: string }>({ id: null, name: '' });
-  
-  // State cho thêm danh mục lớn (top-level)
-  const [isAdding, setIsAdding] = useState(false);
-  const [newName, setNewName] = useState('');
+  // Expanded parents in table
+  const [expandedParents, setExpandedParents] = useState<string[]>([]);
 
-  // State cho thêm danh mục con (subcategory)
-  const [addingSubFor, setAddingSubFor] = useState<string | null>(null); // parentId đang thêm con
-  const [subName, setSubName] = useState('');
-  const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const subInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  useEffect(() => {
-    if (addingSubFor && subInputRef.current) {
-      subInputRef.current.focus();
-    }
-  }, [addingSubFor]);
+  useEffect(() => { loadCategories(); }, []);
 
   const loadCategories = async () => {
     try {
       const res = await api.get('/categories');
       setCategories(res.data || []);
-    } catch (err) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_load_error') });
+    } catch {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải danh mục' });
     } finally {
       setLoading(false);
     }
   };
 
-  // Tạo danh mục lớn
-  const handleCreate = async () => {
-    if (!newName.trim()) return;
-    try {
-      await api.post('/categories', { name: newName });
-      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_created') });
-      setNewName('');
-      setIsAdding(false);
-      loadCategories();
-    } catch (error) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_cat_create_error') });
+  // Auto-generate slug from name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
+  const handleNameChange = (val: string) => {
+    setFormName(val);
+    if (!editingId) {
+      setFormSlug(generateSlug(val));
     }
   };
 
-  // Tạo danh mục con
-  const handleCreateSub = async (parentId: string) => {
-    if (!subName.trim()) return;
+  const resetForm = () => {
+    setFormName('');
+    setFormSlug('');
+    setFormParent('');
+    setFormDesc('');
+    setEditingId(null);
+    nameInputRef.current?.focus();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formName.trim()) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng nhập tên danh mục' });
+      return;
+    }
+    setSaving(true);
     try {
-      await api.post('/categories', { name: subName, parentId });
-      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_sub_created') });
-      setSubName('');
-      setAddingSubFor(null);
+      const payload: any = {
+        name: formName.trim(),
+        slug: formSlug.trim() || generateSlug(formName),
+        description: formDesc.trim() || undefined,
+      };
+      if (formParent) payload.parentId = formParent;
+
+      if (editingId) {
+        await api.put(`/categories/${editingId}`, payload);
+        addToast({ type: 'success', title: 'Thành công', message: 'Đã cập nhật danh mục' });
+      } else {
+        await api.post('/categories', payload);
+        addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm danh mục mới' });
+      }
+      resetForm();
       loadCategories();
-    } catch (error) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_cat_create_error') });
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: err?.response?.data?.message || 'Không thể lưu danh mục' });
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleUpdate = async (id: string) => {
-    if (!isEditing.name.trim()) return;
-    try {
-      await api.put(`/categories/${id}`, { name: isEditing.name });
-      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_updated') });
-      setIsEditing({ id: null, name: '' });
-      loadCategories();
-    } catch (error) {
-      addToast({ type: 'error', title: t('admin_error'), message: t('admin_cat_update_error') });
-    }
+  const startEdit = (cat: any) => {
+    setEditingId(cat.id);
+    setFormName(cat.name);
+    setFormSlug(cat.slug || '');
+    setFormParent(cat.parentId || '');
+    setFormDesc(cat.description || '');
+    nameInputRef.current?.focus();
   };
 
   const handleDelete = async () => {
     if (!confirmDelete.category) return;
     try {
       await api.delete(`/categories/${confirmDelete.category.id}`);
-      addToast({ type: 'success', title: t('admin_success'), message: t('admin_cat_deleted') });
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã xoá danh mục' });
       setConfirmDelete({ isOpen: false, category: null });
+      if (editingId === confirmDelete.category.id) resetForm();
       loadCategories();
-    } catch (error: any) {
-      const msg = error?.response?.data?.message || error?.message || t('admin_cat_delete_error');
-      addToast({ type: 'error', title: t('admin_cat_failed'), message: msg });
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: err?.response?.data?.message || 'Không thể xoá' });
       setConfirmDelete({ isOpen: false, category: null });
     }
   };
 
-  const filtered = categories.filter(c => !search || c.name?.toLowerCase().includes(search.toLowerCase()));
+  const toggleExpand = (id: string) => {
+    setExpandedParents(prev =>
+      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+    );
+  };
+
+  // Only parent (top-level) categories for the table
+  const parentCategories = categories.filter(c => !c.parentId);
+  const filteredParents = parentCategories.filter(c =>
+    !search || c.name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.children?.some((sub: any) => sub.name?.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  // Flatten all categories for parent dropdown (only show parents, not children)
+  const parentOptions = parentCategories.filter(c => c.id !== editingId);
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex justify-end">
-        <button 
-          onClick={() => setIsAdding(true)} 
-          className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0"
-        >
-          <Plus size={16} /> {t('admin_cat_add')}
-        </button>
-      </div>
+    <div>
+      <h1 className="wp-page-title">Danh mục</h1>
 
-      {/* Add Parent Category Form */}
-      {isAdding && (
-        <div className="flex gap-3 items-center bg-blue-50/50 border border-blue-100 rounded-xl p-3">
-          <FolderTree size={16} className="text-primary shrink-0" />
-          <input 
-            type="text" 
-            className="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary transition-all" 
-            placeholder={t('admin_cat_new_placeholder')} 
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            autoFocus
-            onKeyDown={e => e.key === 'Enter' && handleCreate()}
-          />
-          <button onClick={handleCreate} className="bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors">{t('admin_save')}</button>
-          <button onClick={() => { setIsAdding(false); setNewName(''); }} className="text-sm font-bold text-slate-500 px-3 py-2.5 hover:text-slate-700 transition-colors">{t('admin_cancel')}</button>
-        </div>
-      )}
+      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+        {/* ═══ LEFT: Add / Edit Form ═══ */}
+        <div style={{ width: 340, flexShrink: 0 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 4px', color: '#1d2327' }}>
+            {editingId ? 'Sửa danh mục' : 'Thêm danh mục mới'}
+          </h2>
+          <p style={{ fontSize: 12, color: '#646970', margin: '0 0 16px' }}>
+            {editingId 
+              ? 'Chỉnh sửa thông tin danh mục bên dưới.' 
+              : 'Danh mục sẽ hiển thị trên trang chủ và menu sản phẩm.'}
+          </p>
 
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-        <input
-          type="text"
-          placeholder={t('admin_cat_search')}
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary transition-all"
-        />
-      </div>
+          <form onSubmit={handleSubmit}>
+            {/* Name */}
+            <div className="wp-form-row">
+              <label className="wp-form-label">Tên</label>
+              <input
+                ref={nameInputRef}
+                className="wp-form-input"
+                type="text"
+                value={formName}
+                onChange={e => handleNameChange(e.target.value)}
+                placeholder="Nhập tên danh mục"
+              />
+              <p className="wp-form-desc">Tên hiển thị trên website.</p>
+            </div>
 
-      {/* Table */}
-      {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="animate-spin text-primary" size={28} /></div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[500px]">
-            <thead>
-              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
-                <th className="pb-3 pl-1">{t('admin_cat_name')}</th>
-                <th className="pb-3 text-center">{t('admin_cat_product_count')}</th>
-                <th className="pb-3 pr-1 text-right">{t('admin_cat_actions')}</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              {filtered.map(cat => {
-                const childProductCount = (cat.children || []).reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0);
-                const totalProducts = (cat._count?.products || 0) + childProductCount;
-                const isHovered = hoveredGroup === cat.id;
-                const isAddingSub = addingSubFor === cat.id;
+            {/* Slug */}
+            <div className="wp-form-row">
+              <label className="wp-form-label">Đường dẫn (Slug)</label>
+              <input
+                className="wp-form-input"
+                type="text"
+                value={formSlug}
+                onChange={e => setFormSlug(e.target.value)}
+                placeholder="tu-dong-tao-tu-ten"
+              />
+              <p className="wp-form-desc">Phiên bản thân thiện URL. Thường là chữ thường và chỉ chứa ký tự, số và dấu gạch ngang.</p>
+            </div>
 
-                return (
-                  <React.Fragment key={cat.id}>
-                    {/* Parent Category Row */}
-                    <tr 
-                      className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors"
-                      onMouseEnter={() => setHoveredGroup(cat.id)}
-                      onMouseLeave={() => { if (!isAddingSub) setHoveredGroup(null); }}
-                    >
-                      <td className="py-4 pl-1">
-                        {isEditing.id === cat.id ? (
-                          <div className="flex items-center gap-2">
-                            <input 
-                              className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-primary" 
-                              value={isEditing.name} 
-                              onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
-                              onKeyDown={e => e.key === 'Enter' && handleUpdate(cat.id)}
-                            />
-                            <button onClick={() => handleUpdate(cat.id)} className="text-primary font-bold text-xs">{t('admin_save')}</button>
-                            <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-400 font-bold text-xs">{t('admin_cancel')}</button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <FolderTree size={15} className="text-slate-400 shrink-0" />
-                            <span className="font-semibold text-slate-900">{localized(cat, 'name')}</span>
-                            {cat.children?.length > 0 && (
-                              <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                                {cat.children.length} {t('admin_cat_children')}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-4 text-center font-semibold text-slate-600">{totalProducts}</td>
-                      <td className="py-4 pr-1 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <button 
-                            onClick={() => setIsEditing({ id: cat.id, name: cat.name })}
-                            className="p-1.5 text-slate-400 hover:text-primary transition-colors"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button 
-                            onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
-                            className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+            {/* Parent Category */}
+            <div className="wp-form-row">
+              <label className="wp-form-label">Danh mục cha</label>
+              <select
+                className="wp-form-input"
+                value={formParent}
+                onChange={e => setFormParent(e.target.value)}
+              >
+                <option value="">— Không (danh mục gốc) —</option>
+                {parentOptions.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+              <p className="wp-form-desc">Chọn danh mục cha nếu đây là danh mục con.</p>
+            </div>
 
-                    {/* Subcategories */}
-                    {(cat.children || []).map((sub: any, idx: number) => (
-                      <tr 
-                        key={sub.id} 
-                        className="border-b border-slate-50 hover:bg-slate-50/40 transition-colors"
-                        onMouseEnter={() => setHoveredGroup(cat.id)}
-                        onMouseLeave={() => { if (!isAddingSub) setHoveredGroup(null); }}
-                      >
-                        <td className="py-3 pl-8">
-                          {isEditing.id === sub.id ? (
-                            <div className="flex items-center gap-2">
-                              <input 
-                                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-primary" 
-                                value={isEditing.name} 
-                                onChange={e => setIsEditing({ ...isEditing, name: e.target.value })}
-                                onKeyDown={e => e.key === 'Enter' && handleUpdate(sub.id)}
-                              />
-                              <button onClick={() => handleUpdate(sub.id)} className="text-primary font-bold text-xs">{t('admin_save')}</button>
-                              <button onClick={() => setIsEditing({ id: null, name: '' })} className="text-slate-400 font-bold text-xs">{t('admin_cancel')}</button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 text-slate-500">
-                              <span className="text-slate-300">└</span>
-                              <span className="font-medium">{localized(sub, 'name')}</span>
-                            </div>
-                          )}
-                        </td>
-                        <td className="py-3 text-center text-xs font-medium text-slate-400">{sub._count?.products || 0}</td>
-                        <td className="py-3 pr-1 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <button 
-                              onClick={() => setIsEditing({ id: sub.id, name: sub.name })}
-                              className="p-1.5 text-slate-400 hover:text-primary transition-colors"
-                            >
-                              <Edit2 size={13} />
-                            </button>
-                            <button 
-                              onClick={() => setConfirmDelete({ isOpen: true, category: sub })}
-                              className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+            {/* Description */}
+            <div className="wp-form-row">
+              <label className="wp-form-label">Mô tả</label>
+              <textarea
+                className="wp-form-input"
+                rows={4}
+                value={formDesc}
+                onChange={e => setFormDesc(e.target.value)}
+                placeholder="Mô tả ngắn về danh mục (không bắt buộc)"
+                style={{ resize: 'vertical' }}
+              />
+              <p className="wp-form-desc">Mô tả mặc định không quan trọng nhưng một số giao diện có thể hiển thị nó.</p>
+            </div>
 
-                    {/* ✨ Add Subcategory Row — hiện khi hover hoặc đang thêm */}
-                    <tr
-                      onMouseEnter={() => setHoveredGroup(cat.id)}
-                      onMouseLeave={() => { if (!isAddingSub) setHoveredGroup(null); }}
-                      className={`transition-all duration-300 ease-in-out ${
-                        isAddingSub 
-                          ? 'opacity-100 border-b border-dashed border-primary/20 bg-primary/[0.02]' 
-                          : isHovered 
-                            ? 'opacity-100 border-b border-dashed border-slate-200' 
-                            : 'opacity-0 h-0 overflow-hidden pointer-events-none border-none'
-                      }`}
-                    >
-                      <td colSpan={3} className={`transition-all duration-300 ${isHovered || isAddingSub ? 'py-2 pl-8' : 'py-0 pl-8'}`}>
-                        {isAddingSub ? (
-                          // Input form inline
-                          <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                            <CornerDownRight size={14} className="text-primary/40 shrink-0" />
-                            <input
-                              ref={subInputRef}
-                              type="text"
-                              className="flex-1 max-w-xs px-3 py-2 bg-white border border-primary/30 rounded-lg text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-slate-400"
-                              placeholder={t('admin_cat_sub_placeholder')}
-                              value={subName}
-                              onChange={e => setSubName(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') handleCreateSub(cat.id);
-                                if (e.key === 'Escape') { setAddingSubFor(null); setSubName(''); setHoveredGroup(null); }
-                              }}
-                            />
-                            <button 
-                              onClick={() => handleCreateSub(cat.id)} 
-                              className="bg-primary text-white text-xs font-bold px-3.5 py-2 rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
-                            >
-                              {t('admin_save')}
-                            </button>
-                            <button 
-                              onClick={() => { setAddingSubFor(null); setSubName(''); setHoveredGroup(null); }} 
-                              className="text-xs font-bold text-slate-400 px-2 py-2 hover:text-slate-600 transition-colors"
-                            >
-                              {t('admin_cancel')}
-                            </button>
-                          </div>
-                        ) : (
-                          // Hover hint button
-                          <button
-                            onClick={() => { setAddingSubFor(cat.id); setSubName(''); }}
-                            className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-primary transition-colors group py-1"
-                          >
-                            <span className="w-5 h-5 rounded-full border-2 border-dashed border-slate-300 group-hover:border-primary flex items-center justify-center transition-colors">
-                              <Plus size={11} className="text-slate-400 group-hover:text-primary transition-colors" />
-                            </span>
-                            {t('admin_cat_add_sub')}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                );
-              })}
-              {filtered.length === 0 && (
-                <tr><td colSpan={3} className="py-16 text-center text-slate-400 text-sm">{t('admin_cat_empty')}</td></tr>
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <button
+                type="submit"
+                className="wp-btn wp-btn-primary"
+                disabled={saving}
+                style={{ padding: '6px 16px', fontSize: 13 }}
+              >
+                {saving ? 'Đang lưu...' : editingId ? 'Cập nhật danh mục' : 'Thêm danh mục mới'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="wp-btn"
+                  onClick={resetForm}
+                  style={{ padding: '6px 16px', fontSize: 13 }}
+                >
+                  Huỷ
+                </button>
               )}
-            </tbody>
-          </table>
+            </div>
+          </form>
         </div>
-      )}
+
+        {/* ═══ RIGHT: Categories Table ═══ */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Search & Count */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 12, color: '#646970' }}>
+              {parentCategories.length} danh mục gốc • {categories.length} tổng cộng
+            </span>
+            <div style={{ position: 'relative', width: 200 }}>
+              <Search size={13} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#8c8f94' }} />
+              <input
+                type="text"
+                placeholder="Tìm danh mục..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{
+                  width: '100%', paddingLeft: 28, paddingRight: 8,
+                  height: 30, fontSize: 12, border: '1px solid #8c8f94',
+                  borderRadius: 3, outline: 'none',
+                }}
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+              <Loader2 className="animate-spin" size={24} style={{ color: '#2271b1' }} />
+            </div>
+          ) : (
+            <table className="wp-list-table widefat fixed striped" style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <thead>
+                <tr style={{ background: '#f6f7f7', borderBottom: '1px solid #c3c4c7' }}>
+                  <th style={thStyle}>Tên</th>
+                  <th style={{ ...thStyle, width: 140 }}>Mô tả</th>
+                  <th style={{ ...thStyle, width: 80, textAlign: 'center' }}>Đường dẫn</th>
+                  <th style={{ ...thStyle, width: 60, textAlign: 'center' }}>Số SP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredParents.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: 'center', padding: 40, color: '#646970', fontSize: 13 }}>
+                      Chưa có danh mục nào
+                    </td>
+                  </tr>
+                ) : filteredParents.map(cat => {
+                  const isExpanded = expandedParents.includes(cat.id);
+                  const children = cat.children || [];
+                  const childProductCount = children.reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0);
+                  const totalProducts = (cat._count?.products || 0) + childProductCount;
+
+                  return (
+                    <React.Fragment key={cat.id}>
+                      {/* Parent Row */}
+                      <tr style={trStyle} onMouseEnter={e => (e.currentTarget.style.background = '#f6f7f7')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
+                        <td style={tdStyle}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            {children.length > 0 && (
+                              <button
+                                onClick={() => toggleExpand(cat.id)}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, color: '#646970', display: 'flex' }}
+                              >
+                                {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                              </button>
+                            )}
+                            <div>
+                              <a
+                                href="#"
+                                onClick={e => { e.preventDefault(); startEdit(cat); }}
+                                style={{ color: '#2271b1', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+                              >
+                                {cat.name}
+                              </a>
+                              {/* Row actions */}
+                              <div className="wp-row-actions" style={{ fontSize: 11, marginTop: 2 }}>
+                                <span>
+                                  <a href="#" onClick={e => { e.preventDefault(); startEdit(cat); }} style={{ color: '#2271b1', textDecoration: 'none' }}>Sửa</a>
+                                </span>
+                                {' | '}
+                                <span>
+                                  <a
+                                    href="#"
+                                    onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: cat }); }}
+                                    style={{ color: '#b32d2e', textDecoration: 'none' }}
+                                  >
+                                    Xoá
+                                  </a>
+                                </span>
+                                {' | '}
+                                <span>
+                                  <a href={`/products?category=${cat.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: '#2271b1', textDecoration: 'none' }}>
+                                    Xem
+                                  </a>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ ...tdStyle, fontSize: 12, color: '#646970' }}>
+                          {cat.description ? (
+                            <span style={{ display: 'block', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {cat.description}
+                            </span>
+                          ) : '—'}
+                        </td>
+                        <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{cat.slug}</td>
+                        <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 600, fontSize: 13 }}>{totalProducts}</td>
+                      </tr>
+
+                      {/* Children Rows */}
+                      {isExpanded && children.map((sub: any) => (
+                        <tr key={sub.id} style={trStyle} onMouseEnter={e => (e.currentTarget.style.background = '#f6f7f7')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
+                          <td style={{ ...tdStyle, paddingLeft: 36 }}>
+                            <span style={{ color: '#8c8f94', marginRight: 4 }}>—</span>
+                            <a
+                              href="#"
+                              onClick={e => { e.preventDefault(); startEdit(sub); }}
+                              style={{ color: '#2271b1', fontWeight: 500, fontSize: 13, textDecoration: 'none' }}
+                            >
+                              {sub.name}
+                            </a>
+                            <div className="wp-row-actions" style={{ fontSize: 11, marginTop: 2, paddingLeft: 18 }}>
+                              <span>
+                                <a href="#" onClick={e => { e.preventDefault(); startEdit(sub); }} style={{ color: '#2271b1', textDecoration: 'none' }}>Sửa</a>
+                              </span>
+                              {' | '}
+                              <span>
+                                <a
+                                  href="#"
+                                  onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: sub }); }}
+                                  style={{ color: '#b32d2e', textDecoration: 'none' }}
+                                >
+                                  Xoá
+                                </a>
+                              </span>
+                            </div>
+                          </td>
+                          <td style={{ ...tdStyle, fontSize: 12, color: '#646970' }}>
+                            {sub.description || '—'}
+                          </td>
+                          <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{sub.slug}</td>
+                          <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{sub._count?.products || 0}</td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
 
       <ConfirmDialog
         isOpen={confirmDelete.isOpen}
         onClose={() => setConfirmDelete({ ...confirmDelete, isOpen: false })}
         onConfirm={handleDelete}
-        title={t('admin_cat_delete_title')}
-        message={t('admin_cat_delete_msg', { name: localized(confirmDelete.category, 'name') })}
-        confirmText={t('admin_cat_delete_confirm')}
+        title="Xoá danh mục"
+        message={`Bạn có chắc muốn xoá danh mục "${confirmDelete.category?.name}"? Thao tác này không thể hoàn tác.`}
+        confirmText="Xoá"
         variant="danger"
       />
     </div>
   );
 }
+
+/* ── inline styles ── */
+const thStyle: React.CSSProperties = {
+  padding: '8px 10px',
+  fontSize: 12,
+  fontWeight: 600,
+  color: '#1d2327',
+  textAlign: 'left',
+  borderBottom: '1px solid #c3c4c7',
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: '8px 10px',
+  fontSize: 13,
+  color: '#1d2327',
+  verticalAlign: 'top',
+};
+
+const trStyle: React.CSSProperties = {
+  borderBottom: '1px solid #f0f0f1',
+  transition: 'background 0.15s',
+};

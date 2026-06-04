@@ -56,6 +56,16 @@ export declare class CategoriesController {
             reviewCount: number;
             viewCount: number;
             rfqMinQuantity: number | null;
+            origin: string | null;
+            leadTime: string | null;
+            brand: string | null;
+            sku: string | null;
+            productionCapacity: string | null;
+            port: string | null;
+            exportMarkets: string | null;
+            attributes: import("@prisma/client/runtime/library").JsonValue | null;
+            customizations: string[];
+            specifications: import("@prisma/client/runtime/library").JsonValue | null;
             supplierId: string;
             categoryId: string;
         })[];

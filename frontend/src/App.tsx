@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout';
 import { DashboardLayout } from './layouts/DashboardLayout';
+import { WPAdminLayout } from './layouts/WPAdminLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -71,13 +72,22 @@ const SupplierSettings = React.lazy(() => import('./pages/dashboard/supplier/Sup
 // Admin Lazy Pages
 const AdminOverview = React.lazy(() => import('./pages/dashboard/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
 const AdminUsers = React.lazy(() => import('./pages/dashboard/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const AdminAddUser = React.lazy(() => import('./pages/dashboard/admin/AdminAddUser').then(m => ({ default: m.AdminAddUser })));
+const AdminUserProfile = React.lazy(() => import('./pages/dashboard/admin/AdminUserProfile').then(m => ({ default: m.AdminUserProfile })));
 const AdminSuppliers = React.lazy(() => import('./pages/dashboard/admin/AdminSuppliers').then(m => ({ default: m.AdminSuppliers })));
 const AdminProducts = React.lazy(() => import('./pages/dashboard/admin/AdminProducts').then(m => ({ default: m.AdminProducts })));
+const AdminAddProduct = React.lazy(() => import('./pages/dashboard/admin/AdminAddProduct').then(m => ({ default: m.AdminAddProduct })));
+const AdminBrands = React.lazy(() => import('./pages/dashboard/admin/AdminBrands').then(m => ({ default: m.AdminBrands })));
+const AdminAttributes = React.lazy(() => import('./pages/dashboard/admin/AdminAttributes').then(m => ({ default: m.AdminAttributes })));
+const AdminReviews = React.lazy(() => import('./pages/dashboard/admin/AdminReviews').then(m => ({ default: m.AdminReviews })));
 const AdminCategories = React.lazy(() => import('./pages/dashboard/admin/AdminCategories').then(m => ({ default: m.AdminCategories })));
 const AdminContacts = React.lazy(() => import('./pages/dashboard/admin/AdminContacts').then(m => ({ default: m.AdminContacts })));
 const AdminOrders = React.lazy(() => import('./pages/dashboard/admin/AdminOrders').then(m => ({ default: m.AdminOrders })));
 const AdminAuditLog = React.lazy(() => import('./pages/dashboard/admin/AdminAuditLog').then(m => ({ default: m.AdminAuditLog })));
 const AdminSettings = React.lazy(() => import('./pages/dashboard/admin/AdminSettings').then(m => ({ default: m.AdminSettings })));
+const AdminPages = React.lazy(() => import('./pages/dashboard/admin/AdminPages').then(m => ({ default: m.AdminPages })));
+const AdminRequests = React.lazy(() => import('./pages/dashboard/admin/AdminRequests').then(m => ({ default: m.AdminRequests })));
+const AdminMessages = React.lazy(() => import('./pages/dashboard/admin/AdminMessages').then(m => ({ default: m.AdminMessages })));
 
 // Redirect base dashboard based on role
 function DashboardRedirect() {
@@ -215,17 +225,26 @@ export default function App() {
 
             <Route path="/dashboard/admin" element={
               <ProtectedRoute>
-                <DashboardLayout type="admin" />
+                <WPAdminLayout />
               </ProtectedRoute>
             }>
               <Route index element={<AdminOverview />} />
+              <Route path="pages" element={<AdminPages />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="users/add" element={<AdminAddUser />} />
+              <Route path="profile" element={<AdminUserProfile />} />
               <Route path="suppliers" element={<AdminSuppliers />} />
               <Route path="products" element={<AdminProducts />} />
+              <Route path="products/add" element={<AdminAddProduct />} />
+              <Route path="products/brands" element={<AdminBrands />} />
+              <Route path="products/attributes" element={<AdminAttributes />} />
+              <Route path="products/reviews" element={<AdminReviews />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="contacts" element={<AdminContacts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="audit-log" element={<AdminAuditLog />} />
+              <Route path="requests" element={<AdminRequests />} />
+              <Route path="messages" element={<AdminMessages />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>

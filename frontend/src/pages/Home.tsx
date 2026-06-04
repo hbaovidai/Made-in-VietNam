@@ -4,10 +4,7 @@ import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { CategorySidebar } from '../components/CategorySidebar';
-import { CATEGORY_GROUPS } from '../data/categories';
-import { CategoryCard } from '../components/categories/CategoryCard';
 import { SEOHead } from '../components/SEOHead';
-import { ProductCard } from '../components/ProductCard';
 import { SupplierCard } from '../components/SupplierCard';
 import { api } from '../lib/api';
 
@@ -15,6 +12,7 @@ export function Home() {
   const { t } = useTranslation();
   const [products, setProducts] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -54,12 +52,14 @@ export function Home() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [prodRes, suppRes] = await Promise.all([
+        const [prodRes, suppRes, catRes] = await Promise.all([
           api.get('/products?limit=12'),
-          api.get('/suppliers?limit=3')
+          api.get('/suppliers?limit=3'),
+          api.get('/categories')
         ]);
         setProducts(prodRes.data.data);
         setSuppliers(suppRes.data.data);
+        setCategories(catRes.data.filter((c: any) => !c.parentId));
       } catch (error) {
         console.error('Home Loading Error:', error);
       } finally {
@@ -229,44 +229,68 @@ export function Home() {
         </div>
       </section>
 
-      {/* ═══ Featured Products ═══ */}
+      {/* ═══ Featured Categories ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="bg-white border border-slate-200">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex justify-between items-center">
-            <h2 className="text-base sm:text-xl font-bold text-slate-900">{t('featured_products')}</h2>
+            <h2 className="text-base sm:text-xl font-bold text-slate-900">{t('featured_categories', 'Danh mục nổi bật')}</h2>
             <Link to="/products" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1">
               {t('view_more')} <ChevronRight size={14} />
             </Link>
           </div>
-          {/* Mobile: horizontal scroll | Desktop: grid */}
-          <div className="lg:hidden overflow-x-auto">
-            <div className="flex gap-px bg-slate-200 w-max">
-              {products.slice(0, 10).map((product) => (
-                <Link key={product.id} to={`/products/${product.id}`} className="bg-white p-3 hover:shadow-lg transition-shadow group cursor-pointer w-[160px] sm:w-[200px] shrink-0">
-                  <div className="aspect-square bg-slate-50 mb-3 overflow-hidden">
-                    <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
-                  </div>
-                  <h3 className="text-xs sm:text-sm font-medium text-slate-800 line-clamp-2 mb-1 group-hover:text-primary h-8 sm:h-10">{product.name}</h3>
-                  <span className="text-primary font-bold text-xs sm:text-sm">{getPriceDisplay(product)}</span>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{t('min_order')}: {product.moq} {product.unit}</div>
-                </Link>
-              ))}
+          {categories.length === 0 ? (
+            <div className="flex items-center justify-center py-16 text-center">
+              <p className="text-sm text-slate-400">Chưa có danh mục nào. Vui lòng thêm danh mục qua Admin Dashboard.</p>
             </div>
+          ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-slate-200">
+            {categories.map((cat, idx) => {
+              const imgSrc = `https://picsum.photos/seed/${cat.slug}/400/300`;
+              const colors = [
+                'from-blue-500/20 to-blue-600/5',
+                'from-emerald-500/20 to-emerald-600/5',
+                'from-amber-500/20 to-amber-600/5',
+                'from-rose-500/20 to-rose-600/5',
+                'from-violet-500/20 to-violet-600/5',
+                'from-cyan-500/20 to-cyan-600/5',
+              ];
+              const bgGrad = colors[idx % colors.length];
+
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/products?category=${cat.slug}`}
+                  className="bg-white p-4 sm:p-5 flex flex-col items-center gap-3 hover:shadow-lg transition-all group cursor-pointer"
+                >
+                  <div className={`w-full aspect-[4/3] bg-gradient-to-br ${bgGrad} rounded-lg overflow-hidden flex items-center justify-center`}>
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shadow-md group-hover:shadow-xl transition-shadow border-2 border-white/80">
+                      <img
+                        src={imgSrc}
+                        alt={cat.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-center w-full">
+                    <h3 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">{cat.name}</h3>
+                    {cat.children && cat.children.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-1 mt-2">
+                        {cat.children.slice(0, 3).map((sub: any) => (
+                          <span key={sub.id} className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full truncate max-w-[90px]">{sub.name}</span>
+                        ))}
+                        {cat.children.length > 3 && (
+                          <span className="text-[10px] text-primary font-medium">+{cat.children.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-          <div className="hidden lg:grid grid-cols-5 gap-px bg-slate-200">
-            {products.slice(0, 10).map((product) => (
-              <div key={product.id} onClick={() => window.location.href = `/products/${product.id}`} className="bg-white p-4 hover:shadow-lg transition-shadow group cursor-pointer">
-                <div className="aspect-square bg-slate-50 mb-4 overflow-hidden">
-                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
-                </div>
-                <h3 className="text-sm font-medium text-slate-800 line-clamp-2 mb-2 group-hover:text-primary h-10">{product.name}</h3>
-                <div className="flex flex-col">
-                  <span className="text-primary font-bold">{getPriceDisplay(product)}</span>
-                  <span className="text-[11px] text-slate-400 mt-1">{t('min_order')}: {product.moq} {product.unit}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          )}
         </div>
       </section>
 
@@ -309,44 +333,6 @@ export function Home() {
                 banner: supplier.banner,
                 products: [] // mock missing field
               }} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ Categories of Excellence ═══ */}
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div className="bg-[#EEF0FF] rounded-2xl p-6 sm:p-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Categories of <span className="text-primary">Excellence</span></h2>
-              <p className="text-slate-500 text-sm mt-2 max-w-md">
-                Khám phá các ngành sản xuất hàng đầu Việt Nam, tối ưu hóa cho chuỗi cung ứng toàn cầu.
-              </p>
-            </div>
-            <Link to="/products" className="text-sm font-bold text-[#043365] hover:text-primary transition-colors shrink-0">
-              Xem tất cả danh mục →
-            </Link>
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-4 sm:gap-6">
-            {[
-              { name: 'Nông sản', slug: 'nong-san', icon: '/sectors/agriculture.png' },
-              { name: 'Dệt may', slug: 'det-may-may-mac', icon: '/sectors/textiles.png' },
-              { name: 'Nội thất', slug: 'noi-that-trang-tri', icon: '/sectors/furniture.png' },
-              { name: 'Mỹ nghệ', slug: 'thu-cong-my-nghe', icon: '/sectors/handicrafts.png' },
-              { name: 'Điện tử', slug: 'dien-tu', icon: '/sectors/electronics.png' },
-              { name: 'F&B', slug: 'thuc-pham-do-uong', icon: '/sectors/food.png' },
-            ].map((sector) => (
-              <Link
-                key={sector.slug}
-                to={`/products?category=${sector.slug}`}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
-              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-shadow">
-                  <img src={sector.icon} alt={sector.name} className="w-full h-full object-cover" />
-                </div>
-                <span className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors text-center">{sector.name}</span>
-              </Link>
             ))}
           </div>
         </div>

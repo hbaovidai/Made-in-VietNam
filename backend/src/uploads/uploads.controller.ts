@@ -27,13 +27,16 @@ const imageFileFilter = (_req: any, file: any, cb: any) => {
 
 @Controller('uploads')
 export class UploadsController {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null = null;
 
   constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_SERVICE_KEY || '',
-    );
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_KEY;
+    if (url && key) {
+      this.supabase = createClient(url, key);
+    } else {
+      console.warn('⚠ SUPABASE_URL / SUPABASE_SERVICE_KEY chưa được cấu hình. Upload sẽ không hoạt động.');
+    }
   }
 
   @Post()
@@ -48,6 +51,10 @@ export class UploadsController {
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('Vui lòng chọn file ảnh để tải lên');
+    }
+
+    if (!this.supabase) {
+      throw new InternalServerErrorException('Chưa cấu hình Supabase Storage. Vui lòng liên hệ Admin.');
     }
 
     const uniqueName = `${randomUUID()}${extname(file.originalname)}`;

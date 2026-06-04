@@ -13,8 +13,8 @@ export declare class UsersService {
             createdAt: Date;
             status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             phone: string | null;
         }[];
         meta: {
@@ -28,8 +28,8 @@ export declare class UsersService {
         id: string;
         status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        role: import("@prisma/client").$Enums.Role;
         fullName: string;
+        role: import("@prisma/client").$Enums.Role;
     }>;
     deleteUser(userId: string): Promise<{
         id: string;

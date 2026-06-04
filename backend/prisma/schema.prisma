@@ -240,6 +240,16 @@ model Product {
   reviewCount Int           @default(0) @map("review_count")
   viewCount   Int           @default(0) @map("view_count")
   rfqMinQuantity Int?       @map("rfq_min_quantity") // Ngưỡng số lượng để chuyển sang báo giá
+  origin         String?    // Xuất xứ (Việt Nam, China, etc.)
+  leadTime       String?    @map("lead_time") // "15-30 ngày"
+  brand          String?
+  sku            String?
+  productionCapacity String? @map("production_capacity") // "10,000 units/tháng"
+  port           String?    // "Cảng Cát Lái, HCM"
+  exportMarkets  String?    @map("export_markets")
+  attributes     Json?      // { "Màu sắc": ["Đen", "Trắng"], "Kích thước": ["S", "M", "L"] }
+  customizations String[]   // ["OEM Manufacturing", "ODM Service", "In logo riêng"]
+  specifications Json?      // { "Chất liệu": "Inox", "Trọng lượng": "500g" }
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 

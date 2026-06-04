@@ -7,8 +7,8 @@ export declare class AuditLogController {
             user: {
                 id: string;
                 email: string;
-                role: import("@prisma/client").$Enums.Role;
                 fullName: string;
+                role: import("@prisma/client").$Enums.Role;
                 avatar: string | null;
             };
         } & {

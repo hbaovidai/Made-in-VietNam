@@ -1,5 +1,6 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { Prisma } from '@prisma/client';
 export declare class SuppliersService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -81,6 +82,16 @@ export declare class SuppliersService {
             reviewCount: number;
             viewCount: number;
             rfqMinQuantity: number | null;
+            origin: string | null;
+            leadTime: string | null;
+            brand: string | null;
+            sku: string | null;
+            productionCapacity: string | null;
+            port: string | null;
+            exportMarkets: string | null;
+            attributes: Prisma.JsonValue | null;
+            customizations: string[];
+            specifications: Prisma.JsonValue | null;
             supplierId: string;
             categoryId: string;
         })[];
@@ -185,6 +196,16 @@ export declare class SuppliersService {
             reviewCount: number;
             viewCount: number;
             rfqMinQuantity: number | null;
+            origin: string | null;
+            leadTime: string | null;
+            brand: string | null;
+            sku: string | null;
+            productionCapacity: string | null;
+            port: string | null;
+            exportMarkets: string | null;
+            attributes: Prisma.JsonValue | null;
+            customizations: string[];
+            specifications: Prisma.JsonValue | null;
             supplierId: string;
             categoryId: string;
         })[];

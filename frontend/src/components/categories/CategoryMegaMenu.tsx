@@ -38,16 +38,16 @@ export function CategoryMegaMenu() {
 
   if (loading) {
     return (
-      <div className="relative flex items-center justify-center bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-[1600px] mx-auto">
+      <div className="relative flex items-center justify-center bg-white border border-slate-200 shadow-xl rounded-b-xl py-12 px-16">
         <Loader2 className="animate-spin text-primary" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="relative flex bg-white border border-slate-200 shadow-xl min-h-[500px] w-full max-w-[1600px] mx-auto">
+    <div className="relative flex bg-white border border-slate-200 shadow-xl rounded-b-xl">
       {/* Sidebar List */}
-      <div className="w-72 border-r border-slate-100 py-2 shrink-0 overflow-y-auto max-h-[600px] bg-white">
+      <div className="w-60 border-r border-slate-100 py-2 shrink-0 overflow-y-auto max-h-[70vh] bg-white">
         {categories.map((cat) => (
           <div
             key={cat.id}
@@ -67,7 +67,7 @@ export function CategoryMegaMenu() {
       </div>
 
       {/* Detail Panel */}
-      <div className="flex-1 p-8 bg-white overflow-y-auto max-h-[600px]">
+      <div className="flex-1 p-6 bg-white overflow-y-auto max-h-[70vh] min-w-[320px]">
         {activeGroup ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-4 col-span-3">

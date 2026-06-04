@@ -51,11 +51,11 @@ export declare class RfqService {
         createdAt: Date;
         currency: string;
         status: import("@prisma/client").$Enums.QuoteStatus;
+        leadTime: string;
         supplierId: string;
         message: string | null;
         rfqId: string;
         price: number;
-        leadTime: string;
     }>;
     getRFQDetails(id: string): Promise<{
         quotes: ({
@@ -71,11 +71,11 @@ export declare class RfqService {
             createdAt: Date;
             currency: string;
             status: import("@prisma/client").$Enums.QuoteStatus;
+            leadTime: string;
             supplierId: string;
             message: string | null;
             rfqId: string;
             price: number;
-            leadTime: string;
         })[];
         buyer: {
             id: string;

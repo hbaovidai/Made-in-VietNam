@@ -31,8 +31,8 @@ export declare class AuditLogService {
             user: {
                 id: string;
                 email: string;
-                role: import("@prisma/client").$Enums.Role;
                 fullName: string;
+                role: import("@prisma/client").$Enums.Role;
                 avatar: string | null;
             };
         } & {

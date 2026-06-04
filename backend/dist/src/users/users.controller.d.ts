@@ -15,8 +15,8 @@ export declare class UsersController {
             createdAt: Date;
             status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             phone: string | null;
         }[];
         meta: {
@@ -30,8 +30,8 @@ export declare class UsersController {
         id: string;
         status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        role: import("@prisma/client").$Enums.Role;
         fullName: string;
+        role: import("@prisma/client").$Enums.Role;
     }>;
     deleteUser(id: string, adminId: string): Promise<{
         message: string;

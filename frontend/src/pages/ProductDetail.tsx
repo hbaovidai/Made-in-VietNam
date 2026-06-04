@@ -1,95 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, ShieldCheck, MessageSquare, ShoppingCart, Share2, Heart, ChevronRight, Check, Info, Award, Globe, MapPin, Loader2, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { Star, ShieldCheck, MessageSquare, ChevronRight, MapPin, Loader2, Building2, Clock, Package, Globe, Award, Factory, Users, Calendar, ExternalLink, Heart, Play, Check, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useLocalized } from '../hooks/useLocalized';
 import { cn } from '../utils/cn';
 import { ProductCard } from '../components/ProductCard';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
-import { products as mockProducts } from '../data/mockData';
 import { SEOHead } from '../components/SEOHead';
 
 export function ProductDetail() {
   const { t } = useTranslation();
-  const localized = useLocalized();
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { addToast } = useToast();
+
   const [product, setProduct] = useState<any>(null);
   const [supplier, setSupplier] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [categoryProducts, setCategoryProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [quantity, setQuantity] = useState<number>(0);
-  
+  const [activeTab, setActiveTab] = useState('overview');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState('');
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  
-  const { addToast } = useToast();
-
-  const handleToggleFavorite = async () => {
-    if (!user) {
-      addToast({ type: 'error', title: 'Thông báo', message: 'Vui lòng đăng nhập để lưu sản phẩm' });
-      return;
-    }
-    
-    try {
-      if (isFavorite) {
-        await api.delete(`/users/${user.id}/saved/${product.id}`);
-        setIsFavorite(false);
-        addToast({ type: 'success', title: 'Thành công', message: 'Đã bỏ lưu sản phẩm' });
-      } else {
-        await api.post(`/users/${user.id}/saved`, { productId: product.id });
-        setIsFavorite(true);
-        addToast({ type: 'success', title: 'Thành công', message: 'Đã lưu sản phẩm' });
-      }
-    } catch (e) {
-      console.error(e);
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không tìm thấy ID thực để lưu' });
-    }
-  };
-
-  const handleAddToInquiry = async () => {
-    if (!user) {
-      setAuthModalMessage('Vui lòng đăng nhập để gửi Yêu cầu Báo giá.');
-      setIsAuthModalOpen(true);
-      return;
-    }
-
-    if (product.rfqMinQuantity && quantity < product.rfqMinQuantity) {
-      addToast({ type: 'warning', title: 'Lưu ý', message: `Yêu cầu số lượng đạt tối thiểu ${product.rfqMinQuantity} ${product.unit} để sử dụng tính năng Báo giá.` });
-      return;
-    }
-    
-    // Chuyển đến trang RFQ với thông tin sản phẩm
-    navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}&quantity=${quantity}`);
-  };
-
-  const handleAddToCart = async () => {
-    if (!user) {
-      setAuthModalMessage('Vui lòng đăng nhập để thêm vào giỏ hàng.');
-      setIsAuthModalOpen(true);
-      return;
-    }
-
-    if (product.rfqMinQuantity && quantity >= product.rfqMinQuantity) {
-      addToast({ type: 'warning', title: 'Lưu ý', message: `Số lượng đơn hàng lớn (>= ${product.rfqMinQuantity}), vui lòng sử dụng tính năng Yêu cầu Báo giá.` });
-      return;
-    }
-
-    try {
-      await api.post('/cart/items', { productId: product.id, quantity });
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào giỏ hàng' });
-    } catch (e) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm vào giỏ hàng' });
-    }
-  };
+  const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function loadData() {
@@ -98,458 +36,429 @@ export function ProductDetail() {
         const prodRes = await api.get(`/products/${id}`);
         const p = prodRes.data;
         setProduct(p);
-        setQuantity(1);
-
         if (p.supplierId) {
-          try {
-            const suppRes = await api.get(`/suppliers/${p.supplierId}`);
-            setSupplier(suppRes.data);
-          } catch (e) {
-            console.error('Failed to load supplier detail:', e);
-          }
+          try { const s = await api.get(`/suppliers/${p.supplierId}`); setSupplier(s.data); } catch {}
         }
-
-        try {
-          const relatedRes = await api.get(`/products/${p.id}/related`);
-          setRelatedProducts(relatedRes.data || []);
-        } catch (e) {
-          console.error('Failed to load related products:', e);
-        }
-
-        // Record View History if user is logged in
-        if (user?.id) {
-          try {
-            await api.post(`/users/${user.id}/history`, { productId: p.id });
-          } catch (e) {
-            console.error('Error recording view history:', e);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load product details from API', err);
-        // Fallback to mockData
-        const p = mockProducts.find(x => x.id === id);
-        if (p) {
-          setProduct({ ...p, moqUnit: 'unit', slug: 'mock-slug' });
-          setRelatedProducts(mockProducts.filter(x => x.id !== id).slice(0, 4));
-        }
-      } finally {
-        setLoading(false);
-      }
+        try { const r = await api.get(`/products/${p.id}/related`); setRelatedProducts(r.data || []); } catch {}
+        if (p.categoryId) { try { const c = await api.get(`/products?categoryId=${p.categoryId}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); } catch {} }
+        if (user?.id) { try { await api.post(`/users/${user.id}/history`, { productId: p.id }); } catch {} }
+      } catch {
+        setProduct(null);
+      } finally { setLoading(false); }
     }
     if (id) loadData();
   }, [id, user]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="animate-spin text-primary" size={48} />
-      </div>
-    );
-  }
+  const handleToggleFavorite = async () => {
+    if (!user) { addToast({ type: 'error', title: 'Thông báo', message: 'Vui lòng đăng nhập' }); return; }
+    try {
+      if (isFavorite) { await api.delete(`/users/${user.id}/saved/${product.id}`); setIsFavorite(false); }
+      else { await api.post(`/users/${user.id}/saved`, { productId: product.id }); setIsFavorite(true); }
+    } catch {}
+  };
 
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-slate-900">{t('product_not_found')}</h2>
-          <Link to="/products" className="text-primary font-bold underline">{t('back_to_products')}</Link>
-        </div>
-      </div>
-    );
-  }
+  const handleRFQ = () => {
+    if (!user) { setAuthModalMessage('Vui lòng đăng nhập để gửi Yêu cầu Báo giá.'); setIsAuthModalOpen(true); return; }
+    navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`);
+  };
 
-  // Generate Fake Premium Tiers
-  const tier1Price = product.maxPrice;
-  const tier2Price = product.price || ((product.minPrice + product.maxPrice) / 2).toFixed(2);
-  const tier3Price = product.minPrice;
-  const moqBaseline = 1;
+  const handleContact = () => {
+    if (!user) { setAuthModalMessage('Vui lòng đăng nhập để liên hệ nhà cung cấp.'); setIsAuthModalOpen(true); return; }
+    navigate(user.role === 'SUPPLIER' ? '/dashboard/supplier/messages' : '/dashboard/buyer/messages');
+  };
+
+  const handleAddToCart = async () => {
+    if (!user) { setAuthModalMessage('Vui lòng đăng nhập để thêm vào Giỏ yêu cầu.'); setIsAuthModalOpen(true); return; }
+    try { await api.post('/cart/items', { productId: product.id, quantity: 1 }); addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào Giỏ yêu cầu' }); } catch { addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm' }); }
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-primary" size={48} /></div>;
+  if (!product) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold text-slate-900">Không tìm thấy sản phẩm</h2>
+        <Link to="/products" className="text-primary font-bold underline">Quay lại danh sách</Link>
+      </div>
+    </div>
+  );
+
+  const images = product.images?.length > 0 ? product.images : ['https://picsum.photos/seed/' + product.id + '/600/600'];
+  const hasPricing = product.minPrice || product.maxPrice;
+  const memberSince = supplier?.createdAt ? new Date(supplier.createdAt).getFullYear() : '2024';
 
   return (
-    <div className="bg-white min-h-screen pb-20">
-      <SEOHead
-        title={product.name}
-        description={product.description?.substring(0, 160) || `${product.name} - Mua sỉ giá tốt từ nhà cung cấp Việt Nam trên VIEProduct.`}
-        keywords={`${product.name}, ${product.category?.name || ''}, mua sỉ, B2B, nhà cung cấp Việt Nam`}
-        ogImage={product.images?.[0]}
-        canonical={`/products/${product.id}`}
-        ogType="product"
-        structuredData={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          "name": product.name,
-          "image": product.images || [],
-          "description": product.description || '',
-          "brand": {
-            "@type": "Organization",
-            "name": supplier?.companyName || 'VIEProduct Supplier'
-          },
-          "offers": {
-            "@type": "Offer",
-            "priceCurrency": product.currency || 'VND',
-            "price": product.minPrice,
-            "availability": "https://schema.org/InStock",
-            "seller": {
-              "@type": "Organization",
-              "name": supplier?.companyName || 'VIEProduct Supplier'
-            }
-          },
-          ...(product.rating > 0 && {
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": product.rating,
-              "reviewCount": product.reviewCount || 1
-            }
-          })
-        }}
-      />
-      {/* Breadcrumbs */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="flex items-center gap-1 sm:gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest overflow-x-auto no-scrollbar">
-          <Link to="/" className="hover:text-primary shrink-0">{t('marketplace', 'MARKETPLACE')}</Link>
-          <ChevronRight size={10} className="shrink-0" />
-          <Link to="/products" className="hover:text-primary shrink-0">{t(product.category?.name || 'TEXTILES')}</Link>
-          <ChevronRight size={10} className="shrink-0" />
-          <span className="text-slate-900 font-bold truncate max-w-[120px] sm:max-w-none">{product.name}</span>
-        </nav>
+    <div className="bg-[#f5f5f5] min-h-screen">
+      <SEOHead title={product.name} description={product.description?.substring(0, 160) || product.name} canonical={`/products/${product.id}`} />
+
+      {/* Breadcrumb */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-[1400px] mx-auto px-4 py-3">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500">
+            <Link to="/" className="hover:text-primary">Trang chủ</Link>
+            <ChevronRight size={12} />
+            <Link to="/products" className="hover:text-primary">Sản phẩm</Link>
+            {product.category && <><ChevronRight size={12} /><Link to={`/products?category=${product.category.slug}`} className="hover:text-primary">{product.category.name}</Link></>}
+            <ChevronRight size={12} />
+            <span className="text-slate-800 font-medium truncate max-w-[200px]">{product.name}</span>
+          </nav>
+        </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-          {/* Left Column: Gallery */}
-          <div className="space-y-4">
-            <div className="aspect-[4/5] bg-[#F4F1E9] overflow-hidden relative group">
-              <img
-                src={product.images?.[activeImage] || 'https://images.unsplash.com/photo-1596452290466-9a250325d0c7?q=80&w=2000&auto=format&fit=crop'}
-                alt={product.name}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute top-6 left-6 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest text-slate-800 px-4 py-2 flex items-center gap-2 shadow-sm">
-                <Star size={12} className="text-amber-500 fill-amber-500" />
-                PREMIUM ECO-MATERIAL
+      {/* ═══ HERO: 3-Column Layout ═══ */}
+      <div className="max-w-[1400px] mx-auto px-4 py-6">
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+
+            {/* COL 1: Gallery */}
+            <div className="lg:col-span-4 p-5 border-r border-slate-100">
+              <div className="aspect-square bg-slate-50 rounded-lg overflow-hidden mb-3 relative group">
+                <img src={images[activeImage]} alt={product.name} className="w-full h-full object-contain" />
+                <button onClick={handleToggleFavorite} className={cn("absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md", isFavorite ? "bg-red-500 text-white" : "bg-white/90 text-slate-400 hover:text-red-500")}>
+                  <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
+                </button>
               </div>
-              <button
-                onClick={handleToggleFavorite}
-                className={cn(
-                  "absolute top-6 right-6 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg transition-all",
-                  isFavorite ? "text-red-500" : "text-slate-400 hover:text-red-500"
+              {images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {images.map((img: string, idx: number) => (
+                    <button key={idx} onClick={() => setActiveImage(idx)} className={cn("w-16 h-16 rounded border-2 overflow-hidden shrink-0 transition-all", idx === activeImage ? "border-primary" : "border-transparent hover:border-slate-300")}>
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Supplier Card — below gallery */}
+              <div className="mt-4 border border-slate-200 rounded-lg p-4 bg-white">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                    {supplier?.logo ? <img src={supplier.logo} alt="" className="w-full h-full object-cover" /> : <Building2 size={22} className="text-slate-300" />}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-slate-900 text-sm leading-tight">{supplier?.companyName || 'Nhà cung cấp'}</h3>
+                    {supplier?.isVerified && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1">
+                        <ShieldCheck size={10} /> Đã xác minh
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-1.5 text-xs text-slate-500 mb-3">
+                  <div className="flex items-center gap-2"><Calendar size={12} className="text-slate-400" /> Tham gia từ {memberSince}</div>
+                  <div className="flex items-center gap-2"><MapPin size={12} className="text-slate-400" /> {supplier?.city || 'Việt Nam'}</div>
+                  <div className="flex items-center gap-2"><Package size={12} className="text-slate-400" /> {supplier?._count?.products || '—'} sản phẩm</div>
+                  <div className="flex items-center gap-2"><Star size={12} className="text-amber-400" /> Phản hồi: {supplier?.responseRate || '95'}%</div>
+                </div>
+                {supplier?.slug && (
+                  <Link to={`/suppliers/${supplier.slug}`} className="w-full border border-slate-200 text-slate-600 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-center gap-1.5">
+                    <ExternalLink size={12} /> Xem hồ sơ doanh nghiệp
+                  </Link>
                 )}
-              >
-                <Heart size={18} className={isFavorite ? "fill-red-500" : ""} />
-              </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
-              {(product.images?.length > 0 ? product.images : [
-                'https://images.unsplash.com/photo-1596452290466-9a250325d0c7?q=80&w=300&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=300&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1584282431713-79cd175113eb?q=80&w=300&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1620799139886-fca5907def6c?q=80&w=300&auto=format&fit=crop'
-              ]).slice(0, 4).map((img: string, idx: number) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImage(idx)}
-                  className={cn(
-                    "aspect-square overflow-hidden relative group outline-none",
-                    activeImage === idx ? "ring-2 ring-slate-900" : ""
-                  )}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                  {idx === 3 && product.images?.length > 4 && (
-                    <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center text-white font-bold text-sm">
-                      +{product.images.length - 4}
+            {/* COL 2: Product Info */}
+            <div className="lg:col-span-5 p-6 border-r border-slate-100 overflow-y-auto">
+              <h1 className="text-xl font-bold text-slate-900 leading-tight mb-1">{product.name}</h1>
+              <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
+                {product.sku && <span>SKU: {product.sku}</span>}
+                {product.category && <><span>•</span><Link to={`/products?category=${product.category.slug}`} className="text-primary hover:underline">{product.category.name}</Link></>}
+                {product.brand && <><span>•</span><span>{product.brand}</span></>}
+              </div>
+
+              {/* Pricing */}
+              {hasPricing ? (
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-lg p-4 mb-4">
+                  <div className="text-[10px] font-bold text-orange-600 uppercase tracking-wider mb-1">Giá tham khảo (FOB)</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-black text-orange-600">{product.minPrice?.toLocaleString()}</span>
+                    {product.maxPrice && product.maxPrice !== product.minPrice && (
+                      <span className="text-lg text-orange-400"> - {product.maxPrice?.toLocaleString()}</span>
+                    )}
+                    <span className="text-sm text-orange-500 font-medium ml-1">{product.currency || 'VND'}/{product.unit || 'cái'}</span>
+                  </div>
+                  <table className="w-full mt-2 text-xs">
+                    <thead><tr className="border-b border-orange-200/50">
+                      <th className="text-left py-1 text-orange-500 font-semibold">Số lượng</th>
+                      <th className="text-right py-1 text-orange-500 font-semibold">Đơn giá</th>
+                    </tr></thead>
+                    <tbody className="text-slate-700">
+                      <tr className="border-b border-orange-100/50"><td className="py-1">1 - 99 {product.unit || 'cái'}</td><td className="text-right font-semibold">{product.maxPrice?.toLocaleString() || 'Liên hệ'}</td></tr>
+                      <tr className="border-b border-orange-100/50"><td className="py-1">100 - 999 {product.unit || 'cái'}</td><td className="text-right font-semibold">{((product.minPrice + product.maxPrice) / 2)?.toLocaleString() || 'Liên hệ'}</td></tr>
+                      <tr><td className="py-1">≥ 1000 {product.unit || 'cái'}</td><td className="text-right font-semibold text-orange-600">{product.minPrice?.toLocaleString() || 'Liên hệ'}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 text-center">
+                  <p className="text-sm text-slate-500 mb-1">Giá sản phẩm này cần liên hệ trực tiếp</p>
+                  <p className="text-lg font-bold text-primary">Liên hệ báo giá</p>
+                </div>
+              )}
+
+              {/* ═══ Dynamic Attribute Selector ═══ */}
+              {product.attributes && Object.keys(product.attributes).length > 0 && (
+                <div className="mb-4 space-y-3">
+                  <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">Lựa chọn sản phẩm</div>
+                  {Object.entries(product.attributes).map(([attrName, values]: [string, any]) => (
+                    <div key={attrName}>
+                      <div className="text-xs font-semibold text-slate-500 mb-1.5">{attrName}</div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(values) ? values : [values]).map((val: string) => {
+                          const isSelected = selectedAttrs[attrName] === val;
+                          return (
+                            <button key={val} onClick={() => setSelectedAttrs(prev => ({ ...prev, [attrName]: isSelected ? '' : val }))} className={cn(
+                              "px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1",
+                              isSelected ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/20" : "border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary"
+                            )}>
+                              {isSelected && <Check size={12} className="text-primary" />}
+                              {val}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
+
+              {/* ═══ OEM/ODM Customization ═══ */}
+              {product.customizations && product.customizations.length > 0 && (
+                <div className="mb-4 border border-slate-100 rounded-lg p-3 bg-slate-50/50">
+                  <div className="text-xs font-bold text-slate-900 mb-2 flex items-center gap-1"><Zap size={12} className="text-primary" /> Khả năng tùy chỉnh</div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    {product.customizations.map((c: string, i: number) => (
+                      <span key={i} className="text-xs text-slate-600 flex items-center gap-1"><Check size={11} className="text-emerald-500" /> {c}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ═══ Quick Info Badges ═══ */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full"><Package size={10} /> MOQ: {product.moq || 1} {product.unit || 'cái'}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-violet-50 text-violet-700 px-2.5 py-1 rounded-full"><Clock size={10} /> Lead Time: {product.leadTime || '15-30 ngày'}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full"><MapPin size={10} /> Xuất xứ: {product.origin || 'Việt Nam'}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full"><Factory size={10} /> Công suất: {product.productionCapacity || '10,000/tháng'}</span>
+              </div>
+            </div>
+
+            {/* COL 3: CTA Sticky Panel */}
+            <div className="lg:col-span-3 p-5 bg-slate-50/50">
+              <div className="lg:sticky lg:top-24 space-y-3">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">Liên hệ ngay</div>
+                <button onClick={handleRFQ} className="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary-dark transition-colors text-sm">
+                  Yêu cầu báo giá
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: Info */}
-          <div className="space-y-10">
-            {/* Header */}
-            <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F172A] leading-[1.1] tracking-tight mb-4">
-                {localized(product, 'name')}
-              </h1>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest flex-wrap">
-                <Link to={`/suppliers/${product.supplierId || '#'}`} className="text-[#A2875E] hover:underline transition-colors">{supplier?.companyName || 'Nhà cung cấp'}</Link>
-              </div>
-            </div>
-
-            {/* Single Price & MOQ */}
-            <div className="bg-slate-50 border border-slate-100 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-lg">
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Giá bán</div>
-                <div className="flex items-end gap-2">
-                  <div className="text-3xl md:text-4xl font-black text-slate-900">{product.minPrice?.toLocaleString('vi-VN')} {product.currency || 'VNĐ'}</div>
-                  <div className="text-sm text-slate-500 font-bold mb-1">/ {product.unit || 'cái'}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Description */}
-            {product.description && (
-              <div className="space-y-3">
-                <h3 className="font-bold text-slate-900 text-sm uppercase tracking-widest">Mô tả sản phẩm</h3>
-                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{localized(product, 'description')}</p>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-sm font-bold text-slate-700">Số lượng:</span>
-                <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden">
-                  <button 
-                    onClick={() => setQuantity(Math.max(moqBaseline, quantity - 1))}
-                    disabled={quantity <= moqBaseline}
-                    className="p-3 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <input 
-                    type="number" 
-                    value={quantity}
-                    onChange={(e) => setQuantity(Math.max(moqBaseline, parseInt(e.target.value) || moqBaseline))}
-                    className="w-16 text-center font-bold text-slate-900 border-x border-slate-200 py-3 outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors outline-none"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
-                <span className="text-sm text-slate-500 font-medium">({product.unit || 'cái'})</span>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button 
-                    onClick={handleAddToCart}
-                    className="w-full flex items-center justify-center gap-2 bg-white border-2 border-primary text-primary py-3.5 font-bold hover:bg-primary/5 transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
-                  >
-                    <ShoppingCart size={16} /> Thêm vào giỏ
-                  </button>
-                  <button 
-                    onClick={async () => {
-                      if (!user) {
-                        setAuthModalMessage('Vui lòng đăng nhập để mua hàng.');
-                        setIsAuthModalOpen(true);
-                        return;
-                      }
-                      if (product.rfqMinQuantity && quantity >= product.rfqMinQuantity) {
-                        addToast({ type: 'warning', title: 'Lưu ý', message: `Số lượng đơn hàng lớn (>= ${product.rfqMinQuantity}), vui lòng sử dụng tính năng Yêu cầu Báo giá.` });
-                        return;
-                      }
-                      try {
-                        // Mua ngay = Xóa giỏ hàng cũ -> Thêm sản phẩm này -> Vào checkout
-                        await api.delete('/cart');
-                        await api.post('/cart/items', { productId: product.id, quantity });
-                        navigate('/checkout');
-                      } catch (e) {
-                        addToast({ type: 'error', title: 'Lỗi', message: 'Có lỗi xảy ra khi xử lý đơn hàng' });
-                      }
-                    }}
-                    className="w-full flex items-center justify-center gap-2 bg-primary text-white py-4 font-bold hover:bg-primary-dark transition-all uppercase tracking-widest text-xs rounded-lg shadow-lg shadow-primary/20 active:scale-[0.98]"
-                  >
-                    Mua Ngay
-                  </button>
-                </div>
-                <button 
-                  onClick={() => {
-                    if (!user) {
-                      setAuthModalMessage('Vui lòng đăng nhập hoặc tạo tài khoản để gửi Yêu cầu Báo giá (RFQ).');
-                      setIsAuthModalOpen(true);
-                      return;
-                    }
-                    if (product.rfqMinQuantity && quantity < product.rfqMinQuantity) {
-                      addToast({ type: 'warning', title: 'Lưu ý', message: `Yêu cầu số lượng đạt tối thiểu ${product.rfqMinQuantity} ${product.unit} để gửi Báo giá.` });
-                      return;
-                    }
-                    navigate(`/rfq?product=${product.id}&qty=${quantity}`);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 bg-[#021833] text-white py-4 font-bold hover:bg-[#0A2645] transition-colors uppercase tracking-widest text-xs rounded-lg shadow-sm"
-                >
-                  Yêu cầu Báo giá <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <button onClick={handleContact} className="w-full border-2 border-primary text-primary font-bold py-3 rounded-lg hover:bg-primary/5 transition-colors text-sm flex items-center justify-center gap-2">
+                  <MessageSquare size={16} /> Liên hệ nhà cung cấp
                 </button>
-              </div>
-              <button 
-                onClick={() => {
-                  if (!user) {
-                    setAuthModalMessage('Vui lòng đăng nhập để liên hệ với nhà cung cấp.');
-                    setIsAuthModalOpen(true);
-                  } else {
-                    setIsContactModalOpen(true);
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-white border border-[#021833] text-[#021833] py-4 font-bold hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs rounded-lg"
-              >
-                Liên hệ Nhà cung cấp <MessageSquare size={14} />
-              </button>
-            </div>
+                <button onClick={handleAddToCart} className="w-full border border-slate-200 text-slate-600 font-medium py-2.5 rounded-lg hover:bg-white transition-colors text-sm">
+                  + Thêm vào Giỏ yêu cầu
+                </button>
 
-            {/* Tech Specs */}
-            <div className="space-y-5 pt-4 border-t border-slate-100">
-              <h3 className="font-bold text-slate-900">Technical Specifications</h3>
-              <div className="grid grid-cols-2 gap-y-6 gap-x-8">
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Material</div>
-                  <div className="text-sm font-bold text-slate-800">100% Organic Cotton</div>
+                {/* Quick Summary */}
+                <div className="border-t border-slate-200 pt-3 mt-3 space-y-2 text-xs text-slate-500">
+                  <div className="flex justify-between"><span>MOQ</span><span className="font-semibold text-slate-800">{product.moq || 1} {product.unit || 'cái'}</span></div>
+                  <div className="flex justify-between"><span>Lead Time</span><span className="font-semibold text-slate-800">{product.leadTime || '15-30 ngày'}</span></div>
+                  <div className="flex justify-between"><span>Xuất xứ</span><span className="font-semibold text-slate-800">{product.origin || 'Việt Nam'}</span></div>
+                  <div className="flex justify-between"><span>Cảng XK</span><span className="font-semibold text-slate-800">{product.port || '—'}</span></div>
                 </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Weight</div>
-                  <div className="text-sm font-bold text-slate-800">250 GSM</div>
-                </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Width</div>
-                  <div className="text-sm font-bold text-slate-800">150cm</div>
-                </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">MOQ</div>
-                  <div className="text-sm font-bold text-slate-800">{product.moq} {product.moqUnit || 'Meters'}</div>
-                </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lead Time</div>
-                  <div className="text-sm font-bold text-slate-800">15-20 Days</div>
-                </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Finish</div>
-                  <div className="text-sm font-bold text-slate-800">Natural Matte</div>
+
+                {/* Trust badges */}
+                <div className="border-t border-slate-200 pt-3 mt-2 space-y-1.5">
+                  <div className="flex items-center gap-2 text-[10px] font-medium text-slate-500"><ShieldCheck size={12} className="text-emerald-500" /> Giao dịch an toàn</div>
+                  <div className="flex items-center gap-2 text-[10px] font-medium text-slate-500"><Award size={12} className="text-amber-500" /> Đảm bảo chất lượng</div>
+                  <div className="flex items-center gap-2 text-[10px] font-medium text-slate-500"><Clock size={12} className="text-blue-500" /> Phản hồi nhanh &lt; 24h</div>
                 </div>
               </div>
             </div>
-
-            {/* Certifications */}
-            <div className="p-5 bg-[#EEF2FC]/50 border border-blue-50/50 space-y-4">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                <Award size={16} className="text-[#A2875E]" /> Verified Certifications
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-white border border-slate-200 px-3 py-1.5 text-[9px] font-bold text-slate-700 uppercase tracking-widest">GOTS</span>
-                <span className="bg-white border border-slate-200 px-3 py-1.5 text-[9px] font-bold text-slate-700 uppercase tracking-widest">OEKO-TEX STANDARD 100</span>
-                <span className="bg-white border border-slate-200 px-3 py-1.5 text-[9px] font-bold text-slate-700 uppercase tracking-widest">RECYCLED CLAIM STANDARD</span>
-              </div>
-            </div>
-
-            {/* Supplier Card */}
-            <div className="border border-slate-200 p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 -mr-6 -mt-6 rotate-12 z-0"></div>
-              <div className="w-16 h-16 bg-[#021833] text-white flex items-center justify-center font-black text-xl shrink-0 z-10">
-                {supplier?.companyName ? supplier.companyName.substring(0, 2).toUpperCase() : 'VV'}
-              </div>
-              <div className="flex-1 space-y-4 z-10">
-                <div>
-                  <h4 className="font-bold text-slate-900 mb-1">{supplier?.companyName || 'VietVibe Garment Factory'}</h4>
-                  <div className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest">
-                    <Star size={10} className="fill-amber-600 outline-none" /> VERIFIED GOLD
-                  </div>
-                </div>
-                
-                <div className="space-y-2 py-3 border-y border-slate-100">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Experience</span>
-                    <span className="font-bold text-slate-900">12 years</span>
-                  </div>
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Main Markets</span>
-                    <span className="font-bold text-slate-900">Europe, USA</span>
-                  </div>
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Response Rate</span>
-                    <span className="font-bold text-slate-900">98% / 2h</span>
-                  </div>
-                </div>
-
-                <Link to={`/suppliers/${product.supplierId || 'placeholder'}`} className="inline-flex items-center gap-2 text-[10px] font-bold text-[#A2875E] uppercase tracking-widest hover:text-[#8B7047] transition-colors">
-                  View Factory Profile <ChevronRight size={14} />
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Curated Selection */}
-        <div className="mt-20 pt-10 border-t border-slate-200">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <div className="text-[10px] font-bold text-[#A2875E] uppercase tracking-widest mb-1">CURATED SELECTION</div>
-              <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Related Materials</h2>
-            </div>
-            <Link to="/products" className="hidden sm:inline-flex text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-0.5 hover:text-primary hover:border-primary transition-colors">
-              Explore Marketplace
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {relatedProducts.length > 0 ? relatedProducts.slice(0, 4).map((p) => (
-              <Link key={p.id} to={`/products/${p.id}`} className="group block">
-                <div className="aspect-[4/3] sm:aspect-square bg-slate-100 mb-4 overflow-hidden">
-                  <img src={p.images?.[0] || p.image || 'https://images.unsplash.com/photo-1554162402-2826cfbe5fbb?q=80&w=600&auto=format&fit=crop'} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" referrerPolicy="no-referrer" />
-                </div>
-                <h3 className="font-bold text-sm text-slate-900 mb-1 group-hover:text-primary transition-colors line-clamp-1">{p.name}</h3>
-                <div className="text-[10px] text-slate-500 font-medium">
-                  MOQ: {(p.moq || 300).toLocaleString('vi-VN')} {p.moqUnit || p.unit || 'cái'} • {(p.price || p.minPrice || 0).toLocaleString('vi-VN')} ₫/{p.unit || 'cái'}
-                </div>
-              </Link>
-            )) : (
-              <div className="col-span-full py-12 text-center text-slate-400 font-medium">
-                Chưa có sản phẩm liên quan trong cùng danh mục.
-              </div>
-            )}
           </div>
         </div>
       </div>
-      <AuthRequireModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-        message={authModalMessage} 
-      />
 
-      {/* Contact Modal */}
-      {isContactModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 text-center space-y-2">
-              <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageSquare size={24} />
+      {/* ═══ Supply Ability Card ═══ */}
+      <div className="max-w-[1400px] mx-auto px-4 mb-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-5">
+          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Factory size={16} className="text-primary" /> Năng lực cung ứng
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { label: 'MOQ', value: `${product.moq || 1} ${product.unit || 'cái'}` },
+              { label: 'Công suất/tháng', value: product.productionCapacity || '10,000 units' },
+              { label: 'Lead Time', value: product.leadTime || '15-30 ngày' },
+              { label: 'Cảng xuất khẩu', value: product.port || 'Hồ Chí Minh' },
+              { label: 'Thị trường XK', value: product.exportMarkets || 'Toàn cầu' },
+            ].map((item, i) => (
+              <div key={i} className="text-center p-3 bg-slate-50 rounded-lg">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{item.label}</div>
+                <div className="text-sm font-semibold text-slate-800">{item.value}</div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Liên hệ Nhà cung cấp</h3>
-              <p className="text-sm text-slate-500">Chọn phương thức bạn muốn sử dụng để trao đổi với nhà cung cấp.</p>
-            </div>
-            <div className="p-4 space-y-3 bg-slate-50 border-t border-slate-100">
-              <button 
-                onClick={() => {
-                  window.open(`https://zalo.me/${supplier?.phone?.replace(/\D/g, '') || ''}`, '_blank');
-                  setIsContactModalOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-[#0068FF] text-white py-3 font-bold hover:bg-[#0055DD] transition-colors rounded-lg"
-              >
-                Liên hệ qua Zalo <MessageSquare size={16} />
-              </button>
-              <button 
-                onClick={() => {
-                  window.location.href = `mailto:${supplier?.email || ''}`;
-                  setIsContactModalOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 py-3 font-bold hover:bg-slate-50 transition-colors rounded-lg shadow-sm"
-              >
-                Gửi Email <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              </button>
-            </div>
-            <div className="p-3 border-t border-slate-100 text-center">
-              <button 
-                onClick={() => setIsContactModalOpen(false)}
-                className="text-sm font-bold text-slate-500 hover:text-slate-700 p-2"
-              >
-                Đóng
-              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ Certifications ═══ */}
+      {supplier?.certifications?.length > 0 && (
+        <div className="max-w-[1400px] mx-auto px-4 mb-6">
+          <div className="bg-white border border-slate-200 rounded-lg p-5">
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Award size={16} className="text-primary" /> Chứng nhận doanh nghiệp
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {supplier.certifications.map((cert: any, i: number) => (
+                <div key={i} className="flex items-center gap-2.5 border border-emerald-100 bg-emerald-50/40 rounded-lg px-4 py-2.5">
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <ShieldCheck size={15} className="text-emerald-600" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">{cert.name}</div>
+                    {cert.issuedBy && <div className="text-[10px] text-slate-500">{cert.issuedBy}</div>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       )}
+      <div className="max-w-[1400px] mx-auto px-4 mb-6">
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          {/* Tab Headers */}
+          <div className="flex border-b border-slate-200 overflow-x-auto">
+            {['overview', 'specs', 'company', 'reviews'].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} className={cn(
+                "px-6 py-3.5 text-sm font-bold whitespace-nowrap transition-colors border-b-2 -mb-px",
+                activeTab === tab ? "text-primary border-primary bg-primary/5" : "text-slate-500 border-transparent hover:text-slate-700"
+              )}>
+                {{ overview: 'Tổng quan', specs: 'Thông số kỹ thuật', company: 'Doanh nghiệp', reviews: 'Đánh giá' }[tab]}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-6">
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 mb-3">Mô tả sản phẩm</h3>
+                  <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description || 'Chưa có mô tả.'}</div>
+                </div>
+                {product.features && (
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 mb-3">Ưu điểm sản phẩm</h3>
+                    <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.features}</div>
+                  </div>
+                )}
+                {product.applications && (
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 mb-3">Ứng dụng</h3>
+                    <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.applications}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'specs' && (
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-4">Thông số kỹ thuật</h3>
+                <table className="w-full text-sm">
+                  <tbody>
+                    {(product.specifications ? Object.entries(product.specifications) : [
+                      ['Xuất xứ', product.origin || 'Việt Nam'],
+                      ['Đơn vị', product.unit || 'cái'],
+                      ['MOQ', `${product.moq || 1}`],
+                      ['Thương hiệu', product.brand || '—'],
+                    ]).map(([key, val]: any, i: number) => (
+                      <tr key={i} className={i % 2 === 0 ? 'bg-slate-50' : ''}>
+                        <td className="py-2.5 px-4 font-medium text-slate-700 w-1/3 border border-slate-100">{key}</td>
+                        <td className="py-2.5 px-4 text-slate-600 border border-slate-100">{val}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTab === 'company' && supplier && (
+              <div className="space-y-6">
+                <div className="flex items-start gap-5">
+                  <div className="w-20 h-20 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
+                    {supplier.logo ? <img src={supplier.logo} alt="" className="w-full h-full object-cover" /> : <Building2 size={32} className="text-slate-300" />}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">{supplier.companyName}</h3>
+                    {supplier.isVerified && <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"><ShieldCheck size={12} /> Đã xác minh</span>}
+                    <p className="text-sm text-slate-500 mt-2 leading-relaxed">{supplier.description || 'Chưa có mô tả.'}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[
+                    { icon: Calendar, label: 'Năm thành lập', value: supplier.yearEstablished || memberSince },
+                    { icon: Users, label: 'Quy mô', value: supplier.employeeCount || '—' },
+                    { icon: MapPin, label: 'Địa chỉ', value: `${supplier.city || ''} ${supplier.province || ''}`.trim() || 'Việt Nam' },
+                    { icon: Globe, label: 'Thị trường XK', value: supplier.exportMarkets?.join(', ') || 'Toàn cầu' },
+                    { icon: Factory, label: 'Loại hình', value: supplier.businessType || '—' },
+                    { icon: Award, label: 'Chứng nhận', value: supplier.certifications?.map((c: any) => c.name).join(', ') || '—' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+                      <item.icon size={16} className="text-primary mt-0.5 shrink-0" />
+                      <div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase">{item.label}</div>
+                        <div className="text-sm font-medium text-slate-700">{item.value}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <div className="text-center py-12">
+                <Star size={40} className="text-slate-200 mx-auto mb-3" />
+                <p className="text-sm text-slate-400">Chưa có đánh giá nào cho sản phẩm này.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ Related Products ═══ */}
+      <div className="max-w-[1400px] mx-auto px-4 mb-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-5">
+          <h2 className="text-base font-bold text-slate-900 mb-4">Sản phẩm liên quan</h2>
+          {relatedProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {relatedProducts.slice(0, 5).map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-8">Chưa có sản phẩm nào khác từ nhà cung cấp này.</p>
+          )}
+        </div>
+      </div>
+
+      {/* ═══ Category Products ═══ */}
+      <div className="max-w-[1400px] mx-auto px-4 mb-10">
+        <div className="bg-white border border-slate-200 rounded-lg p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-slate-900">Sản phẩm cùng danh mục</h2>
+            {product.category && (
+              <Link to={`/products?category=${product.category.slug}`} className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                Xem tất cả <ChevronRight size={14} />
+              </Link>
+            )}
+          </div>
+          {categoryProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {categoryProducts.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-8">Chưa có sản phẩm nào cùng danh mục.</p>
+          )}
+        </div>
+      </div>
+
+      <AuthRequireModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} message={authModalMessage} />
     </div>
   );
 }

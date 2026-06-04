@@ -28,13 +28,23 @@ const imageFileFilter = (_req, file, cb) => {
     cb(null, true);
 };
 let UploadsController = class UploadsController {
-    supabase;
+    supabase = null;
     constructor() {
-        this.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL || '', process.env.SUPABASE_SERVICE_KEY || '');
+        const url = process.env.SUPABASE_URL;
+        const key = process.env.SUPABASE_SERVICE_KEY;
+        if (url && key) {
+            this.supabase = (0, supabase_js_1.createClient)(url, key);
+        }
+        else {
+            console.warn('⚠ SUPABASE_URL / SUPABASE_SERVICE_KEY chưa được cấu hình. Upload sẽ không hoạt động.');
+        }
     }
     async uploadFile(file) {
         if (!file) {
             throw new common_1.BadRequestException('Vui lòng chọn file ảnh để tải lên');
+        }
+        if (!this.supabase) {
+            throw new common_1.InternalServerErrorException('Chưa cấu hình Supabase Storage. Vui lòng liên hệ Admin.');
         }
         const uniqueName = `${(0, crypto_1.randomUUID)()}${(0, path_1.extname)(file.originalname)}`;
         try {
