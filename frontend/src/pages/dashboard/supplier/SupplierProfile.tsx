@@ -437,38 +437,6 @@ export function SupplierProfile() {
         </div>
       </div>
 
-      {/* Verification Center Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-        <div className="bg-slate-50 border-b border-slate-200 p-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
-              <Shield size={20} />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Trung tâm Xác thực (KYB)</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Xác minh danh tính doanh nghiệp để tăng uy tín với người mua.</p>
-            </div>
-          </div>
-          <div>
-            {supplier?.verificationStatus === 'VERIFIED' && (
-              <div className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs font-bold rounded-lg flex items-center gap-1.5">
-                <CheckCircle2 size={14} /> ĐÃ XÁC THỰC
-              </div>
-            )}
-            {supplier?.verificationStatus === 'PENDING' && (
-              <div className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold rounded-lg flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
-                ĐANG CHỜ DUYỆT
-              </div>
-            )}
-            {(!supplier?.verificationStatus || supplier?.verificationStatus === 'UNVERIFIED' || supplier?.verificationStatus === 'REJECTED') && (
-              <div className="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold rounded-lg">
-                CHƯA XÁC THỰC
-              </div>
-            )}
-          </div>
-        </div>
-        
         {supplier?.verificationStatus !== 'VERIFIED' && (
           <div className="p-6">
             {supplier?.verificationStatus === 'REJECTED' && (
