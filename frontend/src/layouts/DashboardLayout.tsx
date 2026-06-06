@@ -67,10 +67,8 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
 
   const buyerLinks = [
     { icon: <LayoutDashboard size={20} />, label: t('overview'), path: '/dashboard/buyer' },
-    { icon: <ShoppingBag size={20} />, label: t('my_orders', 'Đơn mua'), path: '/dashboard/buyer/orders' },
     { icon: <FileText size={20} />, label: t('rfqs'), path: '/dashboard/buyer/rfqs' },
     { icon: <Heart size={20} />, label: t('saved'), path: '/dashboard/buyer/saved' },
-    { icon: <Clock size={20} />, label: t('history', 'Lịch sử duyệt'), path: '/dashboard/buyer/history' },
     { icon: <MessageSquare size={20} />, label: t('msg_sidebar_label'), path: '/dashboard/buyer/messages' },
     { icon: <Settings size={20} />, label: t('settings'), path: '/dashboard/buyer/settings' },
   ];
