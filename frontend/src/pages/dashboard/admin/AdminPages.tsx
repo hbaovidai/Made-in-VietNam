@@ -103,12 +103,14 @@ export function AdminPages() {
                   <strong className="wp-row-title">{p.title}</strong>
                   {p.status === 'Draft' && <span style={{ color: 'var(--wp-text-muted)', fontWeight: 400 }}> — Draft</span>}
                   <div className="wp-row-actions">
-                    // <a href={p.url}>Edit</a>
-                    // <span className="sep">|</span>
-                    // <a href={p.url}>Quick Edit</a>
-                    // <span className="sep">|</span>
-                    // <button className="trash">Trash</button>
-                    // <span className="sep">|</span>
+                    {/*
+                    <a href={p.url}>Edit</a>
+                    <span className="sep">|</span>
+                    <a href={p.url}>Quick Edit</a>
+                    <span className="sep">|</span>
+                    <button className="trash">Trash</button>
+                    <span className="sep">|</span>
+                    */}
                     <a href={p.url}>View</a>
                   </div>
                 </td>
