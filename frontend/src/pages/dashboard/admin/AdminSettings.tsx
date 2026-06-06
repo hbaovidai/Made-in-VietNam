@@ -11,10 +11,12 @@ export function AdminSettings() {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings');
-        const obj: Record<string, string> = {};
-        (res.data || []).forEach((s: any) => { obj[s.key] = s.value; });
-        setSettings(obj);
-      } catch { /* silent */ }
+        if (res.data) {
+          setSettings(res.data);
+        }
+      } catch (err) {
+        console.error('Error fetching settings:', err);
+      }
       setLoading(false);
     };
     fetchSettings();
@@ -28,7 +30,7 @@ export function AdminSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.put('/settings', { settings }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.put('/settings', settings, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch { /* silent */ }
