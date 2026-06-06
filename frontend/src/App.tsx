@@ -197,9 +197,7 @@ export default function App() {
               <Route index element={<BuyerOverview />} />
               <Route path="rfqs" element={<BuyerRFQs />} />
               <Route path="saved" element={<BuyerSaved />} />
-              <Route path="orders" element={<BuyerOrders />} />
               <Route path="messages" element={<BuyerMessages />} />
-              <Route path="history" element={<BuyerHistory />} />
               <Route path="settings" element={<BuyerSettings />} />
             </Route>
 
