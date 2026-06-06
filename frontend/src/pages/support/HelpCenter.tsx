@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, ChevronRight, Rocket, FileSearch, ShieldCheck, Lock, User, Plus, Minus, MessageCircle, Mail } from 'lucide-react';
+import { api } from '../../lib/api';
 
 export function HelpCenter() {
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({
+    contact_email: 'contact@vieproduct.com',
+  });
+
+  useEffect(() => {
+    api.get('/settings')
+      .then(res => setSiteSettings(prev => ({ ...prev, ...res.data })))
+      .catch(() => {/* use defaults */});
+  }, []);
 
   const categories = [
     { icon: <Rocket size={20} className="text-white" />, title: t('cat_getting_started'), desc: t('cat_getting_started_desc'), href: '/help/user-guide' },
@@ -200,7 +211,7 @@ export function HelpCenter() {
             </div>
           </Link>
 
-          <a href="mailto:support@vieproduct.vn" className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group no-underline">
+          <a href={`mailto:${siteSettings.contact_email}`} className="bg-[#1E293B] p-8 rounded-xl flex flex-col items-start border border-slate-700/50 hover:bg-[#233146] transition-colors cursor-pointer group no-underline">
             <div className="w-12 h-12 bg-[#334155] rounded-xl flex items-center justify-center mb-6">
               <Mail size={24} className="text-white" />
             </div>

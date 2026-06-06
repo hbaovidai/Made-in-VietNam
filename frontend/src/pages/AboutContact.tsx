@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Globe, MessageSquare, Send, CheckCircle2, Award, ShieldCheck, Users } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../lib/api';
@@ -10,6 +10,19 @@ export function AboutContact() {
   const { addToast } = useToast();
   const [form, setForm] = useState({ fullName: '', email: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
+
+  // Fetch site settings for contact info
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({
+    contact_email: 'contact@vieproduct.com',
+    contact_phone: '+84 899 123 456',
+    contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
+  });
+
+  useEffect(() => {
+    api.get('/settings')
+      .then(res => setSiteSettings(prev => ({ ...prev, ...res.data })))
+      .catch(() => {/* use defaults */});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,21 +80,21 @@ export function AboutContact() {
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0"><Phone size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('call_us')}</div>
-                  <div className="text-lg font-bold">+84 899 123 456</div>
+                  <div className="text-lg font-bold">{siteSettings.contact_phone}</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-viet-gold shrink-0"><Mail size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('email_us')}</div>
-                  <div className="text-lg font-bold">support@vieproduct.vn</div>
+                  <div className="text-lg font-bold">{siteSettings.contact_email}</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-blue-400 shrink-0"><MapPin size={24} /></div>
                 <div>
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('visit_us')}</div>
-                  <div className="text-lg font-bold">{t('footer_address')}</div>
+                  <div className="text-lg font-bold">{siteSettings.contact_address}</div>
                 </div>
               </div>
             </div>
