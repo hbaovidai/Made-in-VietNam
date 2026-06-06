@@ -3,12 +3,12 @@ import { Search, Plus } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 
 const staticPages = [
-  { id: '1', title: 'Trang chủ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-06-01' },
-  { id: '2', title: 'Giới thiệu & Liên hệ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-05-20' },
-  { id: '3', title: 'Chính sách bảo mật', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-03-10' },
-  { id: '4', title: 'Điều khoản dịch vụ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-03-10' },
-  { id: '5', title: 'Trung tâm trợ giúp', author: 'Admin', status: 'Published', created: '2026-02-01', updated: '2026-04-15' },
-  { id: '6', title: 'Hướng dẫn bán hàng', author: 'Admin', status: 'Draft', created: '2026-03-01', updated: '2026-05-01' },
+  { id: '1', title: 'Trang chủ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-06-01', url: "/" },
+  { id: '2', title: 'Giới thiệu & Liên hệ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-05-20', url: "/about" },
+  { id: '3', title: 'Chính sách bảo mật', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-03-10', url: "/privacy" },
+  { id: '4', title: 'Điều khoản dịch vụ', author: 'Admin', status: 'Published', created: '2026-01-15', updated: '2026-03-10', url: "/terms" },
+  { id: '5', title: 'Trung tâm trợ giúp', author: 'Admin', status: 'Published', created: '2026-02-01', updated: '2026-04-15', url: "/help" },
+  { id: '6', title: 'Hướng dẫn bán hàng', author: 'Admin', status: 'Draft', created: '2026-03-01', updated: '2026-05-01', url: "#" },
 ];
 
 export function AdminPages() {
@@ -103,13 +103,13 @@ export function AdminPages() {
                   <strong className="wp-row-title">{p.title}</strong>
                   {p.status === 'Draft' && <span style={{ color: 'var(--wp-text-muted)', fontWeight: 400 }}> — Draft</span>}
                   <div className="wp-row-actions">
-                    <a href="#">Edit</a>
-                    <span className="sep">|</span>
-                    <a href="#">Quick Edit</a>
-                    <span className="sep">|</span>
-                    <button className="trash">Trash</button>
-                    <span className="sep">|</span>
-                    <a href="#">View</a>
+                    // <a href={p.url}>Edit</a>
+                    // <span className="sep">|</span>
+                    // <a href={p.url}>Quick Edit</a>
+                    // <span className="sep">|</span>
+                    // <button className="trash">Trash</button>
+                    // <span className="sep">|</span>
+                    <a href={p.url}>View</a>
                   </div>
                 </td>
                 <td>{p.author}</td>
