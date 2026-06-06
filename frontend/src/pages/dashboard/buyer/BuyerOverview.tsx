@@ -76,10 +76,6 @@ export function BuyerOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent RFQs */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">{t('buyer_recent_activity')}</h2>
-            <Link to="/dashboard/buyer/history" className="text-xs font-bold text-primary hover:underline">{t('buyer_view_all')}</Link>
-          </div>
           {loading ? (
             <div className="p-12 text-center">
               <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
