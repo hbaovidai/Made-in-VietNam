@@ -498,7 +498,7 @@ export function Header() {
           </div>
           <div className="flex items-center h-full gap-6">
             <div className="flex items-center h-full gap-5 text-xs font-medium text-slate-500">
-                {user?.role == 'ADMIN' && (
+                {user?.role == 'SUPPLIER' && (
                   <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
                     <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
                   </NavDropdown>
