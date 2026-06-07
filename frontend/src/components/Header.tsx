@@ -467,6 +467,7 @@ export function Header() {
               )}
             </div>
             <nav className="flex items-center gap-8 ml-8 h-full">
+              {/* Tạm ẩn Top Ranking Product
               <Link 
                 to="/products" 
                 className={cn(
@@ -476,6 +477,7 @@ export function Header() {
               >
                 {t('top_ranking_products')}
               </Link>
+              */}
               {/* Reports link - ẩn tạm
               <Link 
                 to="/reports" 
