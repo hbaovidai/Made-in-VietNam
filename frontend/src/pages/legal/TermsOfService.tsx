@@ -16,13 +16,13 @@ export function TermsOfService() {
       </p>
       <p>
         {t('tos_sect_1_point_2')}
+      </p>
         <ul>
             <li>{t('tos_sect_1_item_1')}</li>
             <li>{t('tos_sect_1_item_2')}</li>
             <li>{t('tos_sect_1_item_3')}</li>
             <li>{t('tos_sect_1_item_4')}</li>
         </ul>
-      </p>
 
       <h2>2. {t('tos_sect_2_title')}</h2>
       <p>
