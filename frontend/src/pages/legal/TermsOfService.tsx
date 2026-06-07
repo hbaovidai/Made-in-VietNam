@@ -10,46 +10,47 @@ export function TermsOfService() {
       lastUpdated={t('terms_last_updated')}
       breadcrumbs={[{ label: t('legal'), href: "/privacy" }, { label: t('terms_of_service') }]}
     >
-      <h2>1. {t('terms_section_1_title')}</h2>
+      <h1>{t('tos_fine_print')}</h1>
+      <h2>1. {t('tos_sect_1_title')}</h2>
       <p>
-        {t('terms_section_1_desc')}
+        {t('tos_sect_1_desc')}
       </p>
 
-      <h2>2. {t('terms_section_2_title')}</h2>
+      <h2>2. {t('tos_sect_2_title')}</h2>
       <p>
-        {t('terms_section_2_desc')}
+        {t('tos_sect_2_desc')}
       </p>
       <ul>
-        <li>{t('terms_section_2_point_1')}</li>
-        <li>{t('terms_section_2_point_2')}</li>
-        <li>{t('terms_section_2_point_3')}</li>
-        <li>{t('terms_section_2_point_4')}</li>
-        <li>{t('terms_section_2_point_5')}</li>
+        <li>{t('tos_sect_2_point_1')}</li>
+        <li>{t('tos_sect_2_point_2')}</li>
+        <li>{t('tos_sect_2_point_3')}</li>
+        <li>{t('tos_sect_2_point_4')}</li>
+        <li>{t('tos_sect_2_point_5')}</li>
       </ul>
 
-      <h2>3. {t('terms_section_3_title')}</h2>
+      <h2>3. {t('tos_sect_3_title')}</h2>
       <p>
-        {t('terms_section_3_desc')}
+        {t('tos_sect_3_desc')}
       </p>
 
-      <h2>4. {t('terms_section_4_title')}</h2>
+      <h2>4. {t('tos_sect_4_title')}</h2>
       <p>
-        {t('terms_section_4_desc')}
+        {t('tos_sect_4_desc')}
       </p>
 
-      <h2>5. {t('terms_section_5_title')}</h2>
+      <h2>5. {t('tos_sect_5_title')}</h2>
       <p>
-        {t('terms_section_5_desc')}
+        {t('tos_sect_5_desc')}
       </p>
 
-      <h2>6. {t('terms_section_6_title')}</h2>
+      <h2>6. {t('tos_sect_6_title')}</h2>
       <p>
-        {t('terms_section_6_desc')}
+        {t('tos_sect_6_desc')}
       </p>
 
-      <h2>7. {t('terms_section_7_title')}</h2>
+      <h2>7. {t('tos_sect_7_title')}</h2>
       <p>
-        {t('terms_section_7_desc')}
+        {t('tos_sect_7_desc')}
       </p>
     </PolicyLayout>
   );

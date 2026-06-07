@@ -28,7 +28,6 @@
   "about_us": "Về chúng tôi",
   "contact_support": "Liên hệ hỗ trợ",
   "help_center": "Trung tâm trợ giúp",
-  "terms_of_service": "Điều khoản dịch vụ",
   "privacy_policy": "Chính sách bảo mật",
   "contact_us": "Liên hệ chúng tôi",
   "proudly_vietnamese": "Tự hào Việt Nam",
@@ -1716,5 +1715,20 @@
   "msg_related_card_title": "Thông tin yêu cầu",
   "msg_action_view_request": "Xem chi tiết yêu cầu",
   "msg_search_placeholder": "Tìm kiếm cuộc hội thoại...",
-  "msg_empty_table": "Không tìm thấy cuộc hội thoại nào."
+  "msg_empty_table": "Không tìm thấy cuộc hội thoại nào.",
+
+  "terms_of_service": "Điều khoản và điều kiện sử dụng dịch vụ",
+  "terms_last_updated": "07/06/2026",
+  "tos_fine_print": "NỀN TẢNG THƯƠNG MẠI ĐIỆN TỬ B2B VIEPRODUCT (Áp dụng cho Mô hình Kết nối Thông tin Thương mại và Quản lý RFQ Nội địa)",
+  "tos_sect_1_title": "ĐIỀU 1: CĂN CỨ PHÁP LÝ VÀ ĐỊNH NGHĨA Hệ THỐNG",
+  "tos_sect_2_title": "ĐIỀU 2: TIÊU CHUẨN THÀNH VIÊN VÀ QUY ĐỊNH ĐĂNG KÝ",
+  "tos_sect_3_title": "ĐIỀU 3: PHẠM VI DỊCH VỤ VÀ NGUYÊN TẮC VẬN HÀNH KHÔNG THANH TOÁN",
+  "tos_sect_4_title": "ĐIỀU 4: NGHĨA VỤ CỦA THÀNH VIÊN ĐĂNG TIN (BÊN BÁN)",
+  "tos_sect_5_title": "ĐIỀU 5: NGHĨA VỤ CỦA THÀNH VIÊN PHÁT HÀNH RFQ (BÊN MUA)",
+  "tos_sect_6_title": "ĐIỀU 6: GIỚI HẠN TRÁCH NHIỆM PHÁP LÝ CỦA VIEPRODUCT",
+  "tos_sect_7_title": "ĐIỀU 7: QUY CHẾ XỬ LÝ VI PHẠM VÀ KHÓA TÀI KHOẢN",
+  "tos_sect_8_title": "ĐIỀU 8: CƠ CHẾ SỬA ĐỔI ĐIỀU KHOẢN DỰ PHÒNG NÂNG CẤP",
+  "tos_sect_9_title": "ĐIỀU 9: LUẬT ÁP DỤNG VÀ GIẢI QUYẾT TRANH CHẤP"
+
+
 }
