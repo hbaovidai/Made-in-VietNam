@@ -10,23 +10,28 @@ export function TermsOfService() {
       lastUpdated={t('terms_last_updated')}
       breadcrumbs={[{ label: t('legal'), href: "/privacy" }, { label: t('terms_of_service') }]}
     >
-      <h1>{t('tos_fine_print')}</h1>
       <h2>1. {t('tos_sect_1_title')}</h2>
       <p>
-        {t('tos_sect_1_desc')}
+        {t('tos_sect_1_point_1')}
+      </p>
+      <p>
+        {t('tos_sect_1_point_2')}
+        <ul>
+            <li>{t('tos_sect_1_item_1')}</li>
+            <li>{t('tos_sect_1_item_2')}</li>
+            <li>{t('tos_sect_1_item_3')}</li>
+            <li>{t('tos_sect_1_item_4')}</li>
+        </ul>
       </p>
 
       <h2>2. {t('tos_sect_2_title')}</h2>
       <p>
-        {t('tos_sect_2_desc')}
+        {t('tos_sect_2_point_1')}
       </p>
-      <ul>
-        <li>{t('tos_sect_2_point_1')}</li>
-        <li>{t('tos_sect_2_point_2')}</li>
-        <li>{t('tos_sect_2_point_3')}</li>
-        <li>{t('tos_sect_2_point_4')}</li>
-        <li>{t('tos_sect_2_point_5')}</li>
-      </ul>
+
+      <p>
+        {t('tos_sect_2_point_2')}
+      </p>
 
       <h2>3. {t('tos_sect_3_title')}</h2>
       <p>

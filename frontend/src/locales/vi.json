@@ -1728,7 +1728,22 @@
   "tos_sect_6_title": "ĐIỀU 6: GIỚI HẠN TRÁCH NHIỆM PHÁP LÝ CỦA VIEPRODUCT",
   "tos_sect_7_title": "ĐIỀU 7: QUY CHẾ XỬ LÝ VI PHẠM VÀ KHÓA TÀI KHOẢN",
   "tos_sect_8_title": "ĐIỀU 8: CƠ CHẾ SỬA ĐỔI ĐIỀU KHOẢN DỰ PHÒNG NÂNG CẤP",
-  "tos_sect_9_title": "ĐIỀU 9: LUẬT ÁP DỤNG VÀ GIẢI QUYẾT TRANH CHẤP"
+  "tos_sect_9_title": "ĐIỀU 9: LUẬT ÁP DỤNG VÀ GIẢI QUYẾT TRANH CHẤP",
 
+  "tos_sect_1_point_1": "1.1. Căn cứ pháp lý: Điều khoản này được ban hành phù hợp với các quy định pháp luật hiện hành của Việt Nam, đặc biệt là Nghị định 52/2013/NĐ-CP và Nghị định 85/2021/NĐ-CP về Thương mại điện tử, Luật Thương mại 2005 và Bộ luật Dân sự 2015.",
+  "tos_sect_1_point_2": "1.2. Giải thích từ ngữ:",
+  "tos_sect_1_item_1": "Sàn TMĐT B2B VIEProduct: Nền tảng công nghệ số đóng vai trò trung gian, cung cấp hạ tầng trực tuyến hiển thị danh mục hàng hóa và hỗ trợ luân chuyển thông tin giao thương giữa doanh nghiệp với doanh nghiệp.",
+  "tos_sect_1_item_2": "Thành viên Bên Bán (Nhà cung cấp): Doanh nghiệp hoặc hộ kinh doanh sử dụng hạ tầng của sàn để đăng tải hồ sơ năng lực, giới thiệu sản phẩm và phản hồi báo giá.",
+  "tos_sect_1_item_3": "Thành viên Bên Mua (Nhà thu mua): Doanh nghiệp hoặc cá nhân đại diện phòng mua hàng sử dụng sàn để tìm kiếm đối tác, gửi Yêu cầu báo giá (RFQ).",
+  "tos_sect_1_item_4": "Hệ thống RFQ (Request for Quote): Tính năng cho phép Bên Mua tạo lập và phát hành các yêu cầu thông số kỹ thuật, số lượng, thời gian giao hàng để kêu gọi các Nhà cung cấp phù hợp gửi báo giá trực tuyến.",
 
+  "tos_sect_2_point_1": "2.1. Tiêu chuẩn tham gia: Thành viên trên sàn bắt buộc phải là pháp nhân thương mại hợp pháp, bao gồm các doanh nghiệp, hợp tác xã, hộ kinh doanh được thành lập và hoạt động hợp pháp theo luật pháp Việt Nam. Sàn từ chối cung cấp dịch vụ cho các cá nhân hoạt động với tư cách tiêu dùng không có mã số thuế kinh doanh.",
+  "tos_sect_2_point_2": "2.2. Trách nhiệm định danh: Khi đăng ký, Thành viên có nghĩa vụ cung cấp đầy đủ thông tin bắt buộc gồm: Tên doanh nghiệp chính thức (theo ĐKKD), Mã số thuế, Họ tên người liên hệ đại diện, Số điện thoại di động xác thực và Email. Thành viên chịu hoàn toàn trách nhiệm trước pháp luật về tính chính xác và hợp pháp của các thông tin này.",
+  "tos_sect_3_desc": "",
+  "tos_sect_4_desc": "",
+  "tos_sect_5_desc": "",
+  "tos_sect_6_desc": "",
+  "tos_sect_7_desc": "",
+  "tos_sect_8_desc": "",
+  "tos_sect_9_desc": ""
 }
