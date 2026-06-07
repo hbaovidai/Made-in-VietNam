@@ -485,15 +485,17 @@ export function Header() {
                 {t('audited_suppliers_reports')}
               </Link>
               */}
-              <Link 
-                to="/services" 
-                className={cn(
-                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
-                  location.pathname.startsWith('/services') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
-                )}
-              >
-                {t('secured_trading_service')}
-              </Link>
+              {/*
+                  <Link 
+                    to="/services" 
+                    className={cn(
+                      "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
+                      location.pathname.startsWith('/services') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                    )}
+                  >
+                    {t('secured_trading_service')}
+                  </Link>
+              */}
             </nav>
           </div>
           <div className="flex items-center h-full gap-6">
