@@ -342,7 +342,7 @@ export function Home() {
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="bg-slate-900 text-white p-5 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-8 rounded-xl sm:rounded-none">
           <div className="space-y-1 sm:space-y-2 text-center md:text-left">
-            <h2 className="text-lg sm:text-2xl font-bold">Kính mời quý công ty tham gia mạng lưới kết nối thương mại của Vieproduct</h2>
+            <h2 className="text-lg sm:text-2xl font-bold">Kính mời quý công ty tham gia mạng lưới kết nối thương mại của VIEproduct</h2>
             <p className="text-slate-400 text-xs sm:text-sm">Gia tăng khả năng tiếp cận đến với đối tác trong nước và quốc tế</p>
           </div>
           <div className="flex gap-3 sm:gap-4 w-full md:w-auto">

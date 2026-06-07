@@ -77,24 +77,25 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('marketplace')}</h3>
+            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Trở thành đối tác</h3>
             <ul className="space-y-4 text-sm text-slate-400">
-              <li><Link to="/products" className="hover:text-viet-gold transition-colors">{t('browse_products')}</Link></li>
-              <li><Link to="/suppliers" className="hover:text-viet-gold transition-colors">{t('verified_suppliers')}</Link></li>
-              <li><Link to="/rfq" className="hover:text-viet-gold transition-colors">{t('request_for_quotation')}</Link></li>
-              <li><Link to="/products" className="hover:text-viet-gold transition-colors">{t('all_categories_footer')}</Link></li>
+              <li><Link to="/register" className="hover:text-viet-gold transition-colors">Đăng ký tham gia</Link></li>
+              <li><Link to="/help/seller-guide" className="hover:text-viet-gold transition-colors">Hướng dẫn quy trình</Link></li>
+              <li><Link to="/" className="hover:text-viet-gold transition-colors">Trở thành đối tác đã xác minh</Link></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('support_info')}</h3>
+            <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Về VIEproduct</h3>
             <ul className="space-y-4 text-sm text-slate-400">
               <li><Link to="/about" className="hover:text-viet-gold transition-colors">{t('about_us')}</Link></li>
               <li><Link to="/contact" className="hover:text-viet-gold transition-colors">{t('contact_support')}</Link></li>
               <li><Link to="/help" className="hover:text-viet-gold transition-colors">{t('help_center')}</Link></li>
               <li><Link to="/terms" className="hover:text-viet-gold transition-colors">{t('terms_of_service')}</Link></li>
               <li><Link to="/privacy" className="hover:text-viet-gold transition-colors">{t('privacy_policy')}</Link></li>
+              <li><Link to="/" className="hover:text-viet-gold transition-colors">Blog</Link></li>
+              <li><Link to="/" className="hover:text-viet-gold transition-colors">Tuyển dụng</Link></li>
             </ul>
           </div>
 
