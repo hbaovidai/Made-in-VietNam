@@ -205,7 +205,7 @@ export function Header() {
       links: [
         { icon: <HelpCircle size={18} />, label: t('help_center'), href: "/help" },
         { icon: <FileText size={18} />, label: t('about_us'), href: "/about" },
-        { icon: <Smartphone size={18} />, label: t('apps'), href: "/apps" },
+        // { icon: <Smartphone size={18} />, label: t('apps'), href: "/apps" },
       ]
     },
   ];
@@ -505,7 +505,7 @@ export function Header() {
                 <MegaMenu sections={buyerMenuSections} columns={3} className="w-[720px]" />
               </NavDropdown>
               <Link to="/help" className="hover:text-primary">{t('help')}</Link>
-              <Link to="/apps" className="hover:text-primary flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>
+              {/*<Link to="/apps" className="hover:text-primary flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>*/}
             </div>
           </div>
         </div>
