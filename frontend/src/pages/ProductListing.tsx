@@ -177,8 +177,8 @@ export function ProductListing() {
                 <div className="space-y-4">
                   {[
                     { key: 'verified_supplier_filter', label: t('verified_supplier_filter') },
-                    { key: 'premium_member_filter', label: t('premium_member_filter') },
-                    { key: 'factory_direct_filter', label: t('factory_direct_filter') }
+                    { key: 'verified_manufacturer_filter', label: t('verified_manufacturer_filter') },
+                    { key: 'verified_exporter_filter', label: t('verified_exporter_filter') }
                   ].map((type) => (
                     <label key={type.key} className="flex items-center gap-4 cursor-pointer group">
                       <div className="relative flex items-center justify-center">
