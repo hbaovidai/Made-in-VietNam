@@ -116,8 +116,8 @@ export function Header() {
       title: t('supplier_services'),
       links: [
         { label: t('supplier_directory'), href: "/suppliers" },
-        { label: t('verified_suppliers'), href: "/suppliers?verified=true" },
-        { label: t('audited_factories'), href: "/suppliers?audited=true" },
+        // { label: t('verified_suppliers'), href: "/suppliers?verified=true" },
+        // { label: t('audited_factories'), href: "/suppliers?audited=true" },
       ]
     },
     {
