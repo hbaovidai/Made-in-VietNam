@@ -143,7 +143,7 @@ export function Header() {
       links: [
         { label: t('new_user_guide'), href: "/help/user-guide" },
         // { label: t('audited_suppliers_reports'), href: "/reports" }, // Ẩn tạm — chưa có nội dung
-        { label: t('secured_trading_service'), href: "/services/secured-trading" },
+        // { label: t('secured_trading_service'), href: "/services/secured-trading" },
         { label: t('buyer_center'), href: "/dashboard/buyer" },
         { label: t('contact_us'), href: "/contact" },
       ]
@@ -195,8 +195,8 @@ export function Header() {
       title: t('service'),
       links: [
         { icon: <ClipboardList size={18} />, label: t('post_rfQ'), href: "/rfq" },
-        { icon: <ShieldCheck size={18} />, label: t('verify_qr_short', 'Xác nhận hàng giả'), href: "/verify" },
-        { icon: <Shield size={18} />, label: t('trade_assurance'), href: "/services/trade-assurance" },
+        // { icon: <ShieldCheck size={18} />, label: t('verify_qr_short', 'Xác nhận hàng giả'), href: "/verify" },
+        // { icon: <Shield size={18} />, label: t('trade_assurance'), href: "/services/trade-assurance" },
         { icon: <MessageSquare size={18} />, label: t('contact'), href: user?.role === 'SUPPLIER' ? "/dashboard/supplier/messages" : "/dashboard/buyer/messages" },
       ]
     },
@@ -299,9 +299,11 @@ export function Header() {
               )}
             </div>
 
-            <Link to="/verify" className="p-2 text-primary hover:text-red-700 hover:bg-slate-50 rounded-full transition-colors relative group" title={t('verify_qr_short', 'Xác nhận Hàng giả')}>
-              <ShieldCheck size={20} className="group-hover:scale-110 transition-transform" />
-            </Link>
+            {/*
+                <Link to="/verify" className="p-2 text-primary hover:text-red-700 hover:bg-slate-50 rounded-full transition-colors relative group" title={t('verify_qr_short', 'Xác nhận Hàng giả')}>
+                <ShieldCheck size={20} className="group-hover:scale-110 transition-transform" />
+                </Link>
+            */}
 
             <div className="flex items-center gap-1">
               <Link to="/rfq" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
@@ -596,14 +598,16 @@ export function Header() {
                   🇬🇧 EN
                 </button>
               </div>
-              <Link
-                to="/verify"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 justify-center w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-dark transition-colors"
-              >
-                <ShieldCheck size={16} />
-                {t('verify_qr_short', 'Xác nhận hàng giả')}
-              </Link>
+              {/*
+                  <Link
+                    to="/verify"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 justify-center w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-dark transition-colors"
+                  >
+                    <ShieldCheck size={16} />
+                    {t('verify_qr_short', 'Xác nhận hàng giả')}
+                  </Link>
+              */}
             </div>
           </div>
         </div>
