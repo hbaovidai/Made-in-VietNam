@@ -18,10 +18,10 @@ export function TermsOfService() {
         {t('tos_sect_1_point_2')}
       </p>
       <ul>
-        - <li>{t('tos_sect_1_item_1')}</li>
-        - <li>{t('tos_sect_1_item_2')}</li>
-        - <li>{t('tos_sect_1_item_3')}</li>
-        - <li>{t('tos_sect_1_item_4')}</li>
+        <li>- {t('tos_sect_1_item_1')}</li>
+        <li>- {t('tos_sect_1_item_2')}</li>
+        <li>- {t('tos_sect_1_item_3')}</li>
+        <li>- {t('tos_sect_1_item_4')}</li>
       </ul>
 
       <h2>{t('tos_sect_2_title')}</h2>
@@ -48,8 +48,8 @@ export function TermsOfService() {
         {t('tos_sect_4_point')}
       </p>
       <ul>
-        - <li>{t('tos_sect_4_item_1')}</li>
-        - <li>{t('tos_sect_4_item_2')}</li>
+        <li>- {t('tos_sect_4_item_1')}</li>
+        <li>- {t('tos_sect_4_item_2')}</li>
       </ul>
 
       <h2>{t('tos_sect_5_title')}</h2>
