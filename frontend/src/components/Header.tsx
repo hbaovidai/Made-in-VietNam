@@ -498,9 +498,11 @@ export function Header() {
           </div>
           <div className="flex items-center h-full gap-6">
             <div className="flex items-center h-full gap-5 text-xs font-medium text-slate-500">
-              <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
-                <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
-              </NavDropdown>
+                {user?.role == 'ADMIN' && (
+                  <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
+                    <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
+                  </NavDropdown>
+                )}
               <NavDropdown label={t('buyer')} to="/dashboard/buyer" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
                 <MegaMenu sections={buyerMenuSections} columns={3} className="w-[720px]" />
               </NavDropdown>
