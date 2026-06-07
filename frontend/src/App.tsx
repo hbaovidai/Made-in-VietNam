@@ -210,12 +210,8 @@ export default function App() {
               <Route path="products" element={<SupplierProducts />} />
               <Route path="products/add" element={<ProductFormPage />} />
               <Route path="products/:id/edit" element={<ProductFormPage />} />
-              <Route path="batches" element={<BatchManagement />} />
-              <Route path="qr-management" element={<QRManagement />} />
-              <Route path="anti-counterfeit" element={<AntiCounterfeit />} />
               <Route path="rfqs" element={<SupplierRFQs />} />
               <Route path="inquiries" element={<SupplierInquiries />} />
-              <Route path="orders" element={<SupplierOrders />} />
               <Route path="messages" element={<BuyerMessages />} />
               <Route path="analytics" element={<SupplierAnalytics />} />
               <Route path="profile" element={<SupplierProfileDashboard />} />
