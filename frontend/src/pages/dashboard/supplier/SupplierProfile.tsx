@@ -18,7 +18,8 @@ export function SupplierProfile() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
+  // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
+  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -63,7 +64,6 @@ export function SupplierProfile() {
           companyName: s.companyName || '',
           businessType: s.businessType || '',
           description: s.description || '',
-          taxCode: s.taxCode || '',
           companyEmail: s.companyEmail || '',
           companyPhone: s.companyPhone || '',
           legalRepresentative: s.legalRepresentative || '',
@@ -558,10 +558,14 @@ export function SupplierProfile() {
                 <option value="Agriculture">{t('biz_type_agriculture')}</option>
               </select>
             </div>
-            <div className="space-y-2">
-              <label className="input-label">Mã số thuế</label>
-              <input type="text" className="input" value={editForm.taxCode} onChange={(e) => setEditForm({...editForm, taxCode: e.target.value})} />
-            </div>
+
+            {/*
+              <div className="space-y-2">
+                <label className="input-label">Mã số thuế</label>
+                <input type="text" className="input" value={editForm.taxCode} onChange={(e) => setEditForm({...editForm, taxCode: e.target.value})} />
+              </div>
+            */}
+
             <div className="space-y-2">
               <label className="input-label">Người đại diện</label>
               <input type="text" className="input" value={editForm.legalRepresentative} onChange={(e) => setEditForm({...editForm, legalRepresentative: e.target.value})} />
