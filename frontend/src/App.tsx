@@ -88,7 +88,7 @@ const AdminSettings = React.lazy(() => import('./pages/dashboard/admin/AdminSett
 const AdminPages = React.lazy(() => import('./pages/dashboard/admin/AdminPages').then(m => ({ default: m.AdminPages })));
 const AdminRequests = React.lazy(() => import('./pages/dashboard/admin/AdminRequests').then(m => ({ default: m.AdminRequests })));
 const AdminMessages = React.lazy(() => import('./pages/dashboard/admin/AdminMessages').then(m => ({ default: m.AdminMessages })));
-const AdminSupplierApplications = React.lazy(() => import('./pages/dashboard/admin/AdminSupplierApplications').then(m => ({ default: m.AdminSupplierApplications })));
+const AdminVerifications = React.lazy(() => import('./pages/dashboard/admin/AdminVerifications').then(m => ({ default: m.AdminVerifications })));
 
 // Redirect base dashboard based on role
 function DashboardRedirect() {
@@ -240,7 +240,7 @@ export default function App() {
               <Route path="audit-log" element={<AdminAuditLog />} />
               <Route path="requests" element={<AdminRequests />} />
               <Route path="messages" element={<AdminMessages />} />
-              <Route path="supplier_applications" element={<AdminSupplierApplications />} />
+              <Route path="verifications" element={<AdminVerifications />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>
