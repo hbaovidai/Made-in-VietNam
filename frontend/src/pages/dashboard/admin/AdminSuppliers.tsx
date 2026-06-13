@@ -17,14 +17,12 @@ const fetchSuppliers = async (
   page: number = 1,
   limit: number = PROFILES_PER_PAGE
 ) => {
-  const { data } = await api.get(
+  const { data } = await api.post(
     '/suppliers',
-    { 
-      headers: {
+    {limit, page},
+    { headers: {
         Authorization: `${localStorage.getItem('token')}`
-      }, 
-      params: {limit, page},
-    }
+    }, }
   );
 
   return {
@@ -67,11 +65,11 @@ export function AdminSuppliers() {
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
     ALL: suppliers.length,
-    VERIFIED: suppliers.filter(a => a.verificationStatus === 'VERIFIED').length,
-    UNVERIFIED: suppliers.filter(a => a.verificationStatus === 'UNVERIFIED').length,
+    VERIFIED: suppliers.filter(a => a.verification_status === 'VERIFIED').length,
+    UNVERIFIED: suppliers.filter(a => a.verification_status === 'UNVERIFIED').length,
   }), [suppliers]);
   const statusFilterLabels: Record<string, string> = {
-    ALL: 'Tất cả', VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh',
+    ALL: 'Tất cả', PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Đã từ chối',
   };
 
   const toggleAll = () => {
@@ -94,7 +92,7 @@ export function AdminSuppliers() {
       if (result.data?.success === true) {
         setSuppliers(prev => prev.map(a => {
           if (a.id !== id) return a;
-          const updates: Partial<SupplierProfile> = { verificationStatus: newStatus };
+          const updates: Partial<SupplierProfile> = { verification_status: newStatus };
           return { ...a, ...updates };
         }));
       }
@@ -128,15 +126,15 @@ export function AdminSuppliers() {
 
   const filtered = suppliers.filter(supp => {
     var matchStatus: boolean = true
-    if (filterStatus !== "ALL") matchStatus = supp.verificationStatus == filterStatus;
+    if (filterStatus !== "ALL") matchStatus = supp.verification_status == filterStatus;
 
     var matchSearch: boolean = true;
     if (search) {
       const term = search.toLowerCase()
-      const matchRepName = supp.companyName.toLowerCase().includes(term);
+      const matchRepName = supp.repName.toLowerCase().includes(term);
       const matchCompanyName = supp.companyName.toLowerCase().includes(term);
-      const matchEmail = supp.companyEmail.toLowerCase().includes(term);
-      const matchPhone = supp.companyPhone.toLowerCase().includes(term);
+      const matchEmail = supp.repEmail.toLowerCase().includes(term);
+      const matchPhone = supp.repPhone.toLowerCase().includes(term);
       matchSearch = matchCompanyName || matchEmail || matchPhone ||
         matchRepName;
     }
@@ -225,7 +223,7 @@ export function AdminSuppliers() {
                           {supp.companyName}
                         </span>
                         <div className="wp-row-actions">
-                          {supp.verificationStatus === 'UNVERIFIED' && (
+                          {supp.verification_status === 'UNVERIFIED' && (
                             <>
                             <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, 'VERIFIED')}>
                               Xác minh
@@ -237,7 +235,7 @@ export function AdminSuppliers() {
                             </>
                           )}
 
-                          {supp.verificationStatus === 'VERIFIED' && (
+                          {supp.verification_status === 'VERIFIED' && (
                             <>
                             <button className="delete" onClick={() => handleStatusChange(supp.id, 'UNVERIFIED')}>
                               Huỷ xác minh
@@ -254,10 +252,10 @@ export function AdminSuppliers() {
                     </div>
                   </td>
 
-                  <td>{supp.companyPhone}</td>
-                  <td><a href={`mailto:${supp.companyEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{supp.companyEmail}</a></td>
-                  <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{supp.taxCode}</td>
-                  <td><span className={`wp-badge ${statusBadgeClass[supp.verificationStatus]}`}>{statusLabels[supp.verificationStatus]}</span></td>
+                  <td>{supp.repPhone}</td>
+                  <td><a href={`mailto:${supp.repEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{supp.repEmail}</a></td>
+                  <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{supp.taxId}</td>
+                  <td><span className={`wp-badge ${statusBadgeClass[supp.verification_status]}`}>{statusLabels[supp.verification_status]}</span></td>
 
                 </tr>
               ))}
