@@ -156,7 +156,7 @@ export function AdminSupplierApplications() {
         onApprove={(id) => { handleStatusChange(id, 'APPROVED'); navigate('/dashboard/admin/verifications'); }}
         onReject={(id) => { handleStatusChange(id, 'REJECTED'); navigate('/dashboard/admin/verifications'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/verifications'); }}
-        onBack={() => navigate('/dashboard/admin/supplier_applications')}
+        onBack={() => navigate('/dashboard/admin/verifications')}
       />
     );
   }
@@ -216,7 +216,7 @@ export function AdminSupplierApplications() {
 
                       <div>
                         <span className="wp-row-title"
-                          onClick={() => navigate(`/dashboard/admin/supplier_applications?tab=detail&id=${app.id}`)}
+                          onClick={() => navigate(`/dashboard/admin/verifications?tab=detail&id=${app.id}`)}
                         >
                           {`${app.lastName} ${app.firstName}`}
                         </span>
