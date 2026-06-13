@@ -111,71 +111,94 @@ export function Home() {
 
       {/* ═══ Top Section: Categories + Banner + Recommendations ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="flex gap-6 h-[220px] sm:h-[320px] lg:h-[450px]">
+        <div className="flex gap-4 h-[220px] sm:h-[320px] lg:h-[450px]">
           {/* Left Column: Categories Sidebar — Desktop only */}
           <CategorySidebar />
 
-          {/* Middle Column: Main Banner Carousel */}
-          <div className="flex-1 relative group overflow-hidden bg-slate-200 border border-slate-200 rounded-xl sm:rounded-none">
-            {heroSlides.map((slide, idx) => (
-              <div
-                key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                }`}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex flex-col justify-center px-6 sm:px-12 text-white">
-                  <motion.div
-                    key={`text-${idx}`}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="max-w-md space-y-2 sm:space-y-4"
-                  >
-                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black leading-tight drop-shadow-md">{slide.title}</h2>
-                    <p className="text-slate-200 text-xs sm:text-sm line-clamp-2 sm:line-clamp-none drop-shadow-sm">{slide.desc}</p>
-                    <Link to="/products" className="inline-block bg-primary text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold hover:bg-primary-dark transition-all shadow-xl shadow-primary/20">
-                      {t('source_now')}
-                    </Link>
-                  </motion.div>
-                </div>
-              </div>
-            ))}
-            
-            {/* Arrow Navigation */}
-            <button 
-              onClick={prevSlide}
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft size={20} className="sm:hidden" />
-              <ChevronLeft size={24} className="hidden sm:block" />
-            </button>
-            <button 
-              onClick={nextSlide}
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-              aria-label="Next slide"
-            >
-              <ChevronRight size={20} className="sm:hidden" />
-              <ChevronRight size={24} className="hidden sm:block" />
-            </button>
-
-            {/* Slider Dots */}
-            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {heroSlides.map((_, idx) => (
-                <button
+          {/* Middle Column*/}
+          <div className="flex flex-col h-full min-h-[300px] w-full gap-2">
+            {/* Banner Carousel */}
+            <div className="flex-1 relative group overflow-hidden bg-slate-200 border border-slate-200 rounded-xl sm:rounded-none">
+              {heroSlides.map((slide, idx) => (
+                <div
                   key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`transition-all duration-300 rounded-full outline-none ${
-                    idx === currentSlide ? 'w-6 h-2 sm:h-2.5 bg-primary' : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/50 hover:bg-white/80'
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
                   }`}
-                />
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex flex-col justify-center px-6 sm:px-12 text-white">
+                    <motion.div
+                      key={`text-${idx}`}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      className="max-w-md space-y-2 sm:space-y-4"
+                    >
+                      <h2 className="text-xl sm:text-3xl lg:text-4xl font-black leading-tight drop-shadow-md">{slide.title}</h2>
+                      <p className="text-slate-200 text-xs sm:text-sm line-clamp-2 sm:line-clamp-none drop-shadow-sm">{slide.desc}</p>
+                      <Link to="/products" className="inline-block bg-primary text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold hover:bg-primary-dark transition-all shadow-xl shadow-primary/20">
+                        {t('source_now')}
+                      </Link>
+                    </motion.div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Arrow Navigation */}
+              <button 
+                onClick={prevSlide}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft size={20} className="sm:hidden" />
+                <ChevronLeft size={24} className="hidden sm:block" />
+              </button>
+              <button 
+                onClick={nextSlide}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                aria-label="Next slide"
+              >
+                <ChevronRight size={20} className="sm:hidden" />
+                <ChevronRight size={24} className="hidden sm:block" />
+              </button>
+
+              {/* Slider Dots */}
+              <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`transition-all duration-300 rounded-full outline-none ${
+                      idx === currentSlide ? 'w-6 h-2 sm:h-2.5 bg-primary' : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/50 hover:bg-white/80'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Feature Card */}
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {[
+                { icon: <Star className="text-orange-500" size={16} />, title: t('smart_expo'), desc: t('digital_trade_fair') },
+                { icon: <Shield className="text-blue-500" size={16} />, title: t('secured_trading'), desc: t('trade_assurance') },
+                { icon: <Factory className="text-slate-600" size={16} />, title: t('leading_factory'), desc: t('verified_manufacturers') },
+                { icon: <Award className="text-primary" size={16} />, title: t('selected_supplier'), desc: t('top_rated_partners') }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white p-3 sm:p-4 border border-slate-200 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-full flex items-center justify-center shrink-0">
+                    {item.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-800 truncate">{item.title}</h4>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{item.desc}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -204,28 +227,6 @@ export function Home() {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ═══ Feature Cards Section ═══ */}
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-          {[
-            { icon: <Star className="text-orange-500" size={20} />, title: t('smart_expo'), desc: t('digital_trade_fair') },
-            { icon: <Shield className="text-blue-500" size={20} />, title: t('secured_trading'), desc: t('trade_assurance') },
-            { icon: <Factory className="text-slate-600" size={20} />, title: t('leading_factory'), desc: t('verified_manufacturers') },
-            { icon: <Award className="text-primary" size={20} />, title: t('selected_supplier'), desc: t('top_rated_partners') }
-          ].map((item, idx) => (
-            <div key={idx} className="bg-white p-3 sm:p-4 border border-slate-200 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow cursor-pointer">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-full flex items-center justify-center shrink-0">
-                {item.icon}
-              </div>
-              <div className="min-w-0">
-                <h4 className="font-bold text-xs sm:text-sm text-slate-800 truncate">{item.title}</h4>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{item.desc}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
