@@ -6,29 +6,30 @@ import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
 export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
 
 export interface SupplierProfile {
-  id: string;
-  companyName: string;
-  taxId: string;
-  companyType: string;
-  foundedYear: number;
-  address: string;
-  province: string;
-  website?: string;
-  repName: string;
-  repTitle: string;
-  repIdCard: string;
-  repEmail: string;
-  repPhone: string;
-  industry: string[];
-  products: string;
-  exportExperience: boolean;
-  exportMarkets?: string;
-  annualRevenue: string;
-  employeeCount: string;
-  driveLink: string;
-  documentList: string[];
-  submittedAt: string;
-  verification_status: SupplierVerificationStatus;
+  id?: string,
+  userId?:string,
+  companyName?:     string
+  slug?:            string
+  logo?:            string,
+  banner?:          string,
+  description?:     string,
+  businesstype?:    string,
+  yearEstablished?: number,
+  employeeCount?:   string,
+  address?:             string,
+  city?:                string,
+  province?:            string,
+  website?:             string,
+  taxCode?:             string,
+  companyEmail?:        string,
+  companyPhone?:        string,
+  legalRepresentative?: string,
+  businessLicenseUrl?:  string,
+  identityCardUrl?:     string,
+  verificationStatus?:  SupplierVerificationStatus,
+  isVerified?: boolean,
+  createdAt?: Date,
+  updatedAt?: Date,
 }
 
 interface Props {
@@ -65,7 +66,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
 
-  const st = statusMap[request.verification_status] || statusMap.pending;
+  const st = statusMap[request.verificationStatus] || statusMap.pending;
 
   const handleSaveNotes = () => { setNotesSaved(true); setTimeout(() => setNotesSaved(false), 2000); };
 
@@ -99,9 +100,9 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             </h3>
             <div style={grid2}>
               <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{request.companyName}</div></div>
-              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxId}</div></div>
-              <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div>
-              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.foundedYear}</div></div>
+              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxCode}</div></div>
+              {/* <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div> */}
+              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.yearEstablished}</div></div>
               <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{request.address}</div></div>
               <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{request.province}</div></div>
               {request.website && (
