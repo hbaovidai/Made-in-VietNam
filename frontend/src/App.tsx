@@ -228,6 +228,7 @@ export default function App() {
               <Route path="users" element={<AdminUsers />} />
               <Route path="users/add" element={<AdminAddUser />} />
               <Route path="profile" element={<AdminUserProfile />} />
+              <Route path="suppliers" element={<AdminSuppliers />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="products/add" element={<AdminAddProduct />} />
               <Route path="products/brands" element={<AdminBrands />} />
@@ -239,7 +240,6 @@ export default function App() {
               <Route path="audit-log" element={<AdminAuditLog />} />
               <Route path="requests" element={<AdminRequests />} />
               <Route path="messages" element={<AdminMessages />} />
-              <Route path="suppliers" element={<AdminSuppliers />} />
               <Route path="supplier_applications" element={<AdminSupplierApplications />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
