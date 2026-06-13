@@ -63,7 +63,7 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
   {
     icon: Shield, label: 'Nhà cung cấp', path: '/dashboard/admin/supplier_application_verification',
     children: [
-      { label: 'Ứng viên', path: '/dashboard/admin/supplier_application_verification' },
+      { label: 'Ứng viên', path: '/dashboard/admin/supplier_applications' },
       { label: 'Nhà cung cấp', path: '/dashboard/admin/business_verification' },
       { label: 'Link mời', path: '/dashboard/admin/verifications?tab=tokens' },
     ],
