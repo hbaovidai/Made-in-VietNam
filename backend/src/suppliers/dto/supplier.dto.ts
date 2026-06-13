@@ -1,8 +1,6 @@
 import { IsOptional, IsString, IsInt, IsArray, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export type SupplierVerificationStatus = 'UNVERIFIED' | 'VERIFIED';
-
 export class UpdateSupplierDto {
   @IsString() @IsOptional() companyName?: string;
   @IsString() @IsOptional() description?: string;
@@ -21,7 +19,7 @@ export class UpdateSupplierDto {
   @IsString() @IsOptional() legalRepresentative?: string;
   @IsString() @IsOptional() businessLicenseUrl?: string;
   @IsString() @IsOptional() identityCardUrl?: string;
-  @IsString() @IsOptional() verificationStatus?: SupplierVerificationStatus;
+  @IsString() @IsOptional() verificationStatus?: string;
   @IsArray() @IsString({ each: true }) @IsOptional() industries?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() markets?: string[];
 }
@@ -31,5 +29,4 @@ export class SupplierQueryDto {
   @IsOptional() @IsString() industry?: string;
   @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
-  @IsOptional() @IsString() verificationStatus?: SupplierVerificationStatus; 
 }

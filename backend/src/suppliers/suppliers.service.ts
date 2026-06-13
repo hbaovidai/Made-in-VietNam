@@ -20,10 +20,6 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
-    if (
-      query.verificationStatus
-    ) where.verificationStatus = query.verificationStatus;
-
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
         where,
