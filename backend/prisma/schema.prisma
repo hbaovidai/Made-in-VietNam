@@ -188,12 +188,12 @@ model SupplierApplication {
   firstName       String                    @map("first_name")
   applicantRole   SupplierApplicantRole     @map("applicant_role")
   govId           String                    @map("gov_id")
-  govIdPicUrl     String[]                  @map("gov_id_pic_url") // Handled as a PostgreSQL text array
+  govIdPicUrl     String[]                  @map("gov_id_pic_url")
   email           String
   phone           String
   status          SupplierApplicationStatus @default(PENDING)
 
-  @@map("supplier_applications") // Maps the camelCase model name to your snake_case Supabase table
+  @@map("supplier_applications")
 }
 
 model Certification {
