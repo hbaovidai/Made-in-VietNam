@@ -87,7 +87,7 @@ export declare class RfqController {
                 userId: string;
                 companyName: string;
                 logo: string | null;
-                isVerified: boolean;
+                isVerified: boolean | null;
             };
         } & {
             id: string;

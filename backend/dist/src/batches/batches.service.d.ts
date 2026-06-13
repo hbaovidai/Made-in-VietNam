@@ -147,7 +147,7 @@ export declare class BatchesService {
             };
             supplier: {
                 companyName: string;
-                isVerified: boolean;
+                isVerified: boolean | null;
             };
             batch: {
                 batchNumber: string;

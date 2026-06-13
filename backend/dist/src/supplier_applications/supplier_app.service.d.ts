@@ -15,9 +15,9 @@ export declare class SupplierApplicationService {
             status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
-            firstName: string;
             lastName: string;
-            ApplicantRole: import("@prisma/client").$Enums.SupplierApplicationRole;
+            firstName: string;
+            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
             govId: string;
             govIdPicUrl: string[];
         }[];
@@ -36,9 +36,9 @@ export declare class SupplierApplicationService {
             status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
-            firstName: string;
             lastName: string;
-            ApplicantRole: import("@prisma/client").$Enums.SupplierApplicationRole;
+            firstName: string;
+            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
             govId: string;
             govIdPicUrl: string[];
         };
@@ -56,9 +56,9 @@ export declare class SupplierApplicationService {
             status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
-            firstName: string;
             lastName: string;
-            ApplicantRole: import("@prisma/client").$Enums.SupplierApplicationRole;
+            firstName: string;
+            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
             govId: string;
             govIdPicUrl: string[];
         };
