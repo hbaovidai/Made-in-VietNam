@@ -86,6 +86,7 @@ export function AdminSuppliers() {
 
   const handleStatusChange = async (id: string, newStatus: SupplierVerificationStatus) => {
     try {
+      return;
       const result = await api.patch(
         `/suppliers/${id}`,
         { headers: {Authorization: `${localStorage.getItem('token')}`} }
@@ -106,6 +107,7 @@ export function AdminSuppliers() {
 
   const handleDelete = async (id: string) => {
     try {
+      return;
       const result = await api.delete(
         `/supp_apps/${id}`,
         { headers: {Authorization: `${localStorage.getItem('token')}`} }
@@ -160,7 +162,7 @@ export function AdminSuppliers() {
         onApprove={(id) => { handleStatusChange(id, 'VERIFIED'); navigate('/dashboard/admin/verifications'); }}
         onReject={(id) => { handleStatusChange(id, 'UNVERIFIED'); navigate('/dashboard/admin/verifications'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/verifications'); }}
-        onBack={() => navigate('/dashboard/admin/verifications')}
+        onBack={() => navigate('/dashboard/admin/suppliers')}
       />
     );
   }
@@ -220,7 +222,8 @@ export function AdminSuppliers() {
 
                       <div>
                         <span className="wp-row-title"
-                          onClick={() => navigate(`/dashboard/admin/verifications?tab=detail&id=${supp.id}`)}
+                          onClick={() => navigate(`#`)}
+                          // onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
                         >
                           {supp.companyName}
                         </span>
