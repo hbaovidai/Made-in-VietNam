@@ -26,8 +26,6 @@ let SuppliersService = class SuppliersService {
         if (industry) {
             where.industries = { some: { industry } };
         }
-        if (query.verificationStatus)
-            where.verificationStatus = query.verificationStatus;
         const [suppliers, total] = await Promise.all([
             this.prisma.supplier.findMany({
                 where,
@@ -145,7 +143,7 @@ let SuppliersService = class SuppliersService {
             where: { id: supplierId },
             data: {
                 isVerified,
-                verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED'
+                verificationStatus: isVerified ? 'VERIFIED' : 'REJECTED'
             }
         });
         return updated;

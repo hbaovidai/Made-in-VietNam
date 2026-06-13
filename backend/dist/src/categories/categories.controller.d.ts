@@ -33,7 +33,7 @@ export declare class CategoriesController {
             supplier: {
                 companyName: string;
                 slug: string;
-                isVerified: boolean | null;
+                isVerified: boolean;
             };
         } & {
             id: string;

@@ -35,7 +35,7 @@ export declare class CategoriesService {
             supplier: {
                 companyName: string;
                 slug: string;
-                isVerified: boolean | null;
+                isVerified: boolean;
             };
         } & {
             id: string;

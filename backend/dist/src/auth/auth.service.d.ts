@@ -33,8 +33,8 @@ export declare class AuthService {
                 legalRepresentative: string | null;
                 businessLicenseUrl: string | null;
                 identityCardUrl: string | null;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
+                verificationStatus: string;
+                isVerified: boolean;
                 createdAt: Date;
                 updatedAt: Date;
             } | null;
@@ -54,8 +54,8 @@ export declare class AuthService {
                 id: string;
                 companyName: string;
                 slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
+                verificationStatus: string;
+                isVerified: boolean;
             } | null;
             id: string;
             createdAt: Date;
@@ -81,8 +81,8 @@ export declare class AuthService {
                 id: string;
                 companyName: string;
                 slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
+                verificationStatus: string;
+                isVerified: boolean;
             } | null;
             id: string;
             createdAt: Date;
@@ -102,8 +102,8 @@ export declare class AuthService {
             companyName: string;
             slug: string;
             logo: string | null;
-            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-            isVerified: boolean | null;
+            verificationStatus: string;
+            isVerified: boolean;
         } | null;
         id: string;
         createdAt: Date;

@@ -149,7 +149,7 @@ export declare class BatchesController {
             };
             supplier: {
                 companyName: string;
-                isVerified: boolean | null;
+                isVerified: boolean;
             };
             batch: {
                 batchNumber: string;

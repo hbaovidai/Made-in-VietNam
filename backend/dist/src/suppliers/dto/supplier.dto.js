@@ -143,7 +143,6 @@ class SupplierQueryDto {
     industry;
     page = 1;
     limit = 20;
-    verificationStatus;
 }
 exports.SupplierQueryDto = SupplierQueryDto;
 __decorate([
@@ -168,9 +167,4 @@ __decorate([
     (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], SupplierQueryDto.prototype, "limit", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], SupplierQueryDto.prototype, "verificationStatus", void 0);
 //# sourceMappingURL=supplier.dto.js.map

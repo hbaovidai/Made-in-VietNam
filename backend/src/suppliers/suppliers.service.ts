@@ -162,7 +162,7 @@ export class SuppliersService {
       where: { id: supplierId },
       data: { 
         isVerified,
-        verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED'
+        verificationStatus: isVerified ? 'VERIFIED' : 'REJECTED'
       }
     });
 

@@ -9,7 +9,7 @@ export declare class UsersController {
             supplier: {
                 id: string;
                 companyName: string;
-                isVerified: boolean | null;
+                isVerified: boolean;
             } | null;
             id: string;
             createdAt: Date;
