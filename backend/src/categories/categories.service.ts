@@ -2,7 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/category.dto';
 import { TranslationService } from '../translation/translation.service';
+import { Category } from '@prisma/client';
 
+type CategoryNode = Category & {
+  children: CategoryNode[];
+};
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -10,20 +14,43 @@ export class CategoriesService {
     private translationService: TranslationService,
   ) {}
 
-  async findAll() {
-    return this.prisma.category.findMany({
-      where: { parentId: null },
-      include: {
-        children: {
-          orderBy: { name: 'asc' },
-          include: {
-            _count: { select: { products: true } },
-          },
-        },
-        _count: { select: { products: true, children: true } },
-      },
-      orderBy: { name: 'asc' },
+  private buildTree(categories: Category[]) {
+    const map = new Map<string, CategoryNode>();
+
+    categories.forEach((category) => {
+      map.set(category.id, {
+        ...category,
+        children: [] as CategoryNode[],
+      });
     });
+
+    const roots: CategoryNode[] = [];
+
+    categories.forEach((category) => {
+      const node: CategoryNode = map.get(category.id)!;
+
+      if (!category.parentId) {
+        roots.push(node);
+      } else {
+        const parent: CategoryNode = map.get(category.parentId)!;
+
+        if (parent) {
+          parent.children.push(node);
+        }
+      }
+    });
+
+    return roots;
+  }
+
+  async findAll() {
+    const categories = await this.prisma.category.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return this.buildTree(categories);
   }
 
   async findBySlug(slug: string) {

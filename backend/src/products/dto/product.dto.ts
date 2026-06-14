@@ -139,7 +139,7 @@ export class ProductQueryDto {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  limit?: number = 20;
+  limit?: number = 70;
 
   @IsOptional()
   @IsString()
