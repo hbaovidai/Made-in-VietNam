@@ -56,17 +56,16 @@ export function AdminSuppliers() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
 
-  const [suppliers, setSuppliers] = useState<SupplierProfile[]>();
-  const [suppliersMeta, setSuppliersMeta] = useState<any>();
+  const [suppliers, setSuppliers] = useState<SupplierProfile[]>([]);
+  const [suppliersMeta, setSuppliersMeta] = useState<any>({total: 0});
   useEffect(() => {
     const loadSuppliers = async () => {
-      const data = await fetchSuppliers();
+      const data = await fetchSuppliers(page, PROFILES_PER_PAGE);
       setSuppliers(data.suppliersData);
       setSuppliersMeta(data.suppliersMeta)
     }
     loadSuppliers();
   }, [page]);
-
 
 
   // ─── Counts ────────────────────────────────────────────────
@@ -153,7 +152,7 @@ export function AdminSuppliers() {
       if (app.id === detailId) return app;
     });
 
-    if (!filtered) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
+    if (filtered.length === 0) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
     return (
       <SupplierDetail
         request={filtered[0]}

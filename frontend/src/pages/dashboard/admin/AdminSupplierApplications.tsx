@@ -54,8 +54,8 @@ export function AdminSupplierApplications() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [page, setPage] = useState(1);
 
-  const [applications, setApplications] = useState<SupplierApplicationRequest[]>();
-  const [applicationsMeta, setApplicationsMeta] = useState<any>();
+  const [applications, setApplications] = useState<SupplierApplicationRequest[]>([]);
+  const [applicationsMeta, setApplicationsMeta] = useState<any>({total_apps_count: 0});
   useEffect(() => {
     const loadApps = async () => {
       const data = await fetchApps(page, APPLICATIONS_PER_PAGE);
@@ -147,13 +147,13 @@ export function AdminSupplierApplications() {
       if (app.id === detailId) return app;
     });
 
-    if (!filtered) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
+    if (filtered.length === 0) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
     return (
       <SupplierApplicationDetail
         request={filtered[0]}
-        onApprove={(id) => { handleStatusChange(id, 'APPROVED'); navigate('/dashboard/admin/verifications'); }}
-        onReject={(id) => { handleStatusChange(id, 'REJECTED'); navigate('/dashboard/admin/verifications'); }}
-        onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/verifications'); }}
+        onApprove={(id) => { handleStatusChange(id, 'APPROVED'); navigate('/dashboard/admin/supplier_applications'); }}
+        onReject={(id) => { handleStatusChange(id, 'REJECTED'); navigate('/dashboard/admin/supplier_applications'); }}
+        onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/supplier_applications'); }}
         onBack={() => navigate('/dashboard/admin/supplier_applications')}
       />
     );
