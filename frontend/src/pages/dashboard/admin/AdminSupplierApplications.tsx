@@ -57,11 +57,12 @@ export function AdminSupplierApplications() {
   const [applications, setApplications] = useState<SupplierApplicationRequest[]>();
   const [applicationsMeta, setApplicationsMeta] = useState<any>();
   useEffect(() => {
-    const loadSuppliers = async () => {
+    const loadApps = async () => {
       const data = await fetchApps(page, APPLICATIONS_PER_PAGE);
       setApplications(data.applicationsData);
       setApplicationsMeta(data.applicationsMeta);
     };
+    loadApps();
   }, [page]);
 
 
