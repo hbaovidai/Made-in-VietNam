@@ -15,7 +15,7 @@ export declare class ProductsService {
                 companyName: string;
                 slug: string;
                 logo: string | null;
-                isVerified: boolean;
+                isVerified: boolean | null;
             };
             category: {
                 id: string;
@@ -72,7 +72,7 @@ export declare class ProductsService {
             description: string | null;
             city: string | null;
             province: string | null;
-            isVerified: boolean;
+            isVerified: boolean | null;
             industries: {
                 industry: string;
             }[];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Filter, ChevronDown, ChevronRight, Search, SlidersHorizontal, LayoutGrid, List, X, Loader2 } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
@@ -30,18 +30,18 @@ export function ProductListing() {
     fetchCategories();
   }, []);
 
-  const activeCategoryGroup = React.useMemo(() => {
+  const activeCategoryGroup = useMemo(() => {
     if (!categoryFilter) return null;
     const group = categories.find(g => g.slug === categoryFilter);
     return group ? group.slug : categoryFilter;
   }, [categoryFilter, categories]);
 
   const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
-      setLoading(true);
+      setLoading(false);
       try {
         const queryParams = new URLSearchParams();
         

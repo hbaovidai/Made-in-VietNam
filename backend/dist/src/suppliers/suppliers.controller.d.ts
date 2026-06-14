@@ -42,8 +42,8 @@ export declare class SuppliersController {
             legalRepresentative: string | null;
             businessLicenseUrl: string | null;
             identityCardUrl: string | null;
-            verificationStatus: string;
-            isVerified: boolean;
+            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+            isVerified: boolean | null;
             createdAt: Date;
             updatedAt: Date;
         })[];
@@ -70,7 +70,9 @@ export declare class SuppliersController {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            supplierId: string;
             name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
@@ -79,8 +81,8 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -95,13 +97,11 @@ export declare class SuppliersController {
             attributes: import("@prisma/client/runtime/library").JsonValue | null;
             customizations: string[];
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -137,8 +137,8 @@ export declare class SuppliersController {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -191,8 +191,8 @@ export declare class SuppliersController {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -217,8 +217,8 @@ export declare class SuppliersController {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -241,7 +241,9 @@ export declare class SuppliersController {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            supplierId: string;
             name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
@@ -250,8 +252,8 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -266,13 +268,11 @@ export declare class SuppliersController {
             attributes: import("@prisma/client/runtime/library").JsonValue | null;
             customizations: string[];
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -308,8 +308,8 @@ export declare class SuppliersController {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -322,8 +322,8 @@ export declare class SuppliersController {
         role: string;
     }): Promise<{
         id: string;
-        name: string;
         supplierId: string;
+        name: string;
         issuedBy: string | null;
         issuedDate: Date | null;
         expiryDate: Date | null;

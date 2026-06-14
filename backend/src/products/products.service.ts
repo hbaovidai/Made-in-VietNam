@@ -27,7 +27,7 @@ export class ProductsService {
       category,
       supplierId,
       page = 1,
-      limit = 20,
+      limit = 70,
       sortBy = 'createdAt',
       sortOrder = 'desc',
       status, // Bổ sung status filter

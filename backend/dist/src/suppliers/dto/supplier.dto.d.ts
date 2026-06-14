@@ -1,3 +1,4 @@
+export type SupplierVerificationStatus = 'UNVERIFIED' | 'VERIFIED';
 export declare class UpdateSupplierDto {
     companyName?: string;
     description?: string;
@@ -16,7 +17,7 @@ export declare class UpdateSupplierDto {
     legalRepresentative?: string;
     businessLicenseUrl?: string;
     identityCardUrl?: string;
-    verificationStatus?: string;
+    verificationStatus?: SupplierVerificationStatus;
     industries?: string[];
     markets?: string[];
 }
@@ -25,4 +26,5 @@ export declare class SupplierQueryDto {
     industry?: string;
     page?: number;
     limit?: number;
+    verificationStatus?: SupplierVerificationStatus;
 }
