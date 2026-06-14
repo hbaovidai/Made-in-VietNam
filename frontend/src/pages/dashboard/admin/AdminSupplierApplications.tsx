@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
@@ -10,29 +10,6 @@ import { SupplierApplicationDetail, SupplierApplicationStatus } from './Supplier
 const APPLICATIONS_PER_PAGE: number = 20;
 
 // ─── Types ───────────────────────────────────────────────────
-
-const fetchApps = async (
-  page: number = 1,
-  limit: number = APPLICATIONS_PER_PAGE
-) => {
-  const { data } = await api.post(
-    'supp_apps/supp_apps_all',
-    {limit, page},
-    { headers: {
-        Authorization: `${localStorage.getItem('token')}`
-    }, }
-  );
-
-  return {
-    applicationsData: data.data,
-    applicationsMeta: data.meta,
-  }
-}
-
-var {
-  applicationsData,
-  applicationsMeta
-} = await fetchApps();
 
 // ─── Status helpers ──────────────────────────────────────────
 const statusLabels: Record<SupplierApplicationStatus, string> = {
@@ -47,6 +24,24 @@ const statusColor: Record<SupplierApplicationStatus, string> = {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminSupplierApplications() {
+  const fetchApps = async (
+    page: number = 1,
+    limit: number = APPLICATIONS_PER_PAGE
+  ) => {
+    const { data } = await api.post(
+      'supp_apps/supp_apps_all',
+      {limit, page},
+      { headers: {
+        Authorization: `${localStorage.getItem('token')}`
+      }, }
+    );
+
+    return {
+      applicationsData: data.data,
+      applicationsMeta: data.meta,
+    }
+  }
+
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,11 +49,21 @@ export function AdminSupplierApplications() {
   const tab = params.get('tab') || 'list';
   const detailId: number = Number(params.get('id'));
 
-  const [applications, setApplications] = useState<SupplierApplicationRequest[]>(applicationsData);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [page, setPage] = useState(1);
+
+  const [applications, setApplications] = useState<SupplierApplicationRequest[]>();
+  const [applicationsMeta, setApplicationsMeta] = useState<any>();
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      const data = await fetchApps(page, APPLICATIONS_PER_PAGE);
+      setApplications(data.applicationsData);
+      setApplicationsMeta(data.applicationsMeta);
+    };
+  }, [page]);
+
 
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
@@ -113,14 +118,6 @@ export function AdminSupplierApplications() {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const handlePageChange = async (page: number) => {
-    setPage(page);
-    const data = await fetchApps(page, APPLICATIONS_PER_PAGE);
-    applicationsData = data.applicationsData;
-    applicationsMeta = data.applicationsMeta;
-    setApplications(applicationsData);
   }
 
   const filtered = applications.filter(app => {
@@ -178,7 +175,7 @@ export function AdminSupplierApplications() {
           {Object.entries(statusCounts).map(([key, count], idx) => (
             <React.Fragment key={key}>
               {idx > 0 && <span className="wp-filter-sep">|</span>}
-              <button className={`wp-filter-tab ${filterStatus === key ? 'active' : ''}`} onClick={() => { setFilterStatus(key); handlePageChange(page); }}>
+              <button className={`wp-filter-tab ${filterStatus === key ? 'active' : ''}`} onClick={() => { setFilterStatus(key); setPage(page); }}>
                 {statusFilterLabels[key]} <span className="count">({count})</span>
               </button>
             </React.Fragment>
@@ -191,7 +188,7 @@ export function AdminSupplierApplications() {
             <button className="wp-btn">Áp dụng</button>
           </div>
           <div className="wp-table-search">
-            <input type="text" placeholder="Tìm ứng viên" value={search} onChange={e => { setSearch(e.target.value); handlePageChange(page); }} />
+            <input type="text" placeholder="Tìm ứng viên" value={search} onChange={e => { setSearch(e.target.value); setPage(page); }} />
             <button className="wp-btn"><Search size={14} /> Tìm kiếm</button>
           </div>
         </div>
@@ -274,7 +271,7 @@ export function AdminSupplierApplications() {
           page={page}
           perPage={APPLICATIONS_PER_PAGE}
           total={applicationsMeta.total_apps_count}
-          onPageChange={handlePageChange}
+          onPageChange={setPage}
           />
 
       </div>

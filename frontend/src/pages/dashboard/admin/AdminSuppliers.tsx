@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
@@ -13,31 +13,6 @@ const PROFILES_PER_PAGE: number = 20;
 // ─── Types ───────────────────────────────────────────────────
 export type SupplierStatus = 'VERIFIED' | 'UNVERIFIED';
 
-const fetchSuppliers = async (
-  page: number = 1,
-  limit: number = PROFILES_PER_PAGE
-) => {
-  const { data } = await api.get(
-    '/suppliers',
-    { 
-      headers: {
-        Authorization: `${localStorage.getItem('token')}`
-      }, 
-      params: {limit, page},
-    }
-  );
-
-  return {
-    suppliersData: data.data,
-    suppliersMeta: data.meta,
-  }
-}
-
-var {
-  suppliersData,
-  suppliersMeta
-} = await fetchSuppliers();
-
 // ─── Status helpers ──────────────────────────────────────────
 const statusLabels: Record<SupplierStatus, string> = {
   VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh', 
@@ -51,6 +26,26 @@ const statusColor: Record<SupplierStatus, string> = {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminSuppliers() {
+  const fetchSuppliers = async (
+    page: number = 1,
+    limit: number = PROFILES_PER_PAGE
+  ) => {
+    const { data } = await api.get(
+      '/suppliers',
+      { 
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`
+        }, 
+        params: {limit, page},
+      }
+    );
+
+    return {
+      suppliersData: data.data,
+      suppliersMeta: data.meta,
+    }
+  }
+
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -58,11 +53,23 @@ export function AdminSuppliers() {
   const tab = params.get('tab') || 'list';
   const detailId: string = params.get('id');
 
-  const [suppliers, setSuppliers] = useState<SupplierProfile[]>(suppliersData);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+
+  const [suppliers, setSuppliers] = useState<SupplierProfile[]>();
+  const [suppliersMeta, setSuppliersMeta] = useState<any>();
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      const data = await fetchSuppliers();
+      setSuppliers(data.suppliersData);
+      setSuppliersMeta(data.suppliersMeta)
+    }
+    loadSuppliers();
+  }, [page]);
+
+
 
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
@@ -86,7 +93,6 @@ export function AdminSuppliers() {
 
   const handleStatusChange = async (id: string, newStatus: SupplierVerificationStatus) => {
     try {
-      return;
       const result = await api.patch(
         `/suppliers/${id}`,
         { headers: {Authorization: `${localStorage.getItem('token')}`} }
@@ -107,7 +113,6 @@ export function AdminSuppliers() {
 
   const handleDelete = async (id: string) => {
     try {
-      return;
       const result = await api.delete(
         `/supp_apps/${id}`,
         { headers: {Authorization: `${localStorage.getItem('token')}`} }
@@ -118,14 +123,6 @@ export function AdminSuppliers() {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const handlePageChange = async (page: number) => {
-    setPage(page);
-    const data = await fetchSuppliers(page, PROFILES_PER_PAGE);
-    suppliersData = data.suppliersData;
-    suppliersMeta = data.suppliersMeta;
-    setSuppliers(suppliersData);
   }
 
   const filtered = suppliers.filter(supp => {
@@ -184,7 +181,7 @@ export function AdminSuppliers() {
           {Object.entries(statusCounts).map(([key, count], idx) => (
             <React.Fragment key={key}>
               {idx > 0 && <span className="wp-filter-sep">|</span>}
-              <button className={`wp-filter-tab ${filterStatus === key ? 'active' : ''}`} onClick={() => { setFilterStatus(key); handlePageChange(page); }}>
+              <button className={`wp-filter-tab ${filterStatus === key ? 'active' : ''}`} onClick={() => { setFilterStatus(key); setPage(page); }}>
                 {statusFilterLabels[key]} <span className="count">({count})</span>
               </button>
             </React.Fragment>
@@ -197,7 +194,7 @@ export function AdminSuppliers() {
             <button className="wp-btn">Áp dụng</button>
           </div>
           <div className="wp-table-search">
-            <input type="text" placeholder="Tìm kiếm nhà cung cấp" value={search} onChange={e => { setSearch(e.target.value); handlePageChange(page); }} />
+            <input type="text" placeholder="Tìm kiếm nhà cung cấp" value={search} onChange={e => { setSearch(e.target.value); setPage(page); }} />
             <button className="wp-btn"><Search size={14} /> Tìm kiếm</button>
           </div>
         </div>
@@ -272,7 +269,7 @@ export function AdminSuppliers() {
           page={page}
           perPage={PROFILES_PER_PAGE}
           total={suppliersMeta.total}
-          onPageChange={handlePageChange}
+          onPageChange={setPage}
           />
 
       </div>
