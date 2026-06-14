@@ -17,14 +17,17 @@ export function CategorySidebar() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCategories() {
       try {
         const res = await api.get('/categories');
-        // Chỉ lấy danh mục gốc (parentId === null)
-        setCategories(res.data.filter((c: any) => !c.parentId));
+        // L0 -> L1
+        const l1Categories: Category[] = res.data.flatMap(
+          (root: Category) => root.children ?? []
+        );
+        setCategories(l1Categories);
       } catch (error) {
         console.error('Error loading categories:', error);
       } finally {
@@ -45,12 +48,12 @@ export function CategorySidebar() {
       </div>
       <div className="flex-1 py-1 overflow-y-auto max-h-[400px] no-scrollbar">
         {loading ? (
-          <div className="flex items-center justify-center py-8 px-4 text-center">
-            <p className="text-xs text-slate-400">Chưa có danh mục nào</p>
-          </div>
-        ) : categories.length === 0 ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="animate-spin text-primary" size={20} />
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="flex items-center justify-center py-8 px-4 text-center">
+            <p className="text-xs text-slate-400">Chưa có danh mục nào</p>
           </div>
         ) : (
           categories.map((cat) => (
