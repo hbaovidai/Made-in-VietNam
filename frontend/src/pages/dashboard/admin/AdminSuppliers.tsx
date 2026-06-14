@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { SupplierDetail, SupplierProfile, SupplierVerificationStatus } from './SupplierDetail';
-import { SupplierApplicationRequest } from './SupplierApplicationDetails';
 import { api } from '../../../lib/api'
-import { SupplierApplicationDetail, SupplierApplicationStatus } from './SupplierApplicationDetails';
 
 const PROFILES_PER_PAGE: number = 20;
 
