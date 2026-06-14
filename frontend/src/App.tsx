@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { ProfileSubmission } from './pages/ProfileSubmission';
 
 // ============================================================
 // Lazy-loaded Pages (Code Splitting)
@@ -176,6 +177,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/wp-login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile-submission" element={<ProfileSubmission />} />
 
             {/* Dashboard Root Redirect */}
             <Route path="/dashboard" element={
