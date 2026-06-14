@@ -61,9 +61,10 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: MessageSquare, label: t('msg_menu_label'), path: '/dashboard/admin/messages',
   },
   {
-    icon: Shield, label: 'Doanh nghiệp', path: '/dashboard/admin/verifications',
+    icon: Shield, label: 'Nhà cung cấp', path: '/dashboard/admin/supplier_application_verification',
     children: [
-      { label: 'Tất cả doanh nghiệp', path: '/dashboard/admin/verifications' },
+      { label: 'Ứng viên', path: '/dashboard/admin/supplier_applications' },
+      { label: 'Nhà cung cấp', path: '/dashboard/admin/suppliers' },
       { label: 'Link mời', path: '/dashboard/admin/verifications?tab=tokens' },
     ],
   },

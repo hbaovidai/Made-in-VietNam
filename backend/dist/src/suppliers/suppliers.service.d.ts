@@ -39,8 +39,8 @@ export declare class SuppliersService {
             legalRepresentative: string | null;
             businessLicenseUrl: string | null;
             identityCardUrl: string | null;
-            verificationStatus: string;
-            isVerified: boolean;
+            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+            isVerified: boolean | null;
             createdAt: Date;
             updatedAt: Date;
         })[];
@@ -67,7 +67,9 @@ export declare class SuppliersService {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            supplierId: string;
             name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
@@ -76,8 +78,8 @@ export declare class SuppliersService {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -92,13 +94,11 @@ export declare class SuppliersService {
             attributes: Prisma.JsonValue | null;
             customizations: string[];
             specifications: Prisma.JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -134,8 +134,8 @@ export declare class SuppliersService {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -160,8 +160,8 @@ export declare class SuppliersService {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -181,7 +181,9 @@ export declare class SuppliersService {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            supplierId: string;
             name: string;
+            status: import("@prisma/client").$Enums.ProductStatus;
             nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
@@ -190,8 +192,8 @@ export declare class SuppliersService {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -206,13 +208,11 @@ export declare class SuppliersService {
             attributes: Prisma.JsonValue | null;
             customizations: string[];
             specifications: Prisma.JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
-            name: string;
             supplierId: string;
+            name: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -248,8 +248,8 @@ export declare class SuppliersService {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -259,8 +259,8 @@ export declare class SuppliersService {
         documentUrl?: string;
     }): Promise<{
         id: string;
-        name: string;
         supplierId: string;
+        name: string;
         issuedBy: string | null;
         issuedDate: Date | null;
         expiryDate: Date | null;
@@ -290,8 +290,8 @@ export declare class SuppliersService {
         legalRepresentative: string | null;
         businessLicenseUrl: string | null;
         identityCardUrl: string | null;
-        verificationStatus: string;
-        isVerified: boolean;
+        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+        isVerified: boolean | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
