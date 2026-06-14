@@ -104,7 +104,8 @@ export function ProductFormPage() {
       });
       // Build full URL from backend
       const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace('api/v1', '');
-      const fullUrl = `${baseUrl}${res.data.url}`;
+      // const fullUrl = `${baseUrl}${res.data.url}`;
+      const fullUrl = `${res.data.url}`;
       handleImageChange(index, fullUrl);
     } catch {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải ảnh lên. Vui lòng thử lại.' });
