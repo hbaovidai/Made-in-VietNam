@@ -23,9 +23,14 @@ export function CategoryMegaMenu() {
     async function fetchCategories() {
       try {
         const res = await api.get('/categories');
-        setCategories(res.data);
-        if (res.data.length > 0) {
-          setActiveGroup(res.data[0]);
+        const l1Categories: Category[] = res.data.flatMap(
+          (root: Category) => root.children ?? []
+        );
+
+        setCategories(l1Categories);
+
+        if (l1Categories.length > 0) {
+          setActiveGroup(l1Categories[0]);
         }
       } catch (error) {
         console.error('Lỗi khi tải danh mục:', error);
