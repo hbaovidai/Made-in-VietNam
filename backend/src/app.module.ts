@@ -23,7 +23,6 @@ import { OrdersModule } from './orders/orders.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { TranslationModule } from './translation/translation.module';
 import { SettingsModule } from './settings/settings.module';
-import { SupplierApplicationModule } from './supplier_applications/supplier_app.module';
 
 @Module({
   imports: [
@@ -48,7 +47,6 @@ import { SupplierApplicationModule } from './supplier_applications/supplier_app.
     CategoriesModule,
     ProductsModule,
     SuppliersModule,
-    SupplierApplicationModule,
     RfqModule,
     MessagesModule,
     BatchesModule,

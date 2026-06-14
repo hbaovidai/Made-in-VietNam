@@ -3,37 +3,35 @@ import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────
-export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
-
-export interface SupplierProfile {
-  id?: string,
-  userId?:string,
-  companyName?:     string
-  slug?:            string
-  logo?:            string,
-  banner?:          string,
-  description?:     string,
-  businesstype?:    string,
-  yearEstablished?: number,
-  employeeCount?:   string,
-  address?:             string,
-  city?:                string,
-  province?:            string,
-  website?:             string,
-  taxCode?:             string,
-  companyEmail?:        string,
-  companyPhone?:        string,
-  legalRepresentative?: string,
-  businessLicenseUrl?:  string,
-  identityCardUrl?:     string,
-  verificationStatus?:  SupplierVerificationStatus,
-  isVerified?: boolean,
-  createdAt?: Date,
-  updatedAt?: Date,
+export interface VerificationRequest {
+  id: string;
+  companyName: string;
+  taxId: string;
+  companyType: string;
+  foundedYear: number;
+  address: string;
+  province: string;
+  website?: string;
+  repName: string;
+  repTitle: string;
+  repIdCard: string;
+  repEmail: string;
+  repPhone: string;
+  industry: string[];
+  products: string;
+  exportExperience: boolean;
+  exportMarkets?: string;
+  annualRevenue: string;
+  employeeCount: string;
+  driveLink: string;
+  documentList: string[];
+  submittedAt: string;
+  status: 'pending' | 'approved' | 'rejected' | 'invited' | 'registered';
+  notes: string;
 }
 
 interface Props {
-  request: SupplierProfile;
+  request: VerificationRequest;
   onApprove: (id: string) => void;
   onReject: (id: string, reason: string) => void;
   onDelete: (id: string) => void;
@@ -55,18 +53,22 @@ const badge: React.CSSProperties = {
 };
 
 const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  VERIFIED:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
-  UNVERIFIED:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  pending:    { label: 'Chờ duyệt',     bg: '#fcf0e0', color: '#9a6700', border: '#f0c36d' },
+  approved:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
+  rejected:   { label: 'Đã từ chối',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  invited:    { label: 'Đã gửi link',   bg: '#e1ecf7', color: '#135e96', border: '#8db3d9' },
+  registered: { label: 'Đã đăng ký',    bg: '#f0e6fa', color: '#5b2d8e', border: '#c4a3e0' },
 };
 
 // ═════════════════════════════════════════════════════════════
-export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
+export function VerificationDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
   const [showRejectBox, setShowRejectBox] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [localNotes, setLocalNotes] = useState(request.notes);
   const [notesSaved, setNotesSaved] = useState(false);
 
-  const st = statusMap[request.verificationStatus] || statusMap.pending;
+  const st = statusMap[request.status] || statusMap.pending;
 
   const handleSaveNotes = () => { setNotesSaved(true); setTimeout(() => setNotesSaved(false), 2000); };
 
@@ -76,7 +78,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <Link to="/dashboard/admin/verifications">Nhà cung cấp</Link> {/* TODO: đấu nối api */}
+        <Link to="/dashboard/admin/verifications">Doanh nghiệp</Link>
         <span className="wp-breadcrumb-sep">›</span>
         <span className="wp-breadcrumb-current">{request.companyName}</span>
       </div>
@@ -100,9 +102,9 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             </h3>
             <div style={grid2}>
               <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{request.companyName}</div></div>
-              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxCode}</div></div>
-              {/* <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div> */}
-              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.yearEstablished}</div></div>
+              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxId}</div></div>
+              <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div>
+              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.foundedYear}</div></div>
               <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{request.address}</div></div>
               <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{request.province}</div></div>
               {request.website && (
@@ -214,7 +216,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
           </div>
 
           {/* Quyết định — chỉ hiện khi pending */}
-          {request.verification_status === 'UNVERIFIED' && (
+          {request.status === 'pending' && (
             <div style={card}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
                 Quyết định
@@ -271,7 +273,6 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
 
           {/* Ghi chú nội bộ */}
           <div style={card}>
-            {/*
             <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
               Ghi chú nội bộ
             </h3>
@@ -289,8 +290,6 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               }
               <button onClick={handleSaveNotes} className="wp-btn" style={{ fontSize: 12 }}>Lưu ghi chú</button>
             </div>
-            */}
-
           </div>
         </div>
       </div>

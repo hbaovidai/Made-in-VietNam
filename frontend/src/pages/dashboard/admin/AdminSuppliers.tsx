@@ -90,6 +90,8 @@ export function AdminSuppliers() {
   };
 
   const handleStatusChange = async (id: string, newStatus: SupplierVerificationStatus) => {
+    // handle later
+    return;
     try {
       const result = await api.patch(
         `/suppliers/${id}`,
@@ -110,6 +112,8 @@ export function AdminSuppliers() {
   };
 
   const handleDelete = async (id: string) => {
+    // handle later
+    return;
     try {
       const result = await api.delete(
         `/supp_apps/${id}`,
@@ -149,14 +153,13 @@ export function AdminSuppliers() {
       if (app.id === detailId) return app;
     });
 
-    // TODO: thay link
     if (!filtered) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
     return (
       <SupplierDetail
         request={filtered[0]}
-        onApprove={(id) => { handleStatusChange(id, 'VERIFIED'); navigate('/dashboard/admin/verifications'); }}
-        onReject={(id) => { handleStatusChange(id, 'UNVERIFIED'); navigate('/dashboard/admin/verifications'); }}
-        onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/verifications'); }}
+        onApprove={(id) => { handleStatusChange(id, 'VERIFIED'); navigate('/dashboard/admin/suppliers'); }}
+        onReject={(id) => { handleStatusChange(id, 'UNVERIFIED'); navigate('/dashboard/admin/suppliers'); }}
+        onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/suppliers'); }}
         onBack={() => navigate('/dashboard/admin/suppliers')}
       />
     );

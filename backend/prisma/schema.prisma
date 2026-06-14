@@ -88,24 +88,6 @@ enum MessageType {
   SYSTEM
 }
 
-enum SupplierApplicationStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum SupplierVerificationStatus {
-  VERIFIED
-  UNVERIFIED
-}
-
-enum SupplierApplicantRole {
-  OWNER
-  MANAGER
-  LEGAL_REP
-  EMPLOYEE
-}
-
 // ==================== USERS ====================
 
 model User {
@@ -160,8 +142,8 @@ model Supplier {
   legalRepresentative String?  @map("legal_representative")
   businessLicenseUrl  String?  @map("business_license_url")
   identityCardUrl     String?  @map("identity_card_url")
-  verificationStatus  SupplierVerificationStatus?   @default(UNVERIFIED) @map("verification_status")
-  isVerified           Boolean?   @default(dbgenerated("(verification_status = 'VERIFIED')")) @map("is_verified")
+  verificationStatus  String   @default("UNVERIFIED") @map("verification_status")
+  isVerified          Boolean  @default(false) @map("is_verified")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -176,24 +158,10 @@ model Supplier {
   orders         Order[]
 
   // Indexes for fast queries
+  @@index([isVerified])                // Verified suppliers filter
   @@index([verificationStatus])        // Admin verification filter
   @@index([companyName])               // Search by company name
   @@map("suppliers")
-}
-
-model SupplierApplication {
-  id              Int                       @id @default(autoincrement())
-  createdAt       DateTime                  @default(now()) @db.Timestamptz @map("created_at")
-  lastName        String                    @map("last_name")
-  firstName       String                    @map("first_name")
-  applicantRole   SupplierApplicantRole     @map("applicant_role")
-  govId           String                    @map("gov_id")
-  govIdPicUrl     String[]                  @map("gov_id_pic_url")
-  email           String
-  phone           String
-  status          SupplierApplicationStatus @default(PENDING)
-
-  @@map("supplier_applications")
 }
 
 model Certification {
