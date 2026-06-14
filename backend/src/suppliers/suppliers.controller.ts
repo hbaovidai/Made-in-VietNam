@@ -27,17 +27,13 @@ export class SuppliersController {
     private auditLogService: AuditLogService,
   ) {}
 
-  // Protected: Chỉ Admin mới được lấy hết danh sách các supplier
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  // PUBLIC
   @Get()
   findAll(@Query() query: SupplierQueryDto) {
     return this.suppliersService.findAll(query);
   }
 
-  // Protected
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  // PUBLIC
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
