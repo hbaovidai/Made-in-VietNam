@@ -178,6 +178,7 @@ model Supplier {
   // Indexes for fast queries
   @@index([verificationStatus])        // Admin verification filter
   @@index([companyName])               // Search by company name
+  @@index([industries])
   @@map("suppliers")
 }
 
@@ -193,6 +194,7 @@ model SupplierApplication {
   phone           String
   status          SupplierApplicationStatus @default(PENDING)
 
+  @@map([lastName, firstName])
   @@map("supplier_applications")
 }
 
@@ -248,6 +250,9 @@ model Category {
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([id])
+  @@index([name])
+  @@index([nameEn])
   @@map("categories")
 }
 
@@ -299,6 +304,7 @@ model Product {
   @@index([status, createdAt])       // Product listing (filter active + sort by date)
   @@index([categoryId, status])      // Category page filter
   @@index([supplierId, status])      // Supplier's product page
+  @@index([categoryId])                    // Search by product name
   @@index([name])                    // Search by product name
   @@index([minPrice])                // Sort by price
   @@map("products")
