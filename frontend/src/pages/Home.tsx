@@ -53,7 +53,7 @@ export function Home() {
     async function loadData() {
       try {
         const [prodRes, suppRes, catRes] = await Promise.all([
-          api.get('/products?limit=12'),
+          api.get('/products?limit=3'),
           api.get('/suppliers?limit=3'),
           api.get('/categories')
         ]);
@@ -209,7 +209,7 @@ export function Home() {
               <span className="font-bold text-slate-800">{t('you_may_like')}</span>
             </div>
             <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-              {products.slice(0, 3).map((product) => (
+              {products.map((product) => (
                 <Link key={product.id} to={`/products/${product.id}`} className="flex gap-3 group">
                   <div className="w-16 h-16 bg-slate-100 shrink-0 border border-slate-100 overflow-hidden">
                     <img src={product.images[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
