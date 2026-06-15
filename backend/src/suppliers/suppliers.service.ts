@@ -27,7 +27,7 @@ export class SuppliersService {
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { updatedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
