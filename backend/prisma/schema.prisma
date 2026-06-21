@@ -88,18 +88,13 @@ enum MessageType {
   SYSTEM
 }
 
-enum SupplierApplicationStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum SupplierVerificationStatus {
+enum SupplierStatus {
   VERIFIED
   UNVERIFIED
+  SUSPENDED
 }
 
-enum SupplierApplicantRole {
+enum SupplierAccountHolderRole {
   OWNER
   MANAGER
   LEGAL_REP
@@ -141,27 +136,37 @@ model User {
 
 model Supplier {
   id              String   @id @default(uuid())
-  userId          String   @unique @map("user_id")
-  companyName     String   @map("company_name")
   slug            String   @unique
-  logo            String?
-  banner          String?
-  description     String?
-  businessType    String?  @map("business_type")
-  yearEstablished Int?     @map("year_established")
-  employeeCount   String?  @map("employee_count")
-  address             String?
-  city                String?
-  province            String?
-  website             String?
-  taxCode             String?  @map("tax_code")
+  userId          String   @unique @map("user_id")
+
+  companyName     String   @map("company_name")
   companyEmail        String?  @map("company_email")
   companyPhone        String?  @map("company_phone")
-  legalRepresentative String?  @map("legal_representative")
-  businessLicenseUrl  String?  @map("business_license_url")
-  identityCardUrl     String?  @map("identity_card_url")
-  verificationStatus  SupplierVerificationStatus?   @default(UNVERIFIED) @map("verification_status")
-  isVerified           Boolean?   @default(false) @map("is_verified")
+  description     String?
+  yearEstablished Int?     @map("year_established")
+  website             String?
+
+  province String?
+  district String?
+  address             String?
+
+  taxCode             String?  @map("tax_code")
+  legalRepName String? @map("legal_rep_name")
+  legalRepPhone String? @map("legal_rep_phone")
+  
+  accountHolderGovId String? @map("account_holder_gov_id")
+  accountHolderGovIdUrl String[] @map("account_holder_gov_id_url")
+  accountHolderPhone String? @map("account_holder_phone")
+  accountHolderEmail String? @map("account_holder_email")
+  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+
+  supplierType    String?  @map("supplier_type")
+  status SupplierStatus
+  isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
+
+  logo            String?
+  banner          String?
+
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -176,25 +181,11 @@ model Supplier {
   orders         Order[]
 
   // Indexes for fast queries
-  @@index([verificationStatus])        // Admin verification filter
+  @@index([status])        // Admin verification filter
   @@index([companyName])               // Search by company name
   @@index([updatedAt])
+  @@index([id])
   @@map("suppliers")
-}
-
-model SupplierApplication {
-  id              Int                       @id @default(autoincrement())
-  createdAt       DateTime                  @default(now()) @db.Timestamptz @map("created_at")
-  lastName        String                    @map("last_name")
-  firstName       String                    @map("first_name")
-  applicantRole   SupplierApplicantRole     @map("applicant_role")
-  govId           String                    @map("gov_id")
-  govIdPicUrl     String[]                  @map("gov_id_pic_url")
-  email           String
-  phone           String
-  status          SupplierApplicationStatus @default(PENDING)
-
-  @@map("supplier_applications")
 }
 
 model Certification {
