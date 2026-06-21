@@ -174,7 +174,7 @@ model Supplier {
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
   certifications Certification[]
-  industries     SupplierIndustry[]
+  // industries     SupplierIndustry[]
   markets        SupplierMarket[]
   batches        Batch[]
   quotes         Quote[]
