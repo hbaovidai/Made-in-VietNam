@@ -174,7 +174,7 @@ model Supplier {
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
   certifications Certification[]
-  industries     SupplierIndustry[]
+  // industries     SupplierIndustry[]
   markets        SupplierMarket[]
   batches        Batch[]
   quotes         Quote[]
@@ -183,7 +183,7 @@ model Supplier {
   // Indexes for fast queries
   @@index([status])        // Admin verification filter
   @@index([companyName])               // Search by company name
-  @@index([industries])
+  // @@index([industries])
   @@index([updatedAt])
   @@index([id])
   @@map("suppliers")
