@@ -16,6 +16,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { SupplierStatus } from '@prisma/client';
+
 @Controller('rfqs')
 export class RfqController {
   constructor(
@@ -33,7 +35,8 @@ export class RfqController {
       const supplier = await this.prisma.supplier.findUnique({
         where: { userId: currentUser.id },
       });
-      isVerified = supplier?.isVerified ?? false;
+      // pls don't explode
+      isVerified = supplier?.status === SupplierStatus.VERIFIED;
     }
     return this.rfqService.getOpenRFQs(isVerified);
   }
@@ -90,7 +93,7 @@ export class RfqController {
     });
     if (!supplier)
       throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
-    if (!supplier.isVerified)
+    if (supplier.status !== SupplierStatus.VERIFIED)
       throw new ForbiddenException(
         'Chỉ nhà cung cấp đã xác thực mới được gửi báo giá. Vui lòng hoàn tất Xác thực Doanh nghiệp (KYB).',
       );
