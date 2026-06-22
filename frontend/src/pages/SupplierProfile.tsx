@@ -8,6 +8,7 @@ import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
+import { SupplierStatus } from '../lib/enums';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -80,7 +81,7 @@ export function SupplierProfile() {
             <div className="flex-1 min-w-0 pb-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-2xl md:text-3xl font-black text-white">{supplier.companyName}</h1>
-                {supplier.isVerified && (
+                {supplier.status === SupplierStatus.VERIFIED && (
                   <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-300 bg-emerald-500/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-emerald-400/30">
                     <ShieldCheck size={12} /> Đã xác minh
                   </span>
