@@ -6,6 +6,7 @@ import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
+import { SupplierStatus } from '@/src/lib/enums';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -48,13 +49,12 @@ export function SupplierProfile() {
         const s = suppRes.data;
         setSupplier(s);
         
-        if (user && s.verificationStatus !== user.supplier?.verificationStatus) {
+        if (user && s.status !== user.supplier?.status) {
           updateUser({
             ...user,
             supplier: {
               ...user.supplier!,
-              verificationStatus: s.verificationStatus,
-              isVerified: s.verificationStatus === 'VERIFIED'
+              status: s.verificationStatus,
             }
           });
         }
@@ -128,7 +128,7 @@ export function SupplierProfile() {
       const res = await api.put(`/suppliers/${supplierId}`, {
         businessLicenseUrl: bizLicenseUrl,
         identityCardUrl: idCardUrl,
-        verificationStatus: 'PENDING'
+        status: SupplierStatus.UNVERIFIED
       });
 
       setSupplier(res.data);
@@ -408,7 +408,7 @@ export function SupplierProfile() {
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-3">
               <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{supplier?.companyName || 'Công ty của bạn'}</h2>
-              {supplier?.isVerified && <SupplierBadge type="verified" />}
+              {supplier?.status === SupplierStatus.VERIFIED && <SupplierBadge type="verified" />}
             </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
