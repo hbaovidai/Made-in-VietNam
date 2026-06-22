@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
 import { api } from '../../../lib/api';
+import { SupplierStatus } from '@/src/lib/enums';
 
 export function BuyerRFQs() {
   const { t } = useTranslation();
@@ -221,7 +222,7 @@ export function BuyerRFQs() {
                           <div>
                             <div className="font-bold text-slate-900">{quote.supplier?.companyName}</div>
                             <div className="flex items-center gap-2 mt-0.5">
-                              {quote.supplier?.isVerified && (
+                              {quote.supplier?.status === SupplierStatus.VERIFIED && (
                                 <span className="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase">
                                   <ShieldCheck size={10} /> Verified
                                 </span>
