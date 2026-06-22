@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
+import { SupplierStatus } from '@/src/lib/enums';
 
 const MAX_QUOTES = 10;
 
@@ -23,7 +24,7 @@ export function SupplierRFQs() {
   const [submittingQuote, setSubmittingQuote] = useState(false);
 
   const supplierId = user?.supplier?.id;
-  const isVerified = user?.supplier?.isVerified ?? false;
+  const isVerified = user?.supplier?.status === SupplierStatus.VERIFIED;
 
   useEffect(() => {
     loadRfqs();
