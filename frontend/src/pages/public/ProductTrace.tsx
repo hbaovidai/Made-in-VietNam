@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, ShieldAlert, BadgeInfo, Building, Calendar, Package, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { SupplierStatus } from '@/src/lib/enums';
 
 export function ProductTrace() {
   const { code } = useParams<{ code: string }>();
@@ -95,7 +96,7 @@ export function ProductTrace() {
                 <Building className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Nguồn gốc sản xuất</div>
-                  <div className="text-sm font-medium text-slate-800">{supplier.companyName || 'Công ty TNHH chưa cập nhật'} {supplier.isVerified && <span className="text-green-600 font-bold ml-1">✓ Đã xác minh</span>}</div>
+                  <div className="text-sm font-medium text-slate-800">{supplier.companyName || 'Công ty TNHH chưa cập nhật'} {supplier.status == SupplierStatus.VERIFIED && <span className="text-green-600 font-bold ml-1">✓ Đã xác minh</span>}</div>
                   <div className="text-xs text-slate-500 mt-0.5">Việt Nam</div>
                 </div>
               </div>
