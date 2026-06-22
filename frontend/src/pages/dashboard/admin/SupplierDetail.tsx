@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
+import { SupplierStatus } from '@/src/lib/enums';
 
 // ─── Types ───────────────────────────────────────────────────
-export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
-
 export interface SupplierProfile {
   id?: string,
   userId?:string,
@@ -26,8 +25,7 @@ export interface SupplierProfile {
   legalRepresentative?: string,
   businessLicenseUrl?:  string,
   identityCardUrl?:     string,
-  verificationStatus?:  SupplierVerificationStatus,
-  isVerified?: boolean,
+  status?: SupplierStatus,
   createdAt?: Date,
   updatedAt?: Date,
 }
@@ -57,6 +55,7 @@ const badge: React.CSSProperties = {
 const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
   VERIFIED:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
   UNVERIFIED:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  SUSPENDED:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
 };
 
 // ═════════════════════════════════════════════════════════════
@@ -66,7 +65,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
 
-  const st = statusMap[request.verificationStatus] || statusMap.pending;
+  const st = statusMap[request.status] || statusMap.PENDING;
 
   const handleSaveNotes = () => { setNotesSaved(true); setTimeout(() => setNotesSaved(false), 2000); };
 
@@ -214,7 +213,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
           </div>
 
           {/* Quyết định — chỉ hiện khi pending */}
-          {request.verification_status === 'UNVERIFIED' && (
+          {request.status === SupplierStatus.VERIFIED && (
             <div style={card}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
                 Quyết định
