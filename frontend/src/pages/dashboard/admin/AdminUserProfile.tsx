@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Eye, EyeOff, User, Shield, Key, Clock, Settings, Bell, Globe, Moon, Sun } from 'lucide-react';
+import { SupplierStatus } from '@/src/lib/enums';
 
 type TabKey = 'profile' | 'account' | 'password' | 'activity' | 'settings';
 
@@ -284,7 +285,7 @@ export function AdminUserProfile() {
                 <tr><th style={{ fontSize: 13 }}>Vai trò</th><td><span className={`wp-badge ${profile.role === 'ADMIN' ? 'wp-badge-published' : profile.role === 'SUPPLIER' ? 'wp-badge-pending' : 'wp-badge-draft'}`}>{roleLabels[profile.role]}</span></td></tr>
                 <tr><th style={{ fontSize: 13 }}>Trạng thái</th><td><span className={`wp-badge ${profile.status === 'ACTIVE' ? 'wp-badge-approved' : 'wp-badge-rejected'}`}>{profile.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa'}</span></td></tr>
                 {profile.supplier && (
-                  <tr><th style={{ fontSize: 13 }}>Doanh nghiệp</th><td><strong>{profile.supplier.companyName}</strong>{profile.supplier.isVerified && <span className="wp-badge wp-badge-approved" style={{ marginLeft: 8 }}>Đã xác minh</span>}</td></tr>
+                  <tr><th style={{ fontSize: 13 }}>Doanh nghiệp</th><td><strong>{profile.supplier.companyName}</strong>{profile.supplier.status === SupplierStatus.VERIFIED && <span className="wp-badge wp-badge-approved" style={{ marginLeft: 8 }}>Đã xác minh</span>}</td></tr>
                 )}
                 <tr><th style={{ fontSize: 13 }}>Ngày tạo</th><td style={{ fontSize: 13, color: 'var(--wp-text-muted)' }}>{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}</td></tr>
               </tbody>
