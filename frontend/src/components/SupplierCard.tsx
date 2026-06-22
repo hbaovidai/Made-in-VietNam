@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, MapPin, Award, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { SupplierStatus } from '../lib/enums';
 
 interface SupplierCardProps {
   key?: string;
@@ -53,7 +54,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             <h3 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors tracking-tight line-clamp-1">
               {name}
             </h3>
-            {supplier.isVerified && (
+            {supplier.status === SupplierStatus.VERIFIED && (
               <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter border border-emerald-100 shrink-0">
                 <ShieldCheck size={12} />
                 {t('verified')}
