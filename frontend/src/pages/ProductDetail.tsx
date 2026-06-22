@@ -9,6 +9,7 @@ import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { SEOHead } from '../components/SEOHead';
+import { SupplierStatus } from '../lib/enums';
 
 export function ProductDetail() {
   const { t } = useTranslation();
@@ -135,7 +136,7 @@ export function ProductDetail() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-bold text-slate-900 text-sm leading-tight">{supplier?.companyName || 'Nhà cung cấp'}</h3>
-                    {supplier?.isVerified && (
+                    {supplier?.status === SupplierStatus.VERIFIED && (
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1">
                         <ShieldCheck size={10} /> Đã xác minh
                       </span>
@@ -388,7 +389,7 @@ export function ProductDetail() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">{supplier.companyName}</h3>
-                    {supplier.isVerified && <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"><ShieldCheck size={12} /> Đã xác minh</span>}
+                    {supplier.status === SupplierStatus.VERIFIED && <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"><ShieldCheck size={12} /> Đã xác minh</span>}
                     <p className="text-sm text-slate-500 mt-2 leading-relaxed">{supplier.description || 'Chưa có mô tả.'}</p>
                   </div>
                 </div>
