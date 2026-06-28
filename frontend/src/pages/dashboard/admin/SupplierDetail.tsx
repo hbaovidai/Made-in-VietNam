@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
-import { SupplierStatus } from '@/src/lib/enums';
+import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye, X} from 'lucide-react';
+import { BusinessType, SupplierStatus } from '@/src/lib/enums';
 
 // TODO: THIS FILE NEEDS FIXING
 
@@ -11,25 +11,26 @@ export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
 // ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
   id?: string,
-  userId?:string,
   companyName?:     string
   slug?:            string
-  logo?:            string,
-  banner?:          string,
   description?:     string,
-  businessType?:    string,
+  businesstype?:    BusinessType,
   yearEstablished?: number,
   employeeCount?:   string,
-  address?:             string,
   city?:                string,
   province?:            string,
+  ward?: string,
+  streetAddress?:             string,
   website?:             string,
   taxCode?:             string,
-  companyEmail?:        string,
-  companyPhone?:        string,
-  legalRepresentative?: string,
-  businessLicenseUrl?:  string,
-  identityCardUrl?:     string,
+  accountHolderFullName?: string
+  accountHolderEmail?:        string,
+  accountHolderPhone?:        string,
+  accountHolderGovId?:     string,
+  accountHolderGovIdUrl?:     string[],
+  legalRepName?: string,
+  legalRepPhone?: string,
+  businessLicenseUrl?:  string[],
   status?: SupplierStatus,
   createdAt?: Date,
   updatedAt?: Date,

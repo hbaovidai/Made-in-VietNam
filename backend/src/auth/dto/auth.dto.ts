@@ -6,16 +6,23 @@ import {
   IsString,
   MinLength,
   IsIn,
+  IsNumber,
+  IsArray,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+import {
+  Role, SupplierAccountHolderRole, SupplierStatus, SupplierType, UserStatus,
+  BusinessType
+} from '@prisma/client';
+import { DefaultValuePipe } from '@nestjs/common';
 
-export class RegisterDto {
+export class UserRegisterDto {
   @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6, { message: 'Mật khẩu tối thiểu 6 ký tự' })
-  password: string;
+  password?: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -24,14 +31,13 @@ export class RegisterDto {
   @IsIn(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' })
   role: Role;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   phone?: string;
 
-  // Only for SUPPLIER
-  @IsString()
   @IsOptional()
-  companyName?: string;
+  @IsEnum(UserStatus)
+  status?: UserStatus;
 }
 
 export class LoginDto {
@@ -82,4 +88,28 @@ export class GoogleLoginDto {
   @IsString()
   @IsOptional()
   picture?: string;
+}
+
+// ---- supplier auth dto ---- //
+export class SupplierRegisterDto {
+  @IsString() accountHolderGovId: string;
+  @IsString() accountHolderPhone: string;
+  @IsString() accountHolderEmail: string;
+  @IsArray() accountHolderGovIdUrl: string[];
+  @IsArray() authorizationLetterUrl: string[];
+  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
+
+  @IsString() companyName: string;
+  @IsEnum(BusinessType) businessType: BusinessType;
+  @IsArray() businessLicenseUrl: string[];
+
+  @IsString() taxCode: string;
+  @IsString() legalRepName: string;
+  @IsString() legalRepPhone: string;
+  @IsString() province: string;
+  @IsString() district: string;
+  @IsString() ward: string;
+  @IsString() streetAddress: string;
+
+  @IsEnum(SupplierType) supplierType: SupplierType;
 }

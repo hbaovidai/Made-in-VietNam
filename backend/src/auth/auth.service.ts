@@ -9,11 +9,14 @@ import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  RegisterDto,
+  UserRegisterDto,
   LoginDto,
   UpdateProfileDto,
   ChangePasswordDto,
+  SupplierRegisterDto,
 } from './dto/auth.dto';
+import { Role } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +44,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async register(dto: RegisterDto) {
+  async register(dto: UserRegisterDto) {
     // Check if email already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -52,7 +55,9 @@ export class AuthService {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    let passwordHash: string =
+      (dto.password)? await bcrypt.hash(dto.password, 10) :
+                      await bcrypt.hash(uuidv4(), 10) ;
 
     // Create user
     const user = await this.prisma.user.create({
@@ -60,8 +65,9 @@ export class AuthService {
         email: dto.email,
         passwordHash,
         fullName: dto.fullName,
-        role: dto.role,
+        role: Role.BUYER,
         phone: dto.phone,
+        status: dto.status,
       },
       select: {
         id: true,
@@ -73,23 +79,6 @@ export class AuthService {
       },
     });
 
-    let supplierProfile = null;
-    // If supplier, create supplier profile
-    if (dto.role === 'SUPPLIER' && dto.companyName) {
-      const slug = dto.companyName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      supplierProfile = await this.prisma.supplier.create({
-        data: {
-          userId: user.id,
-          companyName: dto.companyName,
-          slug: `${slug}-${Date.now()}`,
-        },
-      });
-    }
-
     // Tạo JWT token
     const token = this.generateToken(user);
 
@@ -100,6 +89,42 @@ export class AuthService {
         supplier: supplierProfile,
       },
       token,
+    };
+  }
+  
+  async supplierRegister(dto: SupplierRegisterDto) {
+    return {
+      message: "data received",
+      success: true
+    }
+
+    const userDto = new UserRegisterDto();
+    userDto.email = dto.accountHolderEmail;
+    userDto.phone = dto.accountHolderPhone;
+    userDto.fullName = dto.companyName;
+    userDto.role = Role.SUPPLIER;
+
+    const { user } = await this.register(userDto);
+
+    // TODO: prevent duplicate suppliers
+
+    const slug = dto.companyName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    // maybe do some logging later, idk bro
+    const supplierProfile = await this.prisma.supplier.create({
+      data: {
+        userId: user.id,
+        slug: `${slug}-${Date.now()}`,
+        ...dto
+      },
+    });
+
+    return {
+      message: 'Đã tạo hồ sơ nhà cung cấp',
+      success: true,
     };
   }
 

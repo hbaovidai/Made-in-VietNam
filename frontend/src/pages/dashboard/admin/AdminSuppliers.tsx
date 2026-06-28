@@ -3,24 +3,83 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
-import { SupplierDetail, SupplierProfile, SupplierVerificationStatus } from './SupplierDetail';
+import { SupplierDetail, SupplierProfile, } from './SupplierDetail';
 import { api } from '../../../lib/api'
+import { SupplierStatus } from '@/src/lib/enums';
 
 const PROFILES_PER_PAGE: number = 20;
 
-// ─── Types ───────────────────────────────────────────────────
-export type SupplierStatus = 'VERIFIED' | 'UNVERIFIED';
-
 // ─── Status helpers ──────────────────────────────────────────
 const statusLabels: Record<SupplierStatus, string> = {
-  VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh', 
+  VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh',
+  SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
 const statusBadgeClass: Record<SupplierStatus, string> = {
   VERIFIED: 'wp-badge-approved', UNVERIFIED: 'wp-badge-rejected',
+  SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
 const statusColor: Record<SupplierStatus, string> = {
   VERIFIED: '#00a32a', UNVERIFIED: '#d63638',
+  SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
+
+// --- Components ----------------------------------------------
+function Row( {
+  selectedIds, supp, 
+  navigate, toggleOne,
+  handleStatusChange, handleDelete,
+} ) {
+  return (
+    <tr key={supp.id}>
+      <td><input type="checkbox" checked={selectedIds.includes(supp.id)} onChange={() => toggleOne(supp.id)} /></td>
+      <td>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+
+          <div>
+            <span className="wp-row-title"
+              onClick={() => navigate(`#`)}
+              // onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
+            >
+              {supp.companyName}
+            </span>
+            <div className="wp-row-actions">
+              {supp.status === SupplierStatus.UNVERIFIED && (
+                <>
+                <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, SupplierStatus.VERIFIED)}>
+                  Xác minh
+                </button>
+                <span className="sep">|</span>
+                <button className="delete" onClick={() => handleDelete(supp.id)}>
+                  Xoá
+                </button>
+                </>
+              )}
+
+              {supp.status === SupplierStatus.VERIFIED && (
+                <>
+                <button className="delete" onClick={() => handleStatusChange(supp.id, SupplierStatus.UNVERIFIED)}>
+                  Huỷ xác minh
+                </button>
+                <span className="sep">|</span>
+                <button className="delete" onClick={() => handleDelete(supp.id)}>
+                  Xóa
+                </button>
+                </>
+              )}
+
+            </div>
+          </div>
+        </div>
+      </td>
+
+      <td>{supp.accountHolderPhone}</td>
+      <td><a href={`mailto:${supp.accountHolderEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{supp.accountHolderEmail}</a></td>
+      <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{supp.taxCode}</td>
+      <td><span className={`wp-badge ${statusBadgeClass[supp.status]}`}>{statusLabels[supp.status]}</span></td>
+
+    </tr>
+  );
+}
 
 // ═════════════════════════════════════════════════════════════
 export function AdminSuppliers() {
@@ -34,7 +93,9 @@ export function AdminSuppliers() {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`
         }, 
-        params: {limit, page},
+        params: {
+          limit, page,
+        },
       }
     );
 
@@ -75,24 +136,28 @@ export function AdminSuppliers() {
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
     ALL: suppliers.length,
-    VERIFIED: suppliers.filter(a => a.verificationStatus === 'VERIFIED').length,
-    UNVERIFIED: suppliers.filter(a => a.verificationStatus === 'UNVERIFIED').length,
+    [SupplierStatus.VERIFIED]: suppliers.filter(a => a.status === SupplierStatus.VERIFIED).length,
+    [SupplierStatus.SUSPENDED]: suppliers.filter(a => a.status === SupplierStatus.SUSPENDED).length,
   }), [suppliers]);
+
   const statusFilterLabels: Record<string, string> = {
-    ALL: 'Tất cả', VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh',
+    ALL: 'Tất cả',
+    [SupplierStatus.VERIFIED]: 'Đã xác minh',
+    [SupplierStatus.SUSPENDED]: 'Đã ban',
   };
 
   const toggleAll = () => {
     if (selectedIds.length === suppliers.length) setSelectedIds([]);
     else setSelectedIds(suppliers.map(a => a.id));
   };
+
   const toggleOne = (id: string) => {
     setSelectedIds(
       prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
-  const handleStatusChange = async (id: string, newStatus: SupplierVerificationStatus) => {
+  const handleStatusChange = async (id: string, newStatus: SupplierStatus) => {
     // handle later
     return;
     try {
@@ -104,7 +169,7 @@ export function AdminSuppliers() {
       if (result.data?.success === true) {
         setSuppliers(prev => prev.map(a => {
           if (a.id !== id) return a;
-          const updates: Partial<SupplierProfile> = { verificationStatus: newStatus };
+          const updates: Partial<SupplierProfile> = { status: newStatus };
           return { ...a, ...updates };
         }));
       }
@@ -132,15 +197,15 @@ export function AdminSuppliers() {
 
   const filtered = suppliers.filter(supp => {
     var matchStatus: boolean = true
-    if (filterStatus !== "ALL") matchStatus = supp.verificationStatus == filterStatus;
+    if (filterStatus !== 'ALL') matchStatus = supp.status == filterStatus;
 
     var matchSearch: boolean = true;
     if (search) {
       const term = search.toLowerCase()
-      const matchRepName = supp.companyName.toLowerCase().includes(term);
+      const matchRepName = supp.legalRepName.toLowerCase().includes(term);
       const matchCompanyName = supp.companyName.toLowerCase().includes(term);
-      const matchEmail = supp.companyEmail.toLowerCase().includes(term);
-      const matchPhone = supp.companyPhone.toLowerCase().includes(term);
+      const matchEmail = supp.accountHolderEmail.toLowerCase().includes(term);
+      const matchPhone = supp.accountHolderPhone.toLowerCase().includes(term);
       matchSearch = matchCompanyName || matchEmail || matchPhone ||
         matchRepName;
     }
@@ -172,8 +237,8 @@ export function AdminSuppliers() {
     return (
       <SupplierDetail
         request={filtered[0]}
-        onApprove={(id) => { handleStatusChange(id, 'VERIFIED'); navigate('/dashboard/admin/suppliers'); }}
-        onReject={(id) => { handleStatusChange(id, 'UNVERIFIED'); navigate('/dashboard/admin/suppliers'); }}
+        onApprove={(id) => { handleStatusChange(id, SupplierStatus.VERIFIED); navigate('/dashboard/admin/suppliers'); }}
+        onReject={(id) => { handleStatusChange(id, SupplierStatus.UNVERIFIED); navigate('/dashboard/admin/suppliers'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/suppliers'); }}
         onBack={() => navigate('/dashboard/admin/suppliers')}
       />
@@ -228,56 +293,10 @@ export function AdminSuppliers() {
               {filtered.length === 0 ? (
                 <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không tìm thấy ứng viên nào.</td></tr>
               ) : filtered.map(supp => (
-                <tr key={supp.id}>
-                  <td><input type="checkbox" checked={selectedIds.includes(supp.id)} onChange={() => toggleOne(supp.id)} /></td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-
-                      <div>
-                        <span className="wp-row-title"
-                          onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
-                        >
-                          {supp.companyName}
-                        </span>
-                        <div className="wp-row-actions">
-                          <button onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}>Xem hồ sơ</button>
-                          {supp.verificationStatus === 'UNVERIFIED' && (
-                            <>
-                            <span className="sep">|</span>
-                            <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, 'VERIFIED')}>
-                              Xác minh
-                            </button>
-                            <span className="sep">|</span>
-                            <button className="delete" onClick={() => handleDelete(supp.id)}>
-                              Xoá
-                            </button>
-                            </>
-                          )}
-
-                          {supp.verificationStatus === 'VERIFIED' && (
-                            <>
-                            <span className="sep">|</span>
-                            <button className="delete" onClick={() => handleStatusChange(supp.id, 'UNVERIFIED')}>
-                              Huỷ xác minh
-                            </button>
-                            <span className="sep">|</span>
-                            <button className="delete" onClick={() => handleDelete(supp.id)}>
-                              Xóa
-                            </button>
-                            </>
-                          )}
-
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td>{supp.companyPhone}</td>
-                  <td><a href={`mailto:${supp.companyEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{supp.companyEmail}</a></td>
-                  <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{supp.taxCode}</td>
-                  <td><span className={`wp-badge ${statusBadgeClass[supp.verificationStatus]}`}>{statusLabels[supp.verificationStatus]}</span></td>
-
-                </tr>
+                <Row selectedIds={selectedIds} supp={supp}
+                  handleStatusChange={handleStatusChange} handleDelete={handleDelete}
+                  navigate={navigate} toggleOne={toggleOne}
+                />
               ))}
             </tbody>
           </table>
