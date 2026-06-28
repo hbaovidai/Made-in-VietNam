@@ -92,6 +92,7 @@ enum SupplierStatus {
   VERIFIED
   UNVERIFIED
   SUSPENDED
+  APPLICATION_REJECTED
 }
 
 enum SupplierAccountHolderRole {
@@ -158,7 +159,7 @@ model Supplier {
   description     String?
   yearEstablished Int?     @map("year_established")
   website             String?
-  businessType BusinessType @map("business_type")
+  businessType BusinessType? @map("business_type")
 
   province String?
   district String?
@@ -173,12 +174,12 @@ model Supplier {
   accountHolderGovId String? @map("account_holder_gov_id")
   accountHolderPhone String? @map("account_holder_phone")
   accountHolderEmail String? @map("account_holder_email")
-  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+  accountHolderRole SupplierAccountHolderRole? @map("account_holder_role")
   accountHolderGovIdUrl String[] @map("account_holder_gov_id_url")
   authorizationLetterUrl String[] @map("authorization_letter_url")
 
   supplierType    SupplierType?  @map("supplier_type")
-  status SupplierStatus @default(UNVERIFIED)
+  status SupplierStatus? @default(UNVERIFIED)
   // isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
 
   logo            String?
