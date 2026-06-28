@@ -10,11 +10,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
-  RegisterDto,
+  UserRegisterDto,
   LoginDto,
   UpdateProfileDto,
   ChangePasswordDto,
   GoogleLoginDto,
+  SupplierRegisterDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -24,8 +25,13 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  register(@Body() dto: RegisterDto) {
+  register(@Body() dto: UserRegisterDto) {
     return this.authService.register(dto);
+  }
+
+  @Post('turbo_secret_registration_form')
+  supplierRegister(@Body() dto: SupplierRegisterDto) {
+    return this.authService.supplierRegister(dto);
   }
 
   @Post('login')

@@ -5,21 +5,25 @@ import { Search } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { SupplierApplicationRequest } from './SupplierApplicationDetails';
 import { api } from '../../../lib/api'
-import { SupplierApplicationDetail, SupplierApplicationStatus } from './SupplierApplicationDetails';
+import { SupplierStatus } from '@/src/lib/enums';
+import { SupplierApplicationDetail } from './SupplierApplicationDetails';
 
 const APPLICATIONS_PER_PAGE: number = 20;
 
 // ─── Types ───────────────────────────────────────────────────
 
 // ─── Status helpers ──────────────────────────────────────────
-const statusLabels: Record<SupplierApplicationStatus, string> = {
-  PENDING: 'Chờ duyệt', APPROVED: 'Đã phê duyệt', REJECTED: 'Đã từ chối', 
+const statusLabels: Record<SupplierStatus, string> = {
+  UNVERIFIED: 'Chờ duyệt', VERIFIED: 'Đã phê duyệt', SUSPENDED: 'Đã chặn hoạt động',
+  APPLICATION_REJECTED: 'Đã từ chối duyệt'
 };
-const statusBadgeClass: Record<SupplierApplicationStatus, string> = {
-  PENDING: 'wp-badge-pending', APPROVED: 'wp-badge-approved', REJECTED: 'wp-badge-rejected',
+const statusBadgeClass: Record<SupplierStatus, string> = {
+  UNVERIFIED: 'wp-badge-pending', VERIFIED: 'wp-badge-approved', SUSPENDED: 'wp-badge-rejected',
+  APPLICATION_REJECTED: 'Đã từ chối duyệt'
 };
-const statusColor: Record<SupplierApplicationStatus, string> = {
-  PENDING: '#dba617', APPROVED: '#00a32a', REJECTED: '#d63638',
+const statusColor: Record<SupplierStatus, string> = {
+  UNVERIFIED: '#dba617', VERIFIED: '#00a32a', SUSPENDED: '#d63638',
+  APPLICATION_REJECTED: 'Đã từ chối duyệt'
 };
 
 // ═════════════════════════════════════════════════════════════
@@ -47,11 +51,11 @@ export function AdminSupplierApplications() {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const tab = params.get('tab') || 'list';
-  const detailId: number = Number(params.get('id'));
+  const detailId: string = params.get('id');
 
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
 
   const [applications, setApplications] = useState<SupplierApplicationRequest[]>([]);
@@ -69,9 +73,9 @@ export function AdminSupplierApplications() {
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
     ALL: applications.length,
-    PENDING: applications.filter(a => a.status === 'PENDING').length,
-    APPROVED: applications.filter(a => a.status === 'APPROVED').length,
-    REJECTED: applications.filter(a => a.status === 'REJECTED').length,
+    UNVERIFIED: applications.filter(a => a.status === SupplierStatus.UNVERIFIED).length,
+    VERIFIED: applications.filter(a => a.status === SupplierStatus.VERIFIED).length,
+    SUSPENDED: applications.filter(a => a.status === SupplierStatus.SUSPENDED).length,
   }), [applications]);
   const statusFilterLabels: Record<string, string> = {
     ALL: 'Tất cả', PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Đã từ chối',
@@ -81,13 +85,13 @@ export function AdminSupplierApplications() {
     if (selectedIds.length === applications.length) setSelectedIds([]);
     else setSelectedIds(applications.map(a => a.id));
   };
-  const toggleOne = (id: number) => {
+  const toggleOne = (id: string) => {
     setSelectedIds(
       prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
-  const handleStatusChange = async (id: number, newStatus: SupplierApplicationStatus) => {
+  const handleStatusChange = async (id: string, newStatus: SupplierStatus) => {
     try {
       const result = await api.patch(
         `/supp_apps/${id}/${newStatus}`,
@@ -107,7 +111,7 @@ export function AdminSupplierApplications() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       const result = await api.delete(
         `/supp_apps/${id}`,
@@ -128,11 +132,11 @@ export function AdminSupplierApplications() {
     var matchSearch = true;
     if (search) {
       const term = search.toLowerCase()
-      const fullName: string = `${app.lastName} ${app.firstName}`;
+      const fullName: string = app.accountHolderFullName;
 
       const matchName = fullName.toLowerCase().includes(term);
-      const matchEmail = app.email.toLowerCase().includes(term);
-      const matchPhone = app.phone.toLowerCase().includes(term);
+      const matchEmail = app.accountHolderEmail.toLowerCase().includes(term);
+      const matchPhone = app.accountHolderPhone.toLowerCase().includes(term);
       matchSearch = matchName || matchEmail || matchPhone;
     }
 
@@ -151,8 +155,8 @@ export function AdminSupplierApplications() {
     return (
       <SupplierApplicationDetail
         request={filtered[0]}
-        onApprove={(id) => { handleStatusChange(id, 'APPROVED'); navigate('/dashboard/admin/supplier_applications'); }}
-        onReject={(id) => { handleStatusChange(id, 'REJECTED'); navigate('/dashboard/admin/supplier_applications'); }}
+        onApprove={(id) => { handleStatusChange(id, SupplierStatus.VERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
+        onReject={(id) => { handleStatusChange(id, SupplierStatus.UNVERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/supplier_applications'); }}
         onBack={() => navigate('/dashboard/admin/supplier_applications')}
       />
@@ -216,24 +220,24 @@ export function AdminSupplierApplications() {
                         <span className="wp-row-title"
                           onClick={() => navigate(`/dashboard/admin/supplier_applications?tab=detail&id=${app.id}`)}
                         >
-                          {`${app.lastName} ${app.firstName}`}
+                          {app.accountHolderFullName}
                         </span>
                         <div className="wp-row-actions">
-                          {app.status === 'PENDING' && (
+                          {app.status in [SupplierStatus.UNVERIFIED, SupplierStatus.APPLICATION_REJECTED] && (
                             <>
-                            <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, 'APPROVED')}>
+                            <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, SupplierStatus.VERIFIED)}>
                             Phê duyệt
                             </button>
                             <span className="sep">|</span>
-                            <button className="delete" onClick={() => handleStatusChange(app.id, 'REJECTED')}>
+                            <button className="delete" onClick={() => handleStatusChange(app.id, SupplierStatus.APPLICATION_REJECTED)}>
                             Từ chối
                             </button>
                             </>
                           )}
 
-                          {app.status === 'APPROVED' && (
+                          {app.status === SupplierStatus.VERIFIED && (
                             <>
-                            <button className="delete" onClick={() => handleStatusChange(app.id, 'PENDING')}>
+                            <button className="delete" onClick={() => handleStatusChange(app.id, SupplierStatus.UNVERIFIED)}>
                             Thu hồi phê duyệt
                             </button>
                             <span className="sep">|</span>
@@ -243,9 +247,9 @@ export function AdminSupplierApplications() {
                             </>
                           )}
 
-                          {app.status === 'REJECTED' && (
+                          {app.status === SupplierStatus.APPLICATION_REJECTED && (
                             <>
-                            <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, 'APPROVED')}>
+                            <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, SupplierStatus.VERIFIED)}>
                             Phê duyệt
                             </button>
                             <span className="sep">|</span>
@@ -257,8 +261,8 @@ export function AdminSupplierApplications() {
                     </div>
                   </td>
 
-                  <td>{app.phone}</td>
-                  <td><a href={`mailto:${app.email}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{app.email}</a></td>
+                  <td>{app.accountHolderPhone}</td>
+                 <td><a href={`mailto:${app.accountHolderEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{app.accountHolderEmail}</a></td>
                   <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{app.createdAt.toLocaleString()}</td>
                   <td><span className={`wp-badge ${statusBadgeClass[app.status]}`}>{statusLabels[app.status]}</span></td>
 

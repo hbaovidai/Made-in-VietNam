@@ -2,28 +2,26 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
 import { api } from '../../../lib/api';
-
-export type ApplicantRole = 'OWNER' | 'EMPLOYEE' | 'MANAGER' | 'LEGAL_REP';
-export type SupplierApplicationStatus = 'PENDING' | 'REJECTED' | 'APPROVED';
+import { SupplierAccountHolderRole, SupplierStatus } from '@/src/lib/enums';
 
 export interface SupplierApplicationRequest {
-  id: number;
-  firstName: string;
-  lastName: string;
-  applicantRole: ApplicantRole;
-  govId: string;
-  govIdPicUrl: string[];
-  email: string;
-  phone: string;
+  id: string;
+  accountHolderFullName: string;
+  accountHolderRole: SupplierAccountHolderRole;
+  accountHolderGovId: string;
+  accountHolderGovIdUrl: string[];
+  accountHolderEmail: string;
+  accountHolderPhone: string;
+  companyName: string;
   createdAt: Date;
-  status: SupplierApplicationStatus;
+  status: SupplierStatus;
 }
 
 interface Props {
   request: SupplierApplicationRequest;
-  onApprove: (id: number) => void;
-  onReject: (id: number, reason: string) => void;
-  onDelete: (id: number) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string, reason: string) => void;
+  onDelete: (id: string) => void;
   onBack: () => void;
 }
 
@@ -40,7 +38,7 @@ const grid2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 
 export function SupplierApplicationDetail(
   { request, onApprove, onReject, onDelete, onBack }: Props
 ) {
-  const fullName = `${request.lastName} ${request.firstName}`;
+  const fullName = request.accountHolderFullName;
 
   return (
   <div> 
@@ -66,23 +64,23 @@ export function SupplierApplicationDetail(
         <div>Họ và Tên</div> <div>{fullName}</div>
       </div>
       <div>
-        <div>Sđt</div> <div>{request.phone}</div>
+        <div>Sđt</div> <div>{request.accountHolderPhone}</div>
       </div>
       <div>
-        <div>Email</div> <div>{request.email}</div>
+        <div>Email</div> <div>{request.accountHolderEmail}</div>
       </div>
 
       <div>
-        <div>Mã CCCD/Passport</div> <div>{request.govId}</div>
+        <div>Mã CCCD/Passport</div> <div>{request.accountHolderGovId}</div>
       </div>
       <div>
         <div>Link ảnh CCCD/Passport</div>
         <>
-          {request.govIdPicUrl.length == 0 ? (
+          {request.accountHolderGovIdUrl.length == 0 ? (
             <div>Không có link</div>
           ) : (
             <div>
-            {request.govIdPicUrl.map((url, index) => (
+            {request.accountHolderGovIdUrl.map((url, index) => (
               <a key={index} href={url} rel="noreferrer">{url}</a>
             ))}
             </div>
@@ -99,7 +97,7 @@ export function SupplierApplicationDetail(
     </div>
 
     {/* Quyết định — chỉ hiện khi pending */}
-    {request.status === 'PENDING' && (
+    {request.status === SupplierStatus.UNVERIFIED && (
       <div className="flex flex-col gap-4 max-w-md mx-auto p-4 bg-white rounded-lg shadow">
         <h3 className="text-lg font-semibold text-gray-800">
           Quyết định

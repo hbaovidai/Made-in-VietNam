@@ -1,30 +1,31 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
-import { SupplierStatus } from '@/src/lib/enums';
+import { BusinessType, SupplierStatus } from '@/src/lib/enums';
 
 // ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
   id?: string,
-  userId?:string,
   companyName?:     string
   slug?:            string
-  logo?:            string,
-  banner?:          string,
   description?:     string,
-  businesstype?:    string,
+  businesstype?:    BusinessType,
   yearEstablished?: number,
   employeeCount?:   string,
-  address?:             string,
   city?:                string,
   province?:            string,
+  ward?: string,
+  streetAddress?:             string,
   website?:             string,
   taxCode?:             string,
-  companyEmail?:        string,
-  companyPhone?:        string,
-  legalRepresentative?: string,
-  businessLicenseUrl?:  string,
-  identityCardUrl?:     string,
+  accountHolderFullName?: string
+  accountHolderEmail?:        string,
+  accountHolderPhone?:        string,
+  accountHolderGovId?:     string,
+  accountHolderGovIdUrl?:     string[],
+  legalRepName?: string,
+  legalRepPhone?: string,
+  businessLicenseUrl?:  string[],
   status?: SupplierStatus,
   createdAt?: Date,
   updatedAt?: Date,

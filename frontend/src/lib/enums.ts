@@ -76,6 +76,7 @@ export enum SupplierStatus {
   VERIFIED = 'VERIFIED',
   UNVERIFIED = 'UNVERIFIED',
   SUSPENDED = 'SUSPENDED',
+  APPLICATION_REJECTED = 'APPLICATION_REJECTED'
 };
 
 export enum SupplierAccountHolderRole {
@@ -85,3 +86,15 @@ export enum SupplierAccountHolderRole {
   EMPLOYEE = 'EMPLOYEE',
 };
 
+export enum SupplierType {
+  NORMAL = "NORMAL",
+  MANUFACTURER = "MANUFACTURER",
+  EXPORTER = "EXPORTER",
+  MANU_EXPORT = 'MANU_EXPORT'
+};
+
+export enum BusinessType {
+  PRIVATE = 'PRIVATE',
+  LIMITED_LIABILITY = 'LIMITED_LIABILITY',
+  JOINT_STOCK = 'JOINT_STOCK'
+};
