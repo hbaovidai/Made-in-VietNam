@@ -101,6 +101,19 @@ enum SupplierAccountHolderRole {
   EMPLOYEE
 }
 
+enum SupplierType {
+  NORMAL
+  MANUFACTURER
+  EXPORTER
+  MANU_EXPORT
+}
+
+enum BusinessType {
+  PRIVATE
+  LIMITED_LIABILITY
+  JOINT_STOCK
+}
+
 // ==================== USERS ====================
 
 model User {
@@ -145,30 +158,34 @@ model Supplier {
   description     String?
   yearEstablished Int?     @map("year_established")
   website             String?
+  businessType BusinessType @map("business_type")
 
   province String?
   district String?
-  address             String?
+  ward String?
+  streetAddress             String? @map("address")
 
   taxCode             String?  @map("tax_code")
   legalRepName String? @map("legal_rep_name")
   legalRepPhone String? @map("legal_rep_phone")
   
+  accountHolderFullName String? @map("account_holder_fullname")
   accountHolderGovId String? @map("account_holder_gov_id")
-  accountHolderGovIdUrl String[] @map("account_holder_gov_id_url")
   accountHolderPhone String? @map("account_holder_phone")
   accountHolderEmail String? @map("account_holder_email")
   accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+  accountHolderGovIdUrl String[] @map("account_holder_gov_id_url")
+  authorizationLetterUrl String[] @map("authorization_letter_url")
 
-  supplierType    String?  @map("supplier_type")
-  status SupplierStatus
-  isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
+  supplierType    SupplierType?  @map("supplier_type")
+  status SupplierStatus @default(UNVERIFIED)
+  // isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
 
   logo            String?
   banner          String?
 
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime? @default(now()) @map("created_at")
+  updatedAt       DateTime? @updatedAt @map("updated_at")
 
   // Relations
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
