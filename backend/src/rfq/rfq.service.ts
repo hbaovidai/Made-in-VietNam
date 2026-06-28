@@ -11,6 +11,7 @@ import {
   UpdateQuoteStatusDto,
 } from './dto/rfq.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { SupplierStatus } from '@prisma/client';
 
 @Injectable()
 export class RfqService {
@@ -44,7 +45,7 @@ export class RfqService {
     // Notify all verified suppliers about the new RFQ
     try {
       const verifiedSuppliers = await this.prisma.supplier.findMany({
-        where: { verificationStatus: 'VERIFIED' },
+        where: { status : SupplierStatus.VERIFIED },
         select: { userId: true },
       });
       if (verifiedSuppliers.length > 0) {

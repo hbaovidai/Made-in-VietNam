@@ -4,12 +4,7 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SupplierApplicationDto } from "./dto/supplier_app.dto";
-import { Prisma } from "@prisma/client";
-
-export enum SupplierApplicationStatus {
-  PENDING = 'PENDING', REJECTED = 'REJECTED',
-  APPROVED = 'APPROVED',
-} 
+import { Prisma, SupplierStatus } from "@prisma/client";
 
 @Injectable()
 export class SupplierApplicationService {
@@ -18,11 +13,12 @@ export class SupplierApplicationService {
   async findAll(query: SupplierApplicationDto) {
     const {page = 1, limit = 20} = query;
 
-    const where: Prisma.SupplierApplicationWhereInput = {};
+    const where: Prisma.SupplierWhereInput = {};
     if (query.id) where.id = query.id;
+    where.status = {in: [SupplierStatus.UNVERIFIED, SupplierStatus.APPLICATION_REJECTED]};
 
     const [supp_apps, total_apps_count] = await Promise.all([
-      this.prisma.supplierApplication.findMany({
+      this.prisma.supplier.findMany({
         take: limit,
         skip: (page-1) * limit,
         orderBy: {
@@ -30,7 +26,7 @@ export class SupplierApplicationService {
         },
         where: where
       }),
-      this.prisma.supplierApplication.count({}),
+      this.prisma.supplier.count({ where }),
     ]);
 
     return {
@@ -42,9 +38,9 @@ export class SupplierApplicationService {
     }
   }
 
-  async deleteApplication(id: number) {
+  async deleteApplication(id: string) {
     try {
-      const deleted_user = await this.prisma.supplierApplication.delete({
+      const deleted_user = await this.prisma.supplier.delete({
         where: {
           id: id
         }
@@ -70,9 +66,9 @@ export class SupplierApplicationService {
     }
   }
 
-  async updateApplicationStatus(id: number, newStatus: SupplierApplicationStatus) {
+  async updateApplicationStatus(id: string, newStatus: SupplierStatus) {
     try {
-      const updatedApplication = await this.prisma.supplierApplication.update({
+      const updatedApplication = await this.prisma.supplier.update({
         data: {
           status: newStatus
         },

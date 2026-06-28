@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, SupplierStatus } from '@prisma/client';
 
 @Injectable()
 export class SuppliersService {
@@ -20,9 +20,7 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
-    if (
-      query.verificationStatus
-    ) where.verificationStatus = query.verificationStatus;
+    where.status = { in: [SupplierStatus.VERIFIED, SupplierStatus.SUSPENDED] };
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
@@ -66,6 +64,7 @@ export class SuppliersService {
     return supplier;
   }
 
+  // todo: check this shit out, there's the thing over on supplier application service
   async createProfile(userId: string, data: any) {
     const existing = await this.prisma.supplier.findUnique({ where: { userId } });
     if (existing) {
@@ -84,10 +83,10 @@ export class SuppliersService {
         businessType: data.businessType,
         description: data.description,
         taxCode: data.taxCode,
-        companyEmail: data.companyEmail,
-        companyPhone: data.companyPhone,
-        legalRepresentative: data.legalRepresentative,
+        legalRepName: data.legalRepName,
+        legalRepPhone: data.legalRepPhone,
         slug: `${slug}-${Date.now()}`,
+        accountHolderRole: data.accountHolderRole,
       },
     });
     return supplier;
@@ -155,8 +154,7 @@ export class SuppliersService {
     const updated = await this.prisma.supplier.update({
       where: { id: supplierId },
       data: { 
-        isVerified,
-        verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED'
+        status: isVerified ? SupplierStatus.VERIFIED : SupplierStatus.UNVERIFIED
       }
     });
 

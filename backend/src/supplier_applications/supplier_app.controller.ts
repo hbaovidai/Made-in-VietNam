@@ -18,7 +18,7 @@ import { SupplierApplicationDto } from './dto/supplier_app.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { SupplierApplicationStatus } from './supplier_app.service';
+import { SupplierStatus } from '@prisma/client';
 
 @Controller('supp_apps')
 export class SupplierApplicationController {
@@ -38,7 +38,7 @@ export class SupplierApplicationController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Delete('/:id')
-  async deleteApplication(@Param('id', ParseIntPipe) id: number) {
+  async deleteApplication(@Param('id', ParseIntPipe) id: string) {
     const result: any = await this.suppAppService.deleteApplication(id);
     return result;
   }
@@ -48,8 +48,8 @@ export class SupplierApplicationController {
   @Roles('ADMIN')
   @Patch('/:id/:newStatus')
   async updateApplicationStatus(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('newStatus', new ParseEnumPipe(SupplierApplicationStatus)) newStatus: SupplierApplicationStatus
+    @Param('id', ParseIntPipe) id: string,
+    @Param('newStatus', new ParseEnumPipe(SupplierStatus)) newStatus: SupplierStatus
   ) {
     const result: any = await this.suppAppService.updateApplicationStatus(id, newStatus);
     return result;
