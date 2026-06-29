@@ -13,7 +13,7 @@ export function AdminContacts() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await api.get('/contact', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const res = await api.get('/contact', { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
         setContacts(res.data || []);
       } catch { /* silent */ }
       setLoading(false);
@@ -32,7 +32,7 @@ export function AdminContacts() {
 
   const handleMarkRead = async (id: string) => {
     try {
-      await api.patch(`/contact/${id}/read`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.patch(`/contact/${id}/read`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       setContacts(prev => prev.map(c => c.id === id ? { ...c, isRead: true } : c));
     } catch { /* silent */ }
   };
@@ -40,7 +40,7 @@ export function AdminContacts() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Delete this feedback?')) return;
     try {
-      await api.delete(`/contact/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.delete(`/contact/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       setContacts(prev => prev.filter(c => c.id !== id));
     } catch { /* silent */ }
   };

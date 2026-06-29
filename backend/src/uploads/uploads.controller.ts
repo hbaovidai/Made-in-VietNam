@@ -20,7 +20,10 @@ const storage = memoryStorage();
 // Chỉ cho phép ảnh
 const imageFileFilter = (_req: any, file: any, cb: any) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
-    return cb(new BadRequestException('Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF)'), false);
+    return cb(
+      new BadRequestException('Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF)'),
+      false,
+    );
   }
   cb(null, true);
 };
@@ -35,7 +38,9 @@ export class UploadsController {
     if (url && key) {
       this.supabase = createClient(url, key);
     } else {
-      console.warn('⚠ SUPABASE_URL / SUPABASE_SERVICE_KEY chưa được cấu hình. Upload sẽ không hoạt động.');
+      console.warn(
+        '⚠ SUPABASE_URL / SUPABASE_SERVICE_KEY chưa được cấu hình. Upload sẽ không hoạt động.',
+      );
     }
   }
 
@@ -54,7 +59,9 @@ export class UploadsController {
     }
 
     if (!this.supabase) {
-      throw new InternalServerErrorException('Chưa cấu hình Supabase Storage. Vui lòng liên hệ Admin.');
+      throw new InternalServerErrorException(
+        'Chưa cấu hình Supabase Storage. Vui lòng liên hệ Admin.',
+      );
     }
 
     const uniqueName = `${randomUUID()}${extname(file.originalname)}`;

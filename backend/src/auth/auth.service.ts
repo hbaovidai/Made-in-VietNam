@@ -97,7 +97,7 @@ export class AuthService {
       message: 'Đăng ký thành công',
       user: {
         ...user,
-        supplier: supplierProfile
+        supplier: supplierProfile,
       },
       token,
     };
@@ -142,7 +142,12 @@ export class AuthService {
     };
   }
 
-  async googleLogin(data: { credential: string; email: string; name: string; picture?: string }) {
+  async googleLogin(data: {
+    credential: string;
+    email: string;
+    name: string;
+    picture?: string;
+  }) {
     const { email, name, picture } = data;
 
     if (!email) {
@@ -154,7 +159,13 @@ export class AuthService {
       where: { email },
       include: {
         supplier: {
-          select: { id: true, companyName: true, slug: true, isVerified: true, verificationStatus: true },
+          select: {
+            id: true,
+            companyName: true,
+            slug: true,
+            isVerified: true,
+            verificationStatus: true,
+          },
         },
       },
     });
@@ -175,7 +186,13 @@ export class AuthService {
         },
         include: {
           supplier: {
-            select: { id: true, companyName: true, slug: true, isVerified: true, verificationStatus: true },
+            select: {
+              id: true,
+              companyName: true,
+              slug: true,
+              isVerified: true,
+              verificationStatus: true,
+            },
           },
         },
       });

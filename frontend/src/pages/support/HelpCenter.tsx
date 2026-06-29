@@ -2,22 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, ChevronRight, Rocket, FileSearch, ShieldCheck, Lock, User, Plus, Minus, MessageCircle, Mail } from 'lucide-react';
+import { useAppearance } from '../../contexts/AppearanceContext';
+import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import { api } from '../../lib/api';
 
 export function HelpCenter() {
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const { settings: ctx } = useAppearance();
 
-  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({
-    contact_email: 'contact@vieproduct.com',
-  });
-
-  useEffect(() => {
-    api.get('/settings')
-      .then(res => setSiteSettings(prev => ({ ...prev, ...res.data })))
-      .catch(() => {/* use defaults */});
-  }, []);
+  const siteSettings = {
+    contact_email: ctx.contact_email || 'contact@vieproduct.com',
+  };
 
   const categories = [
     { icon: <Rocket size={20} className="text-white" />, title: t('cat_getting_started'), desc: t('cat_getting_started_desc'), href: '/help/user-guide' },
@@ -28,16 +25,33 @@ export function HelpCenter() {
     { icon: <User size={20} className="text-white" />, title: t('cat_for_suppliers'), desc: t('cat_for_suppliers_desc'), href: '/help/seller-guide' },
   ];
 
-  const faqs = [
-    { q: t('faq_q1'), a: t('faq_a1') },
-    { q: t('faq_q2'), a: t('faq_a2') },
-    { q: t('faq_q3'), a: t('faq_a3') },
-    { q: t('faq_q4'), a: t('faq_a4') },
-    { q: t('faq_q5'), a: t('faq_a5') },
-  ];
+  // Fetch active FAQs from database
+  const [faqs, setFaqs] = useState<{ q: string; a: string }[]>([]);
+  const isVi = t('home') === 'Trang chủ';
+
+  useEffect(() => {
+    api.get('/faqs').then(res => {
+      const items = res.data || [];
+      setFaqs(items.map((f: any) => ({
+        q: isVi ? (f.questionVi || f.questionEn) : (f.questionEn || f.questionVi),
+        a: isVi ? (f.answerVi || f.answerEn) : (f.answerEn || f.answerVi),
+      })));
+    }).catch(() => {
+      // Fallback to hardcoded translations if API fails
+      setFaqs([
+        { q: t('faq_q1'), a: t('faq_a1') },
+        { q: t('faq_q2'), a: t('faq_a2') },
+        { q: t('faq_q3'), a: t('faq_a3') },
+        { q: t('faq_q4'), a: t('faq_a4') },
+        { q: t('faq_q5'), a: t('faq_a5') },
+      ]);
+    });
+  }, [isVi]);
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <BreadcrumbBar items={[{ label: t('help_center') }]} />
+
       {/* Premium Header */}
       <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 pt-4 pb-12 relative overflow-hidden">
         {/* Soft Glows */}
@@ -46,12 +60,6 @@ export function HelpCenter() {
         <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-viet-gold/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
 
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-6">
-            <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
-            <ChevronRight size={12} className="text-slate-400" />
-            <span className="text-primary font-bold">{t('help_center')}</span>
-          </nav>
 
           <div className="max-w-4xl space-y-4 flex flex-col items-center text-center mx-auto mt-2">
             <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight drop-shadow-sm pb-1">

@@ -22,9 +22,7 @@ import { SupplierApplicationStatus } from './supplier_app.service';
 
 @Controller('supp_apps')
 export class SupplierApplicationController {
-  constructor(
-    private readonly suppAppService: SupplierApplicationService
-  ) {}
+  constructor(private readonly suppAppService: SupplierApplicationService) {}
 
   // Protected: Chỉ cho phép admin xem
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,9 +47,13 @@ export class SupplierApplicationController {
   @Patch('/:id/:newStatus')
   async updateApplicationStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Param('newStatus', new ParseEnumPipe(SupplierApplicationStatus)) newStatus: SupplierApplicationStatus
+    @Param('newStatus', new ParseEnumPipe(SupplierApplicationStatus))
+    newStatus: SupplierApplicationStatus,
   ) {
-    const result: any = await this.suppAppService.updateApplicationStatus(id, newStatus);
+    const result: any = await this.suppAppService.updateApplicationStatus(
+      id,
+      newStatus,
+    );
     return result;
   }
 }

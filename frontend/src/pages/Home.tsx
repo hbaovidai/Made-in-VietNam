@@ -7,32 +7,41 @@ import { CategorySidebar } from '../components/CategorySidebar';
 import { SEOHead } from '../components/SEOHead';
 import { SupplierCard } from '../components/SupplierCard';
 import { api } from '../lib/api';
+import { useAppearance } from '../contexts/AppearanceContext';
 
 export function Home() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [products, setProducts] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const heroSlides = [
-    {
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200",
-      title: t('vietnam_top_hub'),
-      desc: t('source_directly')
-    },
-    {
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200",
-      title: t('top_ranking_products', 'Sản phẩm Xếp hạng Hàng đầu'),
-      desc: t('verified_status_desc', 'Những nhà cung cấp và sản phẩm đã qua kiểm định')
-    },
-    {
-      image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200",
-      title: t('secured_trading_service'),
-      desc: t('trade_assurance', 'Đảm bảo giao dịch an toàn xuyên quốc gia')
-    }
+  const { settings: siteSettings } = useAppearance();
+
+
+
+  const defaultSlides = [
+    { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: t('vietnam_top_hub'), desc: t('source_directly'), link: '/products' },
+    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('top_ranking_products', 'Sản phẩm Xếp hạng Hàng đầu'), desc: t('verified_status_desc', 'Những nhà cung cấp và sản phẩm đã qua kiểm định'), link: '/products' },
+    { image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200", title: t('secured_trading_service'), desc: t('trade_assurance', 'Đảm bảo giao dịch an toàn xuyên quốc gia'), link: '/products' },
   ];
+
+  const heroSlides = React.useMemo(() => {
+    try {
+      const banners = JSON.parse(siteSettings.hero_banners || '[]');
+      const validBanners = banners.filter((b: any) => b.image && b.image.trim() !== '' && b.status !== 'hidden');
+      if (validBanners.length > 0) {
+        return validBanners.map((b: any) => ({
+          image: b.image,
+          title: i18n.language?.startsWith('vi') ? (b.titleVi || b.title) : b.title,
+          desc: i18n.language?.startsWith('vi') ? (b.descVi || b.desc) : b.desc,
+          link: b.link || '/products',
+        }));
+      }
+    } catch {}
+    return defaultSlides;
+  }, [siteSettings.hero_banners, i18n.language]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -110,6 +119,7 @@ export function Home() {
       />
 
       {/* ═══ Top Section: Categories + Banner + Recommendations ═══ */}
+
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="flex gap-4 h-[220px] sm:h-[320px] lg:h-[450px]">
           {/* Left Column: Categories Sidebar — Desktop only */}
@@ -230,7 +240,9 @@ export function Home() {
         </div>
       </section>
 
+
       {/* ═══ Featured Categories ═══ */}
+
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="bg-white border border-slate-200">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex justify-between items-center">
@@ -295,7 +307,9 @@ export function Home() {
         </div>
       </section>
 
+
       {/* ═══ Verified Suppliers Section ═══ */}
+
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="bg-white border border-slate-200">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex justify-between items-center">
@@ -338,6 +352,7 @@ export function Home() {
           </div>
         </div>
       </section>
+
 
       {/* ═══ RFQ Section ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">

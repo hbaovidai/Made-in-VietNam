@@ -7,9 +7,11 @@ import { NavDropdown } from './NavDropdown';
 import { MegaMenu } from './MegaMenu';
 import { CategoryMegaMenu } from './categories/CategoryMegaMenu';
 import { useAuth } from '../contexts/AuthContext';
+import { useAppearance } from '../contexts/AppearanceContext';
 import { api } from '../lib/api';
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { settings: siteSettings } = useAppearance();
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(false);
@@ -211,21 +213,34 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
+    <header className="sticky top-0 z-50 w-full shadow-sm" style={{
+      backgroundColor: 'var(--color-header-bg, #fff)',
+      color: 'var(--color-header-text, #1E293B)',
+      ...(siteSettings.header_banner_image ? {
+        backgroundImage: `url(${siteSettings.header_banner_image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      } : {}),
+    }}>
       {/* ═══ Main Header ═══ */}
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
         <div className="flex justify-between items-center gap-3 sm:gap-8">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
+            {siteSettings.site_logo ? (
+              <img src={siteSettings.site_logo} alt="Logo" style={{ maxHeight: 40, maxWidth: 160 }} />
+            ) : (
             <div className="flex flex-col">
               <div className="flex items-center">
                 <span className="text-lg sm:text-2xl font-black text-primary tracking-tighter">VIE</span>
                 <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">product</span>
               </div>
               <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                {t('b2b_global_trade')}
+                {siteSettings.site_slogan || siteSettings.site_slogan_vi || t('b2b_global_trade')}
               </span>
             </div>
+            )}
           </Link>
 
           {/* ═══ Desktop Search Bar ═══ */}

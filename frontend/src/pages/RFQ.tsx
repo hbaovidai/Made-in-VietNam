@@ -4,6 +4,7 @@ import { Send, Info, CheckCircle2, ShieldCheck, Zap, Clock, MessageSquare, Loade
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
+import { BreadcrumbBar } from '../components/BreadcrumbBar';
 
 export function RFQ() {
   const { t } = useTranslation();
@@ -113,6 +114,8 @@ export function RFQ() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <BreadcrumbBar items={[{ label: t('rfq_title') }]} />
+
       {/* Header */}
       <div className="bg-gradient-to-b from-blue-50/50 to-transparent border-b border-slate-200 py-10 relative overflow-hidden">
         {/* Soft Glows */}

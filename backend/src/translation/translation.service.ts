@@ -16,7 +16,9 @@ export class TranslationService {
    * @param fields - Object { fieldName: vietnameseText }
    * @returns Object { fieldName: englishText }
    */
-  async translateFields(fields: Record<string, string>): Promise<Record<string, string>> {
+  async translateFields(
+    fields: Record<string, string>,
+  ): Promise<Record<string, string>> {
     if (!this.apiKey) {
       this.logger.warn('GEMINI_API_KEY not configured — skipping translation');
       return {};
@@ -62,12 +64,15 @@ ${JSON.stringify(toTranslate, null, 2)}`;
 
       if (!res.ok) {
         const errText = await res.text();
-        this.logger.error(`Gemini API error ${res.status}: ${errText.substring(0, 200)}`);
+        this.logger.error(
+          `Gemini API error ${res.status}: ${errText.substring(0, 200)}`,
+        );
         return {};
       }
 
-      const data = await res.json() as any;
-      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const data = await res.json();
+      const responseText =
+        data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
       // Clean markdown fences if present
       const cleaned = responseText
@@ -76,7 +81,9 @@ ${JSON.stringify(toTranslate, null, 2)}`;
         .trim();
 
       const parsed = JSON.parse(cleaned);
-      this.logger.log(`Translated ${Object.keys(parsed).length} fields successfully`);
+      this.logger.log(
+        `Translated ${Object.keys(parsed).length} fields successfully`,
+      );
       return parsed;
     } catch (error) {
       this.logger.error(`Translation failed: ${error.message}`);
@@ -87,7 +94,10 @@ ${JSON.stringify(toTranslate, null, 2)}`;
   /**
    * Dịch tên và mô tả sản phẩm
    */
-  async translateProduct(name: string, description?: string): Promise<{ nameEn?: string; descriptionEn?: string }> {
+  async translateProduct(
+    name: string,
+    description?: string,
+  ): Promise<{ nameEn?: string; descriptionEn?: string }> {
     const fields: Record<string, string> = { name };
     if (description) fields.description = description;
 

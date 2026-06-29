@@ -24,6 +24,9 @@ import { AuditLogModule } from './audit-log/audit-log.module';
 import { TranslationModule } from './translation/translation.module';
 import { SettingsModule } from './settings/settings.module';
 import { SupplierApplicationModule } from './supplier_applications/supplier_app.module';
+import { FaqModule } from './faqs/faq.module';
+import { JsonStorageModule } from './json-storage/json-storage.module';
+import { LegalModule } from './legal/legal.module';
 
 @Module({
   imports: [
@@ -39,10 +42,12 @@ import { SupplierApplicationModule } from './supplier_applications/supplier_app.
       },
     }),
     // Anti-Scraping Firewall: Giới hạn 60 request / 1 phút / 1 IP
-    ThrottlerModule.forRoot([{
-      ttl: 60000,   // 1 phút (milliseconds)
-      limit: 60,    // Tối đa 60 requests
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 phút (milliseconds)
+        limit: 60, // Tối đa 60 requests
+      },
+    ]),
     PrismaModule,
     AuthModule,
     CategoriesModule,
@@ -63,6 +68,9 @@ import { SupplierApplicationModule } from './supplier_applications/supplier_app.
     AuditLogModule,
     TranslationModule,
     SettingsModule,
+    FaqModule,
+    JsonStorageModule,
+    LegalModule,
   ],
   providers: [
     // Kích hoạt Rate Limiter toàn cục cho mọi endpoint

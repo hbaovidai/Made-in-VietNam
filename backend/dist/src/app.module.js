@@ -32,6 +32,10 @@ const orders_module_1 = require("./orders/orders.module");
 const audit_log_module_1 = require("./audit-log/audit-log.module");
 const translation_module_1 = require("./translation/translation.module");
 const settings_module_1 = require("./settings/settings.module");
+const supplier_app_module_1 = require("./supplier_applications/supplier_app.module");
+const faq_module_1 = require("./faqs/faq.module");
+const json_storage_module_1 = require("./json-storage/json-storage.module");
+const legal_module_1 = require("./legal/legal.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -49,15 +53,18 @@ exports.AppModule = AppModule = __decorate([
                     },
                 },
             }),
-            throttler_1.ThrottlerModule.forRoot([{
+            throttler_1.ThrottlerModule.forRoot([
+                {
                     ttl: 60000,
                     limit: 60,
-                }]),
+                },
+            ]),
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             categories_module_1.CategoriesModule,
             products_module_1.ProductsModule,
             suppliers_module_1.SuppliersModule,
+            supplier_app_module_1.SupplierApplicationModule,
             rfq_module_1.RfqModule,
             messages_module_1.MessagesModule,
             batches_module_1.BatchesModule,
@@ -72,6 +79,9 @@ exports.AppModule = AppModule = __decorate([
             audit_log_module_1.AuditLogModule,
             translation_module_1.TranslationModule,
             settings_module_1.SettingsModule,
+            faq_module_1.FaqModule,
+            json_storage_module_1.JsonStorageModule,
+            legal_module_1.LegalModule,
         ],
         providers: [
             {

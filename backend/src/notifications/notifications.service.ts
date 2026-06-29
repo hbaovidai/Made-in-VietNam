@@ -34,7 +34,13 @@ export class NotificationsService {
   }
 
   // Internal trigger
-  async createNotification(data: { userId: string, title: string, message: string, type?: string, link?: string }) {
+  async createNotification(data: {
+    userId: string;
+    title: string;
+    message: string;
+    type?: string;
+    link?: string;
+  }) {
     return this.prisma.notification.create({
       data: {
         userId: data.userId,
@@ -42,22 +48,30 @@ export class NotificationsService {
         message: data.message,
         type: data.type || 'info',
         link: data.link,
-      }
+      },
     });
   }
 
   // Trigger to ALL admins
-  async notifyAdmins(data: { title: string, message: string, type?: string, link?: string }) {
-    const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN', status: 'ACTIVE' }, select: { id: true } });
+  async notifyAdmins(data: {
+    title: string;
+    message: string;
+    type?: string;
+    link?: string;
+  }) {
+    const admins = await this.prisma.user.findMany({
+      where: { role: 'ADMIN', status: 'ACTIVE' },
+      select: { id: true },
+    });
     if (admins.length > 0) {
       await this.prisma.notification.createMany({
-        data: admins.map(a => ({
+        data: admins.map((a) => ({
           userId: a.id,
           title: data.title,
           message: data.message,
-          type: data.type || 'info',   
+          type: data.type || 'info',
           link: data.link,
-        }))
+        })),
       });
     }
   }

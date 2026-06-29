@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader';
+import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import { ShieldCheck, Clock, CreditCard, Truck, Award, CheckCircle2, ChevronRight, MessageSquare } from 'lucide-react';
 
 export function TradeAssurance() {
@@ -24,6 +25,7 @@ export function TradeAssurance() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <BreadcrumbBar items={[{ label: t('services'), href: '/services' }, { label: t('trade_assurance') }]} />
       <PageHeader 
         title={t('trade_assurance_title')} 
         description={t('trade_assurance_desc')}

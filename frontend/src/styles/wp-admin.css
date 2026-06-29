@@ -370,6 +370,7 @@
 .wp-badge-suspended { background: #fce8e8; color: #d63638; }
 .wp-badge-approved { background: #e6f7e9; color: #00a32a; }
 .wp-badge-rejected { background: #fce8e8; color: #d63638; }
+.wp-badge-info { background: #e3f2fd; color: #1565c0; }
 
 /* Pagination */
 .wp-pagination {
@@ -660,7 +661,7 @@
 
 /* ═══ Breadcrumb ═══ */
 .wp-breadcrumb {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 6px;
   font-size: 12px;

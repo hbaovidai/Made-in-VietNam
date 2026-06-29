@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 
@@ -129,7 +134,9 @@ export class OrdersService {
             product: { select: { id: true, slug: true, images: true } },
           },
         },
-        buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+        buyer: {
+          select: { id: true, fullName: true, email: true, phone: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -145,8 +152,17 @@ export class OrdersService {
             product: { select: { id: true, slug: true, images: true } },
           },
         },
-        supplier: { select: { id: true, companyName: true, logo: true, companyPhone: true } },
-        buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+        supplier: {
+          select: {
+            id: true,
+            companyName: true,
+            logo: true,
+            companyPhone: true,
+          },
+        },
+        buyer: {
+          select: { id: true, fullName: true, email: true, phone: true },
+        },
       },
     });
 
@@ -158,7 +174,7 @@ export class OrdersService {
     const supplier = await this.prisma.supplier.findUnique({
       where: { userId },
     });
-    
+
     if (order.buyerId !== userId && supplier?.id !== order.supplierId) {
       throw new ForbiddenException('Bạn không có quyền xem đơn hàng này');
     }
@@ -176,7 +192,9 @@ export class OrdersService {
       where: { userId },
     });
     if (!supplier) {
-      throw new ForbiddenException('Chỉ nhà cung cấp mới có thể cập nhật trạng thái');
+      throw new ForbiddenException(
+        'Chỉ nhà cung cấp mới có thể cập nhật trạng thái',
+      );
     }
 
     const order = await this.prisma.order.findUnique({
@@ -214,7 +232,9 @@ export class OrdersService {
     }
 
     if (order.status !== 'PENDING') {
-      throw new BadRequestException('Chỉ có thể hủy đơn hàng đang chờ xác nhận');
+      throw new BadRequestException(
+        'Chỉ có thể hủy đơn hàng đang chờ xác nhận',
+      );
     }
 
     return this.prisma.order.update({
@@ -225,7 +245,11 @@ export class OrdersService {
 
   // ===== ADMIN =====
 
-  async getAllOrders(query: { page?: number; limit?: number; status?: string }) {
+  async getAllOrders(query: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  }) {
     const page = Number(query.page) || 1;
     const limit = Math.min(Number(query.limit) || 50, 100);
     const skip = (page - 1) * limit;
@@ -244,7 +268,9 @@ export class OrdersService {
               product: { select: { id: true, slug: true, images: true } },
             },
           },
-          buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+          buyer: {
+            select: { id: true, fullName: true, email: true, phone: true },
+          },
           supplier: { select: { id: true, companyName: true, logo: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -254,11 +280,16 @@ export class OrdersService {
       this.prisma.order.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async adminUpdateOrderStatus(orderId: string, status: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
     if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
 
     const updateData: any = { status };

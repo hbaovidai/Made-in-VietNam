@@ -12,21 +12,23 @@ export declare class CartController {
                 };
             } & {
                 id: string;
-                slug: string;
-                description: string | null;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 createdAt: Date;
                 updatedAt: Date;
+                slug: string;
+                description: string | null;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                supplierId: string;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
                 unit: string;
                 moq: number;
                 moqUnit: string;
+                categoryId: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -41,8 +43,6 @@ export declare class CartController {
                 attributes: import("@prisma/client/runtime/library").JsonValue | null;
                 customizations: string[];
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
             };
         } & {
             id: string;
@@ -53,8 +53,8 @@ export declare class CartController {
         })[];
     } & {
         id: string;
-        userId: string;
         updatedAt: Date;
+        userId: string;
     }>;
     addItem(req: any, body: {
         productId: string;
@@ -69,21 +69,23 @@ export declare class CartController {
                 };
             } & {
                 id: string;
-                slug: string;
-                description: string | null;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 createdAt: Date;
                 updatedAt: Date;
+                slug: string;
+                description: string | null;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                supplierId: string;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
                 unit: string;
                 moq: number;
                 moqUnit: string;
+                categoryId: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -98,8 +100,6 @@ export declare class CartController {
                 attributes: import("@prisma/client/runtime/library").JsonValue | null;
                 customizations: string[];
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
             };
         } & {
             id: string;
@@ -110,8 +110,8 @@ export declare class CartController {
         })[];
     } & {
         id: string;
-        userId: string;
         updatedAt: Date;
+        userId: string;
     }>;
     updateItem(req: any, itemId: string, body: {
         quantity: number;
@@ -125,21 +125,23 @@ export declare class CartController {
                 };
             } & {
                 id: string;
-                slug: string;
-                description: string | null;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 createdAt: Date;
                 updatedAt: Date;
+                slug: string;
+                description: string | null;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                supplierId: string;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
                 unit: string;
                 moq: number;
                 moqUnit: string;
+                categoryId: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -154,8 +156,6 @@ export declare class CartController {
                 attributes: import("@prisma/client/runtime/library").JsonValue | null;
                 customizations: string[];
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
             };
         } & {
             id: string;
@@ -166,8 +166,8 @@ export declare class CartController {
         })[];
     } & {
         id: string;
-        userId: string;
         updatedAt: Date;
+        userId: string;
     }>;
     removeItem(req: any, itemId: string): Promise<{
         items: ({
@@ -179,21 +179,23 @@ export declare class CartController {
                 };
             } & {
                 id: string;
-                slug: string;
-                description: string | null;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 createdAt: Date;
                 updatedAt: Date;
+                slug: string;
+                description: string | null;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                supplierId: string;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
                 unit: string;
                 moq: number;
                 moqUnit: string;
+                categoryId: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -208,8 +210,6 @@ export declare class CartController {
                 attributes: import("@prisma/client/runtime/library").JsonValue | null;
                 customizations: string[];
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
             };
         } & {
             id: string;
@@ -220,8 +220,8 @@ export declare class CartController {
         })[];
     } & {
         id: string;
-        userId: string;
         updatedAt: Date;
+        userId: string;
     }>;
     clearCart(req: any): Promise<{
         message: string;

@@ -20,20 +20,36 @@ let CategoriesService = class CategoriesService {
         this.prisma = prisma;
         this.translationService = translationService;
     }
-    async findAll() {
-        return this.prisma.category.findMany({
-            where: { parentId: null },
-            include: {
-                children: {
-                    orderBy: { name: 'asc' },
-                    include: {
-                        _count: { select: { products: true } },
-                    },
-                },
-                _count: { select: { products: true, children: true } },
-            },
-            orderBy: { name: 'asc' },
+    buildTree(categories) {
+        const map = new Map();
+        categories.forEach((category) => {
+            map.set(category.id, {
+                ...category,
+                children: [],
+            });
         });
+        const roots = [];
+        categories.forEach((category) => {
+            const node = map.get(category.id);
+            if (!category.parentId) {
+                roots.push(node);
+            }
+            else {
+                const parent = map.get(category.parentId);
+                if (parent) {
+                    parent.children.push(node);
+                }
+            }
+        });
+        return roots;
+    }
+    async findAll() {
+        const categories = await this.prisma.category.findMany({
+            orderBy: {
+                name: 'asc',
+            },
+        });
+        return this.buildTree(categories);
     }
     async findBySlug(slug) {
         const category = await this.prisma.category.findUnique({
@@ -71,7 +87,8 @@ let CategoriesService = class CategoriesService {
                 parentId: dto.parentId || null,
             },
         });
-        this.translationService.translateCategory(dto.name)
+        this.translationService
+            .translateCategory(dto.name)
             .then(async (nameEn) => {
             if (nameEn) {
                 await this.prisma.category.update({
@@ -80,7 +97,7 @@ let CategoriesService = class CategoriesService {
                 });
             }
         })
-            .catch(err => console.error('Auto-translate category failed:', err));
+            .catch((err) => console.error('Auto-translate category failed:', err));
         return category;
     }
     async update(id, dto) {
@@ -102,7 +119,8 @@ let CategoriesService = class CategoriesService {
             data.parentId = dto.parentId || null;
         const updated = await this.prisma.category.update({ where: { id }, data });
         if (dto.name) {
-            this.translationService.translateCategory(dto.name)
+            this.translationService
+                .translateCategory(dto.name)
                 .then(async (nameEn) => {
                 if (nameEn) {
                     await this.prisma.category.update({
@@ -111,7 +129,7 @@ let CategoriesService = class CategoriesService {
                     });
                 }
             })
-                .catch(err => console.error('Auto-translate category update failed:', err));
+                .catch((err) => console.error('Auto-translate category update failed:', err));
         }
         return updated;
     }

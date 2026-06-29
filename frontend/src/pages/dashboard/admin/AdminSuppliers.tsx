@@ -32,7 +32,7 @@ export function AdminSuppliers() {
       '/suppliers',
       { 
         headers: {
-          Authorization: `${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`
         }, 
         params: {limit, page},
       }
@@ -51,13 +51,17 @@ export function AdminSuppliers() {
   const tab = params.get('tab') || 'list';
   const detailId: string = params.get('id');
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(params.get('search') || '');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
 
   const [suppliers, setSuppliers] = useState<SupplierProfile[]>([]);
   const [suppliersMeta, setSuppliersMeta] = useState<any>({total: 0});
+
+  useEffect(() => {
+    setSearch(params.get('search') || '');
+  }, [location.search]);
   useEffect(() => {
     const loadSuppliers = async () => {
       const data = await fetchSuppliers(page, PROFILES_PER_PAGE);
@@ -94,7 +98,7 @@ export function AdminSuppliers() {
     try {
       const result = await api.patch(
         `/suppliers/${id}`,
-        { headers: {Authorization: `${localStorage.getItem('token')}`} }
+        { headers: {Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`} }
       );
 
       if (result.data?.success === true) {
@@ -116,7 +120,7 @@ export function AdminSuppliers() {
     try {
       const result = await api.delete(
         `/supp_apps/${id}`,
-        { headers: {Authorization: `${localStorage.getItem('token')}`} }
+        { headers: {Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`} }
       );
       if (result.data?.success === true) {
         setSuppliers(prev => prev.filter(a => a.id !== id));
@@ -143,6 +147,18 @@ export function AdminSuppliers() {
 
     if (matchSearch && matchStatus) return supp;
   });
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newParams = new URLSearchParams(location.search);
+    if (search.trim()) {
+      newParams.set('search', search.trim());
+    } else {
+      newParams.delete('search');
+    }
+    newParams.set('page', '1');
+    navigate({ pathname: location.pathname, search: newParams.toString() });
+  };
 
   // ═══════════════════════════════════════════════════════════
   // TAB: Detail
@@ -193,10 +209,10 @@ export function AdminSuppliers() {
             <select className="wp-bulk-select"><option>Thao tác hàng loạt</option><option>Xác minh</option><option>Huỷ xác minh</option><option>Xóa</option></select>
             <button className="wp-btn">Áp dụng</button>
           </div>
-          <div className="wp-table-search">
+          <form onSubmit={handleSearchSubmit} className="wp-table-search">
             <input type="text" placeholder="Tìm kiếm nhà cung cấp" value={search} onChange={e => { setSearch(e.target.value); setPage(page); }} />
-            <button className="wp-btn"><Search size={14} /> Tìm kiếm</button>
-          </div>
+            <button type="submit" className="wp-btn"><Search size={14} /> Tìm kiếm</button>
+          </form>
         </div>
 
         <div className="wp-table-wrap">
@@ -219,14 +235,15 @@ export function AdminSuppliers() {
 
                       <div>
                         <span className="wp-row-title"
-                          onClick={() => navigate(`#`)}
-                          // onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
+                          onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
                         >
                           {supp.companyName}
                         </span>
                         <div className="wp-row-actions">
+                          <button onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}>Xem hồ sơ</button>
                           {supp.verificationStatus === 'UNVERIFIED' && (
                             <>
+                            <span className="sep">|</span>
                             <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, 'VERIFIED')}>
                               Xác minh
                             </button>
@@ -239,6 +256,7 @@ export function AdminSuppliers() {
 
                           {supp.verificationStatus === 'VERIFIED' && (
                             <>
+                            <span className="sep">|</span>
                             <button className="delete" onClick={() => handleStatusChange(supp.id, 'UNVERIFIED')}>
                               Huỷ xác minh
                             </button>

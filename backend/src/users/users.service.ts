@@ -16,9 +16,16 @@ export class UsersService {
         where,
         orderBy: { createdAt: 'desc' },
         select: {
-          id: true, email: true, fullName: true, role: true, 
-          phone: true, status: true, createdAt: true,
-          supplier: { select: { id: true, companyName: true, isVerified: true } }
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+          phone: true,
+          status: true,
+          createdAt: true,
+          supplier: {
+            select: { id: true, companyName: true, isVerified: true },
+          },
         },
         skip: (+page - 1) * +limit,
         take: +limit,
@@ -28,7 +35,12 @@ export class UsersService {
 
     return {
       data: users,
-      meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / +limit) }
+      meta: {
+        total,
+        page: +page,
+        limit: +limit,
+        totalPages: Math.ceil(total / +limit),
+      },
     };
   }
 
@@ -36,24 +48,51 @@ export class UsersService {
   async toggleUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED') {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('Người dùng không tồn tại');
-    if (user.role === 'ADMIN') throw new NotFoundException('Không thể khóa tài khoản Admin');
+    if (user.role === 'ADMIN')
+      throw new NotFoundException('Không thể khóa tài khoản Admin');
 
     const updated = await this.prisma.user.update({
       where: { id: userId },
       data: { status },
-      select: { id: true, email: true, fullName: true, role: true, status: true },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        status: true,
+      },
+    });
+    return updated;
+  }
+
+  // ADMIN: Cập nhật vai trò người dùng
+  async updateUserRole(userId: string, role: 'ADMIN' | 'SUPPLIER' | 'BUYER') {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại');
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        status: true,
+      },
     });
     return updated;
   }
 
   // ADMIN: Xóa người dùng hoàn toàn
   async deleteUser(userId: string) {
-    const user = await this.prisma.user.findUnique({ 
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { supplier: { select: { id: true } } },
     });
     if (!user) throw new NotFoundException('Người dùng không tồn tại');
-    if (user.role === 'ADMIN') throw new NotFoundException('Không thể xóa tài khoản Admin');
+    if (user.role === 'ADMIN')
+      throw new NotFoundException('Không thể xóa tài khoản Admin');
 
     // Xóa tất cả dữ liệu liên quan trước
     await this.prisma.$transaction([

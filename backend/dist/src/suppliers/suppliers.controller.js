@@ -41,7 +41,9 @@ let SuppliersController = class SuppliersController {
         return this.suppliersService.getStats(id);
     }
     async getAnalytics(id, userId) {
-        const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
         if (!supplier || supplier.id !== id) {
             throw new common_1.ForbiddenException('Bạn chỉ có thể xem phân tích của chính mình');
         }
@@ -97,8 +99,6 @@ let SuppliersController = class SuppliersController {
 };
 exports.SuppliersController = SuppliersController;
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
@@ -106,8 +106,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Get)(':slug'),
     __param(0, (0, common_1.Param)('slug')),
     __metadata("design:type", Function),

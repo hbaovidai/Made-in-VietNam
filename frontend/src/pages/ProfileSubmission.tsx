@@ -35,7 +35,7 @@ export function ProfileSubmission() {
     */
     const [position, setPosition] = useState("");
     return (
-        <AuthLayout>
+        <AuthLayout rightActionText="Dashboard" rightActionLink="/dashboard/buyer">
 
         <div className="w-full max-w-[520px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
 

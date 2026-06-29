@@ -53,9 +53,13 @@ export class SuppliersController {
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
   ) {
-    const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { userId },
+    });
     if (!supplier || supplier.id !== id) {
-      throw new ForbiddenException('Bạn chỉ có thể xem phân tích của chính mình');
+      throw new ForbiddenException(
+        'Bạn chỉ có thể xem phân tích của chính mình',
+      );
     }
     return this.suppliersService.getAnalytics(id);
   }
@@ -64,10 +68,7 @@ export class SuppliersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPPLIER')
   @Post('me')
-  async createMyProfile(
-    @Body() dto: any,
-    @CurrentUser('id') userId: string,
-  ) {
+  async createMyProfile(@Body() dto: any, @CurrentUser('id') userId: string) {
     return this.suppliersService.createProfile(userId, dto);
   }
 
@@ -76,7 +77,7 @@ export class SuppliersController {
   @Roles('ADMIN')
   @Put(':id/verify')
   async verifySupplier(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body('isVerified') isVerified: boolean,
     @CurrentUser('id') adminId: string,
   ) {

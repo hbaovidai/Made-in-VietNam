@@ -51,6 +51,26 @@ export class UsersController {
     });
     return result;
   }
+ 
+  // PROTECTED ADMIN: Cập nhật vai trò người dùng
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Put(':id/role')
+  async updateUserRole(
+    @Param('id') id: string,
+    @Body('role') role: 'ADMIN' | 'SUPPLIER' | 'BUYER',
+    @CurrentUser('id') adminId: string,
+  ) {
+    const result = await this.usersService.updateUserRole(id, role);
+    await this.auditLogService.log({
+      userId: adminId,
+      action: 'UPDATE_USER_ROLE',
+      targetType: 'User',
+      targetId: id,
+      targetName: `${result.fullName || result.email} to ${role}`,
+    });
+    return result;
+  }
 
   // PROTECTED ADMIN: Xóa người dùng
   @UseGuards(JwtAuthGuard, RolesGuard)

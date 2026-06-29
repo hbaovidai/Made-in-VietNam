@@ -161,7 +161,7 @@ model Supplier {
   businessLicenseUrl  String?  @map("business_license_url")
   identityCardUrl     String?  @map("identity_card_url")
   verificationStatus  SupplierVerificationStatus?   @default(UNVERIFIED) @map("verification_status")
-  isVerified           Boolean?   @default(dbgenerated("(verification_status = 'VERIFIED')")) @map("is_verified")
+  isVerified           Boolean?   @default(false) @map("is_verified")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -178,7 +178,6 @@ model Supplier {
   // Indexes for fast queries
   @@index([verificationStatus])        // Admin verification filter
   @@index([companyName])               // Search by company name
-  @@index([industries])
   @@index([updatedAt])
   @@map("suppliers")
 }
@@ -195,7 +194,6 @@ model SupplierApplication {
   phone           String
   status          SupplierApplicationStatus @default(PENDING)
 
-  @@map([lastName, firstName])
   @@map("supplier_applications")
 }
 
@@ -676,3 +674,39 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+// ==================== FAQs ====================
+
+model Faq {
+  id          String   @id @default(cuid())
+  questionVi  String   @map("question_vi")
+  answerVi    String   @map("answer_vi")
+  questionEn  String   @map("question_en")
+  answerEn    String   @map("answer_en")
+  sortOrder   Int      @default(0) @map("sort_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("faqs")
+}
+
+// ==================== LEGAL SECTIONS ====================
+
+model LegalSection {
+  id        String   @id @default(cuid())
+  pageKey   String   @default("terms") @map("page_key")
+  titleVi   String   @map("title_vi")
+  titleEn   String   @map("title_en")
+  slug      String
+  contentVi String   @map("content_vi") @db.Text
+  contentEn String   @map("content_en") @db.Text
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([pageKey, slug])
+  @@map("legal_sections")
+}
+

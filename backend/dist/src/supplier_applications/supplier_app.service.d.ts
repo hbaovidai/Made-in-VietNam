@@ -1,5 +1,5 @@
-import { PrismaService } from "src/prisma/prisma.service";
-import { SupplierApplicationDto } from "./dto/supplier_app.dto";
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SupplierApplicationDto } from './dto/supplier_app.dto';
 export declare enum SupplierApplicationStatus {
     PENDING = "PENDING",
     REJECTED = "REJECTED",
@@ -11,10 +11,10 @@ export declare class SupplierApplicationService {
     findAll(query: SupplierApplicationDto): Promise<{
         data: {
             id: number;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
+            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
+            createdAt: Date;
             lastName: string;
             firstName: string;
             applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
@@ -32,10 +32,10 @@ export declare class SupplierApplicationService {
         success: boolean;
         deletedUser: {
             id: number;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
+            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
+            createdAt: Date;
             lastName: string;
             firstName: string;
             applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
@@ -52,10 +52,10 @@ export declare class SupplierApplicationService {
         success: boolean;
         updatedApplication: {
             id: number;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
+            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
+            createdAt: Date;
             lastName: string;
             firstName: string;
             applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;

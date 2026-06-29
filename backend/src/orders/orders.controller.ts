@@ -40,7 +40,10 @@ export class OrdersController {
     @Param('id') id: string,
     @Body() body: { status: string },
   ) {
-    const result = await this.ordersService.adminUpdateOrderStatus(id, body.status);
+    const result = await this.ordersService.adminUpdateOrderStatus(
+      id,
+      body.status,
+    );
     await this.auditLogService.log({
       userId: req.user.id,
       action: 'UPDATE_ORDER_STATUS',
@@ -57,7 +60,8 @@ export class OrdersController {
   @Post()
   async createOrder(
     @Request() req: any,
-    @Body() body: {
+    @Body()
+    body: {
       recipientName: string;
       recipientPhone: string;
       shippingAddress: string;
@@ -87,7 +91,8 @@ export class OrdersController {
   async updateStatus(
     @Request() req: any,
     @Param('id') id: string,
-    @Body() body: { status: 'CONFIRMED' | 'PROCESSING' | 'SHIPPING' | 'DELIVERED' },
+    @Body()
+    body: { status: 'CONFIRMED' | 'PROCESSING' | 'SHIPPING' | 'DELIVERED' },
   ) {
     return this.ordersService.updateOrderStatus(req.user.id, id, body.status);
   }

@@ -1,36 +1,20 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/category.dto';
 import { TranslationService } from '../translation/translation.service';
+import { Category } from '@prisma/client';
+type CategoryNode = Category & {
+    children: CategoryNode[];
+};
 export declare class CategoriesService {
     private prisma;
     private translationService;
     constructor(prisma: PrismaService, translationService: TranslationService);
-    findAll(): Promise<({
+    private buildTree;
+    findAll(): Promise<CategoryNode[]>;
+    findBySlug(slug: string): Promise<{
         _count: {
             products: number;
-            children: number;
         };
-        children: ({
-            _count: {
-                products: number;
-            };
-        } & {
-            id: string;
-            slug: string;
-            createdAt: Date;
-            name: string;
-            nameEn: string | null;
-            parentId: string | null;
-        })[];
-    } & {
-        id: string;
-        slug: string;
-        createdAt: Date;
-        name: string;
-        nameEn: string | null;
-        parentId: string | null;
-    })[]>;
-    findBySlug(slug: string): Promise<{
         products: ({
             supplier: {
                 companyName: string;
@@ -39,21 +23,23 @@ export declare class CategoriesService {
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
+            status: import("@prisma/client").$Enums.ProductStatus;
             createdAt: Date;
             updatedAt: Date;
+            slug: string;
+            description: string | null;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            supplierId: string;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -68,32 +54,27 @@ export declare class CategoriesService {
             attributes: import("@prisma/client/runtime/library").JsonValue | null;
             customizations: string[];
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
-        _count: {
-            products: number;
-        };
         children: {
             id: string;
-            slug: string;
             createdAt: Date;
+            slug: string;
             name: string;
             nameEn: string | null;
             parentId: string | null;
         }[];
     } & {
         id: string;
-        slug: string;
         createdAt: Date;
+        slug: string;
         name: string;
         nameEn: string | null;
         parentId: string | null;
     }>;
     create(dto: CreateCategoryDto): Promise<{
         id: string;
-        slug: string;
         createdAt: Date;
+        slug: string;
         name: string;
         nameEn: string | null;
         parentId: string | null;
@@ -103,8 +84,8 @@ export declare class CategoriesService {
         parentId?: string;
     }): Promise<{
         id: string;
-        slug: string;
         createdAt: Date;
+        slug: string;
         name: string;
         nameEn: string | null;
         parentId: string | null;
@@ -113,3 +94,4 @@ export declare class CategoriesService {
         message: string;
     }>;
 }
+export {};

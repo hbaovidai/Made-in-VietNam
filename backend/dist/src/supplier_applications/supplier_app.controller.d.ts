@@ -7,10 +7,10 @@ export declare class SupplierApplicationController {
     getAllApplications(query: SupplierApplicationDto): Promise<{
         data: {
             id: number;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
+            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
+            createdAt: Date;
             lastName: string;
             firstName: string;
             applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;

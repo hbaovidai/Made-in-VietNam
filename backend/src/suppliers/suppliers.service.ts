@@ -20,9 +20,8 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
-    if (
-      query.verificationStatus
-    ) where.verificationStatus = query.verificationStatus;
+    if (query.verificationStatus)
+      where.verificationStatus = query.verificationStatus;
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
@@ -41,8 +40,11 @@ export class SuppliersService {
   }
 
   async findBySlug(slugOrId: string) {
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
-    
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        slugOrId,
+      );
+
     const supplier = await this.prisma.supplier.findFirst({
       where: isUUID ? { id: slugOrId } : { slug: slugOrId },
       include: {
@@ -67,7 +69,9 @@ export class SuppliersService {
   }
 
   async createProfile(userId: string, data: any) {
-    const existing = await this.prisma.supplier.findUnique({ where: { userId } });
+    const existing = await this.prisma.supplier.findUnique({
+      where: { userId },
+    });
     if (existing) {
       return existing; // already exists
     }
@@ -147,17 +151,17 @@ export class SuppliersService {
 
   async verifySupplier(supplierId: string, isVerified: boolean) {
     const supplier = await this.prisma.supplier.findUnique({
-      where: { id: supplierId }
+      where: { id: supplierId },
     });
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
 
     // Update verified status
     const updated = await this.prisma.supplier.update({
       where: { id: supplierId },
-      data: { 
+      data: {
         isVerified,
-        verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED'
-      }
+        verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED',
+      },
     });
 
     return updated;
@@ -188,7 +192,7 @@ export class SuppliersService {
       where: { supplierId },
       select: { id: true, name: true, viewCount: true, status: true },
     });
-    const productIds = products.map(p => p.id);
+    const productIds = products.map((p) => p.id);
 
     // 1) Lượt xem theo ngày (30 ngày gần nhất)
     const thirtyDaysAgo = new Date();
@@ -238,7 +242,9 @@ export class SuppliersService {
     for (let i = 11; i >= 0; i--) {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
-      monthlyMap[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`] = 0;
+      monthlyMap[
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      ] = 0;
     }
     for (const row of monthlyViews) {
       const d = new Date(row.viewedAt);
@@ -256,7 +262,7 @@ export class SuppliersService {
     const topProducts = products
       .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
       .slice(0, 10)
-      .map(p => ({
+      .map((p) => ({
         id: p.id,
         name: p.name,
         views: p.viewCount || 0,
@@ -264,15 +270,19 @@ export class SuppliersService {
       }));
 
     // 4) Tổng quan nhanh
-    const totalViewsAll = products.reduce((sum, p) => sum + (p.viewCount || 0), 0);
-    const activeProducts = products.filter(p => p.status === 'ACTIVE').length;
+    const totalViewsAll = products.reduce(
+      (sum, p) => sum + (p.viewCount || 0),
+      0,
+    );
+    const activeProducts = products.filter((p) => p.status === 'ACTIVE').length;
 
     return {
       overview: {
         totalViews: totalViewsAll,
         totalProducts: products.length,
         activeProducts,
-        avgViewsPerProduct: products.length > 0 ? Math.round(totalViewsAll / products.length) : 0,
+        avgViewsPerProduct:
+          products.length > 0 ? Math.round(totalViewsAll / products.length) : 0,
       },
       dailyViews: dailyData,
       monthlyViews: monthlyData,

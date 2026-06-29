@@ -9,6 +9,7 @@ type TabKey = 'profile' | 'account' | 'password' | 'activity' | 'settings';
 export function AdminUserProfile() {
   const { user: me } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const userId = searchParams.get('id') || me?.id;
   const initialTab = (searchParams.get('tab') as TabKey) || 'profile';
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
 
@@ -20,6 +21,8 @@ export function AdminUserProfile() {
   // Editable profile fields
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [role, setRole] = useState('');
+  const [status, setStatus] = useState('');
 
   // Password fields
   const [oldPw, setOldPw] = useState('');
@@ -40,17 +43,20 @@ export function AdminUserProfile() {
   const [sysNotif, setSysNotif] = useState(localStorage.getItem('wp_sys_notif') !== 'false');
 
   useEffect(() => {
+    if (!userId) return;
     const load = async () => {
       try {
-        const res = await api.get(`/auth/profile/${me?.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const res = await api.get(`/auth/profile/${userId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
         setProfile(res.data);
         setFullName(res.data.fullName || '');
         setPhone(res.data.phone || '');
+        setRole(res.data.role || '');
+        setStatus(res.data.status || '');
       } catch { /* silent */ }
       setLoading(false);
     };
     load();
-  }, [me?.id]);
+  }, [userId]);
 
   useEffect(() => {
     const t = searchParams.get('tab') as TabKey;
@@ -67,7 +73,7 @@ export function AdminUserProfile() {
   useEffect(() => {
     if (activeTab !== 'activity' || activities.length > 0) return;
     setLoadingActivity(true);
-    api.get('/audit-logs?limit=20', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    api.get('/audit-logs?limit=20', { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } })
       .then(res => setActivities(res.data?.data || []))
       .catch(() => {})
       .finally(() => setLoadingActivity(false));
@@ -78,8 +84,20 @@ export function AdminUserProfile() {
     setMsg(null);
     setSaving(true);
     try {
-      await api.put(`/auth/profile/${me?.id}`, { fullName, phone }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
-      setProfile((p: any) => ({ ...p, fullName, phone }));
+      // 1. Update basic profile
+      await api.put(`/auth/profile/${userId}`, { fullName, phone }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+
+      // 2. Update role if changed & not self
+      if (role !== profile.role && userId !== me?.id) {
+        await api.put(`/users/${userId}/role`, { role }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+      }
+
+      // 3. Update status if changed & not self
+      if (status !== profile.status && userId !== me?.id) {
+        await api.put(`/users/${userId}/status`, { status }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+      }
+
+      setProfile((p: any) => ({ ...p, fullName, phone, role, status }));
       setMsg({ type: 'success', text: 'Hồ sơ đã được cập nhật thành công.' });
     } catch (err: any) {
       setMsg({ type: 'error', text: err?.response?.data?.message || 'Không thể cập nhật.' });
@@ -94,7 +112,7 @@ export function AdminUserProfile() {
     if (newPw !== confirmPw) { setMsg({ type: 'error', text: 'Mật khẩu xác nhận không khớp.' }); return; }
     setSaving(true);
     try {
-      await api.put(`/auth/password/${me?.id}`, { oldPassword: oldPw, newPassword: newPw }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.put(`/auth/password/${me?.id}`, { oldPassword: oldPw, newPassword: newPw }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       setMsg({ type: 'success', text: 'Đổi mật khẩu thành công.' });
       setOldPw(''); setNewPw(''); setConfirmPw('');
     } catch (err: any) {
@@ -125,11 +143,7 @@ export function AdminUserProfile() {
   };
 
   const tabs: { key: TabKey; icon: React.ComponentType<any>; label: string }[] = [
-    { key: 'profile', icon: User, label: 'Thông tin cá nhân' },
-    { key: 'account', icon: Shield, label: 'Thông tin tài khoản' },
-    { key: 'password', icon: Key, label: 'Đổi mật khẩu' },
-    { key: 'activity', icon: Clock, label: 'Hoạt động gần đây' },
-    { key: 'settings', icon: Settings, label: 'Cài đặt tài khoản' },
+    { key: 'profile', icon: User, label: 'Hồ sơ cá nhân' },
   ];
 
   if (loading) return <div className="wp-loading">Đang tải hồ sơ...</div>;
@@ -178,22 +192,24 @@ export function AdminUserProfile() {
       </div>
 
       {/* Tab Navigation */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--wp-border)', marginBottom: 20 }}>
-        {tabs.map(t => (
-          <button key={t.key} onClick={() => switchTab(t.key)} style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', fontSize: 13, fontWeight: activeTab === t.key ? 600 : 400,
-            background: 'none', border: 'none', borderBottom: activeTab === t.key ? '2px solid var(--wp-accent)' : '2px solid transparent',
-            color: activeTab === t.key ? 'var(--wp-accent)' : 'var(--wp-text-muted)', cursor: 'pointer', transition: 'all .15s'
-          }}>
-            <t.icon size={14} /> {t.label}
-          </button>
-        ))}
-      </div>
+      {tabs.length > 1 && (
+        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--wp-border)', marginBottom: 20 }}>
+          {tabs.map(t => (
+            <button key={t.key} onClick={() => switchTab(t.key)} style={{
+              display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', fontSize: 13, fontWeight: activeTab === t.key ? 600 : 400,
+              background: 'none', border: 'none', borderBottom: activeTab === t.key ? '2px solid var(--wp-accent)' : '2px solid transparent',
+              color: activeTab === t.key ? 'var(--wp-accent)' : 'var(--wp-text-muted)', cursor: 'pointer', transition: 'all .15s'
+            }}>
+              <t.icon size={14} /> {t.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* ═══ Tab: Thông tin cá nhân ═══ */}
       {activeTab === 'profile' && (
         <div className="wp-card">
-          <div className="wp-card-header"><span className="wp-card-title">Thông tin cá nhân</span></div>
+          <div className="wp-card-header"><span className="wp-card-title">Hồ sơ cá nhân</span></div>
           <div className="wp-card-body">
             <form onSubmit={handleUpdateProfile}>
               <table className="wp-form-table">
@@ -213,7 +229,39 @@ export function AdminUserProfile() {
                   <tr><th style={{ fontSize: 13 }}>Email</th><td><input type="email" className="wp-form-input" style={{ maxWidth: 400, background: '#f0f0f1' }} value={profile.email} disabled /><p className="wp-form-desc">Email không thể thay đổi.</p></td></tr>
                   <tr><th style={{ fontSize: 13 }}>Số điện thoại</th><td><input type="tel" className="wp-form-input" style={{ maxWidth: 400 }} value={phone} onChange={e => setPhone(e.target.value)} placeholder="0901234567" /></td></tr>
                   <tr><th style={{ fontSize: 13 }}>Ngày tham gia</th><td style={{ fontSize: 13, color: 'var(--wp-text-muted)' }}>{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}</td></tr>
-                  <tr><th style={{ fontSize: 13 }}>Vai trò</th><td><span className={`wp-badge ${profile.role === 'ADMIN' ? 'wp-badge-published' : 'wp-badge-draft'}`}>{roleLabels[profile.role]}</span></td></tr>
+                  <tr>
+                    <th style={{ fontSize: 13 }}>Vai trò</th>
+                    <td>
+                      <select
+                        className="wp-form-input"
+                        style={{ maxWidth: 400 }}
+                        value={role}
+                        onChange={e => setRole(e.target.value)}
+                        disabled={userId === me?.id}
+                      >
+                        <option value="BUYER">Khách hàng</option>
+                        <option value="SUPPLIER">Doanh nghiệp (Supplier)</option>
+                        <option value="ADMIN">Quản trị viên (Admin)</option>
+                      </select>
+                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>Bạn không thể tự thay đổi vai trò của chính mình.</p>}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th style={{ fontSize: 13 }}>Trạng thái</th>
+                    <td>
+                      <select
+                        className="wp-form-input"
+                        style={{ maxWidth: 400 }}
+                        value={status}
+                        onChange={e => setStatus(e.target.value)}
+                        disabled={userId === me?.id}
+                      >
+                        <option value="ACTIVE">Hoạt động</option>
+                        <option value="SUSPENDED">Bị khóa</option>
+                      </select>
+                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>Bạn không thể tự khóa tài khoản của chính mình.</p>}
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               <div style={{ borderTop: '1px solid var(--wp-border-light)', paddingTop: 16, marginTop: 8 }}>

@@ -169,7 +169,7 @@ class ProductQueryDto {
     category;
     supplierId;
     page = 1;
-    limit = 20;
+    limit = 70;
     sortBy = 'createdAt';
     sortOrder = 'desc';
     status;

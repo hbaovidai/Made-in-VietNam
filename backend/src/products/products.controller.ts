@@ -48,8 +48,11 @@ export class ProductsController {
   @Roles('SUPPLIER')
   @Get('me')
   async getMyProducts(@CurrentUser('id') userId: string) {
-    const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
-    if (!supplier) throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { userId },
+    });
+    if (!supplier)
+      throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
     return this.productsService.findAllForSupplier(supplier.id);
   }
 

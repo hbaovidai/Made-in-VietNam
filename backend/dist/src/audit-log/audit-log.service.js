@@ -34,7 +34,13 @@ let AuditLogService = class AuditLogService {
                 where,
                 include: {
                     user: {
-                        select: { id: true, fullName: true, email: true, role: true, avatar: true },
+                        select: {
+                            id: true,
+                            fullName: true,
+                            email: true,
+                            role: true,
+                            avatar: true,
+                        },
                     },
                 },
                 orderBy: { createdAt: 'desc' },

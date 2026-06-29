@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
 
 export function AdminUsers() {
   const { user: me } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [filterRole, setFilterRole] = useState('all');
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState('');
   const perPage = 20;
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') || '');
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const res = await api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
         const data = res.data;
         setUsers(Array.isArray(data) ? data : (data?.users || data?.data || []));
       } catch { /* silent */ }
@@ -54,15 +60,83 @@ export function AdminUsers() {
 
   const handleStatusChange = async (userId: string, status: string) => {
     try {
-      await api.put(`/users/${userId}/status`, { status }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.put(`/users/${userId}/status`, { status }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, status } : u));
     } catch { /* silent */ }
+  };
+
+  const handleRoleChange = async (userId: string, role: string) => {
+    try {
+      await api.put(`/users/${userId}/role`, { role }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Không thể thay đổi vai trò.');
+    }
+  };
+
+  const handleBulkAction = async () => {
+    if (!bulkAction) {
+      alert('Vui lòng chọn một thao tác hàng loạt.');
+      return;
+    }
+    if (selectedIds.length === 0) {
+      alert('Vui lòng chọn ít nhất một người dùng.');
+      return;
+    }
+
+    if (bulkAction === 'delete') {
+      if (!window.confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} người dùng đã chọn?`)) return;
+      setLoading(true);
+      try {
+        await Promise.all(
+          selectedIds.map(id =>
+            id !== me?.id ? api.delete(`/users/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } }) : Promise.resolve()
+          )
+        );
+        setUsers(prev => prev.filter(u => !selectedIds.includes(u.id)));
+        setSelectedIds([]);
+        alert('Đã xóa các người dùng thành công.');
+      } catch {
+        alert('Có lỗi xảy ra khi xóa người dùng.');
+      }
+      setLoading(false);
+    } else if (bulkAction === 'lock') {
+      setLoading(true);
+      try {
+        await Promise.all(
+          selectedIds.map(id =>
+            id !== me?.id ? api.put(`/users/${id}/status`, { status: 'SUSPENDED' }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } }) : Promise.resolve()
+          )
+        );
+        setUsers(prev => prev.map(u => selectedIds.includes(u.id) && u.id !== me?.id ? { ...u, status: 'SUSPENDED' } : u));
+        setSelectedIds([]);
+        alert('Đã khóa tài khoản các người dùng đã chọn.');
+      } catch {
+        alert('Có lỗi xảy ra khi khóa tài khoản.');
+      }
+      setLoading(false);
+    } else if (bulkAction === 'unlock') {
+      setLoading(true);
+      try {
+        await Promise.all(
+          selectedIds.map(id =>
+            api.put(`/users/${id}/status`, { status: 'ACTIVE' }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } })
+          )
+        );
+        setUsers(prev => prev.map(u => selectedIds.includes(u.id) ? { ...u, status: 'ACTIVE' } : u));
+        setSelectedIds([]);
+        alert('Đã mở khóa các tài khoản đã chọn.');
+      } catch {
+        alert('Có lỗi xảy ra khi mở khóa tài khoản.');
+      }
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (userId: string) => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
     try {
-      await api.delete(`/users/${userId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.delete(`/users/${userId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       setUsers(prev => prev.filter(u => u.id !== userId));
     } catch { /* silent */ }
   };
@@ -82,6 +156,18 @@ export function AdminUsers() {
       case 'SUPPLIER': return '#00a32a';
       default: return '#646970';
     }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newParams = new URLSearchParams(searchParams);
+    if (search.trim()) {
+      newParams.set('search', search.trim());
+    } else {
+      newParams.delete('search');
+    }
+    newParams.set('page', '1');
+    setSearchParams(newParams);
   };
 
   return (
@@ -120,22 +206,23 @@ export function AdminUsers() {
       {/* Search + Bulk Actions */}
       <div className="wp-table-top">
         <div className="wp-bulk-actions">
-          <select className="wp-bulk-select">
-            <option>Thao tác hàng loạt</option>
-            <option>Xóa</option>
-            <option>Khóa tài khoản</option>
+          <select className="wp-bulk-select" value={bulkAction} onChange={e => setBulkAction(e.target.value)}>
+            <option value="">Thao tác hàng loạt</option>
+            <option value="delete">Xóa</option>
+            <option value="lock">Khóa tài khoản</option>
+            <option value="unlock">Mở khóa tài khoản</option>
           </select>
-          <button className="wp-btn">Áp dụng</button>
+          <button className="wp-btn" onClick={handleBulkAction}>Áp dụng</button>
         </div>
-        <div className="wp-table-search">
+        <form onSubmit={handleSearchSubmit} className="wp-table-search">
           <input
             type="text"
             placeholder="Tìm người dùng..."
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
-          <button className="wp-btn"><Search size={14} /> Tìm kiếm</button>
-        </div>
+          <button type="submit" className="wp-btn"><Search size={14} /> Tìm kiếm</button>
+        </form>
       </div>
 
       {/* Table */}
@@ -182,14 +269,20 @@ export function AdminUsers() {
                         </div>
                       )}
                       <div>
-                        <span className="wp-row-title">{u.email?.split('@')[0]}</span>
+                        <Link to={`/dashboard/admin/profile?id=${u.id}`} className="wp-row-title">{u.email?.split('@')[0]}</Link>
                         <div className="wp-row-actions">
-                        <Link to={`/dashboard/admin/profile?id=${u.id}`}>Edit</Link>
-                          <span className="sep">|</span>
-                          <Link to={`/dashboard/admin/profile?id=${u.id}`}>View Profile</Link>
-                          <span className="sep">|</span>
+                          <Link to={`/dashboard/admin/profile?id=${u.id}`}>Xem hồ sơ</Link>
                           {u.id !== me?.id && (
-                            <button className="delete" onClick={() => handleDelete(u.id)}>Delete</button>
+                            <>
+                              <span className="sep">|</span>
+                              {u.status === 'ACTIVE' ? (
+                                <button onClick={() => handleStatusChange(u.id, 'SUSPENDED')}>Khóa</button>
+                              ) : (
+                                <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(u.id, 'ACTIVE')}>Mở khóa</button>
+                              )}
+                              <span className="sep">|</span>
+                              <button className="delete" onClick={() => handleDelete(u.id)}>Xóa</button>
+                            </>
                           )}
                         </div>
                       </div>

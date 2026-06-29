@@ -111,7 +111,9 @@ let OrdersService = class OrdersService {
                         product: { select: { id: true, slug: true, images: true } },
                     },
                 },
-                buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+                buyer: {
+                    select: { id: true, fullName: true, email: true, phone: true },
+                },
             },
             orderBy: { createdAt: 'desc' },
         });
@@ -125,8 +127,17 @@ let OrdersService = class OrdersService {
                         product: { select: { id: true, slug: true, images: true } },
                     },
                 },
-                supplier: { select: { id: true, companyName: true, logo: true, companyPhone: true } },
-                buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+                supplier: {
+                    select: {
+                        id: true,
+                        companyName: true,
+                        logo: true,
+                        companyPhone: true,
+                    },
+                },
+                buyer: {
+                    select: { id: true, fullName: true, email: true, phone: true },
+                },
             },
         });
         if (!order) {
@@ -198,7 +209,9 @@ let OrdersService = class OrdersService {
                             product: { select: { id: true, slug: true, images: true } },
                         },
                     },
-                    buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+                    buyer: {
+                        select: { id: true, fullName: true, email: true, phone: true },
+                    },
                     supplier: { select: { id: true, companyName: true, logo: true } },
                 },
                 orderBy: { createdAt: 'desc' },
@@ -207,10 +220,15 @@ let OrdersService = class OrdersService {
             }),
             this.prisma.order.count({ where }),
         ]);
-        return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+        return {
+            data,
+            meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+        };
     }
     async adminUpdateOrderStatus(orderId, status) {
-        const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+        });
         if (!order)
             throw new common_1.NotFoundException('Đơn hàng không tồn tại');
         const updateData = { status };

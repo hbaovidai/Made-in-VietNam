@@ -93,7 +93,8 @@ export class CategoriesService {
     });
 
     // Auto-translate category name (non-blocking)
-    this.translationService.translateCategory(dto.name)
+    this.translationService
+      .translateCategory(dto.name)
       .then(async (nameEn) => {
         if (nameEn) {
           await this.prisma.category.update({
@@ -102,7 +103,7 @@ export class CategoriesService {
           });
         }
       })
-      .catch(err => console.error('Auto-translate category failed:', err));
+      .catch((err) => console.error('Auto-translate category failed:', err));
 
     return category;
   }
@@ -128,7 +129,8 @@ export class CategoriesService {
 
     // Re-translate if name changed (non-blocking)
     if (dto.name) {
-      this.translationService.translateCategory(dto.name)
+      this.translationService
+        .translateCategory(dto.name)
         .then(async (nameEn) => {
           if (nameEn) {
             await this.prisma.category.update({
@@ -137,7 +139,9 @@ export class CategoriesService {
             });
           }
         })
-        .catch(err => console.error('Auto-translate category update failed:', err));
+        .catch((err) =>
+          console.error('Auto-translate category update failed:', err),
+        );
     }
 
     return updated;
@@ -151,10 +155,14 @@ export class CategoriesService {
     if (!category) throw new NotFoundException('Danh mục không tồn tại');
 
     if (category._count.products > 0) {
-      throw new NotFoundException(`Không thể xóa — danh mục đang chứa ${category._count.products} sản phẩm`);
+      throw new NotFoundException(
+        `Không thể xóa — danh mục đang chứa ${category._count.products} sản phẩm`,
+      );
     }
     if (category._count.children > 0) {
-      throw new NotFoundException(`Không thể xóa — danh mục có ${category._count.children} danh mục con`);
+      throw new NotFoundException(
+        `Không thể xóa — danh mục có ${category._count.children} danh mục con`,
+      );
     }
 
     await this.prisma.category.delete({ where: { id } });

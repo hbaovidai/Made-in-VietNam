@@ -10,6 +10,55 @@ const DEFAULTS: Record<string, string> = {
   twitter_url: '',
   linkedin_url: '',
   instagram_url: '',
+  hero_banners: JSON.stringify([
+    {
+      id: 'slide-1',
+      image:
+        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200',
+      title: "Vietnam's Top Manufacturing Hub",
+      titleVi: 'Trung tâm sản xuất hàng đầu Việt Nam',
+      desc: 'Source directly from verified factories. High-quality industrial products, textiles, and electronics.',
+      descVi:
+        'Tìm nguồn cung ứng trực tiếp từ các nhà máy đã xác minh. Sản phẩm công nghiệp, dệt may và điện tử chất lượng cao.',
+      link: '/products',
+    },
+    {
+      id: 'slide-2',
+      image:
+        'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200',
+      title: 'Top Ranking Products',
+      titleVi: 'Sản phẩm Xếp hạng Hàng đầu',
+      desc: 'Verified suppliers and audited products',
+      descVi: 'Những nhà cung cấp và sản phẩm đã qua kiểm định',
+      link: '/products',
+    },
+    {
+      id: 'slide-3',
+      image:
+        'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200',
+      title: 'Secured Trading Service',
+      titleVi: 'Dịch vụ giao dịch an toàn',
+      desc: 'Cross-border secure trade assurance',
+      descVi: 'Đảm bảo giao dịch an toàn xuyên quốc gia',
+      link: '/products',
+    },
+  ]),
+  legal_terms_title_vi: 'Điều khoản dịch vụ',
+  legal_terms_title_en: 'Terms of Service',
+  legal_terms_subtitle_vi:
+    'Điều khoản và điều kiện sử dụng dịch vụ nền tảng VIEProduct B2B Trade.',
+  legal_terms_subtitle_en:
+    'Terms and conditions for using the VIEProduct B2B Trade platform.',
+  legal_terms_last_updated: '2026-06-24',
+  legal_terms_banner_bg: '',
+  privacy_policy_title_vi: 'Chính sách bảo mật',
+  privacy_policy_title_en: 'Privacy Policy',
+  privacy_policy_subtitle_vi:
+    'Chúng tôi cam kết bảo vệ dữ liệu cá nhân và quyền riêng tư của bạn.',
+  privacy_policy_subtitle_en:
+    'We are committed to protecting your personal data and privacy.',
+  privacy_policy_last_updated: '2026-06-24',
+  privacy_policy_banner_bg: '',
 };
 
 @Injectable()
@@ -33,7 +82,9 @@ export class SettingsService {
   }
 
   /** Upsert multiple settings at once */
-  async updateMany(data: Record<string, string>): Promise<Record<string, string>> {
+  async updateMany(
+    data: Record<string, string>,
+  ): Promise<Record<string, string>> {
     const ops = Object.entries(data).map(([key, value]) =>
       this.prisma.siteSetting.upsert({
         where: { key },

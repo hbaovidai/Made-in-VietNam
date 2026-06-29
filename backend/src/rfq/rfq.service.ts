@@ -49,7 +49,7 @@ export class RfqService {
       });
       if (verifiedSuppliers.length > 0) {
         await this.prisma.notification.createMany({
-          data: verifiedSuppliers.map(s => ({
+          data: verifiedSuppliers.map((s) => ({
             userId: s.userId,
             title: 'New RFQ Available',
             message: `A buyer is looking for "${dto.productName}" (${dto.quantity} ${dto.quantityUnit}). Submit your quote now!`,
@@ -145,11 +145,19 @@ export class RfqService {
     const rfq = await this.prisma.rFQ.findUnique({
       where: { id },
       include: {
-        buyer: { select: { id: true, fullName: true, email: true, phone: true } },
+        buyer: {
+          select: { id: true, fullName: true, email: true, phone: true },
+        },
         quotes: {
           include: {
             supplier: {
-              select: { id: true, companyName: true, logo: true, isVerified: true, userId: true },
+              select: {
+                id: true,
+                companyName: true,
+                logo: true,
+                isVerified: true,
+                userId: true,
+              },
             },
           },
           orderBy: { price: 'asc' },
@@ -206,7 +214,10 @@ export class RfqService {
       console.error('Failed to notify supplier about accepted quote:', err);
     }
 
-    return { message: 'Đã chấp nhận báo giá', supplierUserId: quote.supplier.userId };
+    return {
+      message: 'Đã chấp nhận báo giá',
+      supplierUserId: quote.supplier.userId,
+    };
   }
 
   // ================= Public/Marketplace =================

@@ -1,74 +1,315 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
 
-// ─── Types ───────────────────────────────────────────────────
+// ─── Types (kept for backward compat with AdminSuppliers) ────
 export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
 
 export interface SupplierProfile {
-  id?: string,
-  userId?:string,
-  companyName?:     string
-  slug?:            string
-  logo?:            string,
-  banner?:          string,
-  description?:     string,
-  businesstype?:    string,
-  yearEstablished?: number,
-  employeeCount?:   string,
-  address?:             string,
-  city?:                string,
-  province?:            string,
-  website?:             string,
-  taxCode?:             string,
-  companyEmail?:        string,
-  companyPhone?:        string,
-  legalRepresentative?: string,
-  businessLicenseUrl?:  string,
-  identityCardUrl?:     string,
-  verificationStatus?:  SupplierVerificationStatus,
-  isVerified?: boolean,
-  createdAt?: Date,
-  updatedAt?: Date,
+  id?: string;
+  userId?: string;
+  companyName?: string;
+  slug?: string;
+  logo?: string;
+  banner?: string;
+  description?: string;
+  businesstype?: string;
+  businessType?: string;
+  yearEstablished?: number;
+  employeeCount?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  website?: string;
+  taxCode?: string;
+  taxId?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  legalRepresentative?: string;
+  businessLicenseUrl?: string;
+  identityCardUrl?: string;
+  verificationStatus?: SupplierVerificationStatus;
+  isVerified?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  repName?: string;
+  repTitle?: string;
+  repIdCard?: string;
+  repEmail?: string;
+  repPhone?: string;
+  industry?: string[];
+  products?: string;
+  exportExperience?: boolean;
+  exportMarkets?: string;
+  annualRevenue?: string;
+  driveLink?: string;
+  documentList?: string[];
+  submittedAt?: Date | string;
 }
 
 interface Props {
   request: SupplierProfile;
   onApprove: (id: string) => void;
-  onReject: (id: string, reason: string) => void;
+  onReject: (id: string, reason?: string) => void;
   onDelete: (id: string) => void;
   onBack: () => void;
 }
 
 // ─── Styles ──────────────────────────────────────────────────
-const card: React.CSSProperties = {
-  background: '#fff', border: '0.5px solid #dcdcde', borderRadius: 12, padding: 16, marginBottom: 16,
-};
-const label: React.CSSProperties = {
-  fontSize: 11, textTransform: 'uppercase', color: '#8c8f94', letterSpacing: '0.5px', marginBottom: 2, fontWeight: 600,
-};
-const value: React.CSSProperties = { fontSize: 14, color: '#1d2327', marginBottom: 12 };
-const grid2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' };
-const badge: React.CSSProperties = {
-  display: 'inline-block', background: '#e6f6ee', color: '#00713a', border: '1px solid #b8e6cc',
-  borderRadius: 20, padding: '3px 10px', fontSize: 12, fontWeight: 600, marginRight: 6, marginBottom: 6,
+const s = {
+  card: { background: '#fff', border: '1px solid #e2e4e7', borderRadius: 4, marginBottom: 16, boxShadow: '0 1px 1px rgba(0,0,0,.04)' } as React.CSSProperties,
+  cardHead: { padding: '10px 16px', borderBottom: '1px solid #e2e4e7', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 } as React.CSSProperties,
+  cardBody: { padding: 16 } as React.CSSProperties,
+  row: { display: 'flex', padding: '8px 0', borderBottom: '1px solid #f5f5f5', fontSize: 13 } as React.CSSProperties,
+  rowLast: { display: 'flex', padding: '8px 0', fontSize: 13 } as React.CSSProperties,
+  label: { width: 220, flexShrink: 0, color: '#646970', fontWeight: 500 } as React.CSSProperties,
+  val: { flex: 1, color: '#1e1e1e', fontWeight: 400 } as React.CSSProperties,
+  emptyState: { textAlign: 'center' as const, padding: 40, color: '#8c8f94', fontSize: 13 },
+  tab: (active: boolean) => ({
+    flex: 1, textAlign: 'center' as const,
+    padding: '10px 16px', fontSize: 13, fontWeight: active ? 700 : 500, cursor: 'pointer',
+    background: active ? '#fff' : 'transparent', color: active ? '#1d2327' : '#646970',
+    border: 'none', borderBottom: active ? '2px solid #2271b1' : '2px solid transparent',
+  } as React.CSSProperties),
+  badge: (bg: string, color: string, border: string) => ({
+    display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '3px 10px',
+    borderRadius: 4, background: bg, color, border: `1px solid ${border}`, marginRight: 6,
+  } as React.CSSProperties),
 };
 
-const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  VERIFIED:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
-  UNVERIFIED:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+const Field = ({ label, value, last, mono }: { label: string; value?: string; last?: boolean; mono?: boolean }) => (
+  <div style={last ? s.rowLast : s.row}>
+    <div style={s.label}>{label}</div>
+    <div style={{ ...s.val, ...(mono ? { fontFamily: 'monospace' } : {}) }}>{value || <span style={{ color: '#c3c4c7' }}>—</span>}</div>
+  </div>
+);
+
+type TabKey = 'overview' | 'contact' | 'legal' | 'manufacturer' | 'exporter' | 'documents' | 'products';
+
+const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+  { key: 'overview', label: 'Overview', icon: <Building2 size={14} /> },
+  { key: 'contact', label: 'Contact', icon: <User size={14} /> },
+  { key: 'legal', label: 'Legal', icon: <Shield size={14} /> },
+  { key: 'manufacturer', label: 'Manufacturer', icon: <Package size={14} /> },
+  { key: 'exporter', label: 'Exporter', icon: <Globe size={14} /> },
+  { key: 'documents', label: 'Documents', icon: <FileText size={14} /> },
+  { key: 'products', label: 'Products', icon: <Package size={14} /> },
+];
+
+const statusBadge = (status?: string) => {
+  const map: Record<string, { bg: string; color: string; border: string }> = {
+    VERIFIED: { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
+    UNVERIFIED: { bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+    PENDING: { bg: '#fcf0e3', color: '#996800', border: '#dba617' },
+    APPROVED: { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
+    REJECTED: { bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+    SUSPENDED: { bg: '#f0f0f1', color: '#646970', border: '#dcdcde' },
+    NOT_APPLIED: { bg: '#f0f0f1', color: '#646970', border: '#dcdcde' },
+  };
+  const cfg = map[status || 'UNVERIFIED'] || map.UNVERIFIED;
+  return <span style={s.badge(cfg.bg, cfg.color, cfg.border)}>{status || 'Unknown'}</span>;
 };
 
-// ═════════════════════════════════════════════════════════════
+// ═══ Tab Components ═══════════════════════════════════════════
+
+function TabOverview({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> Thông tin doanh nghiệp</div>
+      <div style={s.cardBody}>
+        <Field label="Tên doanh nghiệp" value={data.companyName} />
+        <Field label="Mã số thuế" value={data.taxCode} mono />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Mô hình hoạt động" />
+        <Field label="Ngành nghề" value={data.industry?.join(', ')} />
+        <Field label="Địa chỉ trụ sở" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Năm thành lập" value={data.yearEstablished?.toString()} />
+        <Field label="Số lượng nhân viên" value={data.employeeCount} />
+        <Field label="Website" value={data.website} />
+        <Field label="Danh mục chính" />
+        <Field label="Danh mục con" />
+        <Field label="Ghi chú admin" last />
+      </div>
+    </div>
+  );
+}
+
+function TabContact({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><User size={16} color="#2271b1" /> Thông tin liên hệ</div>
+      <div style={s.cardBody}>
+        <Field label="Họ tên người đăng ký" value={data.repName} />
+        <Field label="Chức vụ" value={data.repTitle} />
+        <Field label="Email" value={data.companyEmail || data.repEmail} />
+        <Field label="Số điện thoại" value={data.companyPhone || data.repPhone} />
+        <Field label="Người đại diện pháp luật" value={data.legalRepresentative || data.repName} />
+        <Field label="SĐT người đại diện" value={data.repPhone} last />
+      </div>
+    </div>
+  );
+}
+
+function TabLegal({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><Shield size={16} color="#2271b1" /> Thông tin pháp lý</div>
+      <div style={s.cardBody}>
+        <Field label="Tên DN theo ĐKKD" value={data.companyName} />
+        <Field label="Mã số thuế / Mã số DN" value={data.taxCode || data.taxId} mono />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Địa chỉ ĐKKD" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Trạng thái xác minh pháp lý" last />
+      </div>
+    </div>
+  );
+}
+
+function TabManufacturer() {
+  return (
+    <>
+      <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
+        <div style={s.cardBody}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: '#1d2327' }}>Manufacturer Verification</span>
+            {statusBadge('NOT_APPLIED')}
+          </div>
+          <p style={{ fontSize: 13, color: '#646970', margin: 0 }}>
+            Supplier has not applied for manufacturer verification.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ ...s.card, opacity: 0.5 }}>
+        <div style={s.cardHead}><Package size={16} color="#2271b1" /> Chi tiết năng lực sản xuất</div>
+        <div style={s.cardBody}>
+          <Field label="Trạng thái duyệt Manufacturer" />
+          <Field label="Hình thức sản xuất" />
+          <Field label="Địa chỉ nhà xưởng" />
+          <Field label="Quy mô nhà xưởng" />
+          <Field label="Số lượng nhân sự sản xuất" />
+          <Field label="Năng lực SX mỗi tháng" />
+          <Field label="Ngành sản xuất chính" />
+          <Field label="Sản phẩm chính đang SX" />
+          <Field label="Link Google Drive hồ sơ SX" />
+          <Field label="Ghi chú admin" last />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabExporter() {
+  return (
+    <>
+      <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
+        <div style={s.cardBody}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: '#1d2327' }}>Exporter Verification</span>
+            {statusBadge('NOT_APPLIED')}
+          </div>
+          <p style={{ fontSize: 13, color: '#646970', margin: 0 }}>
+            Supplier has not applied for exporter verification.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ ...s.card, opacity: 0.5 }}>
+        <div style={s.cardHead}><Globe size={16} color="#2271b1" /> Chi tiết xuất khẩu</div>
+        <div style={s.cardBody}>
+          <Field label="Trạng thái duyệt Exporter" />
+          <Field label="Thị trường xuất khẩu" />
+          <Field label="Sản phẩm xuất khẩu chính" />
+          <Field label="Kinh nghiệm xuất khẩu" />
+          <Field label="Link Google Drive hồ sơ XK" />
+          <Field label="Ghi chú admin" last />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabDocuments() {
+  const groups = [
+    { title: 'Identity Documents', docs: ['CCCD / Passport mặt trước', 'CCCD / Passport mặt sau'] },
+    { title: 'Business Legal Documents', docs: ['Giấy phép ĐKKD', 'Giấy chứng nhận đầu tư'] },
+    { title: 'Manufacturer Documents', docs: ['Hình ảnh nhà xưởng', 'Chứng nhận ISO', 'Giấy phép sản xuất'] },
+    { title: 'Exporter Documents', docs: ['Giấy phép xuất khẩu', 'C/O mẫu'] },
+    { title: 'Other Documents', docs: ['Tài liệu bổ sung'] },
+  ];
+
+  return (
+    <>
+      {groups.map(g => (
+        <div key={g.title} style={s.card}>
+          <div style={s.cardHead}><FileText size={16} color="#2271b1" /> {g.title}</div>
+          <div style={s.cardBody}>
+            {g.docs.map((doc, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < g.docs.length - 1 ? '1px solid #f5f5f5' : 'none' }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1e1e1e' }}>{doc}</div>
+                  <div style={{ fontSize: 11, color: '#8c8f94', marginTop: 2 }}>
+                    <span style={s.badge('#f0f0f1', '#646970', '#dcdcde')}>Not uploaded</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button className="wp-btn" style={{ fontSize: 11, padding: '4px 8px' }} disabled><Eye size={12} /> View</button>
+                  <button className="wp-btn" style={{ fontSize: 11, padding: '4px 8px' }} disabled><Download size={12} /> Download</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function TabProducts() {
+  return (
+    <div className="wp-table-wrap">
+      <table className="wp-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>MOQ</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colSpan={6} style={s.emptyState}>
+              No products available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
+// ═══ Main Component ═══════════════════════════════════════════
 export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
-  const [showRejectBox, setShowRejectBox] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [notesSaved, setNotesSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
-  const st = statusMap[request.verificationStatus] || statusMap.pending;
+  const verificationStatus = request.verificationStatus || 'UNVERIFIED';
 
-  const handleSaveNotes = () => { setNotesSaved(true); setTimeout(() => setNotesSaved(false), 2000); };
+  const renderTab = () => {
+    switch (activeTab) {
+      case 'overview': return <TabOverview data={request} />;
+      case 'contact': return <TabContact data={request} />;
+      case 'legal': return <TabLegal data={request} />;
+      case 'manufacturer': return <TabManufacturer />;
+      case 'exporter': return <TabExporter />;
+      case 'documents': return <TabDocuments />;
+      case 'products': return <TabProducts />;
+
+    }
+  };
 
   return (
     <div>
@@ -76,259 +317,73 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <Link to="/dashboard/admin/verifications">Nhà cung cấp</Link> {/* TODO: đấu nối api */}
+        <Link to="/dashboard/admin/suppliers">Nhà cung cấp</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">{request.companyName}</span>
+        <span className="wp-breadcrumb-current">{request.companyName || 'Supplier Detail'}</span>
       </div>
 
-      <div className="wp-page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--wp-accent)', display: 'flex' }}>
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="wp-page-title" style={{ margin: 0 }}>Chi tiết hồ sơ xác minh</h1>
-      </div>
 
-      {/* ═══ 2-column layout ═══ */}
-      <div style={{ display: 'grid', gridTemplateColumns: '65% 35%', gap: 20, alignItems: 'start' }}>
 
-        {/* ─── CỘT TRÁI ─── */}
-        <div>
-          {/* Card 1: Thông tin doanh nghiệp */}
-          <div style={card}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Thông tin doanh nghiệp
-            </h3>
-            <div style={grid2}>
-              <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{request.companyName}</div></div>
-              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxCode}</div></div>
-              {/* <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div> */}
-              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.yearEstablished}</div></div>
-              <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{request.address}</div></div>
-              <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{request.province}</div></div>
-              {request.website && (
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <div style={label}>WEBSITE</div>
-                  <div style={value}><a href={request.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--wp-accent)' }}>{request.website}</a></div>
-                </div>
-              )}
+      {/* ═══ Header Card ═══ */}
+      <div style={{ ...s.card, padding: '16px 20px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+          {/* Left: Info */}
+          <div style={{ flex: 1, minWidth: 300 }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#1d2327', marginBottom: 6 }}>
+              {request.companyName || 'Company Name'}
             </div>
-          </div>
-
-          {/* Card 2: Người đại diện */}
-          <div style={card}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Người đại diện pháp luật
-            </h3>
-            <div style={grid2}>
-              <div><div style={label}>HỌ VÀ TÊN</div><div style={value}>{request.repName}</div></div>
-              <div><div style={label}>CHỨC DANH</div><div style={value}>{request.repTitle}</div></div>
-              <div><div style={label}>SỐ CCCD</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.repIdCard}</div></div>
-              <div><div style={label}>EMAIL</div><div style={value}><a href={`mailto:${request.repEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repEmail}</a></div></div>
-              <div><div style={label}>SỐ ĐIỆN THOẠI</div><div style={value}><a href={`tel:${request.repPhone}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repPhone}</a></div></div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+              {/* Verification Badges */}
+              {(() => {
+                const isSupplierVerified = verificationStatus === 'VERIFIED';
+                const isManufacturerVerified = false; // placeholder — will be from API
+                const isExporterVerified = false;     // placeholder — will be from API
+                const active = { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0', icon: '✓' };
+                const inactive = { bg: '#f0f0f1', color: '#8c8f94', border: '#dcdcde', icon: '○' };
+                const badges = [
+                  { label: 'Verified Supplier', on: isSupplierVerified },
+                  { label: 'Verified Manufacturer', on: isManufacturerVerified },
+                  { label: 'Verified Exporter', on: isExporterVerified },
+                ];
+                return badges.map(b => {
+                  const cfg = b.on ? active : inactive;
+                  return (
+                    <span key={b.label} style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 4,
+                      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
+                    }}>
+                      {cfg.icon} {b.label}
+                    </span>
+                  );
+                });
+              })()}
             </div>
-          </div>
-
-          {/* Card 3: Thông tin kinh doanh */}
-          <div style={card}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Thông tin kinh doanh
-            </h3>
-
-            <div style={label}>LĨNH VỰC KINH DOANH</div>
-            <div style={{ marginBottom: 14 }}>
-              {request.industry.map(i => <span key={i} style={badge}>{i}</span>)}
-            </div>
-
-            <div style={label}>SẢN PHẨM / DỊCH VỤ CHÍNH</div>
-            <div style={{ ...value, lineHeight: 1.6 }}>{request.products}</div>
-
-            <div style={grid2}>
-              <div>
-                <div style={label}>KINH NGHIỆM XUẤT KHẨU</div>
-                <div style={value}>
-                  <span style={{ ...badge, background: request.exportExperience ? '#e6f6ee' : '#f0f0f1', color: request.exportExperience ? '#00713a' : '#646970', border: request.exportExperience ? '1px solid #b8e6cc' : '1px solid #dcdcde' }}>
-                    {request.exportExperience ? 'Có' : 'Không'}
-                  </span>
-                </div>
-              </div>
-              {request.exportMarkets && (
-                <div><div style={label}>THỊ TRƯỜNG XUẤT KHẨU</div><div style={value}>{request.exportMarkets}</div></div>
-              )}
-              <div><div style={label}>DOANH THU HÀNG NĂM</div><div style={value}>{request.annualRevenue}</div></div>
-              <div><div style={label}>SỐ LƯỢNG NHÂN VIÊN</div><div style={value}>{request.employeeCount}</div></div>
-            </div>
-          </div>
-
-          {/* Card 4: Hồ sơ tài liệu */}
-          <div style={card}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Hồ sơ tài liệu
-            </h3>
-            <a
-              href={request.driveLink} target="_blank" rel="noopener noreferrer"
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                background: '#e6f6ee', color: '#00713a', border: '1px solid #b8e6cc',
-                borderRadius: 8, padding: '10px 16px', fontWeight: 700, fontSize: 13,
-                textDecoration: 'none', marginBottom: 16, transition: 'background .15s',
-              }}
-              onMouseOver={e => (e.currentTarget.style.background = '#d0f0dd')}
-              onMouseOut={e => (e.currentTarget.style.background = '#e6f6ee')}
-            >
-              <ExternalLink size={16} /> Mở hồ sơ trên Google Drive
-            </a>
-
-            <div style={label}>DANH SÁCH TÀI LIỆU ĐÃ NỘP</div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: '8px 0 14px' }}>
-              {request.documentList.map(doc => (
-                <li key={doc} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', fontSize: 13, color: '#1d2327' }}>
-                  <CheckCircle size={15} style={{ color: '#00a32a', flexShrink: 0 }} /> {doc}
-                </li>
-              ))}
-            </ul>
-            <div style={{ background: '#f6f7f7', borderRadius: 6, padding: '10px 12px', fontSize: 11, color: '#646970', lineHeight: 1.6 }}>
-              Tài liệu được doanh nghiệp tự tải lên Google Drive và cung cấp đường dẫn.<br />
-              Admin cần truy cập thư mục Drive để kiểm tra hồ sơ thực tế.
-            </div>
-          </div>
-        </div>
-
-        {/* ─── CỘT PHẢI ─── */}
-        <div>
-          {/* Trạng thái */}
-          <div style={card}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Trạng thái hồ sơ
-            </h3>
-            <div style={{ textAlign: 'center', marginBottom: 14 }}>
-              <span style={{ display: 'inline-block', background: st.bg, color: st.color, border: `1px solid ${st.border}`, borderRadius: 20, padding: '6px 18px', fontSize: 13, fontWeight: 700 }}>
-                {st.label}
-              </span>
-            </div>
-            <div style={grid2}>
-              <div><div style={label}>NGÀY GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleDateString('vi-VN')}</div></div>
-              <div><div style={label}>GIỜ GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div></div>
-              <div><div style={label}>NGUỒN GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>Landing Page</div></div>
-              <div><div style={label}>ĐỊA CHỈ IP</div><div style={{ fontSize: 13, color: '#1d2327', fontFamily: 'monospace' }}>14.161.12.34</div></div>
-            </div>
-          </div>
-
-          {/* Quyết định — chỉ hiện khi pending */}
-          {request.verification_status === 'UNVERIFIED' && (
-            <div style={card}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-                Quyết định
-              </h3>
-              <button
-                onClick={() => setShowApproveModal(true)}
-                style={{ width: '100%', padding: '10px 0', background: '#00a32a', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer', marginBottom: 8 }}
-              >
-                Duyệt & Cấp link mời
-              </button>
-
-              {!showRejectBox ? (
-                <button
-                  onClick={() => setShowRejectBox(true)}
-                  style={{ width: '100%', padding: '10px 0', background: '#fff', color: '#d63638', border: '1px solid #d63638', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer', marginBottom: 8 }}
-                >
-                  Từ chối
-                </button>
-              ) : (
-                <div style={{ background: '#fce4e4', border: '1px solid #f1a7a7', borderRadius: 8, padding: 12, marginBottom: 8 }}>
-                  <textarea
-                    value={rejectReason}
-                    onChange={e => setRejectReason(e.target.value)}
-                    placeholder="Lý do từ chối (sẽ gửi email thông báo cho doanh nghiệp)"
-                    rows={3}
-                    style={{ width: '100%', border: '1px solid #f1a7a7', borderRadius: 6, padding: 8, fontSize: 12, resize: 'none', outline: 'none', boxSizing: 'border-box' }}
-                  />
-                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                    <button
-                      onClick={() => { if (rejectReason.trim()) { onReject(request.id, rejectReason); setShowRejectBox(false); } }}
-                      disabled={!rejectReason.trim()}
-                      style={{ flex: 1, padding: '8px 0', background: rejectReason.trim() ? '#d63638' : '#dcdcde', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 12, cursor: rejectReason.trim() ? 'pointer' : 'not-allowed' }}
-                    >
-                      Xác nhận từ chối
-                    </button>
-                    <button
-                      onClick={() => { setShowRejectBox(false); setRejectReason(''); }}
-                      style={{ flex: 1, padding: '8px 0', background: '#f0f0f1', color: '#646970', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}
-                    >
-                      Hủy
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <button
-                onClick={() => onDelete(request.id)}
-                style={{ width: '100%', padding: '10px 0', background: '#f0f0f1', color: '#646970', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
-              >
-                Xóa hồ sơ
-              </button>
-            </div>
-          )}
-
-          {/* Ghi chú nội bộ */}
-          <div style={card}>
-            {/*
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Ghi chú nội bộ
-            </h3>
-            <textarea
-              value={localNotes}
-              onChange={e => setLocalNotes(e.target.value)}
-              placeholder="Ghi chú nội bộ (không hiển thị cho doanh nghiệp)"
-              rows={4}
-              style={{ width: '100%', border: '1px solid #dcdcde', borderRadius: 6, padding: 10, fontSize: 12, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
-            />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-              {notesSaved
-                ? <span style={{ fontSize: 11, color: '#00a32a', fontWeight: 600 }}>✓ Đã lưu lúc {new Date().toLocaleString('vi-VN')}</span>
-                : <span style={{ fontSize: 11, color: '#8c8f94' }}>{request.notes ? `Lưu lần cuối: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
-              }
-              <button onClick={handleSaveNotes} className="wp-btn" style={{ fontSize: 12 }}>Lưu ghi chú</button>
-            </div>
-            */}
-
           </div>
         </div>
       </div>
 
-      {/* ═══ Modal xác nhận duyệt ═══ */}
-      {showApproveModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div style={{ background: '#fff', borderRadius: 12, padding: 24, width: 420, maxWidth: '90vw', position: 'relative' }}>
-            <button onClick={() => setShowApproveModal(false)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#646970' }}>
-              <X size={18} />
-            </button>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1d2327', marginBottom: 16 }}>Xác nhận phê duyệt</h3>
-            <p style={{ fontSize: 13, color: '#646970', marginBottom: 16 }}>Bạn sắp phê duyệt hồ sơ xác minh và tạo link mời cho doanh nghiệp:</p>
-            <div style={{ background: '#f6f7f7', borderRadius: 8, padding: 14, marginBottom: 16, fontSize: 13 }}>
-              <div style={grid2}>
-                <div><div style={label}>TÊN CÔNG TY</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.companyName}</div></div>
-                <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ fontWeight: 600, color: '#1d2327', fontFamily: 'monospace', marginBottom: 8 }}>{request.taxId}</div></div>
-                <div><div style={label}>NGƯỜI ĐẠI DIỆN</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repName}</div></div>
-                <div><div style={label}>EMAIL</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repEmail}</div></div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button
-                onClick={() => { onApprove(request.id); setShowApproveModal(false); }}
-                style={{ flex: 1, padding: '10px 0', background: '#00a32a', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-              >
-                Xác nhận duyệt
-              </button>
-              <button
-                onClick={() => setShowApproveModal(false)}
-                style={{ flex: 1, padding: '10px 0', background: '#f0f0f1', color: '#646970', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ═══ Tab Navigation ═══ */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', borderBottom: '1px solid #e2e4e7', marginBottom: 16, background: '#fff' }}>
+        {TABS.map(t => (
+          <button key={t.key} style={s.tab(activeTab === t.key)} onClick={() => setActiveTab(t.key)}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>{t.icon} {t.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ═══ Tab Content ═══ */}
+      {renderTab()}
+
+      {/* ═══ Admin Actions ═══ */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 24, paddingTop: 16, borderTop: '1px solid #e2e4e7' }}>
+        <button className="wp-btn wp-btn-primary" onClick={() => onApprove(request.id!)}>Approve</button>
+        <button className="wp-btn wp-btn-danger" onClick={() => onReject(request.id!)}>Reject</button>
+        <button className="wp-btn" onClick={() => alert('Request more documents')}>Request More Docs</button>
+        <button className="wp-btn" onClick={() => alert('Suspend supplier')}>Suspend</button>
+        <div style={{ flex: 1 }} />
+        <button className="wp-btn" onClick={onBack}>← Back to List</button>
+      </div>
     </div>
   );
 }

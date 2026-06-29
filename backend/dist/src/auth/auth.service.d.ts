@@ -14,7 +14,8 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                userId: string;
+                createdAt: Date;
+                updatedAt: Date;
                 companyName: string;
                 slug: string;
                 logo: string | null;
@@ -35,15 +36,14 @@ export declare class AuthService {
                 identityCardUrl: string | null;
                 verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
                 isVerified: boolean | null;
-                createdAt: Date;
-                updatedAt: Date;
+                userId: string;
             } | null;
             id: string;
-            createdAt: Date;
             email: string;
-            fullName: string;
             role: import("@prisma/client").$Enums.Role;
+            fullName: string;
             phone: string | null;
+            createdAt: Date;
         };
         token: string;
     }>;
@@ -58,14 +58,14 @@ export declare class AuthService {
                 isVerified: boolean | null;
             } | null;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            fullName: string;
             role: import("@prisma/client").$Enums.Role;
+            fullName: string;
             phone: string | null;
             avatar: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            createdAt: Date;
+            updatedAt: Date;
         };
         token: string;
     }>;
@@ -85,18 +85,26 @@ export declare class AuthService {
                 isVerified: boolean | null;
             } | null;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            fullName: string;
             role: import("@prisma/client").$Enums.Role;
+            fullName: string;
             phone: string | null;
             avatar: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            createdAt: Date;
+            updatedAt: Date;
         };
         token: string;
     }>;
     getProfile(userId: string): Promise<{
+        id: string;
+        email: string;
+        role: import("@prisma/client").$Enums.Role;
+        fullName: string;
+        phone: string | null;
+        avatar: string | null;
+        status: import("@prisma/client").$Enums.UserStatus;
+        createdAt: Date;
         supplier: {
             id: string;
             companyName: string;
@@ -105,26 +113,18 @@ export declare class AuthService {
             verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
             isVerified: boolean | null;
         } | null;
-        id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.UserStatus;
-        email: string;
-        fullName: string;
-        role: import("@prisma/client").$Enums.Role;
-        phone: string | null;
-        avatar: string | null;
     }>;
     updateProfile(userId: string, dto: UpdateProfileDto): Promise<{
         message: string;
         user: {
             id: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            fullName: string;
             role: import("@prisma/client").$Enums.Role;
+            fullName: string;
             phone: string | null;
             avatar: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            createdAt: Date;
         };
     }>;
     changePassword(userId: string, dto: ChangePasswordDto): Promise<{

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../components/PageHeader';
+import { BreadcrumbBar } from '../components/BreadcrumbBar';
 import { Smartphone, Download, ShieldCheck, Globe, Zap, Award, CheckCircle2, ChevronRight, Search, MessageSquare, ShoppingCart, Bell } from 'lucide-react';
 
 export function Apps() {
@@ -16,6 +17,7 @@ export function Apps() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <BreadcrumbBar items={[{ label: t('apps') }]} />
       <PageHeader 
         title={t('mobile_apps_title')} 
         description={t('mobile_apps_desc')}

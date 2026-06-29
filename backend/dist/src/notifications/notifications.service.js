@@ -49,20 +49,23 @@ let NotificationsService = class NotificationsService {
                 message: data.message,
                 type: data.type || 'info',
                 link: data.link,
-            }
+            },
         });
     }
     async notifyAdmins(data) {
-        const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN', status: 'ACTIVE' }, select: { id: true } });
+        const admins = await this.prisma.user.findMany({
+            where: { role: 'ADMIN', status: 'ACTIVE' },
+            select: { id: true },
+        });
         if (admins.length > 0) {
             await this.prisma.notification.createMany({
-                data: admins.map(a => ({
+                data: admins.map((a) => ({
                     userId: a.id,
                     title: data.title,
                     message: data.message,
                     type: data.type || 'info',
                     link: data.link,
-                }))
+                })),
             });
         }
     }

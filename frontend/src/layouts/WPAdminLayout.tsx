@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, MessageSquare, Package,
   Users, Settings, LogOut, Menu, Bell, Search,
   ChevronDown, ChevronRight, ExternalLink, Home, UserPlus, User,
-  FolderOpen, Tag, Star, Shield, Mail, Globe, List, Key
+  FolderOpen, Tag, Star, Shield, Mail, Globe, List, Key, Paintbrush,
+  Newspaper, Briefcase
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -23,31 +24,47 @@ interface MenuItem {
 
 const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
   {
-    icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/admin',
-    children: [{ label: 'Tổng quan', path: '/dashboard/admin' }],
+    icon: LayoutDashboard, label: t('admin_dashboard'), path: '/dashboard/admin',
+    children: [{ label: t('admin_overview'), path: '/dashboard/admin' }],
   },
   {
-    icon: FileText, label: 'Pages', path: '/dashboard/admin/pages',
-  },
-  {
-    icon: MessageSquare, label: 'Feedbacks', path: '/dashboard/admin/contacts',
-  },
-  {
-    icon: Package, label: 'Products', path: '/dashboard/admin/products',
+    icon: FileText, label: t('admin_pages'), path: '/dashboard/admin/pages',
     children: [
-      { label: 'Tất cả sản phẩm', path: '/dashboard/admin/products' },
-      { label: 'Thêm sản phẩm', path: '/dashboard/admin/products/add' },
-      { label: 'Thương hiệu', path: '/dashboard/admin/products/brands' },
-      { label: 'Danh mục', path: '/dashboard/admin/categories' },
-      { label: 'Thuộc tính', path: '/dashboard/admin/products/attributes' },
-      { label: 'Đánh giá', path: '/dashboard/admin/products/reviews' },
+      { label: 'Tất cả trang', path: '/dashboard/admin/pages' },
+      { label: t('terms_of_service'), path: '/dashboard/admin/legal' },
+      { label: t('privacy_policy') || 'Chính sách bảo mật', path: '/dashboard/admin/legal/privacy' },
     ],
   },
   {
-    icon: Users, label: 'Users', path: '/dashboard/admin/users',
+    icon: Newspaper, label: t('blog'), path: '/dashboard/admin/blog/posts',
     children: [
-      { label: 'Tất cả người dùng', path: '/dashboard/admin/users' },
-      { label: 'Thêm người dùng', path: '/dashboard/admin/users/add' },
+      { label: t('admin_blog_posts'), path: '/dashboard/admin/blog/posts' },
+      { label: t('admin_blog_categories'), path: '/dashboard/admin/blog/categories' },
+      { label: t('admin_blog_settings'), path: '/dashboard/admin/blog/settings' },
+    ],
+  },
+  {
+    icon: Briefcase, label: t('careers'), path: '/dashboard/admin/careers',
+  },
+  {
+    icon: MessageSquare, label: t('admin_feedbacks'), path: '/dashboard/admin/contacts',
+  },
+  {
+    icon: Package, label: t('products'), path: '/dashboard/admin/products',
+    children: [
+      { label: t('admin_all_products'), path: '/dashboard/admin/products' },
+      { label: t('admin_add_product'), path: '/dashboard/admin/products/add' },
+      { label: t('admin_brands'), path: '/dashboard/admin/products/brands' },
+      { label: t('admin_categories'), path: '/dashboard/admin/categories' },
+      { label: t('admin_attributes'), path: '/dashboard/admin/products/attributes' },
+      { label: t('admin_reviews'), path: '/dashboard/admin/products/reviews' },
+    ],
+  },
+  {
+    icon: Users, label: t('admin_users'), path: '/dashboard/admin/users',
+    children: [
+      { label: t('admin_all_users'), path: '/dashboard/admin/users' },
+      { label: t('admin_add_user'), path: '/dashboard/admin/users/add' },
     ],
   },
   {
@@ -61,15 +78,29 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: MessageSquare, label: t('msg_menu_label'), path: '/dashboard/admin/messages',
   },
   {
-    icon: Shield, label: 'Nhà cung cấp', path: '/dashboard/admin/supplier_application_verification',
+    icon: Shield, label: t('admin_suppliers_menu'), path: '/dashboard/admin/supplier_application_verification',
     children: [
-      { label: 'Ứng viên', path: '/dashboard/admin/supplier_applications' },
-      { label: 'Nhà cung cấp', path: '/dashboard/admin/suppliers' },
-      { label: 'Link mời', path: '/dashboard/admin/verifications?tab=tokens' },
+      { label: t('admin_pending_profiles'), path: '/dashboard/admin/pending-profiles' },
+      { label: t('admin_verification_requests'), path: '/dashboard/admin/verification-requests' },
+      { label: t('admin_suppliers_menu'), path: '/dashboard/admin/suppliers' },
+      { label: t('admin_invite_links'), path: '/dashboard/admin/verifications?tab=tokens' },
     ],
   },
   {
-    icon: Settings, label: 'Settings', path: '/dashboard/admin/settings',
+    icon: Paintbrush, label: t('admin_appearance'), path: '/dashboard/admin/appearance',
+    children: [
+      { label: t('admin_branding'), path: '/dashboard/admin/appearance' },
+      { label: 'Banner', path: '/dashboard/admin/appearance?tab=banners' },
+      { label: t('admin_popup'), path: '/dashboard/admin/appearance?tab=popup' },
+      { label: 'FAQ', path: '/dashboard/admin/appearance?tab=faq' },
+    ],
+  },
+  {
+    icon: Settings, label: t('admin_settings'), path: '/dashboard/admin/settings',
+    children: [
+      { label: t('admin_general_settings'), path: '/dashboard/admin/settings' },
+      { label: t('admin_website_info'), path: '/dashboard/admin/settings?tab=about' },
+    ],
   },
 ];
 
@@ -78,9 +109,12 @@ export function WPAdminLayout() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState(searchParams.get('search') || '');
+
   const menuItems = baseMenuItems(t);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(() => {
     // Auto-expand the menu that matches current path
@@ -89,6 +123,10 @@ export function WPAdminLayout() {
     );
     return current ? [current.label] : ['Dashboard'];
   });
+
+  useEffect(() => {
+    setGlobalSearch(searchParams.get('search') || '');
+  }, [searchParams]);
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
@@ -110,6 +148,30 @@ export function WPAdminLayout() {
     return location.search === `?${subQuery}`;
   };
 
+  const handleGlobalSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    let targetPath = location.pathname;
+    const searchablePages = [
+      '/dashboard/admin/products',
+      '/dashboard/admin/users',
+      '/dashboard/admin/suppliers',
+      '/dashboard/admin/blog/posts',
+      '/dashboard/admin/requests',
+    ];
+    if (!searchablePages.includes(targetPath)) {
+      targetPath = '/dashboard/admin/products';
+    }
+
+    const newParams = new URLSearchParams(location.search);
+    if (globalSearch.trim()) {
+      newParams.set('search', globalSearch.trim());
+    } else {
+      newParams.delete('search');
+    }
+    newParams.set('page', '1');
+    navigate({ pathname: targetPath, search: newParams.toString() });
+  };
+
   return (
     <div className="wp-admin-root">
       {/* ═══ Admin Bar ═══ */}
@@ -122,10 +184,15 @@ export function WPAdminLayout() {
           </Link>
         </div>
         <div className="wp-admin-bar-right">
-          <div className="wp-admin-bar-search">
+          <form onSubmit={handleGlobalSearchSubmit} className="wp-admin-bar-search">
             <Search size={14} />
-            <input type="text" placeholder="Tìm kiếm..." />
-          </div>
+            <input 
+              type="text" 
+              placeholder={`${t('search')}...`} 
+              value={globalSearch}
+              onChange={e => setGlobalSearch(e.target.value)}
+            />
+          </form>
           <button className="wp-admin-bar-btn">
             <Bell size={16} />
             <span className="wp-admin-bar-badge">3</span>
@@ -146,8 +213,6 @@ export function WPAdminLayout() {
                 </div>
                 <div className="wp-admin-profile-divider" />
                 <Link to="/dashboard/admin/profile" className="wp-admin-profile-item" onClick={() => setProfileOpen(false)}><User size={14} /><span>Hồ sơ cá nhân</span></Link>
-                <Link to="/dashboard/admin/profile?tab=settings" className="wp-admin-profile-item" onClick={() => setProfileOpen(false)}><Settings size={14} /><span>Cài đặt tài khoản</span></Link>
-                <Link to="/dashboard/admin/profile?tab=password" className="wp-admin-profile-item" onClick={() => setProfileOpen(false)}><Key size={14} /><span>Đổi mật khẩu</span></Link>
                 <div className="wp-admin-profile-divider" />
                 <Link to="/" className="wp-admin-profile-item"><Globe size={14} /><span>Xem trang web</span></Link>
                 <button onClick={handleLogout} className="wp-admin-profile-logout"><LogOut size={14} /><span>Đăng xuất</span></button>
@@ -174,6 +239,7 @@ export function WPAdminLayout() {
               const active = isMenuActive(item);
               const expanded = expandedMenus.includes(item.label);
               const hasChildren = item.children && item.children.length > 0;
+              const Icon = item.icon;
 
               return (
                 <div key={item.label} className={`wp-menu-group ${active ? 'active' : ''}`}>
@@ -187,7 +253,7 @@ export function WPAdminLayout() {
                     }}
                     title={collapsed ? item.label : undefined}
                   >
-                    <item.icon size={18} />
+                    {collapsed && <Icon size={18} />}
                     {!collapsed && (
                       <>
                         <span className="wp-sidebar-item-label">{item.label}</span>

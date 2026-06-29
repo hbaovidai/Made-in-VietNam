@@ -27,7 +27,11 @@ export class CartController {
     @Request() req: any,
     @Body() body: { productId: string; quantity?: number },
   ) {
-    return this.cartService.addItem(req.user.id, body.productId, body.quantity || 1);
+    return this.cartService.addItem(
+      req.user.id,
+      body.productId,
+      body.quantity || 1,
+    );
   }
 
   @Patch('items/:itemId')
@@ -36,7 +40,11 @@ export class CartController {
     @Param('itemId') itemId: string,
     @Body() body: { quantity: number },
   ) {
-    return this.cartService.updateItemQuantity(req.user.id, itemId, body.quantity);
+    return this.cartService.updateItemQuantity(
+      req.user.id,
+      itemId,
+      body.quantity,
+    );
   }
 
   @Delete('items/:itemId')

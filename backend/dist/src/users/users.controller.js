@@ -41,6 +41,17 @@ let UsersController = class UsersController {
         });
         return result;
     }
+    async updateUserRole(id, role, adminId) {
+        const result = await this.usersService.updateUserRole(id, role);
+        await this.auditLogService.log({
+            userId: adminId,
+            action: 'UPDATE_USER_ROLE',
+            targetType: 'User',
+            targetId: id,
+            targetName: `${result.fullName || result.email} to ${role}`,
+        });
+        return result;
+    }
     async deleteUser(id, adminId) {
         const result = await this.usersService.deleteUser(id);
         await this.auditLogService.log({
@@ -116,6 +127,17 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "toggleUserStatus", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Put)(':id/role'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('role')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUserRole", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('ADMIN'),

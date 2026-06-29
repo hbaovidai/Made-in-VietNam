@@ -27,9 +27,16 @@ let UsersService = class UsersService {
                 where,
                 orderBy: { createdAt: 'desc' },
                 select: {
-                    id: true, email: true, fullName: true, role: true,
-                    phone: true, status: true, createdAt: true,
-                    supplier: { select: { id: true, companyName: true, isVerified: true } }
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    role: true,
+                    phone: true,
+                    status: true,
+                    createdAt: true,
+                    supplier: {
+                        select: { id: true, companyName: true, isVerified: true },
+                    },
                 },
                 skip: (+page - 1) * +limit,
                 take: +limit,
@@ -38,7 +45,12 @@ let UsersService = class UsersService {
         ]);
         return {
             data: users,
-            meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / +limit) }
+            meta: {
+                total,
+                page: +page,
+                limit: +limit,
+                totalPages: Math.ceil(total / +limit),
+            },
         };
     }
     async toggleUserStatus(userId, status) {
@@ -50,7 +62,30 @@ let UsersService = class UsersService {
         const updated = await this.prisma.user.update({
             where: { id: userId },
             data: { status },
-            select: { id: true, email: true, fullName: true, role: true, status: true },
+            select: {
+                id: true,
+                email: true,
+                fullName: true,
+                role: true,
+                status: true,
+            },
+        });
+        return updated;
+    }
+    async updateUserRole(userId, role) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user)
+            throw new common_1.NotFoundException('Người dùng không tồn tại');
+        const updated = await this.prisma.user.update({
+            where: { id: userId },
+            data: { role },
+            select: {
+                id: true,
+                email: true,
+                fullName: true,
+                role: true,
+                status: true,
+            },
         });
         return updated;
     }

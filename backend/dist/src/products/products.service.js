@@ -25,7 +25,7 @@ let ProductsService = class ProductsService {
         this.translationService = translationService;
     }
     async findAll(query) {
-        const { search, category, supplierId, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
+        const { search, category, supplierId, page = 1, limit = 70, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
         const where = {};
         if (status) {
             where.status = status;
@@ -136,7 +136,7 @@ let ProductsService = class ProductsService {
             orderBy: { createdAt: 'desc' },
             include: {
                 category: { select: { name: true, slug: true } },
-            }
+            },
         });
     }
     async create(supplierId, dto) {
@@ -169,7 +169,8 @@ let ProductsService = class ProductsService {
                 category: { select: { name: true, slug: true } },
             },
         });
-        this.translationService.translateProduct(dto.name, dto.description)
+        this.translationService
+            .translateProduct(dto.name, dto.description)
             .then(async (translated) => {
             if (translated.nameEn || translated.descriptionEn) {
                 await this.prisma.product.update({
@@ -181,13 +182,13 @@ let ProductsService = class ProductsService {
                 });
             }
         })
-            .catch(err => console.error('Auto-translate product failed:', err));
+            .catch((err) => console.error('Auto-translate product failed:', err));
         try {
             await this.notificationsService.notifyAdmins({
                 title: 'Sản phẩm mới cần duyệt',
                 message: `Xưởng vừa đăng sản phẩm "${product.name}". Vui lòng kiểm duyệt nội dung.`,
                 link: '/dashboard/admin/products',
-                type: 'warning'
+                type: 'warning',
             });
         }
         catch (err) {
@@ -207,7 +208,9 @@ let ProductsService = class ProductsService {
         if (supplierId && product.status === client_1.ProductStatus.REJECTED) {
             newStatus = client_1.ProductStatus.PENDING;
         }
-        if (supplierId && newStatus === client_1.ProductStatus.ACTIVE && product.status !== client_1.ProductStatus.ACTIVE) {
+        if (supplierId &&
+            newStatus === client_1.ProductStatus.ACTIVE &&
+            product.status !== client_1.ProductStatus.ACTIVE) {
             newStatus = client_1.ProductStatus.PENDING;
         }
         const updated = await this.prisma.product.update({
@@ -218,19 +221,22 @@ let ProductsService = class ProductsService {
             },
         });
         if (dto.name || dto.description) {
-            this.translationService.translateProduct(dto.name || product.name, dto.description || product.description || undefined)
+            this.translationService
+                .translateProduct(dto.name || product.name, dto.description || product.description || undefined)
                 .then(async (translated) => {
                 if (translated.nameEn || translated.descriptionEn) {
                     await this.prisma.product.update({
                         where: { id: productId },
                         data: {
                             ...(translated.nameEn && { nameEn: translated.nameEn }),
-                            ...(translated.descriptionEn && { descriptionEn: translated.descriptionEn }),
+                            ...(translated.descriptionEn && {
+                                descriptionEn: translated.descriptionEn,
+                            }),
                         },
                     });
                 }
             })
-                .catch(err => console.error('Auto-translate product update failed:', err));
+                .catch((err) => console.error('Auto-translate product update failed:', err));
         }
         return updated;
     }

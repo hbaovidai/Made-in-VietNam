@@ -35,7 +35,9 @@ let ProductsController = class ProductsController {
         return this.productsService.findAll(query);
     }
     async getMyProducts(userId) {
-        const supplier = await this.prisma.supplier.findUnique({ where: { userId } });
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
         if (!supplier)
             throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
         return this.productsService.findAllForSupplier(supplier.id);

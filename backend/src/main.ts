@@ -12,9 +12,11 @@ async function bootstrap() {
 
   // Security: Ẩn thông tin server, chống XSS, clickjacking
   // crossOriginResourcePolicy: 'cross-origin' cho phép frontend (port khác) tải ảnh từ /uploads
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-  }));
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   // Global prefix
   app.setGlobalPrefix('api/v1');

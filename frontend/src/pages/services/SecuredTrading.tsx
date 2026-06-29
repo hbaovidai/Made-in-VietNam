@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../components/PageHeader';
+import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import { Shield, CheckCircle2, Lock, CreditCard, Truck, MessageSquare } from 'lucide-react';
 
 export function SecuredTrading() {
@@ -30,6 +31,7 @@ export function SecuredTrading() {
 
   return (
     <div className="min-h-screen bg-white">
+      <BreadcrumbBar items={[{ label: t('services'), href: '/services' }, { label: t('secured_trading') }]} />
       <PageHeader 
         title={t('secured_trading_title')} 
         description={t('secured_trading_desc')}

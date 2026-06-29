@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../components/PageHeader';
+import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import { Star, CheckCircle2, Zap, Award, Shield, Globe, MessageSquare, TrendingUp, Loader2 } from 'lucide-react';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -42,6 +43,7 @@ export function Membership() {
 
   return (
     <div className="min-h-screen bg-white">
+      <BreadcrumbBar items={[{ label: t('services'), href: '/services' }, { label: t('membership') }]} />
       <PageHeader 
         title={t('membership_plans_title')} 
         description={t('membership_plans_desc')}

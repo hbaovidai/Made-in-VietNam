@@ -14,7 +14,9 @@ export class CartService {
           include: {
             product: {
               include: {
-                supplier: { select: { id: true, companyName: true, logo: true } },
+                supplier: {
+                  select: { id: true, companyName: true, logo: true },
+                },
               },
             },
           },
@@ -31,7 +33,9 @@ export class CartService {
             include: {
               product: {
                 include: {
-                  supplier: { select: { id: true, companyName: true, logo: true } },
+                  supplier: {
+                    select: { id: true, companyName: true, logo: true },
+                  },
                 },
               },
             },

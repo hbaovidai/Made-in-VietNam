@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -33,7 +42,10 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: { name?: string; parentId?: string }) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: { name?: string; parentId?: string },
+  ) {
     return this.categoriesService.update(id, dto);
   }
 

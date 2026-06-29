@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { api } from '../../../lib/api';
 
 export function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [filterStatus, setFilterStatus] = useState('all');
   const [page, setPage] = useState(1);
   const perPage = 20;
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') || '');
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,6 +42,18 @@ export function AdminProducts() {
     ACTIVE: products.filter(p => p.status === 'ACTIVE').length,
     PENDING: products.filter(p => p.status === 'PENDING').length,
     DRAFT: products.filter(p => p.status === 'DRAFT').length,
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newParams = new URLSearchParams(searchParams);
+    if (search.trim()) {
+      newParams.set('search', search.trim());
+    } else {
+      newParams.delete('search');
+    }
+    newParams.set('page', '1');
+    setSearchParams(newParams);
   };
 
   return (
@@ -72,11 +90,11 @@ export function AdminProducts() {
           </select>
           <button className="wp-btn">Apply</button>
         </div>
-        <div className="wp-table-search">
+        <form onSubmit={handleSearchSubmit} className="wp-table-search">
           <input type="text" placeholder="Search products..." value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }} />
-          <button className="wp-btn"><Search size={14} /> Search</button>
-        </div>
+          <button type="submit" className="wp-btn"><Search size={14} /> Search</button>
+        </form>
       </div>
 
       {loading ? (

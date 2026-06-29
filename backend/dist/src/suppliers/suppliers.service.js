@@ -31,13 +31,7 @@ let SuppliersService = class SuppliersService {
         const [suppliers, total] = await Promise.all([
             this.prisma.supplier.findMany({
                 where,
-                include: {
-                    industries: { select: { industry: true } },
-                    markets: { select: { market: true } },
-                    certifications: { select: { name: true } },
-                    _count: { select: { products: true } },
-                },
-                orderBy: { createdAt: 'desc' },
+                orderBy: { updatedAt: 'desc' },
                 skip: (page - 1) * limit,
                 take: limit,
             }),
@@ -73,7 +67,9 @@ let SuppliersService = class SuppliersService {
         return supplier;
     }
     async createProfile(userId, data) {
-        const existing = await this.prisma.supplier.findUnique({ where: { userId } });
+        const existing = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
         if (existing) {
             return existing;
         }
@@ -137,7 +133,7 @@ let SuppliersService = class SuppliersService {
     }
     async verifySupplier(supplierId, isVerified) {
         const supplier = await this.prisma.supplier.findUnique({
-            where: { id: supplierId }
+            where: { id: supplierId },
         });
         if (!supplier)
             throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
@@ -145,8 +141,8 @@ let SuppliersService = class SuppliersService {
             where: { id: supplierId },
             data: {
                 isVerified,
-                verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED'
-            }
+                verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED',
+            },
         });
         return updated;
     }
@@ -172,7 +168,7 @@ let SuppliersService = class SuppliersService {
             where: { supplierId },
             select: { id: true, name: true, viewCount: true, status: true },
         });
-        const productIds = products.map(p => p.id);
+        const productIds = products.map((p) => p.id);
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const dailyViews = await this.prisma.viewHistory.groupBy({
@@ -227,14 +223,14 @@ let SuppliersService = class SuppliersService {
         const topProducts = products
             .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
             .slice(0, 10)
-            .map(p => ({
+            .map((p) => ({
             id: p.id,
             name: p.name,
             views: p.viewCount || 0,
             status: p.status,
         }));
         const totalViewsAll = products.reduce((sum, p) => sum + (p.viewCount || 0), 0);
-        const activeProducts = products.filter(p => p.status === 'ACTIVE').length;
+        const activeProducts = products.filter((p) => p.status === 'ACTIVE').length;
         return {
             overview: {
                 totalViews: totalViewsAll,

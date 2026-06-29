@@ -25,7 +25,9 @@ let CartService = class CartService {
                     include: {
                         product: {
                             include: {
-                                supplier: { select: { id: true, companyName: true, logo: true } },
+                                supplier: {
+                                    select: { id: true, companyName: true, logo: true },
+                                },
                             },
                         },
                     },
@@ -41,7 +43,9 @@ let CartService = class CartService {
                         include: {
                             product: {
                                 include: {
-                                    supplier: { select: { id: true, companyName: true, logo: true } },
+                                    supplier: {
+                                        select: { id: true, companyName: true, logo: true },
+                                    },
                                 },
                             },
                         },

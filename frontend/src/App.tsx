@@ -6,6 +6,9 @@ import { WPAdminLayout } from './layouts/WPAdminLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AppearanceProvider } from './contexts/AppearanceContext';
+import { ThemeEffects } from './components/ThemeEffects';
+import { PromoPopup } from './components/PromoPopup';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { ProfileSubmission } from './pages/ProfileSubmission';
@@ -26,12 +29,15 @@ const ProductDetail = React.lazy(() => import('./pages/ProductDetail').then(m =>
 const SupplierList = React.lazy(() => import('./pages/SupplierList').then(m => ({ default: m.SupplierList })));
 const SupplierProfile = React.lazy(() => import('./pages/SupplierProfile').then(m => ({ default: m.SupplierProfile })));
 const RFQ = React.lazy(() => import('./pages/RFQ').then(m => ({ default: m.RFQ })));
-const AboutContact = React.lazy(() => import('./pages/AboutContact').then(m => ({ default: m.AboutContact })));
+const About = React.lazy(() => import('./pages/About').then(m => ({ default: m.About })));
+const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 const Cart = React.lazy(() => import('./pages/Cart').then(m => ({ default: m.Cart })));
 const Checkout = React.lazy(() => import('./pages/Checkout').then(m => ({ default: m.Checkout })));
 const NotFound = React.lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const Reports = React.lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const Apps = React.lazy(() => import('./pages/Apps').then(m => ({ default: m.Apps })));
+const Blog = React.lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })));
+const Careers = React.lazy(() => import('./pages/Careers').then(m => ({ default: m.Careers })));
 
 // Support Pages
 const HelpCenter = React.lazy(() => import('./pages/support/HelpCenter').then(m => ({ default: m.HelpCenter })));
@@ -69,6 +75,7 @@ const SupplierOrders = React.lazy(() => import('./pages/dashboard/supplier/Suppl
 const SupplierAnalytics = React.lazy(() => import('./pages/dashboard/supplier/SupplierAnalytics').then(m => ({ default: m.SupplierAnalytics })));
 const SupplierProfileDashboard = React.lazy(() => import('./pages/dashboard/supplier/SupplierProfile').then(m => ({ default: m.SupplierProfile })));
 const SupplierSettings = React.lazy(() => import('./pages/dashboard/supplier/SupplierSettings').then(m => ({ default: m.SupplierSettings })));
+const ManufacturerVerification = React.lazy(() => import('./pages/dashboard/supplier/ManufacturerVerification').then(m => ({ default: m.ManufacturerVerification })));
 
 // Admin Lazy Pages
 const AdminOverview = React.lazy(() => import('./pages/dashboard/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
@@ -89,7 +96,16 @@ const AdminSettings = React.lazy(() => import('./pages/dashboard/admin/AdminSett
 const AdminPages = React.lazy(() => import('./pages/dashboard/admin/AdminPages').then(m => ({ default: m.AdminPages })));
 const AdminRequests = React.lazy(() => import('./pages/dashboard/admin/AdminRequests').then(m => ({ default: m.AdminRequests })));
 const AdminMessages = React.lazy(() => import('./pages/dashboard/admin/AdminMessages').then(m => ({ default: m.AdminMessages })));
-const AdminSupplierApplications = React.lazy(() => import('./pages/dashboard/admin/AdminSupplierApplications').then(m => ({ default: m.AdminSupplierApplications })));
+
+const AdminPendingProfiles = React.lazy(() => import('./pages/dashboard/admin/AdminPendingProfiles').then(m => ({ default: m.AdminPendingProfiles })));
+const AdminVerificationRequests = React.lazy(() => import('./pages/dashboard/admin/AdminVerificationRequests').then(m => ({ default: m.AdminVerificationRequests })));
+const AdminAppearance = React.lazy(() => import('./pages/dashboard/admin/AdminAppearance').then(m => ({ default: m.AdminAppearance })));
+const AdminBlogPosts = React.lazy(() => import('./pages/dashboard/admin/AdminBlogPosts').then(m => ({ default: m.AdminBlogPosts })));
+const AdminBlogCategories = React.lazy(() => import('./pages/dashboard/admin/AdminBlogCategories').then(m => ({ default: m.AdminBlogCategories })));
+const AdminBlogSettings = React.lazy(() => import('./pages/dashboard/admin/AdminBlogSettings').then(m => ({ default: m.AdminBlogSettings })));
+const AdminCareers = React.lazy(() => import('./pages/dashboard/admin/AdminCareers').then(m => ({ default: m.AdminCareers })));
+const AdminLegal = React.lazy(() => import('./pages/dashboard/admin/AdminLegal').then(m => ({ default: m.AdminLegal })));
+const AdminPrivacy = React.lazy(() => import('./pages/dashboard/admin/AdminPrivacy').then(m => ({ default: m.AdminPrivacy })));
 
 // Redirect base dashboard based on role
 function DashboardRedirect() {
@@ -129,9 +145,12 @@ function ScrollToTop() {
 export default function App() {
   return (
     <AuthProvider>
+      <AppearanceProvider>
       <BrowserRouter>
         <ErrorBoundary>
         <ScrollToTop />
+        <ThemeEffects />
+        <PromoPopup />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Main Public Routes */}
@@ -151,8 +170,8 @@ export default function App() {
                   <Checkout />
                 </ProtectedRoute>
               } />
-              <Route path="/about" element={<AboutContact />} />
-              <Route path="/contact" element={<AboutContact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
 
               {/* New Public Routes */}
               <Route path="/reports" element={<Reports />} />
@@ -169,6 +188,8 @@ export default function App() {
 
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/careers" element={<Careers />} />
 
               <Route path="*" element={<NotFound />} />
             </Route>
@@ -218,6 +239,7 @@ export default function App() {
               <Route path="analytics" element={<SupplierAnalytics />} />
               <Route path="profile" element={<SupplierProfileDashboard />} />
               <Route path="settings" element={<SupplierSettings />} />
+              <Route path="verification/manufacturer" element={<ManufacturerVerification />} />
             </Route>
 
             <Route path="/dashboard/admin" element={
@@ -242,13 +264,23 @@ export default function App() {
               <Route path="requests" element={<AdminRequests />} />
               <Route path="messages" element={<AdminMessages />} />
               <Route path="suppliers" element={<AdminSuppliers />} />
-              <Route path="supplier_applications" element={<AdminSupplierApplications />} />
+
+              <Route path="pending-profiles" element={<AdminPendingProfiles />} />
+              <Route path="verification-requests" element={<AdminVerificationRequests />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="appearance" element={<AdminAppearance />} />
+              <Route path="blog/posts" element={<AdminBlogPosts />} />
+              <Route path="blog/categories" element={<AdminBlogCategories />} />
+              <Route path="blog/settings" element={<AdminBlogSettings />} />
+              <Route path="careers" element={<AdminCareers />} />
+              <Route path="legal" element={<AdminLegal />} />
+              <Route path="legal/privacy" element={<AdminPrivacy />} />
             </Route>
           </Routes>
         </Suspense>
       </ErrorBoundary>
       </BrowserRouter>
+      </AppearanceProvider>
     </AuthProvider>
   );
 }

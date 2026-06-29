@@ -37,7 +37,7 @@ export class ProductsService {
 
     // Nếu có truyền status (do admin filter) thì lấy status đó, ngược lại mặc định chỉ lấy ACTIVE cho public view
     if (status) {
-      where.status = status as ProductStatus;
+      where.status = status;
     } else {
       where.status = 'ACTIVE';
     }
@@ -166,7 +166,7 @@ export class ProductsService {
       orderBy: { createdAt: 'desc' },
       include: {
         category: { select: { name: true, slug: true } },
-      }
+      },
     });
   }
 
@@ -204,7 +204,8 @@ export class ProductsService {
     });
 
     // Auto-translate to English (non-blocking)
-    this.translationService.translateProduct(dto.name, dto.description)
+    this.translationService
+      .translateProduct(dto.name, dto.description)
       .then(async (translated) => {
         if (translated.nameEn || translated.descriptionEn) {
           await this.prisma.product.update({
@@ -216,7 +217,7 @@ export class ProductsService {
           });
         }
       })
-      .catch(err => console.error('Auto-translate product failed:', err));
+      .catch((err) => console.error('Auto-translate product failed:', err));
 
     // Notify Admins
     try {
@@ -224,7 +225,7 @@ export class ProductsService {
         title: 'Sản phẩm mới cần duyệt',
         message: `Xưởng vừa đăng sản phẩm "${product.name}". Vui lòng kiểm duyệt nội dung.`,
         link: '/dashboard/admin/products',
-        type: 'warning'
+        type: 'warning',
       });
     } catch (err) {
       console.error('Failed to notify admins:', err);
@@ -252,13 +253,17 @@ export class ProductsService {
     }
 
     // Không cho phép Supplier tự đổi status sang ACTIVE
-    if (supplierId && newStatus === ProductStatus.ACTIVE && product.status !== ProductStatus.ACTIVE) {
+    if (
+      supplierId &&
+      newStatus === ProductStatus.ACTIVE &&
+      product.status !== ProductStatus.ACTIVE
+    ) {
       newStatus = ProductStatus.PENDING;
     }
 
     const updated = await this.prisma.product.update({
       where: { id: productId },
-      data: { ...dto, status: newStatus as ProductStatus },
+      data: { ...dto, status: newStatus },
       include: {
         category: { select: { name: true, slug: true } },
       },
@@ -266,22 +271,27 @@ export class ProductsService {
 
     // Re-translate if name or description changed
     if (dto.name || dto.description) {
-      this.translationService.translateProduct(
-        dto.name || product.name,
-        dto.description || product.description || undefined,
-      )
+      this.translationService
+        .translateProduct(
+          dto.name || product.name,
+          dto.description || product.description || undefined,
+        )
         .then(async (translated) => {
           if (translated.nameEn || translated.descriptionEn) {
             await this.prisma.product.update({
               where: { id: productId },
               data: {
                 ...(translated.nameEn && { nameEn: translated.nameEn }),
-                ...(translated.descriptionEn && { descriptionEn: translated.descriptionEn }),
+                ...(translated.descriptionEn && {
+                  descriptionEn: translated.descriptionEn,
+                }),
               },
             });
           }
         })
-        .catch(err => console.error('Auto-translate product update failed:', err));
+        .catch((err) =>
+          console.error('Auto-translate product update failed:', err),
+        );
     }
 
     return updated;
@@ -345,7 +355,10 @@ export class ProductsService {
         link: '/dashboard/supplier/products',
       });
     } catch (err) {
-      console.error('Failed to notify supplier about product verification:', err);
+      console.error(
+        'Failed to notify supplier about product verification:',
+        err,
+      );
     }
 
     return updated;

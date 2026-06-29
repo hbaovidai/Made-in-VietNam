@@ -1,10 +1,16 @@
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export enum ApplicantRole {
-  Owner='OWNER',
-  LegalRep='LEGAL_REP',
-  Manager='MANAGER',
-  Employee='EMPLOYEE',
+  Owner = 'OWNER',
+  LegalRep = 'LEGAL_REP',
+  Manager = 'MANAGER',
+  Employee = 'EMPLOYEE',
 }
 
 export class SupplierApplicationDto {

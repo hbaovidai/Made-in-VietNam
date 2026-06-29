@@ -31,5 +31,5 @@ export class SupplierQueryDto {
   @IsOptional() @IsString() industry?: string;
   @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
-  @IsOptional() @IsString() verificationStatus?: SupplierVerificationStatus; 
+  @IsOptional() @IsString() verificationStatus?: SupplierVerificationStatus;
 }

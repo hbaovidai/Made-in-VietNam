@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Globe, MessageSquare, Send, CheckCircle2, Award, ShieldCheck, Users } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../lib/api';
 import { useToast } from '../components/ui/Toast';
 import { SEOHead } from '../components/SEOHead';
+import { useAppearance } from '../contexts/AppearanceContext';
 
 export function AboutContact() {
   const { t } = useTranslation();
   const { addToast } = useToast();
   const [form, setForm] = useState({ fullName: '', email: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
+  const { settings: ctx } = useAppearance();
 
-  // Fetch site settings for contact info
-  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({
-    contact_email: 'contact@vieproduct.com',
-    contact_phone: '+84 899 123 456',
-    contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
-  });
-
-  useEffect(() => {
-    api.get('/settings')
-      .then(res => setSiteSettings(prev => ({ ...prev, ...res.data })))
-      .catch(() => {/* use defaults */});
-  }, []);
+  const siteSettings = {
+    contact_email: ctx.contact_email || 'contact@vieproduct.com',
+    contact_phone: ctx.contact_phone || '+84 899 123 456',
+    contact_address: ctx.contact_address || '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

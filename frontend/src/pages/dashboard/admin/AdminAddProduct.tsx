@@ -324,7 +324,7 @@ export function AdminAddProduct() {
 
     try {
       // POST to real NestJS api
-      await api.post('/products', payload, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      await api.post('/products', payload, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
       alert('Sản phẩm đã được đăng thành công!');
       window.location.href = '/dashboard/admin/products';
     } catch (err: any) {

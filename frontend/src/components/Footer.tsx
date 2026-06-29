@@ -1,31 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../lib/api';
+import { useAppearance } from '../contexts/AppearanceContext';
 
 export function Footer() {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const { settings: ctx } = useAppearance();
 
-  const [settings, setSettings] = useState<Record<string, string>>({
-    contact_email: 'contact@vieproduct.com',
-    contact_phone: '+84 899 123 456',
-    contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
-    facebook_url: '',
-    twitter_url: '',
-    linkedin_url: '',
-    instagram_url: '',
-  });
-
-  useEffect(() => {
-    api.get('/settings')
-      .then(res => setSettings(prev => ({ ...prev, ...res.data })))
-      .catch(() => {/* use defaults */});
-  }, []);
+  const settings = {
+    contact_email: ctx.contact_email || 'contact@vieproduct.com',
+    contact_phone: ctx.contact_phone || '+84 899 123 456',
+    contact_address: ctx.contact_address || '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
+    facebook_url: ctx.facebook_url || '',
+    twitter_url: ctx.twitter_url || '',
+    linkedin_url: ctx.linkedin_url || '',
+    instagram_url: ctx.instagram_url || '',
+  };
 
   return (
-    <footer className="bg-[#043365] text-slate-300 pt-16 pb-8 border-t border-[#03254A]">
+    <footer className="pt-16 pb-8 border-t" style={{
+      backgroundColor: 'var(--color-footer-bg, #043365)',
+      color: 'var(--color-footer-text, #CBD5E1)',
+      borderColor: 'var(--color-footer-bg, #03254A)',
+      ...(ctx.footer_banner_image ? {
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${ctx.footer_banner_image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      } : {}),
+    }}>
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
@@ -94,8 +99,8 @@ export function Footer() {
               <li><Link to="/help" className="hover:text-viet-gold transition-colors">{t('help_center')}</Link></li>
               <li><Link to="/terms" className="hover:text-viet-gold transition-colors">{t('terms_of_service')}</Link></li>
               <li><Link to="/privacy" className="hover:text-viet-gold transition-colors">{t('privacy_policy')}</Link></li>
-              <li><Link to="/" className="hover:text-viet-gold transition-colors">Blog</Link></li>
-              <li><Link to="/" className="hover:text-viet-gold transition-colors">Tuyển dụng</Link></li>
+              <li><Link to="/blog" className="hover:text-viet-gold transition-colors">Blog</Link></li>
+              <li><Link to="/careers" className="hover:text-viet-gold transition-colors">Tuyển dụng</Link></li>
             </ul>
           </div>
 

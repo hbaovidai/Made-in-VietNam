@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../components/PageHeader';
+import { BreadcrumbBar } from '../components/BreadcrumbBar';
 import { FileText, Download, ShieldCheck, CheckCircle2, ChevronRight, Search, Filter, Loader2 } from 'lucide-react';
 import { api } from '../lib/api';
 
@@ -21,6 +22,7 @@ export function Reports() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <BreadcrumbBar items={[{ label: t('reports') }]} />
       <PageHeader 
         title={t('audited_supplier_reports')} 
         description={t('audited_supplier_reports_desc')}

@@ -34,30 +34,32 @@ let SupplierApplicationService = class SupplierApplicationService {
                 take: limit,
                 skip: (page - 1) * limit,
                 orderBy: {
-                    status: 'asc'
+                    status: 'asc',
                 },
-                where: where
+                where: where,
             }),
             this.prisma.supplierApplication.count({}),
         ]);
         return {
             data: supp_apps,
             meta: {
-                total_apps_count, page,
-                limit, total_pages: Math.ceil(total_apps_count / limit)
-            }
+                total_apps_count,
+                page,
+                limit,
+                total_pages: Math.ceil(total_apps_count / limit),
+            },
         };
     }
     async deleteApplication(id) {
         try {
             const deleted_user = await this.prisma.supplierApplication.delete({
                 where: {
-                    id: id
-                }
+                    id: id,
+                },
             });
             return {
                 success: true,
-                deletedUser: deleted_user
+                deletedUser: deleted_user,
             };
         }
         catch (error) {
@@ -65,7 +67,7 @@ let SupplierApplicationService = class SupplierApplicationService {
                 error.code === 'P2025') {
                 return {
                     success: false,
-                    reason: `User with id ${id} doesn't exist.`
+                    reason: `User with id ${id} doesn't exist.`,
                 };
             }
             throw new common_1.InternalServerErrorException('Something went wrong on the server.');
@@ -75,23 +77,23 @@ let SupplierApplicationService = class SupplierApplicationService {
         try {
             const updatedApplication = await this.prisma.supplierApplication.update({
                 data: {
-                    status: newStatus
+                    status: newStatus,
                 },
                 where: {
-                    id
+                    id,
                 },
             });
             return {
                 success: true,
-                updatedApplication
+                updatedApplication,
             };
         }
         catch (error) {
             if (error instanceof client_1.Prisma.PrismaClientKnownRequestError &&
-                error.code === "P2025") {
+                error.code === 'P2025') {
                 return {
                     success: false,
-                    reason: 'Application does not exist.'
+                    reason: 'Application does not exist.',
                 };
             }
             throw new common_1.InternalServerErrorException('Something went wrong on the server.');
