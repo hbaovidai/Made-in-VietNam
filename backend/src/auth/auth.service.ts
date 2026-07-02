@@ -86,7 +86,6 @@ export class AuthService {
       message: 'Đăng ký thành công',
       user: {
         ...user,
-        supplier: supplierProfile,
       },
       token,
     };

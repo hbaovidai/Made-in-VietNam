@@ -13,9 +13,6 @@ function attrBox( {  } ) {
   );
 }
 
-// ─── Types (kept for backward compat with AdminSuppliers) ────
-export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
-
 // ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
   idOrSlug?: string,
@@ -137,7 +134,6 @@ export function SupplierDetail({ id, onApprove, onReject, onDelete, onBack }: Pr
   useEffect(() => {
     fetchProfile(id);
   }, []);
-
 
   const st = statusMap[profile.status] || statusMap.PENDING;
 
