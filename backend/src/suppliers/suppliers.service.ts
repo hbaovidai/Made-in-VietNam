@@ -197,7 +197,7 @@ export class SuppliersService {
     const updated = await this.prisma.supplier.update({
       where: { id: supplierId },
       data: { 
-        status: isVerified ? SupplierStatus.VERIFIED : SupplierStatus.UNVERIFIED
+        status: isVerified ? SupplierStatus.VERIFIED : SupplierStatus.APPLICATION_PENDING
       }
     });
 

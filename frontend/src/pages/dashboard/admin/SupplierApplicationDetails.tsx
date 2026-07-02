@@ -185,7 +185,7 @@ export function SupplierApplicationDetail(
       </div>
 
       {/* Quyết định — chỉ hiện khi pending
-      {profile.status === SupplierStatus.UNVERIFIED && (
+      {profile.status === SupplierStatus.APPLICATION_PENDING && (
         <div className="flex flex-col gap-4 max-w-md mx-auto p-4 bg-white rounded-lg shadow">
           <h3 className="text-lg font-semibold text-gray-800">
             Quyết định

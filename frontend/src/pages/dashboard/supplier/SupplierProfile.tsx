@@ -128,7 +128,7 @@ export function SupplierProfile() {
       const res = await api.put(`/suppliers/${supplierId}`, {
         businessLicenseUrl: bizLicenseUrl,
         identityCardUrl: idCardUrl,
-        status: SupplierStatus.UNVERIFIED
+        status: SupplierStatus.APPLICATION_PENDING
       });
 
       setSupplier(res.data);

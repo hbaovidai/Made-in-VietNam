@@ -63,9 +63,9 @@ const badge: React.CSSProperties = {
 
 const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
   [SupplierStatus.VERIFIED]:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
-  [SupplierStatus.UNVERIFIED]:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
   [SupplierStatus.SUSPENDED]:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
   [SupplierStatus.APPLICATION_REJECTED]:   { label: 'Đã từ chối phê duyệt',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  [SupplierStatus.APPLICATION_PENDING]:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
 };
 
 // ═════════════════════════════════════════════════════════════

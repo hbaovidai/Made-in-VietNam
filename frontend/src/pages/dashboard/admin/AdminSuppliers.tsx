@@ -11,15 +11,15 @@ const PROFILES_PER_PAGE: number = 20;
 
 // ─── Status helpers ──────────────────────────────────────────
 const statusLabels: Record<SupplierStatus, string> = {
-  VERIFIED: 'Đã xác minh', UNVERIFIED: 'Chưa xác minh',
+  VERIFIED: 'Đã xác minh', APPLICATION_PENDING: 'Chưa xác minh',
   SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
 const statusBadgeClass: Record<SupplierStatus, string> = {
-  VERIFIED: 'wp-badge-approved', UNVERIFIED: 'wp-badge-rejected',
+  VERIFIED: 'wp-badge-approved', APPLICATION_PENDING: 'wp-badge-rejected',
   SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
 const statusColor: Record<SupplierStatus, string> = {
-  VERIFIED: '#00a32a', UNVERIFIED: '#d63638',
+  VERIFIED: '#00a32a', APPLICATION_PENDING: '#d63638',
   SUSPENDED: 'Đã ăn ban', APPLICATION_REJECTED: 'Đã từ chối ứng viên'
 };
 
@@ -43,7 +43,7 @@ function Row( {
               {supp.companyName}
             </span>
             <div className="wp-row-actions">
-              {supp.status === SupplierStatus.UNVERIFIED && (
+              {supp.status === SupplierStatus.APPLICATION_PENDING && (
                 <>
                 <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, SupplierStatus.VERIFIED)}>
                   Xác minh
@@ -57,7 +57,7 @@ function Row( {
 
               {supp.status === SupplierStatus.VERIFIED && (
                 <>
-                <button className="delete" onClick={() => handleStatusChange(supp.id, SupplierStatus.UNVERIFIED)}>
+                <button className="delete" onClick={() => handleStatusChange(supp.id, SupplierStatus.APPLICATION_PENDING)}>
                   Huỷ xác minh
                 </button>
                 <span className="sep">|</span>
@@ -222,7 +222,7 @@ export function AdminSuppliers() {
       <SupplierDetail
         request={filtered[0]}
         onApprove={(id) => { handleStatusChange(id, SupplierStatus.VERIFIED); navigate('/dashboard/admin/suppliers'); }}
-        onReject={(id) => { handleStatusChange(id, SupplierStatus.UNVERIFIED); navigate('/dashboard/admin/suppliers'); }}
+        onReject={(id) => { handleStatusChange(id, SupplierStatus.APPLICATION_PENDING); navigate('/dashboard/admin/suppliers'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/suppliers'); }}
         onBack={() => navigate('/dashboard/admin/suppliers')}
       />
