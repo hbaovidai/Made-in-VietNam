@@ -6,108 +6,35 @@ import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { BusinessType, SupplierAccountHolderRole, SupplierType, } from '../lib/enums';
+import { FontSizes, formLabel, } from '../lib/constants';
+import { Selection, FormField, UploadField, FormFieldTextInput, Label } from '../components/supplier_profile_submit_form/components';
 
-function Label( { text } ) {
-  return (
-    <label className="text-[13px] font-bold text-[#0F172A]"
-    >{text}</label>
-  )
-}
-
-function FormFieldTextInput( { value, setValue, placeHolder, required = true } ) {
-  return (
-    <input
-      required={required}
-      type="text"
-      value={value}
-      onChange={(e) => setValue(e.target.value) }
-      placeholder={placeHolder}
-      className="w-full px-4 py-3.5 bg-[#F8FAFC] border border-slate-200 rounded-xl"
-    />
-  );
-}
-
-function FormField({ label, value, setValue, placeHolder=label, required=true}) {
-  return (
-    <div className="space-y-2">
-      <Label text={label}/>
-      <FormFieldTextInput
-        value={value}
-        setValue={setValue}
-        placeHolder={placeHolder}
-        required={required}
-      />
-    </div>
-  );
-}
-
-function Selection( { label, value, setValue, options } ) {
-  return (
-    <div className="space-y-2">
-      <label className="text-[13px] font-bold text-[#0F172A]">
-        {label}
-      </label>
-
-      <select
-        required
-        value={value}
-        onChange={(e)=>setValue(e.target.value)}
-        className="w-full px-4 py-3.5 bg-[#F8FAFC] border border-slate-200 rounded-xl"
-      >
-        {options && Object.keys(options).map(optionLabel => {
-          return (
-            <option value={options[optionLabel]}>{optionLabel}</option>
-          );
-        })}
-      </select>
-    </div>
-  );
-}
-
-function UploadField( { label, handleUpload, urlArray } ) {
-  return (
-    <div className="space-y-2 flex flex-col">
-      <Label text={label}/>
-      <input type="file" required
-        accept=".png,.jpg,.jpeg,.pdf,.webp"
-        className="w-full px-4 py-3.5 text-[13px] text-justify
-          rounded-xl bg-blue-200 hover:border hover:border-blue-950
-          file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0
-          file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-[#0F172A]
-          hover:file:bg-blue-100
-          cursor-pointer"
-        onSubmit={(e) => handleUpload(e, imageArray)}
-      />
-    </div>
-  );
-}
+// todo: this page increases memory usage every time you reload it. really bad bad
 
 export function ProfileSubmission() {
   const { t } = useTranslation();
 
-  const [accountHolderFullName, setAccountHolderFullName] = useState<string>();
-  const [accountHolderPhone, setAccountHolderPhone] = useState<string>();
+  const [accountHolderFullName, setAccountHolderFullName] = useState<string>('');
+  const [accountHolderPhone, setAccountHolderPhone] = useState<string>('');
   const [accountHolderRole, setAccountHolderRole] = useState<SupplierAccountHolderRole>(SupplierAccountHolderRole.EMPLOYEE);
   const [accountHolderGovId, setAccountholderGovId] = useState<File[] | null>(null);
-  const [accountHolderEmail, setAccountHolderEmail] = useState<string>();
+  const [accountHolderEmail, setAccountHolderEmail] = useState<string>('');
   const accountHolderGovIdUrl: string[] = [];
   const authorizationLetterUrl: string[] = [];
   const [authorizationLetter, setAuthorizationLetter] = useState<File[] | null>(null);
 
-  const [companyName, setCompanyName] = useState<string>();
+  const [companyName, setCompanyName] = useState<string>('');
   const [businessType, setBusinessType] = useState<BusinessType>(BusinessType.PRIVATE);
   const businessLicenseUrl: string[] = [];
 
-  const [taxCode, setTaxCode] = useState<string>();
-  const [legalRepName, setCompanyLegalRepName]  = useState<string>();
-  const [legalRepPhone, setCompanyLegalRepPhone]  = useState<string>();
+  const [taxCode, setTaxCode] = useState<string>('');
+  const [legalRepName, setCompanyLegalRepName]  = useState<string>('');
+  const [legalRepPhone, setCompanyLegalRepPhone]  = useState<string>('');
   const [businessLicense, setBusinessLicense] = useState<File | null>(null);
-  const [province, setProvince] = useState<string>();
-  const [district, setDistrict] = useState<string>();
-  const [ward, setWard] = useState<string>();
-  const [streetAddress, setStreetAddress] = useState<string>();
+  const [province, setProvince] = useState<string>('');
+  const [district, setDistrict] = useState<string>('');
+  const [ward, setWard] = useState<string>('');
+  const [streetAddress, setStreetAddress] = useState<string>('');
 
   const [supplierType, setSupplierType] = useState<SupplierType>(SupplierType.NORMAL);
 
@@ -126,6 +53,8 @@ export function ProfileSubmission() {
       const imageUrl = res.data.url;
 
       urlArray.push(imageUrl);
+      console.log(urlArray);
+
     } catch (error) {
       console.log(error);
     }
@@ -143,10 +72,8 @@ export function ProfileSubmission() {
       streetAddress, supplierType,
     }
 
-    const res = await api.post('/turbo_secret_registration_form', dto);
-    if (res.data.success) {
-      alert(res.data.message);
-    }
+    const res = await api.post('/auth/turbo_secret_registration_form', dto);
+    alert(res.data.message);
   };
 
   const accountHolderRoleOptions = {
@@ -245,7 +172,7 @@ export function ProfileSubmission() {
         <div className="px-10 py-10 space-y-4">
           {/* todo: center the text */}
           <div className="flex ">
-            <label className="font-bold text-[22px] ">Thông tin liên hệ người kiểm soát tài khoản</label>
+            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>Thông tin liên hệ người kiểm soát tài khoản</label>
           </div>
 
           {contactInfoInputs.map( ({ id, Component, props }) => {
@@ -257,7 +184,9 @@ export function ProfileSubmission() {
         </div>
 
         <div className="px-10 py-10 space-y-4">
-          <label className="font-bold text-[22px]">Thông tin Doanh nghiệp</label>
+          <div className='flex'>
+            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>Thông tin Doanh nghiệp</label>
+          </div>
 
           {businessInputs.map( ( { id, Component, props } ) => {
             return (
