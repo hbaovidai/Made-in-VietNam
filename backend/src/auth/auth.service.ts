@@ -92,39 +92,58 @@ export class AuthService {
   }
   
   async supplierRegister(dto: SupplierRegisterDto) {
-    return {
-      message: "data received",
-      success: true
-    }
-
     const userDto = new UserRegisterDto();
     userDto.email = dto.accountHolderEmail;
     userDto.phone = dto.accountHolderPhone;
     userDto.fullName = dto.companyName;
     userDto.role = Role.SUPPLIER;
 
-    const { user } = await this.register(userDto);
+    try {
+      const { user } = await this.register(userDto);
 
-    // TODO: prevent duplicate suppliers
+      // TODO: prevent duplicate suppliers
+      const existingCompany = await this.prisma.supplier.findUnique({
+        where: {
+          taxCode: dto.taxCode,
+        },
+      });
 
-    const slug = dto.companyName
+
+      if ( existingCompany ) {
+        return {
+          message: 'Doanh nghiệp đã tồn tại.',
+          success: false
+        };
+      }
+
+      const slug = dto.companyName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
-    // maybe do some logging later, idk bro
-    const supplierProfile = await this.prisma.supplier.create({
-      data: {
-        userId: user.id,
-        slug: `${slug}-${Date.now()}`,
-        ...dto
-      },
-    });
+      // maybe do some logging later, idk bro
+      const supplierProfile = await this.prisma.supplier.create({
+        data: {
+          userId: user.id,
+          slug: `${slug}-${Date.now()}`,
+          ...dto
+        },
+      });
 
-    return {
-      message: 'Đã tạo hồ sơ nhà cung cấp',
-      success: true,
-    };
+      return {
+        message: 'Đã tạo hồ sơ nhà cung cấp',
+        success: true,
+      };
+
+    } catch (error) {
+      // var message = "An error occurred.";
+      // if ( error instanceof ConflictException ) {
+      //   message = error.message;
+      // } 
+
+      console.log(error.message);
+      return { message: error.message, success: false, }
+    }
   }
 
   async login(dto: LoginDto) {

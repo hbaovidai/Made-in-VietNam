@@ -92,6 +92,7 @@ export class GoogleLoginDto {
 
 // ---- supplier auth dto ---- //
 export class SupplierRegisterDto {
+  @IsString() accountHolderFullName: string;
   @IsString() accountHolderGovId: string;
   @IsString() accountHolderPhone: string;
   @IsString() accountHolderEmail: string;
