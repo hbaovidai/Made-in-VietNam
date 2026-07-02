@@ -1,50 +1,46 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
+import { SupplierStatus } from '@/src/lib/enums';
+
+// TODO: THIS FILE NEEDS FIXING
 
 // ─── Types (kept for backward compat with AdminSuppliers) ────
 export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
 
+// ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
-  id?: string;
-  userId?: string;
-  companyName?: string;
-  slug?: string;
-  logo?: string;
-  banner?: string;
-  description?: string;
-  businesstype?: string;
-  businessType?: string;
-  yearEstablished?: number;
-  employeeCount?: string;
-  address?: string;
-  city?: string;
-  province?: string;
-  website?: string;
-  taxCode?: string;
-  taxId?: string;
-  companyEmail?: string;
-  companyPhone?: string;
-  legalRepresentative?: string;
-  businessLicenseUrl?: string;
-  identityCardUrl?: string;
-  verificationStatus?: SupplierVerificationStatus;
-  isVerified?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  repName?: string;
-  repTitle?: string;
-  repIdCard?: string;
-  repEmail?: string;
-  repPhone?: string;
-  industry?: string[];
-  products?: string;
-  exportExperience?: boolean;
-  exportMarkets?: string;
-  annualRevenue?: string;
-  driveLink?: string;
-  documentList?: string[];
-  submittedAt?: Date | string;
+  id?: string,
+  userId?:string,
+  companyName?:     string
+  slug?:            string
+  logo?:            string,
+  banner?:          string,
+  description?:     string,
+  businessType?:    string,
+  yearEstablished?: number,
+  employeeCount?:   string,
+  address?:             string,
+  city?:                string,
+  province?:            string,
+  website?:             string,
+  taxCode?:             string,
+  companyEmail?:        string,
+  companyPhone?:        string,
+  legalRepresentative?: string,
+  businessLicenseUrl?:  string,
+  identityCardUrl?:     string,
+  status?: SupplierStatus,
+  createdAt?: Date,
+  updatedAt?: Date,
+
+  // thêm tạm
+  industry: string[],
+  repName: string,
+  repPhone: string,
+  repEmail: string,
+  repTitle: string,
+  taxId: string,
 }
 
 interface Props {
@@ -108,6 +104,12 @@ const statusBadge = (status?: string) => {
   };
   const cfg = map[status || 'UNVERIFIED'] || map.UNVERIFIED;
   return <span style={s.badge(cfg.bg, cfg.color, cfg.border)}>{status || 'Unknown'}</span>;
+}
+
+const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
+  VERIFIED:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
+  UNVERIFIED:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  SUSPENDED:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
 };
 
 // ═══ Tab Components ═══════════════════════════════════════════
@@ -119,7 +121,7 @@ function TabOverview({ data }: { data: SupplierProfile }) {
       <div style={s.cardBody}>
         <Field label="Tên doanh nghiệp" value={data.companyName} />
         <Field label="Mã số thuế" value={data.taxCode} mono />
-        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businessType} />
         <Field label="Mô hình hoạt động" />
         <Field label="Ngành nghề" value={data.industry?.join(', ')} />
         <Field label="Địa chỉ trụ sở" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
@@ -157,7 +159,7 @@ function TabLegal({ data }: { data: SupplierProfile }) {
       <div style={s.cardBody}>
         <Field label="Tên DN theo ĐKKD" value={data.companyName} />
         <Field label="Mã số thuế / Mã số DN" value={data.taxCode || data.taxId} mono />
-        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businessType} />
         <Field label="Địa chỉ ĐKKD" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
         <Field label="Trạng thái xác minh pháp lý" last />
       </div>
@@ -296,7 +298,7 @@ function TabProducts() {
 export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
-  const verificationStatus = request.verificationStatus || 'UNVERIFIED';
+  const st = statusMap[request.status] || statusMap.PENDING;
 
   const renderTab = () => {
     switch (activeTab) {
@@ -335,7 +337,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
               {/* Verification Badges */}
               {(() => {
-                const isSupplierVerified = verificationStatus === 'VERIFIED';
+                const isSupplierVerified = status === 'VERIFIED';
                 const isManufacturerVerified = false; // placeholder — will be from API
                 const isExporterVerified = false;     // placeholder — will be from API
                 const active = { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0', icon: '✓' };
