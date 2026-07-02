@@ -1,38 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
-import { BusinessType, SupplierStatus } from '@/src/lib/enums';
+import { BusinessType, SupplierStatus, SupplierType } from '@/src/lib/enums';
+import { api } from '@/src/lib/api';
+
+function attrBox( {  } ) {
+  return (
+    <>
+    </>
+  );
+}
+
 
 // ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
-  id?: string,
-  companyName?:     string
-  slug?:            string
-  description?:     string,
-  businesstype?:    BusinessType,
-  yearEstablished?: number,
-  employeeCount?:   string,
-  city?:                string,
-  province?:            string,
+  idOrSlug?: string,
+
+  companyName?: string,
+  province?: string,
+  district?: string,
   ward?: string,
-  streetAddress?:             string,
-  website?:             string,
-  taxCode?:             string,
-  accountHolderFullName?: string
-  accountHolderEmail?:        string,
-  accountHolderPhone?:        string,
-  accountHolderGovId?:     string,
-  accountHolderGovIdUrl?:     string[],
+  streetAddress?: string,
+  supplierType?: SupplierType,
+  businessType?: BusinessType,
+  status?: SupplierStatus,
+
+  taxCode?: string,
   legalRepName?: string,
   legalRepPhone?: string,
-  businessLicenseUrl?:  string[],
-  status?: SupplierStatus,
-  createdAt?: Date,
-  updatedAt?: Date,
+  businessLicenseUrl?: string[],
+
+  accountHolderFullName: string,
+  accountHolderPhone: string,
+  accountHolderEmail: string,
+  accountHolderRole: string,
+  accountHolderGovId: string,
+  accountHolderGovIdUrl: string[],
+  authorizationLetterUrl: string[],
 }
 
 interface Props {
-  request: SupplierProfile;
+  id: string;
   onApprove: (id: string) => void;
   onReject: (id: string, reason: string) => void;
   onDelete: (id: string) => void;
@@ -54,19 +62,39 @@ const badge: React.CSSProperties = {
 };
 
 const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  VERIFIED:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
-  UNVERIFIED:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
-  SUSPENDED:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  [SupplierStatus.VERIFIED]:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
+  [SupplierStatus.UNVERIFIED]:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  [SupplierStatus.SUSPENDED]:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
+  [SupplierStatus.APPLICATION_REJECTED]:   { label: 'Đã từ chối phê duyệt',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
 };
 
 // ═════════════════════════════════════════════════════════════
-export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
+export function SupplierDetail({ id, onApprove, onReject, onDelete, onBack }: Props) {
+
   const [showRejectBox, setShowRejectBox] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
+  
+  const [profile, setProfile] = useState<SupplierProfile>(null);
+  const fetchProfile = async (id: string) => { 
+    const res = await api.get(
+      `/suppliers/adminShotGun/${id}`, 
+      {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`
+        }
+      }
+    );
 
-  const st = statusMap[request.status] || statusMap.PENDING;
+    setProfile(res.data);
+  };
+  useEffect(() => {
+    fetchProfile(id);
+  }, []);
+
+
+  const st = statusMap[profile.status] || statusMap.PENDING;
 
   const handleSaveNotes = () => { setNotesSaved(true); setTimeout(() => setNotesSaved(false), 2000); };
 
@@ -76,9 +104,9 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <Link to="/dashboard/admin/verifications">Nhà cung cấp</Link> {/* TODO: đấu nối api */}
+        <label>Nhà cung cấp</label> {/* TODO: đổi lại đúng  */}
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">{request.companyName}</span>
+        <span className="wp-breadcrumb-current">{profile.companyName}</span>
       </div>
 
       <div className="wp-page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -99,16 +127,15 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               Thông tin doanh nghiệp
             </h3>
             <div style={grid2}>
-              <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{request.companyName}</div></div>
-              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxCode}</div></div>
-              {/* <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div> */}
-              <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.yearEstablished}</div></div>
-              <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{request.address}</div></div>
-              <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{request.province}</div></div>
-              {request.website && (
+              <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{profile.companyName}</div></div>
+              <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{profile.taxCode}</div></div>
+              {/* <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{profile.companyType}</div></div> */}
+              <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{address}</div></div>
+              <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{profile.province}</div></div>
+              {profile.website && (
                 <div style={{ gridColumn: '1 / -1' }}>
                   <div style={label}>WEBSITE</div>
-                  <div style={value}><a href={request.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--wp-accent)' }}>{request.website}</a></div>
+                  <div style={value}><a href={profile.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--wp-accent)' }}>{profile.website}</a></div>
                 </div>
               )}
             </div>
@@ -120,11 +147,11 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               Người đại diện pháp luật
             </h3>
             <div style={grid2}>
-              <div><div style={label}>HỌ VÀ TÊN</div><div style={value}>{request.repName}</div></div>
-              <div><div style={label}>CHỨC DANH</div><div style={value}>{request.repTitle}</div></div>
-              <div><div style={label}>SỐ CCCD</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.repIdCard}</div></div>
-              <div><div style={label}>EMAIL</div><div style={value}><a href={`mailto:${request.repEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repEmail}</a></div></div>
-              <div><div style={label}>SỐ ĐIỆN THOẠI</div><div style={value}><a href={`tel:${request.repPhone}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repPhone}</a></div></div>
+              <div><div style={label}>HỌ VÀ TÊN</div><div style={value}>{profile.repName}</div></div>
+              <div><div style={label}>CHỨC DANH</div><div style={value}>{profile.repTitle}</div></div>
+              <div><div style={label}>SỐ CCCD</div><div style={{ ...value, fontFamily: 'monospace' }}>{profile.repIdCard}</div></div>
+              <div><div style={label}>EMAIL</div><div style={value}><a href={`mailto:${profile.repEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{profile.repEmail}</a></div></div>
+              <div><div style={label}>SỐ ĐIỆN THOẠI</div><div style={value}><a href={`tel:${profile.repPhone}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{profile.repPhone}</a></div></div>
             </div>
           </div>
 
@@ -136,26 +163,26 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
 
             <div style={label}>LĨNH VỰC KINH DOANH</div>
             <div style={{ marginBottom: 14 }}>
-              {request.industry.map(i => <span key={i} style={badge}>{i}</span>)}
+              {profile.industry.map(i => <span key={i} style={badge}>{i}</span>)}
             </div>
 
             <div style={label}>SẢN PHẨM / DỊCH VỤ CHÍNH</div>
-            <div style={{ ...value, lineHeight: 1.6 }}>{request.products}</div>
+            <div style={{ ...value, lineHeight: 1.6 }}>{profile.products}</div>
 
             <div style={grid2}>
               <div>
                 <div style={label}>KINH NGHIỆM XUẤT KHẨU</div>
                 <div style={value}>
-                  <span style={{ ...badge, background: request.exportExperience ? '#e6f6ee' : '#f0f0f1', color: request.exportExperience ? '#00713a' : '#646970', border: request.exportExperience ? '1px solid #b8e6cc' : '1px solid #dcdcde' }}>
-                    {request.exportExperience ? 'Có' : 'Không'}
+                  <span style={{ ...badge, background: profile.exportExperience ? '#e6f6ee' : '#f0f0f1', color: profile.exportExperience ? '#00713a' : '#646970', border: profile.exportExperience ? '1px solid #b8e6cc' : '1px solid #dcdcde' }}>
+                    {profile.exportExperience ? 'Có' : 'Không'}
                   </span>
                 </div>
               </div>
-              {request.exportMarkets && (
-                <div><div style={label}>THỊ TRƯỜNG XUẤT KHẨU</div><div style={value}>{request.exportMarkets}</div></div>
+              {profile.exportMarkets && (
+                <div><div style={label}>THỊ TRƯỜNG XUẤT KHẨU</div><div style={value}>{profile.exportMarkets}</div></div>
               )}
-              <div><div style={label}>DOANH THU HÀNG NĂM</div><div style={value}>{request.annualRevenue}</div></div>
-              <div><div style={label}>SỐ LƯỢNG NHÂN VIÊN</div><div style={value}>{request.employeeCount}</div></div>
+              <div><div style={label}>DOANH THU HÀNG NĂM</div><div style={value}>{profile.annualRevenue}</div></div>
+              <div><div style={label}>SỐ LƯỢNG NHÂN VIÊN</div><div style={value}>{profile.employeeCount}</div></div>
             </div>
           </div>
 
@@ -165,7 +192,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               Hồ sơ tài liệu
             </h3>
             <a
-              href={request.driveLink} target="_blank" rel="noopener noreferrer"
+              href={profile.driveLink} target="_blank" rel="noopener noreferrer"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 background: '#e6f6ee', color: '#00713a', border: '1px solid #b8e6cc',
@@ -180,7 +207,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
 
             <div style={label}>DANH SÁCH TÀI LIỆU ĐÃ NỘP</div>
             <ul style={{ listStyle: 'none', padding: 0, margin: '8px 0 14px' }}>
-              {request.documentList.map(doc => (
+              {profile.documentList.map(doc => (
                 <li key={doc} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', fontSize: 13, color: '#1d2327' }}>
                   <CheckCircle size={15} style={{ color: '#00a32a', flexShrink: 0 }} /> {doc}
                 </li>
@@ -206,15 +233,15 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               </span>
             </div>
             <div style={grid2}>
-              <div><div style={label}>NGÀY GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleDateString('vi-VN')}</div></div>
-              <div><div style={label}>GIỜ GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div></div>
+              <div><div style={label}>NGÀY GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(profile.submittedAt).toLocaleDateString('vi-VN')}</div></div>
+              <div><div style={label}>GIỜ GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(profile.submittedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div></div>
               <div><div style={label}>NGUỒN GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>Landing Page</div></div>
               <div><div style={label}>ĐỊA CHỈ IP</div><div style={{ fontSize: 13, color: '#1d2327', fontFamily: 'monospace' }}>14.161.12.34</div></div>
             </div>
           </div>
 
           {/* Quyết định — chỉ hiện khi pending */}
-          {request.status === SupplierStatus.VERIFIED && (
+          {profile.status === SupplierStatus.VERIFIED && (
             <div style={card}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
                 Quyết định
@@ -244,7 +271,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
                   />
                   <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                     <button
-                      onClick={() => { if (rejectReason.trim()) { onReject(request.id, rejectReason); setShowRejectBox(false); } }}
+                      onClick={() => { if (rejectReason.trim()) { onReject(profile.id, rejectReason); setShowRejectBox(false); } }}
                       disabled={!rejectReason.trim()}
                       style={{ flex: 1, padding: '8px 0', background: rejectReason.trim() ? '#d63638' : '#dcdcde', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 12, cursor: rejectReason.trim() ? 'pointer' : 'not-allowed' }}
                     >
@@ -261,7 +288,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
               )}
 
               <button
-                onClick={() => onDelete(request.id)}
+                onClick={() => onDelete(profile.id)}
                 style={{ width: '100%', padding: '10px 0', background: '#f0f0f1', color: '#646970', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
               >
                 Xóa hồ sơ
@@ -285,7 +312,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
               {notesSaved
                 ? <span style={{ fontSize: 11, color: '#00a32a', fontWeight: 600 }}>✓ Đã lưu lúc {new Date().toLocaleString('vi-VN')}</span>
-                : <span style={{ fontSize: 11, color: '#8c8f94' }}>{request.notes ? `Lưu lần cuối: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
+                : <span style={{ fontSize: 11, color: '#8c8f94' }}>{profile.notes ? `Lưu lần cuối: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
               }
               <button onClick={handleSaveNotes} className="wp-btn" style={{ fontSize: 12 }}>Lưu ghi chú</button>
             </div>
@@ -306,15 +333,15 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             <p style={{ fontSize: 13, color: '#646970', marginBottom: 16 }}>Bạn sắp phê duyệt hồ sơ xác minh và tạo link mời cho doanh nghiệp:</p>
             <div style={{ background: '#f6f7f7', borderRadius: 8, padding: 14, marginBottom: 16, fontSize: 13 }}>
               <div style={grid2}>
-                <div><div style={label}>TÊN CÔNG TY</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.companyName}</div></div>
-                <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ fontWeight: 600, color: '#1d2327', fontFamily: 'monospace', marginBottom: 8 }}>{request.taxId}</div></div>
-                <div><div style={label}>NGƯỜI ĐẠI DIỆN</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repName}</div></div>
-                <div><div style={label}>EMAIL</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repEmail}</div></div>
+                <div><div style={label}>TÊN CÔNG TY</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{profile.companyName}</div></div>
+                <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ fontWeight: 600, color: '#1d2327', fontFamily: 'monospace', marginBottom: 8 }}>{profile.taxId}</div></div>
+                <div><div style={label}>NGƯỜI ĐẠI DIỆN</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{profile.repName}</div></div>
+                <div><div style={label}>EMAIL</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{profile.repEmail}</div></div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button
-                onClick={() => { onApprove(request.id); setShowApproveModal(false); }}
+                onClick={() => { onApprove(profile.id); setShowApproveModal(false); }}
                 style={{ flex: 1, padding: '10px 0', background: '#00a32a', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
               >
                 Xác nhận duyệt
