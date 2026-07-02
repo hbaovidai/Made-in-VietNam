@@ -1,16 +1,15 @@
 // VIEproduct B2B Platform - Database Schema
 // NestJS + PostgreSQL + Prisma
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
 
 // ==================== ENUMS ====================
 
@@ -90,9 +89,9 @@ enum MessageType {
 
 enum SupplierStatus {
   VERIFIED
-  UNVERIFIED
   SUSPENDED
   APPLICATION_REJECTED
+  APPLICATION_PENDING
 }
 
 enum SupplierAccountHolderRole {
@@ -166,9 +165,10 @@ model Supplier {
   ward String?
   streetAddress             String? @map("address")
 
-  taxCode             String?  @map("tax_code")
+  taxCode             String?  @map("tax_code") @unique
   legalRepName String? @map("legal_rep_name")
   legalRepPhone String? @map("legal_rep_phone")
+  businessLicenseUrl String[] @map("business_license_url")
   
   accountHolderFullName String? @map("account_holder_fullname")
   accountHolderGovId String? @map("account_holder_gov_id")
@@ -203,6 +203,8 @@ model Supplier {
   @@index([companyName])               // Search by company name
   @@index([updatedAt])
   @@index([id])
+  @@index([slug])
+  @@index([taxCode])
   @@map("suppliers")
 }
 
