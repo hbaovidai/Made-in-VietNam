@@ -11,13 +11,14 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
+import { SupplierStatus } from '@prisma/client';
 
 @Controller('suppliers')
 export class SuppliersController {
@@ -30,6 +31,8 @@ export class SuppliersController {
   // PUBLIC
   @Get()
   findAll(@Query() query: SupplierQueryDto) {
+    // Only return verified suppliers to the public;
+    query.status = SupplierStatus.VERIFIED;
     return this.suppliersService.findAll(query);
   }
 
@@ -37,6 +40,12 @@ export class SuppliersController {
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
+  }
+
+  // PROTECTED: ADMIN ONLY
+  @Get('adminShotGun/:slugOrId')
+  findBySlugAdmin(@Param('slugOrId') slugOrId: string) {
+    return this.suppliersService.findBySlugAdmin(slugOrId);
   }
 
   // PUBLIC
