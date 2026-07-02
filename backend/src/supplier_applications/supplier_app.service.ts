@@ -15,7 +15,7 @@ export class SupplierApplicationService {
 
     const where: Prisma.SupplierWhereInput = {};
     if (query.id) where.id = query.id;
-    where.status = {in: [SupplierStatus.UNVERIFIED, SupplierStatus.APPLICATION_REJECTED]};
+    where.status = {in: [SupplierStatus.APPLICATION_PENDING, SupplierStatus.APPLICATION_REJECTED]};
 
     const [supp_apps, total_apps_count] = await Promise.all([
       this.prisma.supplier.findMany({

@@ -22,17 +22,17 @@ interface RowData {
 
 // ─── Status helpers ──────────────────────────────────────────
 const statusLabels: Record<string, string> = {
-  [SupplierStatus.UNVERIFIED]: 'Chờ duyệt',
+  [SupplierStatus.APPLICATION_PENDING]: 'Chờ duyệt',
   [SupplierStatus.APPLICATION_REJECTED]: 'Đã từ chối ứng tuyển',
   [SupplierStatus.VERIFIED]: 'Đã duyệt',
 };
 const statusBadgeClass: Record<string, string> = {
-  [SupplierStatus.UNVERIFIED]: 'wp-badge-pending',
+  [SupplierStatus.APPLICATION_PENDING]: 'wp-badge-pending',
   [SupplierStatus.VERIFIED]: 'wp-badge-approved',
   [SupplierStatus.APPLICATION_REJECTED]: 'wp-badge-rejected',
 };
 const statusColor: Record<string, string> = {
-  [SupplierStatus.UNVERIFIED]: '#dba617', 
+  [SupplierStatus.APPLICATION_PENDING]: '#dba617', 
   [SupplierStatus.VERIFIED]: '#00a32a',
   [SupplierStatus.APPLICATION_REJECTED]: '#d63638',
 };
@@ -84,14 +84,14 @@ export function AdminSupplierApplications() {
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
     ALL: applications.length,
-    [SupplierStatus.UNVERIFIED]: applications.filter(a => a.status === SupplierStatus.UNVERIFIED).length,
+    [SupplierStatus.APPLICATION_PENDING]: applications.filter(a => a.status === SupplierStatus.APPLICATION_PENDING).length,
     [SupplierStatus.VERIFIED]: applications.filter(a => a.status === SupplierStatus.VERIFIED).length,
     [SupplierStatus.APPLICATION_REJECTED]: applications.filter(a => a.status === SupplierStatus.APPLICATION_REJECTED).length,
   }), [applications]);
 
   const statusFilterLabels: Record<string, string> = {
     ALL: 'Tất cả',
-    [SupplierStatus.UNVERIFIED]: 'Chờ duyệt',
+    [SupplierStatus.APPLICATION_PENDING]: 'Chờ duyệt',
     [SupplierStatus.VERIFIED]: 'Đã duyệt',
     [SupplierStatus.APPLICATION_REJECTED]: 'Đã từ chối',
   };
@@ -172,7 +172,7 @@ export function AdminSupplierApplications() {
       <SupplierApplicationDetail
         id={id}
         onApprove={(id) => { handleStatusChange(id, SupplierStatus.VERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
-        onReject={(id) => { handleStatusChange(id, SupplierStatus.UNVERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
+        onReject={(id) => { handleStatusChange(id, SupplierStatus.APPLICATION_PENDING); navigate('/dashboard/admin/supplier_applications'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/supplier_applications'); }}
         onBack={() => navigate('/dashboard/admin/supplier_applications')}
       />
@@ -239,7 +239,7 @@ export function AdminSupplierApplications() {
                           {app.companyName}
                         </span>
                         <div className="wp-row-actions">
-                          {app.status in [SupplierStatus.UNVERIFIED, SupplierStatus.APPLICATION_REJECTED] && (
+                          {app.status in [SupplierStatus.APPLICATION_PENDING, SupplierStatus.APPLICATION_REJECTED] && (
                             <>
                             <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, SupplierStatus.VERIFIED)}>
                             Phê duyệt
@@ -253,7 +253,7 @@ export function AdminSupplierApplications() {
 
                           {app.status === SupplierStatus.VERIFIED && (
                             <>
-                            <button className="delete" onClick={() => handleStatusChange(app.id, SupplierStatus.UNVERIFIED)}>
+                            <button className="delete" onClick={() => handleStatusChange(app.id, SupplierStatus.APPLICATION_PENDING)}>
                             Thu hồi phê duyệt
                             </button>
                             <span className="sep">|</span>
