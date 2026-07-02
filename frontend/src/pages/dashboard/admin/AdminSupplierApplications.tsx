@@ -5,25 +5,36 @@ import { Search } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { SupplierApplicationRequest } from './SupplierApplicationDetails';
 import { api } from '../../../lib/api'
-import { SupplierStatus } from '@/src/lib/enums';
+import { BusinessType, SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { SupplierApplicationDetail } from './SupplierApplicationDetails';
+import { busType } from './SupplierApplicationDetails';
+import { Modal } from '@/src/components/ui/Modal';
 
 const APPLICATIONS_PER_PAGE: number = 20;
 
-// ─── Types ───────────────────────────────────────────────────
+interface RowData {
+  companyName: string,
+  businessType: BusinessType,
+  accountHolderEmail: string,
+  dateCreated: Date,
+  status: SupplierStatus,
+};
 
 // ─── Status helpers ──────────────────────────────────────────
-const statusLabels: Record<SupplierStatus, string> = {
-  UNVERIFIED: 'Chờ duyệt', VERIFIED: 'Đã phê duyệt', SUSPENDED: 'Đã chặn hoạt động',
-  APPLICATION_REJECTED: 'Đã từ chối duyệt'
+const statusLabels: Record<string, string> = {
+  [SupplierStatus.UNVERIFIED]: 'Chờ duyệt',
+  [SupplierStatus.APPLICATION_REJECTED]: 'Đã từ chối ứng tuyển',
+  [SupplierStatus.VERIFIED]: 'Đã duyệt',
 };
-const statusBadgeClass: Record<SupplierStatus, string> = {
-  UNVERIFIED: 'wp-badge-pending', VERIFIED: 'wp-badge-approved', SUSPENDED: 'wp-badge-rejected',
-  APPLICATION_REJECTED: 'Đã từ chối duyệt'
+const statusBadgeClass: Record<string, string> = {
+  [SupplierStatus.UNVERIFIED]: 'wp-badge-pending',
+  [SupplierStatus.VERIFIED]: 'wp-badge-approved',
+  [SupplierStatus.APPLICATION_REJECTED]: 'wp-badge-rejected',
 };
-const statusColor: Record<SupplierStatus, string> = {
-  UNVERIFIED: '#dba617', VERIFIED: '#00a32a', SUSPENDED: '#d63638',
-  APPLICATION_REJECTED: 'Đã từ chối duyệt'
+const statusColor: Record<string, string> = {
+  [SupplierStatus.UNVERIFIED]: '#dba617', 
+  [SupplierStatus.VERIFIED]: '#00a32a',
+  [SupplierStatus.APPLICATION_REJECTED]: '#d63638',
 };
 
 // ═════════════════════════════════════════════════════════════
@@ -73,12 +84,16 @@ export function AdminSupplierApplications() {
   // ─── Counts ────────────────────────────────────────────────
   const statusCounts = useMemo(() => ({
     ALL: applications.length,
-    UNVERIFIED: applications.filter(a => a.status === SupplierStatus.UNVERIFIED).length,
-    VERIFIED: applications.filter(a => a.status === SupplierStatus.VERIFIED).length,
-    SUSPENDED: applications.filter(a => a.status === SupplierStatus.SUSPENDED).length,
+    [SupplierStatus.UNVERIFIED]: applications.filter(a => a.status === SupplierStatus.UNVERIFIED).length,
+    [SupplierStatus.VERIFIED]: applications.filter(a => a.status === SupplierStatus.VERIFIED).length,
+    [SupplierStatus.APPLICATION_REJECTED]: applications.filter(a => a.status === SupplierStatus.APPLICATION_REJECTED).length,
   }), [applications]);
+
   const statusFilterLabels: Record<string, string> = {
-    ALL: 'Tất cả', PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Đã từ chối',
+    ALL: 'Tất cả',
+    [SupplierStatus.UNVERIFIED]: 'Chờ duyệt',
+    [SupplierStatus.VERIFIED]: 'Đã duyệt',
+    [SupplierStatus.APPLICATION_REJECTED]: 'Đã từ chối',
   };
 
   const toggleAll = () => {
@@ -147,14 +162,15 @@ export function AdminSupplierApplications() {
   // TAB: Detail
   // ═══════════════════════════════════════════════════════════
   if (tab === 'detail' && detailId) {
-    const filtered = applications.filter(app => {
-      if (app.id === detailId) return app;
-    });
+    // const filtered = applications.filter(app => {
+    //   if (app.id === detailId) return app;
+    // });
+    const id: string = detailId;
 
     if (filtered.length === 0) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
     return (
       <SupplierApplicationDetail
-        request={filtered[0]}
+        id={id}
         onApprove={(id) => { handleStatusChange(id, SupplierStatus.VERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
         onReject={(id) => { handleStatusChange(id, SupplierStatus.UNVERIFIED); navigate('/dashboard/admin/supplier_applications'); }}
         onDelete={(id) => { handleDelete(id); navigate('/dashboard/admin/supplier_applications'); }}
@@ -203,7 +219,7 @@ export function AdminSupplierApplications() {
             <thead>
               <tr>
                 <th style={{ width: 30 }}><input type="checkbox" checked={selectedIds.length === applications.length && applications.length > 0} onChange={toggleAll} /></th>
-                <th>Họ và Tên</th><th>Sđt</th><th>Email</th><th>Ngày nộp</th><th>Trạng thái</th>
+                <th>Tên doanh nghiệp</th><th>Loại DN</th><th>Email</th><th>Ngày nộp</th><th>Trạng thái</th>
               </tr>
             </thead>
 
@@ -220,7 +236,7 @@ export function AdminSupplierApplications() {
                         <span className="wp-row-title"
                           onClick={() => navigate(`/dashboard/admin/supplier_applications?tab=detail&id=${app.id}`)}
                         >
-                          {app.accountHolderFullName}
+                          {app.companyName}
                         </span>
                         <div className="wp-row-actions">
                           {app.status in [SupplierStatus.UNVERIFIED, SupplierStatus.APPLICATION_REJECTED] && (
@@ -261,7 +277,7 @@ export function AdminSupplierApplications() {
                     </div>
                   </td>
 
-                  <td>{app.accountHolderPhone}</td>
+                  <td>{busType[app.businessType]}</td>
                  <td><a href={`mailto:${app.accountHolderEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{app.accountHolderEmail}</a></td>
                   <td style={{ fontSize: 12, color: 'var(--wp-text-muted)', whiteSpace: 'nowrap' }}>{app.createdAt.toLocaleString()}</td>
                   <td><span className={`wp-badge ${statusBadgeClass[app.status]}`}>{statusLabels[app.status]}</span></td>
