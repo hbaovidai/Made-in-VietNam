@@ -179,7 +179,7 @@ model Supplier {
   authorizationLetterUrl String[] @map("authorization_letter_url")
 
   supplierType    SupplierType?  @map("supplier_type")
-  status SupplierStatus? @default(UNVERIFIED)
+  status SupplierStatus? @default(APPLICATION_PENDING)
   // isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
 
   logo            String?
