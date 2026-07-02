@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BusinessType, SupplierStatus } from '@prisma/client';
 
@@ -31,5 +31,13 @@ export class SupplierQueryDto {
   @IsOptional() @IsString() industry?: string;
   @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
-  @IsEnum(BusinessType) @IsOptional() businessType?: BusinessType;
+  @IsOptional() @IsEnum(BusinessType) businessType?: BusinessType;
+  @IsOptional() @IsEnum(SupplierStatus) status?: SupplierStatus;
+}
+
+export class AdminQueryDto {
+  @IsOptional() @IsString() slugOrId?: string;
+  @IsOptional() @IsEnum(SupplierStatus) status?: SupplierStatus;
+  // this looks cursed, but it's just a set of attributes copied over from the database. literally
+  @IsOptional() @ValidateNested() @Type(() => UpdateSupplierDto) include?: UpdateSupplierDto;
 }

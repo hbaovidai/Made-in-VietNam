@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
 import { Prisma, SupplierStatus } from '@prisma/client';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
-    where.status = { in: [SupplierStatus.VERIFIED, SupplierStatus.SUSPENDED] };
+    if (query.status) where.status = query.status;
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
@@ -38,6 +38,8 @@ export class SuppliersService {
     };
   }
 
+  // this one is for the public, we should limit the information we're giving them
+  // why is the repo open to the public btw?
   async findBySlug(slugOrId: string) {
     const isUUID =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -45,7 +47,11 @@ export class SuppliersService {
       );
 
     const supplier = await this.prisma.supplier.findFirst({
-      where: isUUID ? { id: slugOrId } : { slug: slugOrId },
+      where: {
+        status: SupplierStatus.VERIFIED,
+        ...(isUUID ? { id: slugOrId } : { slug: slugOrId }),
+      },
+
       include: {
         user: { select: { fullName: true, email: true } },
         industries: { select: { industry: true } },
@@ -67,7 +73,44 @@ export class SuppliersService {
     return supplier;
   }
 
-  // todo: check this shit out, there's the thing over on supplier application service
+  async findBySlugAdmin(slugOrId: string) {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { ...(isUUID ? { id: slugOrId } : { slug: slugOrId }),},
+
+      // this is cursed
+      select: {
+        ...(isUUID ? { id: true } : { slug: true } ),
+        companyName: true,
+        province: true,
+        district: true,
+        ward: true,
+        supplierType: true,
+        businessType: true,
+        status: true,
+
+        streetAddress: true,
+        taxCode: true,
+        legalRepName: true,
+        legalRepPhone: true,
+        businessLicenseUrl: true,
+
+        accountHolderFullName: true,
+        accountHolderPhone: true,
+        accountHolderEmail: true,
+        accountHolderRole: true,
+        accountHolderGovId: true,
+        accountHolderGovIdUrl: true,
+        authorizationLetterUrl: true,
+      }
+    });
+
+    if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
+    return supplier;
+  }
+
+  // note: idk what this for, we can create supplier profiles in the auth module
   async createProfile(userId: string, data: any) {
     const existing = await this.prisma.supplier.findUnique({
       where: { userId },
