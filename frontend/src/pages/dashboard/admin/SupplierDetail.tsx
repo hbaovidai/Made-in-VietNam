@@ -1,47 +1,54 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
-import { BusinessType, SupplierStatus, SupplierType } from '@/src/lib/enums';
-import { api } from '@/src/lib/api';
+import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
 
-// TODO: THIS FILE NEEDS FIXING
+// ─── Types (kept for backward compat with AdminSuppliers) ────
+export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
 
-function attrBox( {  } ) {
-  return (
-    <>
-    </>
-  );
-}
-
-// ─── Types ───────────────────────────────────────────────────
 export interface SupplierProfile {
-  idOrSlug?: string,
-
-  companyName?: string,
-  province?: string,
-  district?: string,
-  ward?: string,
-  streetAddress?: string,
-  supplierType?: SupplierType,
-  businessType?: BusinessType,
-  status?: SupplierStatus,
-
-  taxCode?: string,
-  legalRepName?: string,
-  legalRepPhone?: string,
-  businessLicenseUrl?: string[],
-
-  accountHolderFullName: string,
-  accountHolderPhone: string,
-  accountHolderEmail: string,
-  accountHolderRole: string,
-  accountHolderGovId: string,
-  accountHolderGovIdUrl: string[],
-  authorizationLetterUrl: string[],
+  id?: string;
+  userId?: string;
+  companyName?: string;
+  slug?: string;
+  logo?: string;
+  banner?: string;
+  description?: string;
+  businesstype?: string;
+  businessType?: string;
+  yearEstablished?: number;
+  employeeCount?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  website?: string;
+  taxCode?: string;
+  taxId?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  legalRepresentative?: string;
+  businessLicenseUrl?: string;
+  identityCardUrl?: string;
+  verificationStatus?: SupplierVerificationStatus;
+  isVerified?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  repName?: string;
+  repTitle?: string;
+  repIdCard?: string;
+  repEmail?: string;
+  repPhone?: string;
+  industry?: string[];
+  products?: string;
+  exportExperience?: boolean;
+  exportMarkets?: string;
+  annualRevenue?: string;
+  driveLink?: string;
+  documentList?: string[];
+  submittedAt?: Date | string;
 }
 
 interface Props {
-  id: string;
+  request: SupplierProfile;
   onApprove: (id: string) => void;
   onReject: (id: string, reason?: string) => void;
   onDelete: (id: string) => void;
@@ -101,41 +108,195 @@ const statusBadge = (status?: string) => {
   };
   const cfg = map[status || 'UNVERIFIED'] || map.UNVERIFIED;
   return <span style={s.badge(cfg.bg, cfg.color, cfg.border)}>{status || 'Unknown'}</span>;
-}
-
-const statusMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  [SupplierStatus.VERIFIED]:   { label: 'Đã xác minh',   bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0' },
-  [SupplierStatus.SUSPENDED]:   { label: 'Đã ăn ban',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
-  [SupplierStatus.APPLICATION_REJECTED]:   { label: 'Đã từ chối phê duyệt',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
-  [SupplierStatus.APPLICATION_PENDING]:   { label: 'Chưa xác minh',    bg: '#fce4e4', color: '#8b1a1a', border: '#f1a7a7' },
 };
 
-// ═════════════════════════════════════════════════════════════
-export function SupplierDetail({ id, onApprove, onReject, onDelete, onBack }: Props) {
+// ═══ Tab Components ═══════════════════════════════════════════
 
-  const [showRejectBox, setShowRejectBox] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [notesSaved, setNotesSaved] = useState(false);
-  
-  const [profile, setProfile] = useState<SupplierProfile>(null);
-  const fetchProfile = async (id: string) => { 
-    const res = await api.get(
-      `/suppliers/adminShotGun/${id}`, 
-      {
-        headers: {
-          Authorization: `${localStorage.getItem('token')}`
-        }
-      }
-    );
+function TabOverview({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> Thông tin doanh nghiệp</div>
+      <div style={s.cardBody}>
+        <Field label="Tên doanh nghiệp" value={data.companyName} />
+        <Field label="Mã số thuế" value={data.taxCode} mono />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Mô hình hoạt động" />
+        <Field label="Ngành nghề" value={data.industry?.join(', ')} />
+        <Field label="Địa chỉ trụ sở" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Năm thành lập" value={data.yearEstablished?.toString()} />
+        <Field label="Số lượng nhân viên" value={data.employeeCount} />
+        <Field label="Website" value={data.website} />
+        <Field label="Danh mục chính" />
+        <Field label="Danh mục con" />
+        <Field label="Ghi chú admin" last />
+      </div>
+    </div>
+  );
+}
 
-    setProfile(res.data);
-  };
-  useEffect(() => {
-    fetchProfile(id);
-  }, []);
+function TabContact({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><User size={16} color="#2271b1" /> Thông tin liên hệ</div>
+      <div style={s.cardBody}>
+        <Field label="Họ tên người đăng ký" value={data.repName} />
+        <Field label="Chức vụ" value={data.repTitle} />
+        <Field label="Email" value={data.companyEmail || data.repEmail} />
+        <Field label="Số điện thoại" value={data.companyPhone || data.repPhone} />
+        <Field label="Người đại diện pháp luật" value={data.legalRepresentative || data.repName} />
+        <Field label="SĐT người đại diện" value={data.repPhone} last />
+      </div>
+    </div>
+  );
+}
 
-  const st = statusMap[profile.status] || statusMap.PENDING;
+function TabLegal({ data }: { data: SupplierProfile }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHead}><Shield size={16} color="#2271b1" /> Thông tin pháp lý</div>
+      <div style={s.cardBody}>
+        <Field label="Tên DN theo ĐKKD" value={data.companyName} />
+        <Field label="Mã số thuế / Mã số DN" value={data.taxCode || data.taxId} mono />
+        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
+        <Field label="Địa chỉ ĐKKD" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Trạng thái xác minh pháp lý" last />
+      </div>
+    </div>
+  );
+}
+
+function TabManufacturer() {
+  return (
+    <>
+      <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
+        <div style={s.cardBody}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: '#1d2327' }}>Manufacturer Verification</span>
+            {statusBadge('NOT_APPLIED')}
+          </div>
+          <p style={{ fontSize: 13, color: '#646970', margin: 0 }}>
+            Supplier has not applied for manufacturer verification.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ ...s.card, opacity: 0.5 }}>
+        <div style={s.cardHead}><Package size={16} color="#2271b1" /> Chi tiết năng lực sản xuất</div>
+        <div style={s.cardBody}>
+          <Field label="Trạng thái duyệt Manufacturer" />
+          <Field label="Hình thức sản xuất" />
+          <Field label="Địa chỉ nhà xưởng" />
+          <Field label="Quy mô nhà xưởng" />
+          <Field label="Số lượng nhân sự sản xuất" />
+          <Field label="Năng lực SX mỗi tháng" />
+          <Field label="Ngành sản xuất chính" />
+          <Field label="Sản phẩm chính đang SX" />
+          <Field label="Link Google Drive hồ sơ SX" />
+          <Field label="Ghi chú admin" last />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabExporter() {
+  return (
+    <>
+      <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
+        <div style={s.cardBody}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: '#1d2327' }}>Exporter Verification</span>
+            {statusBadge('NOT_APPLIED')}
+          </div>
+          <p style={{ fontSize: 13, color: '#646970', margin: 0 }}>
+            Supplier has not applied for exporter verification.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ ...s.card, opacity: 0.5 }}>
+        <div style={s.cardHead}><Globe size={16} color="#2271b1" /> Chi tiết xuất khẩu</div>
+        <div style={s.cardBody}>
+          <Field label="Trạng thái duyệt Exporter" />
+          <Field label="Thị trường xuất khẩu" />
+          <Field label="Sản phẩm xuất khẩu chính" />
+          <Field label="Kinh nghiệm xuất khẩu" />
+          <Field label="Link Google Drive hồ sơ XK" />
+          <Field label="Ghi chú admin" last />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabDocuments() {
+  const groups = [
+    { title: 'Identity Documents', docs: ['CCCD / Passport mặt trước', 'CCCD / Passport mặt sau'] },
+    { title: 'Business Legal Documents', docs: ['Giấy phép ĐKKD', 'Giấy chứng nhận đầu tư'] },
+    { title: 'Manufacturer Documents', docs: ['Hình ảnh nhà xưởng', 'Chứng nhận ISO', 'Giấy phép sản xuất'] },
+    { title: 'Exporter Documents', docs: ['Giấy phép xuất khẩu', 'C/O mẫu'] },
+    { title: 'Other Documents', docs: ['Tài liệu bổ sung'] },
+  ];
+
+  return (
+    <>
+      {groups.map(g => (
+        <div key={g.title} style={s.card}>
+          <div style={s.cardHead}><FileText size={16} color="#2271b1" /> {g.title}</div>
+          <div style={s.cardBody}>
+            {g.docs.map((doc, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < g.docs.length - 1 ? '1px solid #f5f5f5' : 'none' }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1e1e1e' }}>{doc}</div>
+                  <div style={{ fontSize: 11, color: '#8c8f94', marginTop: 2 }}>
+                    <span style={s.badge('#f0f0f1', '#646970', '#dcdcde')}>Not uploaded</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button className="wp-btn" style={{ fontSize: 11, padding: '4px 8px' }} disabled><Eye size={12} /> View</button>
+                  <button className="wp-btn" style={{ fontSize: 11, padding: '4px 8px' }} disabled><Download size={12} /> Download</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function TabProducts() {
+  return (
+    <div className="wp-table-wrap">
+      <table className="wp-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>MOQ</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colSpan={6} style={s.emptyState}>
+              No products available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
+// ═══ Main Component ═══════════════════════════════════════════
+export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
+  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+
+  const verificationStatus = request.verificationStatus || 'UNVERIFIED';
 
   const renderTab = () => {
     switch (activeTab) {
@@ -156,10 +317,11 @@ export function SupplierDetail({ id, onApprove, onReject, onDelete, onBack }: Pr
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <label>Nhà cung cấp</label> {/* TODO: đổi lại đúng  */}
+        <Link to="/dashboard/admin/suppliers">Nhà cung cấp</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">{profile.companyName}</span>
+        <span className="wp-breadcrumb-current">{request.companyName || 'Supplier Detail'}</span>
       </div>
+
 
 
       {/* ═══ Header Card ═══ */}
@@ -173,7 +335,7 @@ export function SupplierDetail({ id, onApprove, onReject, onDelete, onBack }: Pr
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
               {/* Verification Badges */}
               {(() => {
-                const isSupplierVerified = status === 'VERIFIED';
+                const isSupplierVerified = verificationStatus === 'VERIFIED';
                 const isManufacturerVerified = false; // placeholder — will be from API
                 const isExporterVerified = false;     // placeholder — will be from API
                 const active = { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0', icon: '✓' };
