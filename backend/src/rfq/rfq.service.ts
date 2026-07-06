@@ -44,7 +44,7 @@ export class RfqService {
     // Notify all verified suppliers about the new RFQ
     try {
       const verifiedSuppliers = await this.prisma.supplier.findMany({
-        where: { verificationStatus: 'VERIFIED' },
+        where: { verification_status: 'VERIFIED' },
         select: { userId: true },
       });
       if (verifiedSuppliers.length > 0) {
@@ -155,7 +155,7 @@ export class RfqService {
                 id: true,
                 companyName: true,
                 logo: true,
-                isVerified: true,
+                is_verified: true,
                 userId: true,
               },
             },

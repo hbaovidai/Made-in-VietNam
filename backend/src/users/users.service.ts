@@ -24,7 +24,7 @@ export class UsersService {
           status: true,
           createdAt: true,
           supplier: {
-            select: { id: true, companyName: true, isVerified: true },
+            select: { id: true, companyName: true, is_verified: true },
           },
         },
         skip: (+page - 1) * +limit,

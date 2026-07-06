@@ -16,11 +16,11 @@ export class SupplierApplicationService {
   async findAll(query: SupplierApplicationDto) {
     const { page = 1, limit = 20 } = query;
 
-    const where: Prisma.SupplierApplicationWhereInput = {};
+    const where: Prisma.supplier_applicationsWhereInput = {};
     if (query.id) where.id = query.id;
 
     const [supp_apps, total_apps_count] = await Promise.all([
-      this.prisma.supplierApplication.findMany({
+      this.prisma.supplier_applications.findMany({
         take: limit,
         skip: (page - 1) * limit,
         orderBy: {
@@ -28,7 +28,7 @@ export class SupplierApplicationService {
         },
         where: where,
       }),
-      this.prisma.supplierApplication.count({}),
+      this.prisma.supplier_applications.count({}),
     ]);
 
     return {
@@ -44,7 +44,7 @@ export class SupplierApplicationService {
 
   async deleteApplication(id: number) {
     try {
-      const deleted_user = await this.prisma.supplierApplication.delete({
+      const deleted_user = await this.prisma.supplier_applications.delete({
         where: {
           id: id,
         },
@@ -76,7 +76,7 @@ export class SupplierApplicationService {
     newStatus: SupplierApplicationStatus,
   ) {
     try {
-      const updatedApplication = await this.prisma.supplierApplication.update({
+      const updatedApplication = await this.prisma.supplier_applications.update({
         data: {
           status: newStatus,
         },

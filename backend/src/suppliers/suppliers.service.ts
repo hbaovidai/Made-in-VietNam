@@ -21,7 +21,7 @@ export class SuppliersService {
     }
 
     if (query.verificationStatus)
-      where.verificationStatus = query.verificationStatus;
+      where.verification_status = query.verificationStatus;
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
@@ -90,7 +90,7 @@ export class SuppliersService {
         taxCode: data.taxCode,
         companyEmail: data.companyEmail,
         companyPhone: data.companyPhone,
-        legalRepresentative: data.legalRepresentative,
+        legal_representative: data.legalRepresentative,
         slug: `${slug}-${Date.now()}`,
       },
     });
@@ -159,8 +159,8 @@ export class SuppliersService {
     const updated = await this.prisma.supplier.update({
       where: { id: supplierId },
       data: {
-        isVerified,
-        verificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED',
+        is_verified: isVerified,
+        verification_status: isVerified ? 'VERIFIED' : 'UNVERIFIED',
       },
     });
 
