@@ -218,13 +218,13 @@ export function TradeMessageModal({
     return (
       <div
         onClick={() => onMinimizeToggle(false)}
-        className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white shadow-xl rounded-xl px-5 py-3.5 z-[9999] flex items-center gap-3 cursor-pointer transition-all duration-300 hover:-translate-y-1 font-bold text-xs select-none animate-in fade-in slide-in-from-bottom-5"
+        className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white shadow-xl px-3.5 py-2 z-[9999] flex items-center gap-2 cursor-pointer transition-all duration-300 hover:-translate-y-1 font-bold text-[11px] select-none animate-in fade-in slide-in-from-bottom-5"
       >
-        <MessageSquare size={16} />
+        <MessageSquare size={13} />
         <span>Trade Messenger</span>
         {totalUnread > 0 && (
-          <span className="bg-red-500 text-white rounded-full text-[10px] font-bold px-2 py-0.5 animate-pulse">
-            {totalUnread} new
+          <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 animate-pulse">
+            {totalUnread}
           </span>
         )}
       </div>
@@ -233,7 +233,7 @@ export function TradeMessageModal({
 
   return (
     <div
-      className={`bg-white shadow-2xl flex flex-col overflow-hidden border border-slate-200/80 transition-all duration-300 z-[9999] select-none fixed bottom-6 right-6 rounded-2xl w-full h-full md:w-[90vw] md:h-[75vh] lg:w-[900px] lg:h-[620px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-32px)] max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none`}
+      className={`bg-white shadow-2xl flex flex-col overflow-hidden border border-slate-200/80 transition-all duration-300 z-[9999] select-none fixed bottom-6 right-6 w-full h-full md:w-[90vw] md:h-[75vh] lg:w-[900px] lg:h-[620px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-32px)] max-md:inset-0 max-md:w-full max-md:h-full`}
     >
       {/* Window Chrome Titlebar */}
       <div className="bg-[#0b162f] text-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0 select-none border-b border-blue-950/40">
@@ -248,7 +248,7 @@ export function TradeMessageModal({
           {/* Minimize Action */}
           <button
             onClick={() => onMinimizeToggle(true)}
-            className="p-1.5 hover:text-white hover:bg-slate-800 rounded transition-all text-slate-400"
+            className="p-1.5 hover:text-white hover:bg-slate-800 transition-all text-slate-400"
             title="Minimize Window"
           >
             <Minus size={14} />
@@ -257,7 +257,7 @@ export function TradeMessageModal({
           {/* Close Action */}
           <button
             onClick={onClose}
-            className="p-1.5 hover:text-white hover:bg-red-600/90 rounded transition-all text-slate-400"
+            className="p-1.5 hover:text-white hover:bg-red-600/90 transition-all text-slate-400"
             title="Close Workspace"
           >
             <X size={14} />

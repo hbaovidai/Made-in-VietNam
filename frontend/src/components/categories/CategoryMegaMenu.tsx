@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../utils/cn';
 import { api } from '../../lib/api';
 
-// category need parent_id, not children_id
 interface Category {
   id: string;
   name: string;
@@ -15,24 +14,19 @@ interface Category {
 
 export function CategoryMegaMenu() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeGroup, setActiveGroup] = useState<Category | null>(null);
+  const [hoveredL1, setHoveredL1] = useState<Category | null>(null);
 
   useEffect(() => {
     async function fetchCategories() {
       try {
         const res = await api.get('/categories');
+        // L1 = children of root nodes
         const l1Categories: Category[] = res.data.flatMap(
           (root: Category) => root.children ?? []
         );
-
         setCategories(l1Categories);
-
-        if (l1Categories.length > 0) {
-          setActiveGroup(l1Categories[0]);
-        }
       } catch (error) {
         console.error('Lỗi khi tải danh mục:', error);
       } finally {
@@ -51,66 +45,83 @@ export function CategoryMegaMenu() {
   }
 
   return (
-    <div className="relative flex bg-white border border-slate-200 shadow-xl rounded-b-xl">
-      {/* Sidebar List */}
-      <div className="p-6 bg-white">
-        <div className="grid grid-flow-col grid-rows-14 gap-x-8 gap-y-1">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/products?category=${cat.slug}`}
-              className="
-                flex items-center
-                py-1 px-2
-                text-sm text-slate-700
-                hover:text-primary
-                hover:bg-slate-50
-                rounded
-                whitespace-nowrap
-              "
-            >
-              {cat.name}
-            </Link>
-          ))}
-        </div>
+    <div className="relative flex bg-white border border-slate-200 shadow-xl rounded-b-xl min-h-[400px]">
+      {/* Left: L1 Category List */}
+      <div className="w-[260px] border-r border-slate-100 py-3 shrink-0 overflow-y-auto max-h-[70vh]">
+        {categories.map((cat) => (
+          <Link
+            key={cat.id}
+            to={`/products?category=${cat.slug}`}
+            className={cn(
+              "flex items-center justify-between px-5 py-2.5 text-sm font-medium transition-colors",
+              hoveredL1?.id === cat.id
+                ? "text-primary bg-primary/5 border-r-2 border-primary"
+                : "text-slate-700 hover:text-primary hover:bg-slate-50"
+            )}
+            onMouseEnter={() => setHoveredL1(cat)}
+          >
+            <span className="truncate">{cat.name}</span>
+            {cat.children && cat.children.length > 0 && (
+              <ChevronRight size={14} className="text-slate-300 shrink-0 ml-2" />
+            )}
+          </Link>
+        ))}
       </div>
 
-      {/* Detail Panel - deprecated */}
-      {/*<div className="flex-1 p-6 bg-white overflow-y-auto max-h-[70vh] min-w-[320px]">
-        {activeGroup ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-4 col-span-3">
-               <h4 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex justify-between items-center">
-                 <Link to={`/products?category=${activeGroup.slug}`} className="hover:text-primary">
-                   Tất cả trong {activeGroup.name}
-                 </Link>
-               </h4>
-            </div>*/}
-            
-            {/* Split children into columns arbitrarily for UI */}
-            {/*{activeGroup.children && activeGroup.children.length > 0 ? (
-              activeGroup.children.map((sub: Category) => (
-                <div key={sub.id} className="space-y-4">
-                  <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
-                    <Link to={`/products?category=${sub.slug}`} className="hover:text-primary">
-                      {sub.name}
-                    </Link>
-                  </h4>*/}
-                  {/* If backend has level-3 children, map them here. */}
-                {/*</div>
-              }))
-            ) : (
-              <div className="col-span-3 text-sm text-slate-500">
-                Chưa có danh mục con.
+      {/* Right: L2 → L4 Subcategories Panel */}
+      {hoveredL1 && hoveredL1.children && hoveredL1.children.length > 0 && (
+        <div className="flex-1 p-6 overflow-y-auto max-h-[70vh] min-w-[500px]">
+          <div className={cn(
+            "grid gap-x-10 gap-y-6",
+            hoveredL1.children.length === 1 ? "grid-cols-1" :
+            hoveredL1.children.length === 2 ? "grid-cols-2" :
+            hoveredL1.children.length <= 4 ? "grid-cols-3" : "grid-cols-4"
+          )}>
+            {hoveredL1.children.map((l2) => (
+              <div key={l2.id} className="min-w-0">
+                {/* L2 heading */}
+                <Link
+                  to={`/products?category=${l2.slug}`}
+                  className="text-sm font-bold text-slate-900 hover:text-primary transition-colors block pb-2 border-b border-slate-100 mb-2"
+                >
+                  {l2.name}
+                </Link>
+
+                {/* L3 items */}
+                {l2.children && l2.children.length > 0 && (
+                  <div className="space-y-1">
+                    {l2.children.map((l3) => (
+                      <div key={l3.id}>
+                        <Link
+                          to={`/products?category=${l3.slug}`}
+                          className="text-xs text-slate-600 hover:text-primary transition-colors block py-1 font-medium"
+                        >
+                          {l3.name}
+                        </Link>
+
+                        {/* L4 items (if any) */}
+                        {l3.children && l3.children.length > 0 && (
+                          <div className="pl-3 space-y-0.5">
+                            {l3.children.map((l4) => (
+                              <Link
+                                key={l4.id}
+                                to={`/products?category=${l4.slug}`}
+                                className="text-[11px] text-slate-400 hover:text-primary transition-colors block py-0.5"
+                              >
+                                {l4.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ) : (
-          <div className="flex items-center justify-center h-full text-slate-400 italic">
-            {t('hover_category_desc')}
-          </div>
-        )}
-      </div>*/}
+        </div>
+      )}
     </div>
   );
 }

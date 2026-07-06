@@ -29,13 +29,20 @@ export function Header() {
 
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!searchQuery.trim()) return;
     
-    const encodedQuery = encodeURIComponent(searchQuery);
+    const query = searchQuery.trim();
     if (searchType === 'suppliers') {
-      navigate(`/suppliers?search=${encodedQuery}`);
+      if (query) {
+        navigate(`/suppliers?search=${encodeURIComponent(query)}`);
+      } else {
+        navigate(`/suppliers`);
+      }
     } else {
-      navigate(`/products?search=${encodedQuery}`);
+      if (query) {
+        navigate(`/search?search=${encodeURIComponent(query)}`);
+      } else {
+        navigate(`/search`);
+      }
     }
     setIsMobileSearchOpen(false);
   };
@@ -245,52 +252,27 @@ export function Header() {
 
           {/* ═══ Desktop Search Bar ═══ */}
           <div className="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl ml-4">
-            <div className="flex items-stretch w-full h-12 rounded-xl overflow-visible bg-[#EEF2FC] transition-all focus-within:ring-2 focus-within:ring-[#A2875E]/30 focus-within:shadow-sm">
-              <div className="relative shrink-0 h-full">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSearchDropdownOpen(!isSearchDropdownOpen);
-                  }}
-                  className="h-full flex items-center gap-2 px-5 text-sm font-bold text-[#1E293B] min-w-[140px] justify-between whitespace-nowrap border-r border-[#CBD5E1]/50 rounded-l-xl hover:bg-[#E2E8F0]/50 transition-colors"
-                >
-                  {t(searchType)} <ChevronDown size={14} className={cn("transition-transform text-slate-400", isSearchDropdownOpen && "rotate-180")} />
-                </button>
-
-                {isSearchDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-xl py-2 z-[60]">
-                    {searchOptions.map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => {
-                          setSearchType(option);
-                          setIsSearchDropdownOpen(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-5 py-2.5 text-sm hover:bg-slate-50 transition-colors whitespace-nowrap",
-                          searchType === option ? "text-[#A2875E] font-black bg-[#A2875E]/5" : "text-slate-600 font-medium"
-                        )}
-                      >
-                        {t(option)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <form onSubmit={handleSearch} className="flex-1 flex items-center px-4 bg-transparent border-0 m-0 p-0 shadow-none">
-                <button type="submit" className="outline-none border-none bg-transparent m-0 p-0 shrink-0">
-                  <Search size={22} className="text-[#9B7A4F] mr-3" strokeWidth={2.5} />
-                </button>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 h-full text-sm sm:text-base outline-none w-full min-w-0 bg-transparent text-slate-700 placeholder-slate-400/80 font-medium border-0 m-0 p-0"
-                  placeholder={t('search_placeholder', { type: t(searchType).toLowerCase() })}
-                />
-              </form>
-            </div>
+            <form onSubmit={handleSearch} className="flex items-center w-full h-11 rounded-full border border-slate-200 bg-[#f8fafc] overflow-hidden transition-all focus-within:border-slate-300 focus-within:bg-white focus-within:shadow-sm">
+              <button type="submit" className="shrink-0 pl-4 pr-2 h-full flex items-center bg-transparent border-none outline-none cursor-pointer">
+                <Search size={18} className="text-slate-400" strokeWidth={2} />
+              </button>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 h-full text-sm outline-none w-full min-w-0 bg-transparent text-slate-700 placeholder-slate-400 font-medium border-0 m-0 p-0 px-2"
+                placeholder={t('search_products_suppliers', 'Tìm kiếm sản phẩm, nhà cung cấp...')}
+              />
+              <button
+                type="submit"
+                className="shrink-0 h-[calc(100%-6px)] mr-[3px] px-5 rounded-full text-sm font-bold text-white transition-colors"
+                style={{ background: '#1e293b' }}
+                onMouseOver={(e) => (e.currentTarget.style.background = '#334155')}
+                onMouseOut={(e) => (e.currentTarget.style.background = '#1e293b')}
+              >
+                {t('search_btn', 'Tìm kiếm')}
+              </button>
+            </form>
           </div>
 
           <div className="hidden lg:flex items-center gap-4 shrink-0">
@@ -303,7 +285,7 @@ export function Header() {
                 className="flex items-center gap-1 text-slate-600 hover:text-primary"
               >
                 <Globe size={20} />
-                <span className="text-sm font-bold uppercase">{i18n.language?.startsWith('vi') ? 'Tiếng Việt' : 'English'}</span>
+                <span className="text-sm font-bold uppercase">{i18n.language?.startsWith('vi') ? 'VI' : 'EN'}</span>
                 <ChevronDown size={14} className={cn("transition-transform", isLangDropdownOpen && "rotate-180")} />
               </button>
               {isLangDropdownOpen && (
@@ -329,50 +311,43 @@ export function Header() {
               </Link>
 
               {/* Notification Bell */}
-              {isAuthenticated && (
-                <div className="relative">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
-                    className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative"
-                    title={t('notifications')}
-                  >
-                    <Bell size={20} />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center ring-2 ring-white px-1">
-                        {unreadCount > 99 ? '99+' : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                  {isNotifOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden z-[100]" onClick={(e) => e.stopPropagation()}>
-                      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                        <h4 className="font-bold text-sm text-slate-900">{t('notifications')}</h4>
-                        {unreadCount > 0 && (
-                          <button onClick={markAllRead} className="text-xs text-primary font-bold hover:underline">{t('mark_all_read')}</button>
-                        )}
-                      </div>
-                      <div className="max-h-72 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                          <div className="p-8 text-center text-sm text-slate-400">{t('no_notifications')}</div>
-                        ) : notifications.slice(0, 10).map((notif: any) => (
-                          <div key={notif.id} onClick={() => markOneReadAndNavigate(notif)} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
-                            <div className="text-sm font-bold text-slate-900">{notif.title}</div>
-                            <div className="text-xs text-slate-500 mt-1 line-clamp-2">{notif.message}</div>
-                            <div className="text-[10px] text-slate-400 mt-2">{new Date(notif.createdAt).toLocaleDateString()}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+              <div className="relative">
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
+                  className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative"
+                  title={t('notifications')}
+                >
+                  <Bell size={20} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center ring-2 ring-white px-1">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
                   )}
-                </div>
-              )}
-
-              <Link to="/cart" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('inquiry_basket', 'Giỏ yêu cầu')}>
-                <ShoppingCart size={20} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">{cartCount}</span>
+                </button>
+                {isNotifOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden z-[100]" onClick={(e) => e.stopPropagation()}>
+                    <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                      <h4 className="font-bold text-sm text-slate-900">{t('notifications')}</h4>
+                      {unreadCount > 0 && (
+                        <button onClick={markAllRead} className="text-xs text-primary font-bold hover:underline">{t('mark_all_read')}</button>
+                      )}
+                    </div>
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-sm text-slate-400">{t('no_notifications')}</div>
+                      ) : notifications.slice(0, 10).map((notif: any) => (
+                        <div key={notif.id} onClick={() => markOneReadAndNavigate(notif)} className={cn("p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer", !notif.isRead && "bg-blue-50/50")}>
+                          <div className="text-sm font-bold text-slate-900">{notif.title}</div>
+                          <div className="text-xs text-slate-500 mt-1 line-clamp-2">{notif.message}</div>
+                          <div className="text-[10px] text-slate-400 mt-2">{new Date(notif.createdAt).toLocaleDateString()}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </Link>
+              </div>
+
+
             </div>
 
             <div className="h-6 w-px bg-slate-200 mx-2" />
@@ -422,13 +397,19 @@ export function Header() {
             >
               <Search size={22} />
             </button>
-            {/* Cart icon */}
-            <Link to="/cart" className="p-2 text-slate-600 hover:text-primary transition-colors relative" title={t('inquiry_basket', 'Giỏ yêu cầu')}>
-              <ShoppingCart size={22} />
-              {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>
+            {/* Notification bell — mobile */}
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
+              className="p-2 text-slate-600 hover:text-primary transition-colors relative"
+              title={t('notifications')}
+            >
+              <Bell size={22} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
               )}
-            </Link>
+            </button>
             {/* Menu toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -443,21 +424,26 @@ export function Header() {
       {/* ═══ Mobile Search Bar (expandable) ═══ */}
       {isMobileSearchOpen && (
         <div className="md:hidden border-t border-slate-100 px-3 py-3 bg-white">
-          <div className="flex items-center h-12 bg-[#EEF2FC] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#A2875E]/30 focus-within:shadow-sm">
-            <form onSubmit={handleSearch} className="flex-1 flex items-center bg-transparent m-0 p-0 border-0 h-full">
-              <button type="submit" className="outline-none border-none bg-transparent pl-4 m-0 p-0 shrink-0 transform translate-y-0.5">
-                <Search size={20} className="text-[#9B7A4F]" strokeWidth={2.5} />
-              </button>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-3 bg-transparent h-full text-sm outline-none w-full min-w-0 text-slate-700 placeholder-slate-400/80 font-medium border-0 m-0"
-                placeholder={t('search_placeholder', { type: t(searchType).toLowerCase() })}
-                autoFocus
-              />
-            </form>
-          </div>
+          <form onSubmit={handleSearch} className="flex items-center h-11 rounded-full border border-slate-200 bg-[#f8fafc] overflow-hidden focus-within:border-slate-300 focus-within:bg-white focus-within:shadow-sm">
+            <button type="submit" className="shrink-0 pl-4 pr-2 h-full flex items-center bg-transparent border-none outline-none">
+              <Search size={18} className="text-slate-400" strokeWidth={2} />
+            </button>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-2 bg-transparent h-full text-sm outline-none w-full min-w-0 text-slate-700 placeholder-slate-400 font-medium border-0 m-0"
+              placeholder={t('search_products_suppliers', 'Tìm kiếm sản phẩm, nhà cung cấp...')}
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="shrink-0 h-[calc(100%-6px)] mr-[3px] px-4 rounded-full text-xs font-bold text-white"
+              style={{ background: '#1e293b' }}
+            >
+              {t('search_btn', 'Tìm kiếm')}
+            </button>
+          </form>
         </div>
       )}
 
@@ -470,9 +456,9 @@ export function Header() {
               onMouseEnter={() => setIsCategoriesOpen(true)}
               onMouseLeave={() => setIsCategoriesOpen(false)}
             >
-              <Link to="/products" className="flex items-center gap-2 bg-primary text-white px-6 h-full font-bold text-sm">
-                <Menu size={18} />
-                {t('all_categories')}
+              <Link to="/products" className="flex items-center gap-2 text-slate-700 hover:text-primary px-4 h-full font-bold text-sm transition-colors">
+                <Menu size={16} />
+                Danh mục ngành hàng
               </Link>
 
               {isCategoriesOpen && (
@@ -481,40 +467,25 @@ export function Header() {
                 </div>
               )}
             </div>
-            <nav className="flex items-center gap-8 ml-8 h-full">
-              {/* Tạm ẩn Top Ranking Product
-              <Link 
-                to="/products" 
+            <nav className="flex items-center gap-0 h-full">
+              <Link
+                to="/suppliers"
                 className={cn(
-                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
-                  location.pathname.startsWith('/products') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                  "text-sm font-bold transition-colors h-full flex items-center px-5 border-b-2 outline-none",
+                  location.pathname.startsWith('/suppliers') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
                 )}
               >
-                {t('top_ranking_products')}
+                Danh sách Nhà cung cấp
               </Link>
-              */}
-              {/* Reports link - ẩn tạm
-              <Link 
-                to="/reports" 
+              <Link
+                to="/blog"
                 className={cn(
-                  "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
-                  location.pathname.startsWith('/reports') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
+                  "text-sm font-bold transition-colors h-full flex items-center px-5 border-b-2 outline-none",
+                  location.pathname.startsWith('/blog') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
                 )}
               >
-                {t('audited_suppliers_reports')}
+                VIE Share
               </Link>
-              */}
-              {/*
-                  <Link 
-                    to="/services" 
-                    className={cn(
-                      "text-sm font-bold transition-colors h-full flex items-center border-b-2 outline-none",
-                      location.pathname.startsWith('/services') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
-                    )}
-                  >
-                    {t('secured_trading_service')}
-                  </Link>
-              */}
             </nav>
           </div>
           <div className="flex items-center h-full gap-6">

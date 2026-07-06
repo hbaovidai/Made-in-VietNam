@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, ChevronLeft, LayoutGrid, Star, Factory, Shield, Loader2 } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, ChevronLeft, LayoutGrid, Star, Factory, Shield, Loader2, Wrench, Beaker, Shirt, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { CategorySidebar } from '../components/CategorySidebar';
@@ -22,8 +22,8 @@ export function Home() {
 
 
   const defaultSlides = [
-    { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: t('vietnam_top_hub'), desc: t('source_directly'), link: '/products' },
-    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('top_ranking_products', 'Sản phẩm Xếp hạng Hàng đầu'), desc: t('verified_status_desc', 'Những nhà cung cấp và sản phẩm đã qua kiểm định'), link: '/products' },
+    { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: "VIEproduct - Nền tảng kết nối thương mại minh bạch & tin cậy", desc: "Hỗ trợ Nhà cung cấp chuyển đổi số hồ sơ doanh nghiệp chuyên nghiệp và Người mua tìm kiếm nguồn hàng chất lượng từ các Nhà cung cấp uy tín nhanh chóng.", link: '/products' },
+    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: "Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp", desc: "Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ Verified Supplier tại VIEproduct.", link: '/register' },
     { image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200", title: t('secured_trading_service'), desc: t('trade_assurance', 'Đảm bảo giao dịch an toàn xuyên quốc gia'), link: '/products' },
   ];
 
@@ -63,7 +63,7 @@ export function Home() {
       try {
         const [prodRes, suppRes, catRes] = await Promise.all([
           api.get('/products?limit=3'),
-          api.get('/suppliers?limit=3'),
+          api.get('/suppliers?limit=5'),
           api.get('/categories')
         ]);
         setProducts(prodRes.data.data);
@@ -118,253 +118,261 @@ export function Home() {
         }}
       />
 
-      {/* ═══ Top Section: Categories + Banner + Recommendations ═══ */}
-
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="flex gap-4 h-[220px] sm:h-[320px] lg:h-[450px]">
-          {/* Left Column: Categories Sidebar — Desktop only */}
-          <CategorySidebar />
-
-          {/* Middle Column*/}
-          <div className="flex flex-col h-full min-h-[300px] w-full gap-2">
-            {/* Banner Carousel */}
-            <div className="flex-1 relative group overflow-hidden bg-slate-200 border border-slate-200 rounded-xl sm:rounded-none">
-              {heroSlides.map((slide, idx) => (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 transition-opacity duration-1000 ${
-                    idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                  }`}
+      {/* ═══ Hero Banner ═══ */}
+      <section>
+        <div className="relative group overflow-hidden bg-slate-200 h-[240px] sm:h-[360px] lg:h-[480px]">
+          {heroSlides.map((slide, idx) => (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6 sm:px-12 lg:px-16 text-white">
+                <motion.div
+                  key={`text-${idx}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="max-w-2xl space-y-3 sm:space-y-5"
                 >
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex flex-col justify-center px-6 sm:px-12 text-white">
-                    <motion.div
-                      key={`text-${idx}`}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="max-w-md space-y-2 sm:space-y-4"
-                    >
-                      <h2 className="text-xl sm:text-3xl lg:text-4xl font-black leading-tight drop-shadow-md">{slide.title}</h2>
-                      <p className="text-slate-200 text-xs sm:text-sm line-clamp-2 sm:line-clamp-none drop-shadow-sm">{slide.desc}</p>
-                      <Link to="/products" className="inline-block bg-primary text-white px-5 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold hover:bg-primary-dark transition-all shadow-xl shadow-primary/20">
-                        {t('source_now')}
-                      </Link>
-                    </motion.div>
+                  <h2 className="text-xl sm:text-3xl lg:text-5xl font-extrabold leading-tight drop-shadow-md">{slide.title}</h2>
+                  <p className="text-slate-200 text-xs sm:text-sm leading-relaxed drop-shadow-sm max-w-xl">{slide.desc}</p>
+                  
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <Link to={slide.link} className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-lg flex items-center gap-1.5">
+                      {idx === 1 ? 'Đăng ký ngay' : 'Khám phá ngay'} {idx === 1 && <ArrowRight size={14} />}
+                    </Link>
+                    <Link to="/about" className="border border-white/40 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-white/10 transition-all">
+                      {idx === 1 ? 'Tìm hiểu quy trình' : 'Tìm hiểu thêm'}
+                    </Link>
                   </div>
-                </div>
-              ))}
-
-              {/* Arrow Navigation */}
-              <button 
-                onClick={prevSlide}
-                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft size={20} className="sm:hidden" />
-                <ChevronLeft size={24} className="hidden sm:block" />
-              </button>
-              <button 
-                onClick={nextSlide}
-                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-                aria-label="Next slide"
-              >
-                <ChevronRight size={20} className="sm:hidden" />
-                <ChevronRight size={24} className="hidden sm:block" />
-              </button>
-
-              {/* Slider Dots */}
-              <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`transition-all duration-300 rounded-full outline-none ${
-                      idx === currentSlide ? 'w-6 h-2 sm:h-2.5 bg-primary' : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/50 hover:bg-white/80'
-                    }`}
-                  />
-                ))}
+                </motion.div>
               </div>
             </div>
+          ))}
 
-            {/* Feature Card */}
-            <div className="grid grid-cols-2 md:grid-cols-4">
-              {[
-                { icon: <Star className="text-orange-500" size={16} />, title: t('smart_expo'), desc: t('digital_trade_fair') },
-                { icon: <Shield className="text-blue-500" size={16} />, title: t('secured_trading'), desc: t('trade_assurance') },
-                { icon: <Factory className="text-slate-600" size={16} />, title: t('leading_factory'), desc: t('verified_manufacturers') },
-                { icon: <Award className="text-primary" size={16} />, title: t('selected_supplier'), desc: t('top_rated_partners') }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white p-3 sm:p-4 border border-slate-200 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-50 rounded-full flex items-center justify-center shrink-0">
-                    {item.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="font-bold text-xs sm:text-sm text-slate-800 truncate">{item.title}</h4>
-                    <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Arrow Navigation */}
+          <button 
+            onClick={prevSlide}
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <button 
+            onClick={nextSlide}
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+            aria-label="Next slide"
+          >
+            <ChevronRight size={22} />
+          </button>
 
-          {/* Right Column: Recommendations — Desktop XL only */}
-          <div className="hidden xl:flex flex-col w-72 bg-white border border-slate-200 shrink-0">
-            <div className="px-4 py-3 border-b border-slate-200">
-              <span className="font-bold text-slate-800">{t('you_may_like')}</span>
-            </div>
-            <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-              {products.map((product) => (
-                <Link key={product.id} to={`/products/${product.id}`} className="flex gap-3 group">
-                  <div className="w-16 h-16 bg-slate-100 shrink-0 border border-slate-100 overflow-hidden">
-                    <img src={product.images[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" loading="lazy" />
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <span className="text-xs font-medium text-slate-800 line-clamp-2 group-hover:text-primary">{product.name}</span>
-                    <span className="text-[10px] text-slate-400 mt-1">1,200+ {t('products')}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="p-4 border-t border-slate-100">
-              <Link to="/rfq" className="block w-full text-center py-2 border border-primary text-primary text-sm font-bold hover:bg-blue-50 transition-colors">
-                {t('post_your_request_now')}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* ═══ Featured Categories ═══ */}
-
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div className="bg-white border border-slate-200">
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex justify-between items-center">
-            <h2 className="text-base sm:text-xl font-bold text-slate-900">{t('featured_categories', 'Danh mục nổi bật')}</h2>
-            <Link to="/products" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1">
-              {t('view_more')} <ChevronRight size={14} />
-            </Link>
-          </div>
-          {categories.length === 0 ? (
-            <div className="flex items-center justify-center py-16 text-center">
-              <p className="text-sm text-slate-400">Chưa có danh mục nào. Vui lòng thêm danh mục qua Admin Dashboard.</p>
-            </div>
-          ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-slate-200">
-            {categories.map((cat, idx) => {
-              const imgSrc = `https://picsum.photos/seed/${cat.slug}/400/300`;
-              const colors = [
-                'from-blue-500/20 to-blue-600/5',
-                'from-emerald-500/20 to-emerald-600/5',
-                'from-amber-500/20 to-amber-600/5',
-                'from-rose-500/20 to-rose-600/5',
-                'from-violet-500/20 to-violet-600/5',
-                'from-cyan-500/20 to-cyan-600/5',
-              ];
-              const bgGrad = colors[idx % colors.length];
-
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/products?category=${cat.slug}`}
-                  className="bg-white p-4 sm:p-5 flex flex-col items-center gap-3 hover:shadow-lg transition-all group cursor-pointer"
-                >
-                  <div className={`w-full aspect-[4/3] bg-gradient-to-br ${bgGrad} rounded-lg overflow-hidden flex items-center justify-center`}>
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shadow-md group-hover:shadow-xl transition-shadow border-2 border-white/80">
-                      <img
-                        src={imgSrc}
-                        alt={cat.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                  <div className="text-center w-full">
-                    <h3 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">{cat.name}</h3>
-                    {cat.children && cat.children.length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-1 mt-2">
-                        {cat.children.slice(0, 3).map((sub: any) => (
-                          <span key={sub.id} className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full truncate max-w-[90px]">{sub.name}</span>
-                        ))}
-                        {cat.children.length > 3 && (
-                          <span className="text-[10px] text-primary font-medium">+{cat.children.length - 3}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          )}
-        </div>
-      </section>
-
-
-      {/* ═══ Verified Suppliers Section ═══ */}
-
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div className="bg-white border border-slate-200">
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex justify-between items-center">
-            <h2 className="text-base sm:text-xl font-bold text-slate-900">{t('verified_manufacturers')}</h2>
-            <Link to="/suppliers" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1">
-              {t('view_more')} <ChevronRight size={14} />
-            </Link>
-          </div>
-          {/* Mobile: horizontal scroll | Desktop: grid */}
-          <div className="md:hidden overflow-x-auto p-4">
-            <div className="flex gap-4 w-max">
-              {suppliers.slice(0, 3).map((supplier) => (
-                <div key={supplier.id} className="w-[280px] shrink-0">
-                  {/* SupplierCard does not exactly match new properties (it used mock properties). We will fix SupplierCard later if it breaks, or map it properly now. For now passing 'supplier' obj. */}
-                  <SupplierCard supplier={{
-                    ...supplier,
-                    name: supplier.companyName,
-                    rating: 4.8,
-                    responseRate: 98,
-                    image: supplier.logo,
-                    banner: supplier.banner,
-                    products: [] // mock missing field
-                  }} />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-            {suppliers.slice(0, 3).map((supplier) => (
-              <SupplierCard key={supplier.id} supplier={{
-                ...supplier,
-                name: supplier.companyName,
-                rating: 4.8,
-                responseRate: 98,
-                image: supplier.logo,
-                banner: supplier.banner,
-                products: [] // mock missing field
-              }} />
+          {/* Slider Dots */}
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            {heroSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`transition-all duration-300 rounded-full outline-none ${
+                  idx === currentSlide ? 'w-7 h-2.5 bg-white' : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+                }`}
+              />
             ))}
           </div>
         </div>
       </section>
 
 
-      {/* ═══ RFQ Section ═══ */}
+      {/* ═══ Featured Categories ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div className="bg-slate-900 text-white p-5 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-8 rounded-xl sm:rounded-none">
-          <div className="space-y-1 sm:space-y-2 text-center md:text-left">
-            <h2 className="text-lg sm:text-2xl font-bold">Kính mời quý công ty tham gia mạng lưới kết nối thương mại của VIEproduct</h2>
-            <p className="text-slate-400 text-xs sm:text-sm">Gia tăng khả năng tiếp cận đến với đối tác trong nước và quốc tế</p>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">Các ngành hàng tiêu biểu</h2>
+          <Link to="/products" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
+            {t('view_more')} <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        {categories.length === 0 ? (
+          <div className="bg-white border border-slate-200/80 rounded-xl p-12 text-center">
+            <p className="text-sm text-slate-400">Chưa có danh mục nào. Vui lòng thêm danh mục qua Admin Dashboard.</p>
           </div>
-          <div className="flex gap-3 sm:gap-4 w-full md:w-auto">
-            <input type="text" placeholder={t('what_looking_for')} className="flex-1 md:w-80 px-3 sm:px-4 py-2 text-sm text-slate-900 outline-none rounded-lg md:rounded-none" />
-            <Link to="/register" className="bg-primary px-5 sm:px-8 py-2 font-bold hover:bg-primary-dark transition-colors shrink-0 text-sm sm:text-base rounded-lg md:rounded-none flex items-center">
-              Tham gia
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {categories.slice(0, 10).map((cat, idx) => {
+              const imgSrc = `https://picsum.photos/seed/${cat.slug}/400/300`;
+
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/products?category=${cat.slug}`}
+                  className="bg-white border border-slate-200/80 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col"
+                >
+                  <div className="w-full aspect-[4/3] overflow-hidden bg-slate-50 border-b border-slate-100">
+                    <img
+                      src={imgSrc}
+                      alt={cat.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="p-4 text-center flex-1 flex items-center justify-center">
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2">
+                      {cat.name}
+                    </h3>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>      {/* ═══ Verified Suppliers Section ═══ */}
+      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">Nhà cung cấp tiêu biểu</h2>
+          <Link to="/suppliers" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
+            {t('view_more')} <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        {suppliers.length === 0 ? (
+          <div className="bg-white border border-slate-200/80 rounded-xl py-12 text-center text-slate-400 text-sm">
+            Chưa có nhà cung cấp nào
+          </div>
+        ) : (
+          <div>
+            {/* Mobile: horizontal scroll */}
+            <div className="md:hidden overflow-x-auto pb-4">
+              <div className="flex gap-4 w-max">
+                {suppliers.slice(0, 5).map((supplier, idx) => {
+                  const name = supplier.companyName || supplier.name;
+                  const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : 'Việt Nam');
+                  const industries = supplier.industries 
+                    ? supplier.industries.map((i: any) => i.industry) 
+                    : (supplier.industry || []);
+                  
+                  return (
+                    <div key={supplier.id} className="w-[280px] shrink-0 bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                          {supplier.logo ? (
+                            <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            idx % 5 === 0 ? <Factory size={24} className="text-slate-400" /> :
+                            idx % 5 === 1 ? <Wrench size={24} className="text-slate-400" /> :
+                            idx % 5 === 2 ? <Beaker size={24} className="text-slate-400" /> :
+                            idx % 5 === 3 ? <Shirt size={24} className="text-slate-400" /> :
+                            <Zap size={24} className="text-slate-400" />
+                          )}
+                        </div>
+                        <h3 className="font-extrabold text-slate-800 text-xs mb-1 uppercase line-clamp-2 h-10 flex items-center justify-center px-1">
+                          {name}
+                        </h3>
+                        <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
+                          <MapPin size={12} className="shrink-0 text-slate-400" />
+                          <span className="truncate max-w-[200px]">{location}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
+                          <span className="font-bold text-slate-700">Ngành hàng: </span>
+                          {industries.join(', ') || 'Đang cập nhật'}
+                        </div>
+                      </div>
+                      <Link
+                        to={`/suppliers/${supplier.id}`}
+                        className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
+                      >
+                        Xem hồ sơ
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Desktop: Grid */}
+            <div className="hidden md:grid grid-cols-2 lg:grid-cols-5 gap-4">
+              {suppliers.slice(0, 5).map((supplier, idx) => {
+                const name = supplier.companyName || supplier.name;
+                const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : 'Việt Nam');
+                const industries = supplier.industries 
+                  ? supplier.industries.map((i: any) => i.industry) 
+                  : (supplier.industry || []);
+                
+                return (
+                  <div key={supplier.id} className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                        {supplier.logo ? (
+                          <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          idx % 5 === 0 ? <Factory size={24} className="text-slate-400" /> :
+                          idx % 5 === 1 ? <Wrench size={24} className="text-slate-400" /> :
+                          idx % 5 === 2 ? <Beaker size={24} className="text-slate-400" /> :
+                          idx % 5 === 3 ? <Shirt size={24} className="text-slate-400" /> :
+                          <Zap size={24} className="text-slate-400" />
+                        )}
+                      </div>
+                      <h3 className="font-extrabold text-slate-800 text-xs mb-1 uppercase line-clamp-2 h-10 flex items-center justify-center px-1">
+                        {name}
+                      </h3>
+                      <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
+                        <MapPin size={12} className="shrink-0 text-slate-400" />
+                        <span className="truncate max-w-[150px]">{location}</span>
+                      </div>
+                      <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
+                        <span className="font-bold text-slate-700">Ngành hàng: </span>
+                        {industries.join(', ') || 'Đang cập nhật'}
+                      </div>
+                    </div>
+                    <Link
+                      to={`/suppliers/${supplier.id}`}
+                      className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
+                    >
+                      Xem hồ sơ
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </section>
+
+
+      {/* ═══ Register Digital Profile Section ═══ */}
+      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
+        <div 
+          className="relative bg-[#0f3460] text-white p-8 sm:p-12 rounded-2xl flex flex-col items-center justify-center overflow-hidden border border-slate-200/5 shadow-inner"
+          style={{
+            backgroundImage: `radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.03) 8%, transparent 8%, transparent 92%), radial-gradient(circle at 90% 80%, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.03) 8%, transparent 8%, transparent 92%)`,
+            backgroundSize: '24px 24px'
+          }}
+        >
+          <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/10 shadow-inner">
+            <ShieldCheck size={26} />
+          </div>
+          
+          <h2 className="text-xl sm:text-3xl font-extrabold text-white text-center mb-3 tracking-tight max-w-2xl leading-tight">
+            Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp
+          </h2>
+          
+          <p className="text-slate-200/90 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed">
+            Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ <span className="font-bold text-white">Verified Supplier</span> tại VIEproduct.
+          </p>
+          
+          <div className="flex flex-wrap gap-4 justify-center items-center">
+            <Link to="/register" className="bg-white text-[#0f3460] px-6 py-3 rounded-full text-sm font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
+              Đăng ký ngay <ArrowRight size={16} />
+            </Link>
+            <Link to="/about" className="border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-white/5 transition-all">
+              Tìm hiểu quy trình
             </Link>
           </div>
         </div>

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
 
-// ─── Types (kept for backward compat with AdminSuppliers) ────
-export type SupplierVerificationStatus = 'VERIFIED' | 'UNVERIFIED';
+// ─── Types (aligned with new Prisma schema) ─────────────────
+import { SupplierStatus, SupplierType, BusinessType, SupplierAccountHolderRole } from '../../../lib/enums';
 
 export interface SupplierProfile {
   id?: string;
@@ -13,30 +13,30 @@ export interface SupplierProfile {
   logo?: string;
   banner?: string;
   description?: string;
-  businesstype?: string;
-  businessType?: string;
+  businessType?: BusinessType;
   yearEstablished?: number;
-  employeeCount?: string;
-  address?: string;
-  city?: string;
   province?: string;
+  district?: string;
+  ward?: string;
+  streetAddress?: string;
   website?: string;
   taxCode?: string;
-  taxId?: string;
   companyEmail?: string;
   companyPhone?: string;
-  legalRepresentative?: string;
-  businessLicenseUrl?: string;
-  identityCardUrl?: string;
-  verificationStatus?: SupplierVerificationStatus;
-  isVerified?: boolean;
+  legalRepName?: string;
+  legalRepPhone?: string;
+  businessLicenseUrl?: string[];
+  accountHolderFullName?: string;
+  accountHolderGovId?: string;
+  accountHolderPhone?: string;
+  accountHolderEmail?: string;
+  accountHolderRole?: SupplierAccountHolderRole;
+  accountHolderGovIdUrl?: string[];
+  authorizationLetterUrl?: string[];
+  supplierType?: SupplierType;
+  status?: SupplierStatus;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  repName?: string;
-  repTitle?: string;
-  repIdCard?: string;
-  repEmail?: string;
-  repPhone?: string;
   industry?: string[];
   products?: string;
   exportExperience?: boolean;
@@ -119,15 +119,12 @@ function TabOverview({ data }: { data: SupplierProfile }) {
       <div style={s.cardBody}>
         <Field label="Tên doanh nghiệp" value={data.companyName} />
         <Field label="Mã số thuế" value={data.taxCode} mono />
-        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
-        <Field label="Mô hình hoạt động" />
+        <Field label="Loại hình tổ chức" value={data.businessType} />
+        <Field label="Loại nhà cung cấp" value={data.supplierType} />
         <Field label="Ngành nghề" value={data.industry?.join(', ')} />
-        <Field label="Địa chỉ trụ sở" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Địa chỉ trụ sở" value={[data.streetAddress, data.ward, data.district, data.province].filter(Boolean).join(', ')} />
         <Field label="Năm thành lập" value={data.yearEstablished?.toString()} />
-        <Field label="Số lượng nhân viên" value={data.employeeCount} />
         <Field label="Website" value={data.website} />
-        <Field label="Danh mục chính" />
-        <Field label="Danh mục con" />
         <Field label="Ghi chú admin" last />
       </div>
     </div>
@@ -139,12 +136,12 @@ function TabContact({ data }: { data: SupplierProfile }) {
     <div style={s.card}>
       <div style={s.cardHead}><User size={16} color="#2271b1" /> Thông tin liên hệ</div>
       <div style={s.cardBody}>
-        <Field label="Họ tên người đăng ký" value={data.repName} />
-        <Field label="Chức vụ" value={data.repTitle} />
-        <Field label="Email" value={data.companyEmail || data.repEmail} />
-        <Field label="Số điện thoại" value={data.companyPhone || data.repPhone} />
-        <Field label="Người đại diện pháp luật" value={data.legalRepresentative || data.repName} />
-        <Field label="SĐT người đại diện" value={data.repPhone} last />
+        <Field label="Người đại diện tài khoản" value={data.accountHolderFullName} />
+        <Field label="Vai trò" value={data.accountHolderRole} />
+        <Field label="Email liên hệ" value={data.accountHolderEmail || data.companyEmail} />
+        <Field label="Số điện thoại" value={data.accountHolderPhone || data.companyPhone} />
+        <Field label="Người đại diện pháp luật" value={data.legalRepName} />
+        <Field label="SĐT người đại diện PL" value={data.legalRepPhone} last />
       </div>
     </div>
   );
@@ -156,9 +153,9 @@ function TabLegal({ data }: { data: SupplierProfile }) {
       <div style={s.cardHead}><Shield size={16} color="#2271b1" /> Thông tin pháp lý</div>
       <div style={s.cardBody}>
         <Field label="Tên DN theo ĐKKD" value={data.companyName} />
-        <Field label="Mã số thuế / Mã số DN" value={data.taxCode || data.taxId} mono />
-        <Field label="Loại hình tổ chức" value={data.businessType || data.businesstype} />
-        <Field label="Địa chỉ ĐKKD" value={[data.address, data.city, data.province].filter(Boolean).join(', ')} />
+        <Field label="Mã số thuế" value={data.taxCode} mono />
+        <Field label="Loại hình tổ chức" value={data.businessType} />
+        <Field label="Địa chỉ ĐKKD" value={[data.streetAddress, data.ward, data.district, data.province].filter(Boolean).join(', ')} />
         <Field label="Trạng thái xác minh pháp lý" last />
       </div>
     </div>
@@ -296,7 +293,7 @@ function TabProducts() {
 export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
-  const verificationStatus = request.verificationStatus || 'UNVERIFIED';
+  const supplierStatus = request.status || SupplierStatus.APPLICATION_PENDING;
 
   const renderTab = () => {
     switch (activeTab) {
@@ -335,7 +332,7 @@ export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
               {/* Verification Badges */}
               {(() => {
-                const isSupplierVerified = verificationStatus === 'VERIFIED';
+                const isSupplierVerified = supplierStatus === SupplierStatus.VERIFIED;
                 const isManufacturerVerified = false; // placeholder — will be from API
                 const isExporterVerified = false;     // placeholder — will be from API
                 const active = { bg: '#e6f6ee', color: '#00713a', border: '#7bc4a0', icon: '✓' };

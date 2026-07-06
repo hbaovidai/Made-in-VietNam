@@ -10,11 +10,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }[]>;
     findAll(pageKey?: string): Promise<{
         id: string;
@@ -23,11 +23,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
@@ -36,11 +36,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }>;
     create(dto: CreateLegalSectionDto): Promise<{
         id: string;
@@ -49,11 +49,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }>;
     update(id: string, dto: UpdateLegalSectionDto): Promise<{
         id: string;
@@ -62,11 +62,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }>;
     move(id: string, direction: 'up' | 'down'): Promise<{
         id: string;
@@ -75,11 +75,11 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }[]>;
     delete(id: string): Promise<{
         id: string;
@@ -88,10 +88,10 @@ export declare class LegalController {
         updatedAt: Date;
         sortOrder: number;
         isActive: boolean;
-        pageKey: string;
         titleVi: string;
         titleEn: string;
         contentVi: string;
         contentEn: string;
+        pageKey: string;
     }>;
 }

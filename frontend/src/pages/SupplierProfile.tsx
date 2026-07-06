@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, Loader2, Factory, Users, Package, Clock, Star, Building2, CheckCircle2, Play, TrendingUp, Ship, Target } from 'lucide-react';
+import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, Loader2, Factory, Users, Package, Clock, Star, Building2, CheckCircle2, Play, TrendingUp, Ship, Target, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ProductCard } from '../components/ProductCard';
 import { cn } from '../utils/cn';
@@ -8,6 +8,7 @@ import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
+import { SupplierStatus } from '../lib/enums';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -20,7 +21,6 @@ export function SupplierProfile() {
   const [loading, setLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState('');
-  const [activeGallery, setActiveGallery] = useState(0);
 
   useEffect(() => {
     async function loadData() {
@@ -41,6 +41,11 @@ export function SupplierProfile() {
     navigate(user.role === 'SUPPLIER' ? '/dashboard/supplier/messages' : '/dashboard/buyer/messages');
   };
 
+  const handleRFQ = () => {
+    if (!user) { setAuthModalMessage('Vui lòng đăng nhập để gửi yêu cầu báo giá.'); setIsAuthModalOpen(true); return; }
+    navigate(`/rfq?supplierName=${encodeURIComponent(supplier.companyName)}`);
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-primary" size={48} /></div>;
   if (!supplier) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -51,229 +56,287 @@ export function SupplierProfile() {
     </div>
   );
 
+  const isVerified =
+    supplier.is_verified === true ||
+    supplier.isVerified === true ||
+    supplier.status === SupplierStatus.VERIFIED ||
+    supplier.verificationStatus === 'VERIFIED' ||
+    supplier.verification_status === 'VERIFIED';
+
   const memberSince = supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024;
   const certNames = supplier.certifications?.map((c: any) => c.name) || [];
   const markets = supplier.markets?.map((m: any) => m.market) || [];
+  const industries = supplier.industries?.map((i: any) => i.industry) || [];
 
-  // Factory gallery images (use banner or placeholders)
-  const galleryImages = [
-    { src: supplier.banner || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800', label: 'Nhà máy' },
-    { src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', label: 'Kho hàng' },
-    { src: 'https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800', label: 'Dây chuyền SX' },
-    { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800', label: 'Nhân sự' },
-    { src: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800', label: 'Kiểm định CL' },
-  ];
+  // Fallback certifications for display
+  const displayCerts = supplier.certifications?.length > 0
+    ? supplier.certifications
+    : [
+        { name: 'ISO 9001:2015', issuedBy: 'Hệ thống quản lý chất lượng', expiryDate: '2026-12-31' },
+        { name: 'CE Marking', issuedBy: 'Tiêu chuẩn An toàn Châu Âu', expiryDate: '2027-06-30' },
+        { name: 'ISO 14001:2015', issuedBy: 'Hệ thống quản lý môi trường', expiryDate: '2026-12-31' },
+      ];
+
+  const location = supplier.streetAddress || supplier.address
+    ? `${supplier.streetAddress || supplier.address}${supplier.city ? `, ${supplier.city}` : ''}${supplier.province ? `, ${supplier.province}` : ''}`
+    : (supplier.city ? `${supplier.city}, ${supplier.province || 'Việt Nam'}` : (supplier.province || 'Việt Nam'));
+
+  // Price display helper
+  const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
 
   return (
-    <div className="bg-[#f0f2f5] min-h-screen">
+    <div className="bg-white min-h-screen pb-16">
       <SEOHead title={supplier.companyName} description={supplier.description?.substring(0, 160)} canonical={`/suppliers/${supplier.slug || supplier.id}`} />
 
-      {/* ═══ 1. HERO BANNER ═══ */}
-      <div className="relative h-[280px] md:h-[340px] overflow-hidden">
-        <img src={supplier.banner || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400'} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0">
-          <div className="max-w-[1400px] mx-auto px-4 pb-6 flex items-end gap-5">
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl bg-white border-4 border-white shadow-xl flex items-center justify-center overflow-hidden shrink-0">
-              {supplier.logo ? <img src={supplier.logo} alt="" className="w-full h-full object-cover" /> : <Building2 size={36} className="text-slate-300" />}
-            </div>
-            <div className="flex-1 min-w-0 pb-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl md:text-3xl font-black text-white">{supplier.companyName}</h1>
-                {supplier.isVerified && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-300 bg-emerald-500/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-emerald-400/30">
-                    <ShieldCheck size={12} /> Đã xác minh
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-4 mt-2 text-sm text-white/70 flex-wrap">
-                <span className="flex items-center gap-1"><Calendar size={13} /> Thành lập {supplier.yearEstablished || memberSince}</span>
-                <span className="flex items-center gap-1"><MapPin size={13} /> {supplier.city || supplier.province || 'Việt Nam'}</span>
-                <span className="flex items-center gap-1"><Users size={13} /> {supplier.employeeCount || '—'} nhân viên</span>
-              </div>
-            </div>
-            <div className="hidden md:flex gap-2 shrink-0">
-              <button onClick={handleContact} className="bg-primary text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2 shadow-lg">
-                <MessageSquare size={15} /> Nhắn tin
-              </button>
-              <button onClick={() => { if (!user) { setAuthModalMessage('Vui lòng đăng nhập.'); setIsAuthModalOpen(true); return; } navigate(`/rfq?supplierName=${encodeURIComponent(supplier.companyName)}`); }} className="bg-white/10 backdrop-blur-sm text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-white/20 transition-colors border border-white/20">
-                Yêu cầu báo giá
-              </button>
-            </div>
-          </div>
+      {/* ═══ BREADCRUMB ═══ */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-[1280px] mx-auto px-6 py-3">
+          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+            <ChevronRight size={12} className="text-slate-300" />
+            <Link to="/suppliers" className="hover:text-primary transition-colors">Danh sách nhà cung cấp</Link>
+            <ChevronRight size={12} className="text-slate-300" />
+            <span className="text-slate-800 font-bold truncate max-w-[200px]">{supplier.companyName}</span>
+          </nav>
         </div>
       </div>
 
-      {/* Mobile CTAs */}
-      <div className="md:hidden flex gap-2 px-4 py-3 bg-white border-b border-slate-200">
-        <button onClick={handleContact} className="flex-1 bg-primary text-white font-bold text-sm py-2.5 rounded-lg flex items-center justify-center gap-2"><MessageSquare size={14} /> Nhắn tin</button>
-        <button onClick={() => navigate(`/rfq?supplierName=${encodeURIComponent(supplier.companyName)}`)} className="flex-1 border border-primary text-primary font-bold text-sm py-2.5 rounded-lg">Báo giá</button>
-      </div>
-
-      {/* ═══ 2. KPI CARDS ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 -mt-4 md:-mt-0 md:mt-6 relative z-10">
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-          {[
-            { icon: Calendar, label: 'Năm thành lập', value: supplier.yearEstablished || memberSince, color: 'text-blue-600 bg-blue-50' },
-            { icon: Factory, label: 'Diện tích nhà xưởng', value: supplier.factoryArea || '2,000 m²', color: 'text-emerald-600 bg-emerald-50' },
-            { icon: TrendingUp, label: 'Công suất SX', value: supplier.productionCapacity || '10,000/tháng', color: 'text-orange-600 bg-orange-50' },
-            { icon: Package, label: 'Sản phẩm', value: `${supplier._count?.products || supplierProducts.length}`, color: 'text-violet-600 bg-violet-50' },
-            { icon: Globe, label: 'Quốc gia XK', value: `${markets.length || 4}+`, color: 'text-cyan-600 bg-cyan-50' },
-            { icon: Star, label: 'Tỷ lệ phản hồi', value: `${supplier.responseRate || 95}%`, color: 'text-amber-600 bg-amber-50' },
-          ].map((kpi, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 border border-slate-200 text-center shadow-sm hover:shadow-md transition-shadow">
-              <div className={cn("w-10 h-10 rounded-lg mx-auto mb-2 flex items-center justify-center", kpi.color)}>
-                <kpi.icon size={18} />
+      {/* ═══ 1. HEADER BLOCK ═══ */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-[1280px] mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            {/* Left: Logo + Company Info */}
+            <div className="flex items-start gap-5">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg border border-slate-200 bg-white p-2 flex items-center justify-center overflow-hidden shrink-0">
+                {supplier.logo
+                  ? <img src={supplier.logo} alt="" className="w-full h-full object-contain" />
+                  : <Building2 size={36} className="text-slate-300" />
+                }
               </div>
-              <div className="text-lg md:text-xl font-black text-slate-900">{kpi.value}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{kpi.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ═══ 3. ABOUT + GALLERY ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 mt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* About */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2"><Building2 size={16} className="text-primary" /> Giới thiệu doanh nghiệp</h2>
-            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{supplier.description || 'Chưa có thông tin giới thiệu.'}</p>
-            <div className="mt-4 space-y-2.5 text-sm">
-              {supplier.address && <div className="flex items-start gap-2 text-slate-600"><MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />{supplier.address}, {supplier.city}</div>}
-              {supplier.companyPhone && <div className="flex items-center gap-2 text-slate-600"><Phone size={14} className="text-slate-400 shrink-0" />{supplier.companyPhone}</div>}
-              {supplier.companyEmail && <div className="flex items-center gap-2 text-slate-600"><Mail size={14} className="text-slate-400 shrink-0" />{supplier.companyEmail}</div>}
-              {supplier.website && <div className="flex items-center gap-2"><Globe size={14} className="text-slate-400 shrink-0" /><a href={supplier.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">{supplier.website}</a></div>}
-            </div>
-          </div>
-
-          {/* Factory Gallery */}
-          <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2"><Factory size={16} className="text-primary" /> Hình ảnh nhà xưởng</h2>
-            <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3 bg-slate-100">
-              <img src={galleryImages[activeGallery].src} alt={galleryImages[activeGallery].label} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {galleryImages.map((img, i) => (
-                <button key={i} onClick={() => setActiveGallery(i)} className={cn("shrink-0 rounded-lg overflow-hidden border-2 transition-all", i === activeGallery ? "border-primary" : "border-transparent opacity-70 hover:opacity-100")}>
-                  <img src={img.src} alt={img.label} className="w-20 h-14 object-cover" />
-                  <div className="text-[9px] font-bold text-slate-500 text-center py-0.5 bg-slate-50">{img.label}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ═══ 4. NĂNG LỰC SẢN XUẤT ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 mt-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2"><Target size={16} className="text-primary" /> Năng lực sản xuất & cung ứng</h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[
-              { label: 'MOQ trung bình', value: '50 - 500 units', icon: Package },
-              { label: 'Công suất / tháng', value: supplier.productionCapacity || '10,000 units', icon: TrendingUp },
-              { label: 'Lead Time', value: supplier.leadTime || '15 - 30 ngày', icon: Clock },
-              { label: 'Cảng xuất hàng', value: supplier.port || 'Cảng Cát Lái, HCM', icon: Ship },
-              { label: 'Thị trường XK', value: markets.length > 0 ? markets.join(', ') : 'Toàn cầu', icon: Globe },
-            ].map((item, i) => (
-              <div key={i} className="border border-slate-100 rounded-lg p-4 hover:border-primary/30 hover:bg-primary/[0.02] transition-all">
-                <item.icon size={18} className="text-primary mb-2" />
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{item.label}</div>
-                <div className="text-sm font-semibold text-slate-800">{item.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ═══ 5. CHỨNG NHẬN ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 mt-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2"><Award size={16} className="text-primary" /> Chứng nhận & Giấy phép</h2>
-          {supplier.certifications?.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {supplier.certifications.map((cert: any, i: number) => (
-                <div key={i} className="border border-slate-100 rounded-lg p-4 flex items-start gap-3 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={18} className="text-emerald-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900">{cert.name}</div>
-                    {cert.issuedBy && <div className="text-xs text-slate-500 mt-0.5">{cert.issuedBy}</div>}
-                    {cert.issuedDate && <div className="text-[10px] text-slate-400 mt-0.5">{new Date(cert.issuedDate).toLocaleDateString('vi-VN')}</div>}
-                  </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-extrabold text-[#1a2e4a] uppercase tracking-tight">
+                  {supplier.companyName}
+                </h1>
+                <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1.5">
+                  <MapPin size={14} className="text-slate-400 shrink-0" />
+                  <span>{location}</span>
                 </div>
-              ))}
+                {/* Badges — supports up to 3 from supplier.badges[], falls back to verified badge */}
+                {(() => {
+                  const badgeStyles = [
+                    { bg: 'bg-[#d1f5e0]', text: 'text-[#0d6b3e]', border: 'border-[#8edcb3]' },
+                    { bg: 'bg-[#dbeafe]', text: 'text-[#1e40af]', border: 'border-[#93c5fd]' },
+                    { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', border: 'border-[#fcd34d]' },
+                  ];
+                  const badges: { label: string; icon?: any }[] = supplier.badges?.slice(0, 3) || [];
+                  if (badges.length === 0 && isVerified) {
+                    badges.push({ label: 'Nhà cung cấp xác thực' });
+                  }
+                  if (badges.length === 0) return null;
+                  return (
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      {badges.map((badge: any, idx: number) => {
+                        const style = badgeStyles[idx % badgeStyles.length];
+                        return (
+                          <div key={idx} className={`inline-flex items-center gap-1.5 ${style.bg} ${style.text} px-3 py-1 rounded-full text-xs font-bold border ${style.border}`}>
+                            <CheckCircle2 size={13} />
+                            {badge.label || badge.name || badge}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </div>
             </div>
-          ) : (
-            <p className="text-sm text-slate-400 text-center py-6">Chưa có thông tin chứng nhận.</p>
+
+            {/* Right: CTA Buttons */}
+            <div className="flex flex-col gap-2 w-full md:w-auto md:min-w-[180px] shrink-0">
+              <button
+                onClick={handleRFQ}
+                className="flex items-center justify-center gap-2 bg-[#1a2e4a] text-white font-bold text-xs px-4 py-2 hover:bg-[#243c5e] transition-colors"
+              >
+                <FileText size={14} />
+                Gửi yêu cầu báo giá
+              </button>
+              <button
+                onClick={handleContact}
+                className="flex items-center justify-center gap-2 bg-white text-[#1a2e4a] font-bold text-xs px-4 py-2 border-2 border-[#1a2e4a] hover:bg-slate-50 transition-colors"
+              >
+                <MessageSquare size={14} />
+                Gửi tin nhắn
+              </button>
+            </div>
+          </div>
+
+          {/* Description */}
+          {supplier.description && (
+            <p className="mt-6 text-sm text-slate-600 leading-relaxed max-w-[850px]">
+              {supplier.description}
+            </p>
           )}
         </div>
       </div>
 
-      {/* ═══ 6. TIMELINE ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 mt-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-6 flex items-center gap-2"><Clock size={16} className="text-primary" /> Lịch sử phát triển</h2>
-          <div className="relative pl-8 space-y-6 border-l-2 border-primary/20 ml-3">
-            {[
-              { year: supplier.yearEstablished || memberSince, title: 'Thành lập công ty', desc: `${supplier.companyName} chính thức được thành lập tại ${supplier.city || 'Việt Nam'}.` },
-              { year: (supplier.yearEstablished || memberSince) + 3, title: 'Mở rộng sản xuất', desc: 'Đầu tư dây chuyền sản xuất hiện đại, nâng công suất gấp 3 lần.' },
-              { year: (supplier.yearEstablished || memberSince) + 5, title: 'Đạt chứng nhận quốc tế', desc: `Đạt ${certNames[0] || 'ISO 9001'} và bắt đầu xuất khẩu sang ${markets[0] || 'thị trường quốc tế'}.` },
-              { year: memberSince, title: 'Tham gia VIEProduct', desc: 'Trở thành nhà cung cấp đã xác minh trên nền tảng B2B VIEProduct.' },
-            ].map((event, i) => (
-              <div key={i} className="relative">
-                <div className="absolute -left-[41px] w-5 h-5 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-primary" />
+      {/* ═══ 2. TWO-COLUMN LAYOUT (70/30) ═══ */}
+      <div className="max-w-[1280px] mx-auto px-6 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+
+          {/* ═══ A. MAIN COLUMN (70%) ═══ */}
+          <div className="lg:col-span-7 space-y-8">
+
+            {/* Block: THÔNG TIN DOANH NGHIỆP */}
+            <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-4">
+                Thông tin doanh nghiệp
+              </h2>
+              <div className="border-t border-slate-200 mb-4" />
+              <div className="divide-y divide-slate-100">
+                {[
+                  { label: 'Mã số thuế', value: supplier.taxCode || '0312345678' },
+                  { label: 'Loại hình doanh nghiệp', value: supplier.businessType === 'manufacturer' ? 'Nhà sản xuất' : (supplier.businessType === 'trader' ? 'Thương mại' : (supplier.businessType || 'Nhà sản xuất & Xuất khẩu')) },
+                  { label: 'Năm thành lập', value: supplier.yearEstablished || memberSince },
+                  { label: 'Quy mô nhân sự', value: supplier.employee_count || supplier.employeeCount || '50 - 100 người' },
+                ].map((row, i) => (
+                  <div key={i} className="flex items-center justify-between py-3.5">
+                    <span className="text-sm text-slate-500 font-medium">{row.label}</span>
+                    <span className="text-sm text-slate-900 font-bold">{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Block: SẢN PHẨM TIÊU BIỂU */}
+            <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider">
+                  Các sản phẩm tiêu biểu
+                </h2>
+                <Link
+                  to={`/products?supplierId=${supplier.id}`}
+                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                >
+                  Xem tất cả sản phẩm <ChevronRight size={14} />
+                </Link>
+              </div>
+              <div className="border-t border-slate-200 mb-5" />
+
+              {supplierProducts.length > 0 ? (
+                <div className="flex gap-4 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                  {supplierProducts.map((product) => {
+                    const imageUrl = product.images?.[0] || product.image || 'https://via.placeholder.com/300';
+                    const price = product.minPrice ?? product.price;
+                    const priceDisplay = price != null
+                      ? `${formatVND(price)}${product.maxPrice ? ` - ${formatVND(product.maxPrice)}` : ''}`
+                      : 'Liên hệ báo giá';
+                    const moq = product.moq ? `MOQ: ${product.moq.toLocaleString('vi-VN')} ${product.moqUnit || product.unit || 'Bộ'}` : 'MOQ: 1 Bộ';
+
+                    return (
+                      <Link
+                        key={product.id}
+                        to={`/products/${product.id}`}
+                        className="group bg-white border border-slate-300 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col shrink-0 w-[200px]"
+                      >
+                        <div className="aspect-square overflow-hidden bg-slate-100">
+                          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div className="p-3.5 flex flex-col flex-1">
+                          <h3 className="text-xs font-bold text-slate-900 line-clamp-2 leading-snug mb-2">{product.name}</h3>
+                          <div className="mt-auto space-y-0.5">
+                            <div className="text-xs font-extrabold text-primary">{priceDisplay}</div>
+                            <div className="text-[11px] text-slate-400 font-medium">{moq}</div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
-                <div className="text-xs font-black text-primary mb-1">{event.year}</div>
-                <div className="text-sm font-bold text-slate-900">{event.title}</div>
-                <div className="text-xs text-slate-500 mt-0.5">{event.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ═══ 8. SẢN PHẨM NỔI BẬT ═══ */}
-      {supplierProducts.length > 0 && (
-        <div className="max-w-[1400px] mx-auto px-4 mt-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2"><Package size={16} className="text-primary" /> Sản phẩm nổi bật</h2>
-              <Link to={`/products?supplierId=${supplier.id}`} className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-                Xem tất cả <ChevronRight size={14} />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {supplierProducts.slice(0, 5).map(p => <ProductCard key={p.id} product={p} />)}
+              ) : (
+                <p className="text-sm text-slate-400 text-center py-10">Chưa có sản phẩm nào.</p>
+              )}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* ═══ 9. THÔNG TIN LIÊN HỆ ═══ */}
-      <div className="max-w-[1400px] mx-auto px-4 mt-6 mb-10">
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-6 md:p-8 text-white">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-2">
-              <h2 className="text-xl font-black mb-2">Liên hệ {supplier.companyName}</h2>
-              <p className="text-sm text-slate-300 mb-4">Gửi yêu cầu báo giá hoặc nhắn tin trực tiếp để nhận phản hồi nhanh nhất.</p>
-              <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-                {supplier.address && <span className="flex items-center gap-1.5"><MapPin size={13} /> {supplier.address}, {supplier.city}</span>}
-                {supplier.companyPhone && <span className="flex items-center gap-1.5"><Phone size={13} /> {supplier.companyPhone}</span>}
-                {supplier.companyEmail && <span className="flex items-center gap-1.5"><Mail size={13} /> {supplier.companyEmail}</span>}
+          {/* ═══ B. SIDEBAR (30%) ═══ */}
+          <div className="lg:col-span-3 space-y-6">
+
+            {/* Block: LIÊN HỆ */}
+            <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Liên hệ</h3>
+              <div className="border-t border-slate-200 mb-4" />
+              <div className="space-y-3.5">
+                <a
+                  href={supplier.website || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-sm text-slate-600 hover:text-primary transition-colors"
+                >
+                  <Globe size={16} className="text-slate-400 shrink-0" />
+                  <span className="truncate">{supplier.website || 'website.com'}</span>
+                </a>
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <Mail size={16} className="text-slate-400 shrink-0" />
+                  <span className="truncate">{supplier.companyEmail || supplier.user?.email || 'contact@company.vn'}</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <Phone size={16} className="text-slate-400 shrink-0" />
+                  <span>{supplier.companyPhone || '(028) 1234 5678'}</span>
+                </div>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <button onClick={handleContact} className="bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary-dark transition-colors text-sm flex items-center justify-center gap-2">
-                <MessageSquare size={16} /> Nhắn tin cho doanh nghiệp
-              </button>
-              <button onClick={() => navigate(`/rfq?supplierName=${encodeURIComponent(supplier.companyName)}`)} className="bg-white/10 text-white font-bold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm border border-white/20">
-                Gửi yêu cầu báo giá
-              </button>
+
+            {/* Block: KÊNH BÁN HÀNG */}
+            {(() => {
+              const channels: { name: string; url?: string }[] = Array.isArray(supplier.salesChannels)
+                ? supplier.salesChannels
+                : [{ name: 'Shopee' }, { name: 'Facebook' }, { name: 'Tiktok' }];
+              if (channels.length === 0) return null;
+              return (
+                <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                  <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Kênh bán hàng</h3>
+                  <div className="border-t border-slate-200 mb-4" />
+                  <div className="flex flex-wrap gap-2">
+                    {channels.map((channel) => (
+                      <a
+                        key={channel.name}
+                        href={channel.url || '#'}
+                        target={channel.url ? '_blank' : undefined}
+                        rel={channel.url ? 'noopener noreferrer' : undefined}
+                        onClick={channel.url ? undefined : (e) => e.preventDefault()}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 border border-slate-200 bg-slate-50 hover:border-primary/40 hover:text-primary cursor-pointer transition-colors"
+                      >
+                        {channel.name}
+                        {channel.url && <ExternalLink size={11} />}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Block: CHỨNG NHẬN & CHỨNG CHỈ */}
+            <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Chứng nhận & Chứng chỉ</h3>
+              <div className="border-t border-slate-200 mb-4" />
+              <div className="space-y-2.5">
+                {displayCerts.map((cert: any, i: number) => {
+                  const inner = (
+                    <div className="flex items-center gap-3 px-4 py-3.5 bg-blue-50/60 border border-slate-300 hover:border-orange-400 group/cert cursor-pointer transition-all duration-200">
+                      <Award size={18} className="text-blue-500 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-slate-800 group-hover/cert:text-primary transition-colors">{cert.name}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{cert.issuedBy || 'Tổ chức chứng nhận'}</div>
+                      </div>
+                      <ExternalLink size={13} className="text-slate-200 group-hover/cert:text-primary shrink-0 transition-colors" />
+                    </div>
+                  );
+                  return cert.documentUrl
+                    ? <a key={i} href={cert.documentUrl} target="_blank" rel="noopener noreferrer">{inner}</a>
+                    : <div key={i}>{inner}</div>;
+                })}
+              </div>
             </div>
+
           </div>
         </div>
       </div>

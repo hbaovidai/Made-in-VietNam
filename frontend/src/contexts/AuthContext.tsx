@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Role, SupplierStatus } from '../lib/enums';
 
 // Struct khớp với model ở Backend
 export interface User {
   id: string;
   email: string;
   fullName: string;
-  role: 'BUYER' | 'SUPPLIER' | 'ADMIN';
+  role: Role | string;
   phone?: string | null;
   avatar?: string | null;
   supplier?: {
     id: string;
     companyName: string;
     slug: string;
-    isVerified: boolean;
-    verificationStatus?: string;
+    status: SupplierStatus;
   } | null;
 }
 

@@ -3,7 +3,6 @@ import { Modal } from '../../../components/ui/Modal';
 import { Tabs } from '../../../components/ui/Tabs';
 import { useToast } from '../../../components/ui/Toast';
 import { UploadCloud, Image as ImageIcon, X, Loader2 } from 'lucide-react';
-import { Product } from '../../../data/mockData';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 
@@ -16,7 +15,7 @@ interface CategoryOption {
 interface ProductFormProps {
   isOpen: boolean;
   onClose: () => void;
-  product?: Product | null;
+  product?: any | null;
   onSave: (product: any) => void;
 }
 

@@ -9,20 +9,9 @@ export declare class SupplierApplicationService {
     private prisma;
     constructor(prisma: PrismaService);
     findAll(query: SupplierApplicationDto): Promise<{
-        data: {
-            id: number;
-            email: string;
-            phone: string;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
-            createdAt: Date;
-            lastName: string;
-            firstName: string;
-            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
-            govId: string;
-            govIdPicUrl: string[];
-        }[];
+        data: any;
         meta: {
-            total_apps_count: number;
+            total_apps_count: any;
             page: number;
             limit: number;
             total_pages: number;
@@ -30,18 +19,7 @@ export declare class SupplierApplicationService {
     }>;
     deleteApplication(id: number): Promise<{
         success: boolean;
-        deletedUser: {
-            id: number;
-            email: string;
-            phone: string;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
-            createdAt: Date;
-            lastName: string;
-            firstName: string;
-            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
-            govId: string;
-            govIdPicUrl: string[];
-        };
+        deletedUser: any;
         reason?: undefined;
     } | {
         success: boolean;
@@ -50,18 +28,7 @@ export declare class SupplierApplicationService {
     }>;
     updateApplicationStatus(id: number, newStatus: SupplierApplicationStatus): Promise<{
         success: boolean;
-        updatedApplication: {
-            id: number;
-            email: string;
-            phone: string;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
-            createdAt: Date;
-            lastName: string;
-            firstName: string;
-            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
-            govId: string;
-            govIdPicUrl: string[];
-        };
+        updatedApplication: any;
         reason?: undefined;
     } | {
         success: boolean;

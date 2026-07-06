@@ -14,8 +14,7 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                createdAt: Date;
-                updatedAt: Date;
+                userId: string;
                 companyName: string;
                 slug: string;
                 logo: string | null;
@@ -23,49 +22,44 @@ export declare class AuthService {
                 description: string | null;
                 businessType: string | null;
                 yearEstablished: number | null;
-                employeeCount: string | null;
-                address: string | null;
+                employee_count: string | null;
+                streetAddress: string | null;
                 city: string | null;
                 province: string | null;
                 website: string | null;
                 taxCode: string | null;
                 companyEmail: string | null;
                 companyPhone: string | null;
-                legalRepresentative: string | null;
+                legal_representative: string | null;
                 businessLicenseUrl: string | null;
-                identityCardUrl: string | null;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
-                userId: string;
+                identity_card_url: string | null;
+                salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+                is_verified: boolean | null;
+                createdAt: Date;
+                updatedAt: Date;
+                verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
             } | null;
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
             createdAt: Date;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
         };
         token: string;
     }>;
     login(dto: LoginDto): Promise<{
         message: string;
         user: {
-            supplier: {
-                id: string;
-                companyName: string;
-                slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
-            } | null;
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
+            avatar: string | null;
         };
         token: string;
     }>;
@@ -77,54 +71,41 @@ export declare class AuthService {
     }): Promise<{
         message: string;
         user: {
-            supplier: {
-                id: string;
-                companyName: string;
-                slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
-            } | null;
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
+            avatar: string | null;
         };
         token: string;
     }>;
     getProfile(userId: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        role: import("@prisma/client").$Enums.Role;
         fullName: string;
+        role: import("@prisma/client").$Enums.Role;
         phone: string | null;
         avatar: string | null;
-        status: import("@prisma/client").$Enums.UserStatus;
-        createdAt: Date;
-        supplier: {
-            id: string;
-            companyName: string;
-            slug: string;
-            logo: string | null;
-            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-            isVerified: boolean | null;
-        } | null;
+        passwordHash: string;
     }>;
     updateProfile(userId: string, dto: UpdateProfileDto): Promise<{
         message: string;
         user: {
             id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             phone: string | null;
             avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
-            createdAt: Date;
         };
     }>;
     changePassword(userId: string, dto: ChangePasswordDto): Promise<{

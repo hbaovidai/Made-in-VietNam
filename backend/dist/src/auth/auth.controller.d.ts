@@ -16,21 +16,22 @@ export declare class AuthController {
                 description: string | null;
                 businessType: string | null;
                 yearEstablished: number | null;
-                employeeCount: string | null;
-                address: string | null;
+                employee_count: string | null;
+                streetAddress: string | null;
                 city: string | null;
                 province: string | null;
                 website: string | null;
                 taxCode: string | null;
                 companyEmail: string | null;
                 companyPhone: string | null;
-                legalRepresentative: string | null;
+                legal_representative: string | null;
                 businessLicenseUrl: string | null;
-                identityCardUrl: string | null;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
+                identity_card_url: string | null;
+                salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+                is_verified: boolean | null;
                 createdAt: Date;
                 updatedAt: Date;
+                verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
             } | null;
             id: string;
             createdAt: Date;
@@ -44,13 +45,6 @@ export declare class AuthController {
     login(dto: LoginDto): Promise<{
         message: string;
         user: {
-            supplier: {
-                id: string;
-                companyName: string;
-                slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
-            } | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
@@ -66,13 +60,6 @@ export declare class AuthController {
     googleLogin(dto: GoogleLoginDto): Promise<{
         message: string;
         user: {
-            supplier: {
-                id: string;
-                companyName: string;
-                slug: string;
-                verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-                isVerified: boolean | null;
-            } | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
@@ -89,22 +76,16 @@ export declare class AuthController {
         id: string;
         role: string;
     }): Promise<{
-        supplier: {
-            id: string;
-            companyName: string;
-            slug: string;
-            logo: string | null;
-            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-            isVerified: boolean | null;
-        } | null;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         status: import("@prisma/client").$Enums.UserStatus;
         email: string;
         fullName: string;
         role: import("@prisma/client").$Enums.Role;
         phone: string | null;
         avatar: string | null;
+        passwordHash: string;
     }>;
     updateProfile(id: string, dto: UpdateProfileDto, currentUser: {
         id: string;

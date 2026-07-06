@@ -81,32 +81,6 @@ export declare class RfqController {
         buyerId: string;
     })[]>;
     getRFQDetails(id: string): Promise<{
-        quotes: ({
-            supplier: {
-                id: string;
-                userId: string;
-                companyName: string;
-                logo: string | null;
-                isVerified: boolean | null;
-            };
-        } & {
-            id: string;
-            createdAt: Date;
-            currency: string;
-            status: import("@prisma/client").$Enums.QuoteStatus;
-            leadTime: string;
-            supplierId: string;
-            message: string | null;
-            rfqId: string;
-            price: number;
-        })[];
-        buyer: {
-            id: string;
-            email: string;
-            fullName: string;
-            phone: string | null;
-        };
-    } & {
         id: string;
         description: string;
         createdAt: Date;

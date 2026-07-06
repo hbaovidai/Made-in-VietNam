@@ -76,85 +76,16 @@ export declare class BatchesController {
     verifyQR(dto: VerifyQRDto, req: Request): Promise<{
         valid: boolean;
         warning: string;
-        data: {
-            id: string;
-            slug: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            nameEn: string | null;
-            descriptionEn: string | null;
-            minPrice: number;
-            maxPrice: number;
-            currency: string;
-            unit: string;
-            moq: number;
-            moqUnit: string;
-            images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
-            rating: number;
-            reviewCount: number;
-            viewCount: number;
-            rfqMinQuantity: number | null;
-            origin: string | null;
-            leadTime: string | null;
-            brand: string | null;
-            sku: string | null;
-            productionCapacity: string | null;
-            port: string | null;
-            exportMarkets: string | null;
-            attributes: import("@prisma/client/runtime/library").JsonValue | null;
-            customizations: string[];
-            specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
-        };
+        data: any;
     } | {
         valid: boolean;
         data: {
-            product: {
-                id: string;
-                slug: string;
-                description: string | null;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                nameEn: string | null;
-                descriptionEn: string | null;
-                minPrice: number;
-                maxPrice: number;
-                currency: string;
-                unit: string;
-                moq: number;
-                moqUnit: string;
-                images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
-                rating: number;
-                reviewCount: number;
-                viewCount: number;
-                rfqMinQuantity: number | null;
-                origin: string | null;
-                leadTime: string | null;
-                brand: string | null;
-                sku: string | null;
-                productionCapacity: string | null;
-                port: string | null;
-                exportMarkets: string | null;
-                attributes: import("@prisma/client/runtime/library").JsonValue | null;
-                customizations: string[];
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
-            };
-            supplier: {
-                companyName: string;
-                isVerified: boolean | null;
-            };
+            product: any;
+            supplier: any;
             batch: {
-                batchNumber: string;
-                mfgDate: Date;
-                expDate: Date;
+                batchNumber: any;
+                mfgDate: any;
+                expDate: any;
             };
             scanInfo: {
                 scantCount: number;

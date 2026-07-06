@@ -5,20 +5,9 @@ export declare class SupplierApplicationController {
     private readonly suppAppService;
     constructor(suppAppService: SupplierApplicationService);
     getAllApplications(query: SupplierApplicationDto): Promise<{
-        data: {
-            id: number;
-            email: string;
-            phone: string;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
-            createdAt: Date;
-            lastName: string;
-            firstName: string;
-            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
-            govId: string;
-            govIdPicUrl: string[];
-        }[];
+        data: any;
         meta: {
-            total_apps_count: number;
+            total_apps_count: any;
             page: number;
             limit: number;
             total_pages: number;

@@ -38,6 +38,7 @@ const Reports = React.lazy(() => import('./pages/Reports').then(m => ({ default:
 const Apps = React.lazy(() => import('./pages/Apps').then(m => ({ default: m.Apps })));
 const Blog = React.lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })));
 const Careers = React.lazy(() => import('./pages/Careers').then(m => ({ default: m.Careers })));
+const SearchResults = React.lazy(() => import('./pages/SearchResults').then(m => ({ default: m.SearchResults })));
 
 // Support Pages
 const HelpCenter = React.lazy(() => import('./pages/support/HelpCenter').then(m => ({ default: m.HelpCenter })));
@@ -190,6 +191,7 @@ export default function App() {
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/careers" element={<Careers />} />
+              <Route path="/search" element={<SearchResults />} />
 
               <Route path="*" element={<NotFound />} />
             </Route>

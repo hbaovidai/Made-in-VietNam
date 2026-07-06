@@ -52,7 +52,7 @@ export function SupplierProducts() {
   };
 
   const handleCreate = () => {
-    if (user?.supplier?.verificationStatus !== 'VERIFIED') {
+    if (user?.supplier?.status !== 'VERIFIED') {
       addToast({ type: 'error', title: t('supplier_unverified_title'), message: t('supplier_unverified_msg') });
       return;
     }
