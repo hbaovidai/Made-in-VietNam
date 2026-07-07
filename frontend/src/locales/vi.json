@@ -2384,5 +2384,20 @@
   "spec_unit": "Đơn vị",
   "spec_moq": "MOQ",
   "spec_brand": "Thương hiệu",
-  "spec_unit_piece": "cái"
+  "spec_unit_piece": "cái",
+  "hero_slide1_title": "VIEproduct - Nền tảng kết nối thương mại minh bạch & tin cậy",
+  "hero_slide1_desc": "Hỗ trợ Nhà cung cấp chuyển đổi số hồ sơ doanh nghiệp chuyên nghiệp và Người mua tìm kiếm nguồn hàng chất lượng từ các Nhà cung cấp uy tín nhanh chóng.",
+  "hero_slide2_title": "Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp",
+  "hero_slide2_desc": "Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ Verified Supplier tại VIEproduct.",
+  "register_now": "Đăng ký ngay",
+  "explore_now": "Khám phá ngay",
+  "learn_process": "Tìm hiểu quy trình",
+  "contact_for_price": "Liên hệ báo giá",
+  "no_suppliers_yet": "Chưa có nhà cung cấp nào",
+  "updating": "Đang cập nhật",
+  "home_digital_profile_title": "Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp",
+  "home_digital_profile_desc": "Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ",
+  "seo_home_title": "Trang chủ",
+  "seo_home_desc": "VIEProduct - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế.",
+  "seo_home_org_desc": "Nền tảng B2B hàng đầu kết nối nhà cung cấp Việt Nam với thị trường toàn cầu"
 }

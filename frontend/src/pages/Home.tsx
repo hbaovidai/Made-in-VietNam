@@ -22,9 +22,9 @@ export function Home() {
 
 
   const defaultSlides = [
-    { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: "VIEproduct - Nền tảng kết nối thương mại minh bạch & tin cậy", desc: "Hỗ trợ Nhà cung cấp chuyển đổi số hồ sơ doanh nghiệp chuyên nghiệp và Người mua tìm kiếm nguồn hàng chất lượng từ các Nhà cung cấp uy tín nhanh chóng.", link: '/products' },
-    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: "Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp", desc: "Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ Verified Supplier tại VIEproduct.", link: '/register' },
-    { image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200", title: t('secured_trading_service'), desc: t('trade_assurance', 'Đảm bảo giao dịch an toàn xuyên quốc gia'), link: '/products' },
+    { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide1_title'), desc: t('hero_slide1_desc'), link: '/products' },
+    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide2_title'), desc: t('hero_slide2_desc'), link: '/register' },
+    { image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200", title: t('secured_trading_service'), desc: t('trade_assurance'), link: '/products' },
   ];
 
   const heroSlides = React.useMemo(() => {
@@ -94,21 +94,21 @@ export function Home() {
   const getPriceDisplay = (product: any) => {
     const price = product.minPrice ?? product.price;
     if (price != null) return `${formatVND(price)} / ${product.unit || 'cái'}`;
-    return 'Liên hệ báo giá';
+    return t('contact_for_price');
   };
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
       <SEOHead
-        title="Trang chủ"
-        description="VIEProduct - Nền tảng B2B kết nối nhà cung cấp Việt Nam uy tín với thị trường toàn cầu. Tìm sản phẩm, nhà sản xuất và dịch vụ thương mại quốc tế."
+        title={t('seo_home_title')}
+        description={t('seo_home_desc')}
         canonical="/"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": "VIEProduct",
           "url": "https://vieproduct.com",
-          "description": "Nền tảng B2B hàng đầu kết nối nhà cung cấp Việt Nam với thị trường toàn cầu",
+          "description": t('seo_home_org_desc'),
           "sameAs": [],
           "contactPoint": {
             "@type": "ContactPoint",
@@ -147,10 +147,10 @@ export function Home() {
                   
                   <div className="flex flex-wrap gap-3 pt-2">
                     <Link to={slide.link} className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-lg flex items-center gap-1.5">
-                      {idx === 1 ? 'Đăng ký ngay' : 'Khám phá ngay'} {idx === 1 && <ArrowRight size={14} />}
+                      {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
                     </Link>
                     <Link to="/about" className="border border-white/40 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-white/10 transition-all">
-                      {idx === 1 ? 'Tìm hiểu quy trình' : 'Tìm hiểu thêm'}
+                      {idx === 1 ? t('learn_process') : t('learn_more')}
                     </Link>
                   </div>
                 </motion.div>
@@ -244,7 +244,7 @@ export function Home() {
 
         {suppliers.length === 0 ? (
           <div className="bg-white border border-slate-200/80 rounded-xl py-12 text-center text-slate-400 text-sm">
-            Chưa có nhà cung cấp nào
+            {t('no_suppliers_yet')}
           </div>
         ) : (
           <div>
@@ -253,7 +253,7 @@ export function Home() {
               <div className="flex gap-4 w-max">
                 {suppliers.slice(0, 5).map((supplier, idx) => {
                   const name = supplier.companyName || supplier.name;
-                  const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : 'Việt Nam');
+                  const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
                   const industries = supplier.industries 
                     ? supplier.industries.map((i: any) => i.industry) 
                     : (supplier.industry || []);
@@ -281,14 +281,14 @@ export function Home() {
                         </div>
                         <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
                           <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
-                          {industries.join(', ') || 'Đang cập nhật'}
+                          {industries.join(', ') || t('updating')}
                         </div>
                       </div>
                       <Link
                         to={`/suppliers/${supplier.id}`}
                         className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
                       >
-                        Xem hồ sơ
+                        {t('view_profile')}
                       </Link>
                     </div>
                   );
@@ -300,7 +300,7 @@ export function Home() {
             <div className="hidden md:grid grid-cols-2 lg:grid-cols-5 gap-4">
               {suppliers.slice(0, 5).map((supplier, idx) => {
                 const name = supplier.companyName || supplier.name;
-                const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : 'Việt Nam');
+                const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
                 const industries = supplier.industries 
                   ? supplier.industries.map((i: any) => i.industry) 
                   : (supplier.industry || []);
@@ -328,14 +328,14 @@ export function Home() {
                       </div>
                       <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
                         <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
-                        {industries.join(', ') || 'Đang cập nhật'}
+                        {industries.join(', ') || t('updating')}
                       </div>
                     </div>
                     <Link
                       to={`/suppliers/${supplier.id}`}
                       className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
                     >
-                      Xem hồ sơ
+                      {t('view_profile')}
                     </Link>
                   </div>
                 );
@@ -360,19 +360,19 @@ export function Home() {
           </div>
           
           <h2 className="text-xl sm:text-3xl font-extrabold text-white text-center mb-3 tracking-tight max-w-2xl leading-tight">
-            Tạo hồ sơ số hóa Doanh nghiệp chuyên nghiệp
+            {t('home_digital_profile_title')}
           </h2>
           
           <p className="text-slate-200/90 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed">
-            {t('home_verified_cta_text')} <span className="font-bold text-white">Verified Supplier</span> tại VIEproduct.
+            {t('home_digital_profile_desc')} <span className="font-bold text-white">Verified Supplier</span> {t('at_vieproduct', 'tại VIEproduct')}.
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center items-center">
             <Link to="/register" className="bg-white text-[#0f3460] px-6 py-3 rounded-full text-sm font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
-              Đăng ký ngay <ArrowRight size={16} />
+              {t('register_now')} <ArrowRight size={16} />
             </Link>
             <Link to="/about" className="border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-white/5 transition-all">
-              Tìm hiểu quy trình
+              {t('learn_process')}
             </Link>
           </div>
         </div>

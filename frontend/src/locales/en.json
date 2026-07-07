@@ -2384,5 +2384,20 @@
   "spec_unit": "Unit",
   "spec_moq": "MOQ",
   "spec_brand": "Brand",
-  "spec_unit_piece": "piece"
+  "spec_unit_piece": "piece",
+  "hero_slide1_title": "VIEproduct - Transparent & Trusted B2B Trade Platform",
+  "hero_slide1_desc": "Helping suppliers digitize professional business profiles and enabling buyers to quickly find quality products from trusted suppliers.",
+  "hero_slide2_title": "Create a Professional Digital Business Profile",
+  "hero_slide2_desc": "Demonstrate transparency, build trust with partners, and enhance market competitiveness through your Verified Supplier profile at VIEproduct.",
+  "register_now": "Register Now",
+  "explore_now": "Explore Now",
+  "learn_process": "Learn the Process",
+  "contact_for_price": "Contact for Price",
+  "no_suppliers_yet": "No suppliers yet",
+  "updating": "Updating",
+  "home_digital_profile_title": "Create a Professional Digital Business Profile",
+  "home_digital_profile_desc": "Demonstrate transparency, build trust with partners, and enhance market competitiveness through your",
+  "seo_home_title": "Home",
+  "seo_home_desc": "VIEProduct - B2B platform connecting trusted Vietnamese suppliers with the global market. Find products, manufacturers, and international trade services.",
+  "seo_home_org_desc": "Leading B2B platform connecting Vietnamese suppliers with the global market"
 }
