@@ -172,7 +172,7 @@ export function ProfileSubmission() {
         <div className="px-10 py-10 space-y-4">
           {/* todo: center the text */}
           <div className="flex ">
-            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>Thông tin liên hệ người kiểm soát tài khoản</label>
+            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>{t('profile_account_controller')}</label>
           </div>
 
           {contactInfoInputs.map( ({ id, Component, props }) => {
@@ -185,7 +185,7 @@ export function ProfileSubmission() {
 
         <div className="px-10 py-10 space-y-4">
           <div className='flex'>
-            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>Thông tin Doanh nghiệp</label>
+            <label className={formLabel(FontSizes.FORM_FIELD_SECTION_TITLE)}>{t('profile_business_info')}</label>
           </div>
 
           {businessInputs.map( ( { id, Component, props } ) => {

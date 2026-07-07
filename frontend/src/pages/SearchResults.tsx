@@ -241,7 +241,7 @@ export function SearchResults() {
         <aside className="hidden md:flex flex-col bg-white border-r border-slate-200 shrink-0 transition-all duration-300 w-16 lg:w-[280px]">
           <div className="p-4 lg:p-5 border-b border-slate-100 flex items-center justify-center lg:justify-start">
             <h2 className="text-base font-bold text-slate-900 lg:block hidden">Danh mục sản phẩm</h2>
-            <span className="lg:hidden text-center block text-[10px] font-black text-slate-400 uppercase tracking-wider">Mục</span>
+            <span className="lg:hidden text-center block text-[10px] font-black text-slate-400 uppercase tracking-wider">{t('search_items_label')}</span>
           </div>
           
           <div className="flex-1 py-4 overflow-y-auto px-2 lg:px-3">
@@ -295,10 +295,10 @@ export function SearchResults() {
                   onChange={handleSortChange}
                   className="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer appearance-none"
                 >
-                  <option value="default">Sắp xếp: Mặc định</option>
-                  <option value="price-asc">Giá thấp đến cao</option>
-                  <option value="price-desc">Giá cao đến thấp</option>
-                  <option value="newest">Mới nhất</option>
+                  <option value="default">{t('search_sort_default')}</option>
+                  <option value="price-asc">{t('search_price_asc')}</option>
+                  <option value="price-desc">{t('search_price_desc')}</option>
+                  <option value="newest">{t('search_newest')}</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
               </div>
@@ -404,7 +404,7 @@ export function SearchResults() {
                             to={`/rfq?product=${product.id}`}
                             className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-bold text-xs text-center rounded-lg transition-colors duration-200"
                           >
-                            Yêu cầu báo giá
+                            {t('product_request_quote')}
                           </Link>
                           <Link
                             to={`/products/${product.id}`}

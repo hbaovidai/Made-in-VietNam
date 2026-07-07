@@ -73,7 +73,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
               
               {isVerified && (
                 <div className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold border bg-[#d1f5e0] text-[#0d6b3e] border-[#8edcb3] shrink-0">
-                  Nhà cung cấp xác thực
+                  {t('home_verified_supplier_badge')}
                 </div>
               )}
             </div>
@@ -87,7 +87,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             {/* Main Products / Tags Row */}
             {industries.length > 0 && (
               <div className="space-y-1.5 mb-4">
-                <span className="block text-xs font-bold text-slate-700">Sản phẩm chính:</span>
+                <span className="block text-xs font-bold text-slate-700">{t('supplier_main_products_label')}</span>
                 <div className="flex flex-wrap gap-2">
                   {industries.map((ind: string) => (
                     <span 

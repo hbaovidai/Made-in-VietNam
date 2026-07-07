@@ -85,7 +85,7 @@ export function ProductDetail() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold text-slate-900">Không tìm thấy sản phẩm</h2>
-        <Link to="/products" className="text-primary font-bold underline">Quay lại danh sách</Link>
+        <Link to="/products" className="text-primary font-bold underline">{t('product_back_to_list')}</Link>
       </div>
     </div>
   );
@@ -104,7 +104,7 @@ export function ProductDetail() {
         <nav className="flex items-center flex-wrap gap-1.5 text-[11px] text-slate-500 mb-4">
           <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
           <ChevronRight size={10} className="text-slate-400" />
-          <Link to="/products" className="hover:text-primary transition-colors">Sản phẩm</Link>
+          <Link to="/products" className="hover:text-primary transition-colors">{t('supplier_products_tab')}</Link>
           {product.category && (
             <>
               <ChevronRight size={10} className="text-slate-400" />
@@ -186,7 +186,7 @@ export function ProductDetail() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-bold tracking-wider uppercase bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
-                  <ShieldCheck size={12} /> Đã xác minh
+                  <ShieldCheck size={12} /> {t('status_verified')}
                 </span>
               </div>
 
@@ -195,12 +195,12 @@ export function ProductDetail() {
               </h1>
 
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
-                {product.sku && <span>Mã sản phẩm: <span className="font-semibold text-slate-700">{product.sku}</span></span>}
+                {product.sku && <span>{t('product_sku_label')} <span className="font-semibold text-slate-700">{product.sku}</span></span>}
                 <span>|</span>
                 <div className="flex items-center gap-1">
                   <Star size={13} className="text-amber-400 fill-amber-400" />
                   <span className="font-bold text-slate-700">4.9/5</span>
-                  <span className="text-slate-400">(120 Đơn hàng)</span>
+                  <span className="text-slate-400">{t('product_orders_count')}</span>
                 </div>
               </div>
             </div>
@@ -208,7 +208,7 @@ export function ProductDetail() {
             {/* Price Tiers Card */}
             <div className="bg-white border border-slate-200/80 rounded-xl p-6">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                Bảng giá theo số lượng (MOQ)
+                {t('product_moq_pricing')}
               </h3>
 
               {hasPricing ? (
@@ -371,7 +371,7 @@ export function ProductDetail() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-3">Mô tả sản phẩm</h3>
+                  <h3 className="text-base font-bold text-slate-900 mb-3">{t('product_description_section')}</h3>
                   <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                     {product.description || 'Chưa có mô tả.'}
                   </div>
@@ -380,7 +380,7 @@ export function ProductDetail() {
                 {/* Technical Specifications inside Specifications Tab */}
                 <div className="border-t border-slate-100 pt-6">
                   <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-4">
-                    Thông số kỹ thuật
+                    {t('product_specifications_section')}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(product.specifications ? Object.entries(product.specifications) : [
@@ -401,7 +401,7 @@ export function ProductDetail() {
 
             {activeTab === 'certs' && (
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-slate-900 mb-2">Chứng nhận doanh nghiệp</h3>
+                <h3 className="text-base font-bold text-slate-900 mb-2">{t('product_business_certs')}</h3>
                 {supplier?.certifications?.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {supplier.certifications.map((cert: any, i: number) => (
@@ -418,7 +418,7 @@ export function ProductDetail() {
                   </div>
                 ) : (
                   <div className="py-8 text-center text-slate-400 text-sm">
-                    Chưa có chứng nhận
+                    {t('supplier_no_certs')}
                   </div>
                 )}
               </div>
@@ -434,7 +434,7 @@ export function ProductDetail() {
                     <h3 className="text-base font-bold text-slate-900">{supplier.companyName}</h3>
                     {supplier.status === SupplierStatus.VERIFIED && (
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1">
-                        <ShieldCheck size={11} /> Đã xác minh
+                        <ShieldCheck size={11} /> {t('status_verified')}
                       </span>
                     )}
                     <p className="text-sm text-slate-500 mt-2 leading-relaxed">{supplier.description || 'Chưa có mô tả.'}</p>
@@ -466,7 +466,7 @@ export function ProductDetail() {
 
         {/* Related Products Section */}
         <div className="mt-8 bg-white border border-slate-200/80 rounded-xl p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4">Các sản phẩm tương tự</h2>
+          <h2 className="text-base font-bold text-slate-900 mb-4">{t('product_similar_items')}</h2>
           {relatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.slice(0, 5).map((rp: any) => {

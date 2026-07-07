@@ -204,7 +204,7 @@ export function SupplierList() {
           <div className="flex items-center justify-between h-14 px-5 border-b border-slate-100 shrink-0">
             <span className="font-bold text-slate-900">Ngành hàng</span>
             <button onClick={() => setIsMobileSidebarOpen(false)} className="text-xs font-bold text-slate-400 uppercase">
-              Đóng
+              {t('close_action')}
             </button>
           </div>
           <div className="flex-1 overflow-y-auto py-2">

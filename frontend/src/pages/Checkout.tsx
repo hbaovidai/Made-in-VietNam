@@ -92,7 +92,7 @@ export function Checkout() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="animate-spin text-primary" size={32} />
-          <p className="text-sm text-slate-500 font-medium">Đang tải trang thanh toán...</p>
+          <p className="text-sm text-slate-500 font-medium">{t('checkout_loading')}</p>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ export function Checkout() {
       <div className="max-w-[1100px] mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Gửi yêu cầu Báo giá hàng loạt</h1>
-          <p className="text-sm text-slate-500 mt-1">Kiểm tra thông tin liên hệ và danh sách sản phẩm cần gửi báo giá</p>
+          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t('checkout_bulk_rfq_title')}</h1>
+          <p className="text-sm text-slate-500 mt-1">{t('checkout_review_desc')}</p>
         </div>
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -122,7 +122,7 @@ export function Checkout() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Họ tên người liên hệ <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{t('checkout_contact_name')} <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       required
@@ -133,7 +133,7 @@ export function Checkout() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Số điện thoại liên hệ <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{t('checkout_contact_phone')} <span className="text-red-500">*</span></label>
                     <input
                       type="tel"
                       required
@@ -146,7 +146,7 @@ export function Checkout() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Địa chỉ nhận hàng dự kiến <span className="text-red-500">*</span></label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{t('checkout_shipping_address')} <span className="text-red-500">*</span></label>
                   <textarea
                     required
                     rows={3}
@@ -158,7 +158,7 @@ export function Checkout() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ghi chú / Yêu cầu đặc biệt (Tùy chọn)</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{t('checkout_special_notes')}</label>
                   <textarea
                     rows={2}
                     value={formData.note}
@@ -186,15 +186,15 @@ export function Checkout() {
                 <div className="flex gap-3 p-4 bg-slate-50 rounded-xl border border-slate-250 text-xs">
                   <div className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold">1</div>
                   <div>
-                    <h4 className="font-bold text-slate-900 mb-0.5">Xác nhận yêu cầu</h4>
-                    <p>Nhà cung cấp sẽ kiểm tra số lượng tồn kho, thời gian sản xuất và liên hệ lại với bạn.</p>
+                    <h4 className="font-bold text-slate-900 mb-0.5">{t('checkout_confirm_request')}</h4>
+                    <p>{t('checkout_confirm_desc')}</p>
                   </div>
                 </div>
                 <div className="flex gap-3 p-4 bg-slate-50 rounded-xl border border-slate-250 text-xs">
                   <div className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold">2</div>
                   <div>
-                    <h4 className="font-bold text-slate-900 mb-0.5">Thỏa thuận thương mại</h4>
-                    <p>Hai bên tự do đàm phán phương thức thanh toán doanh nghiệp (L/C, T/T, bảo lãnh...) và phương thức vận chuyển phù hợp.</p>
+                    <h4 className="font-bold text-slate-900 mb-0.5">{t('checkout_trade_agreement')}</h4>
+                    <p>{t('checkout_trade_agreement_desc')}</p>
                   </div>
                 </div>
               </div>
@@ -237,10 +237,10 @@ export function Checkout() {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="text-slate-400 font-bold uppercase tracking-wider">
-                      <th className="text-left pb-2">Sản phẩm</th>
-                      <th className="text-center pb-2">Giá sỉ tham khảo</th>
+                      <th className="text-left pb-2">{t('supplier_products_tab')}</th>
+                      <th className="text-center pb-2">{t('checkout_ref_wholesale_price')}</th>
                       <th className="text-center pb-2">SL</th>
-                      <th className="text-right pb-2">Tạm tính</th>
+                      <th className="text-right pb-2">{t('checkout_subtotal')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -261,13 +261,13 @@ export function Checkout() {
                     <span className="font-bold text-slate-700">{formatCurrency(calculateTotal())}₫</span>
                   </div>
                   <div className="flex justify-between text-sm text-slate-500">
-                    <span>Vận chuyển & Thuế</span>
-                    <span className="text-primary font-bold text-xs bg-primary/5 px-2 py-0.5 rounded-full">Thương lượng sau</span>
+                    <span>{t('checkout_shipping_tax')}</span>
+                    <span className="text-primary font-bold text-xs bg-primary/5 px-2 py-0.5 rounded-full">{t('checkout_negotiate_later')}</span>
                   </div>
                 </div>
 
                 <div className="border-t-2 border-primary/20 pt-3 flex justify-between items-center">
-                  <span className="font-bold text-slate-900">Tổng giá trị tham khảo</span>
+                  <span className="font-bold text-slate-900">{t('checkout_ref_total')}</span>
                   <span className="text-xl font-black text-primary">{formatCurrency(calculateTotal())}₫</span>
                 </div>
               </div>
@@ -279,22 +279,22 @@ export function Checkout() {
                 className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark disabled:opacity-50 transition-all uppercase tracking-widest text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 {submitting ? (
-                  <><Loader2 size={16} className="animate-spin" /> Đang gửi yêu cầu...</>
+                  <><Loader2 size={16} className="animate-spin" /> {t('checkout_submitting')}</>
                 ) : (
-                  <>GỬI YÊU CẦU BÁO GIÁ HÀNG LOẠT <ArrowRight size={16} /></>
+                  <>{t('checkout_submit_bulk_rfq')} <ArrowRight size={16} /></>
                 )}
               </button>
               
               {/* Trust badges */}
               <div className="mt-4 flex items-center justify-center gap-4 text-[10px] text-slate-400 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck size={12} /> Thông tin bảo mật</span>
+                <span className="flex items-center gap-1"><ShieldCheck size={12} /> {t('checkout_privacy_info')}</span>
                 <span>•</span>
-                <span className="flex items-center gap-1"><CheckCircle2 size={12} /> Kết nối trực tiếp</span>
+                <span className="flex items-center gap-1"><CheckCircle2 size={12} /> {t('checkout_direct_connect')}</span>
               </div>
 
               <div className="mt-3 flex items-start gap-2 text-xs text-slate-500 p-3 bg-blue-50 rounded-xl border border-blue-100">
                 <AlertCircle size={14} className="text-primary shrink-0 mt-0.5" />
-                <p>Nền tảng Made in Vietnam đóng vai trò trung gian kết nối B2B, không thu phí giao dịch hay xử lý thanh toán trực tuyến.</p>
+                <p>{t('checkout_platform_disclaimer')}</p>
               </div>
             </div>
           </div>

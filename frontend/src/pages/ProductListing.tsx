@@ -375,11 +375,11 @@ export function ProductListing() {
                   <Menu size={16} /> Danh mục
                 </button>
                 {totalProducts > 0 && (
-                  <span><strong className="text-slate-800">{totalProducts}</strong> sản phẩm</span>
+                  <span><strong className="text-slate-800">{totalProducts}</strong> {t('listing_products_unit')}</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-medium hidden sm:inline">Sắp xếp theo:</span>
+                <span className="text-xs text-slate-500 font-medium hidden sm:inline">{t('listing_sort_by')}</span>
                 <select
                   className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 outline-none cursor-pointer appearance-none pr-8"
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : 'popular'}
@@ -466,7 +466,7 @@ export function ProductListing() {
                           onClick={(e) => { e.preventDefault(); navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`); }}
                           className="w-full py-1.5 border border-primary text-primary text-[11px] font-bold rounded-lg hover:bg-primary hover:text-white transition-colors duration-200 mb-2"
                         >
-                          Liên hệ
+                          {t('listing_contact_btn')}
                         </button>
 
                         {/* Supplier */}
@@ -509,7 +509,7 @@ export function ProductListing() {
                   className="px-8 py-2.5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   {loadingMore ? (
-                    <><Loader2 size={16} className="animate-spin" /> Đang tải...</>
+                    <><Loader2 size={16} className="animate-spin" /> {t('loading_text')}</>
                   ) : (
                     'Xem thêm sản phẩm'
                   )}

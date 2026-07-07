@@ -193,7 +193,7 @@ export function Home() {
       {/* ═══ Featured Categories ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">Các ngành hàng tiêu biểu</h2>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">{t('home_featured_categories')}</h2>
           <Link to="/products" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
             {t('view_more')} <ChevronRight size={14} />
           </Link>
@@ -201,7 +201,7 @@ export function Home() {
 
         {categories.length === 0 ? (
           <div className="bg-white border border-slate-200/80 rounded-xl p-12 text-center">
-            <p className="text-sm text-slate-400">Chưa có danh mục nào. Vui lòng thêm danh mục qua Admin Dashboard.</p>
+            <p className="text-sm text-slate-400">{t('home_no_categories')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -236,7 +236,7 @@ export function Home() {
       </section>      {/* ═══ Verified Suppliers Section ═══ */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">Nhà cung cấp tiêu biểu</h2>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">{t('home_featured_suppliers')}</h2>
           <Link to="/suppliers" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
             {t('view_more')} <ChevronRight size={14} />
           </Link>
@@ -280,7 +280,7 @@ export function Home() {
                           <span className="truncate max-w-[200px]">{location}</span>
                         </div>
                         <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
-                          <span className="font-bold text-slate-700">Ngành hàng: </span>
+                          <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
                           {industries.join(', ') || 'Đang cập nhật'}
                         </div>
                       </div>
@@ -327,7 +327,7 @@ export function Home() {
                         <span className="truncate max-w-[150px]">{location}</span>
                       </div>
                       <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
-                        <span className="font-bold text-slate-700">Ngành hàng: </span>
+                        <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
                         {industries.join(', ') || 'Đang cập nhật'}
                       </div>
                     </div>
@@ -364,7 +364,7 @@ export function Home() {
           </h2>
           
           <p className="text-slate-200/90 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed">
-            Khẳng định sự minh bạch, tăng độ tin cậy với đối tác và nâng cao lợi thế cạnh tranh trên thị trường thông qua hồ sơ <span className="font-bold text-white">Verified Supplier</span> tại VIEproduct.
+            {t('home_verified_cta_text')} <span className="font-bold text-white">Verified Supplier</span> tại VIEproduct.
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center items-center">
