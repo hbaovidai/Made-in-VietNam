@@ -50,7 +50,7 @@ export function SupplierProfile() {
   if (!supplier) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">Không tìm thấy doanh nghiệp</h2>
+        <h2 className="text-2xl font-bold text-slate-900">{t('khong_tim_thay_doanh_nghiep')}</h2>
         <Link to="/suppliers" className="text-primary font-bold underline">Quay lại danh sách</Link>
       </div>
     </div>
@@ -94,7 +94,7 @@ export function SupplierProfile() {
           <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
             <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
             <ChevronRight size={12} className="text-slate-300" />
-            <Link to="/suppliers" className="hover:text-primary transition-colors">Danh sách nhà cung cấp</Link>
+            <Link to="/suppliers" className="hover:text-primary transition-colors">{t('danh_sach_nha_cung_cap')}</Link>
             <ChevronRight size={12} className="text-slate-300" />
             <span className="text-slate-800 font-bold truncate max-w-[200px]">{supplier.companyName}</span>
           </nav>
@@ -188,7 +188,7 @@ export function SupplierProfile() {
             {/* Block: THÔNG TIN DOANH NGHIỆP */}
             <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-4">
-                Thông tin doanh nghiệp
+                {t('thong_tin_doanh_nghiep')}
               </h2>
               <div className="border-t border-slate-200 mb-4" />
               <div className="divide-y divide-slate-100">
@@ -252,7 +252,7 @@ export function SupplierProfile() {
                   })}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 text-center py-10">Chưa có sản phẩm nào.</p>
+                <p className="text-sm text-slate-400 text-center py-10">{t('chua_co_san_pham_nao')}</p>
               )}
             </div>
           </div>
@@ -293,7 +293,7 @@ export function SupplierProfile() {
               if (channels.length === 0) return null;
               return (
                 <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Kênh bán hàng</h3>
+                  <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('kenh_ban_hang')}</h3>
                   <div className="border-t border-slate-200 mb-4" />
                   <div className="flex flex-wrap gap-2">
                     {channels.map((channel) => (
@@ -316,7 +316,7 @@ export function SupplierProfile() {
 
             {/* Block: CHỨNG NHẬN & CHỨNG CHỈ */}
             <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Chứng nhận & Chứng chỉ</h3>
+              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('chung_nhan_chung_chi')}</h3>
               <div className="border-t border-slate-200 mb-4" />
               <div className="space-y-2.5">
                 {displayCerts.map((cert: any, i: number) => {

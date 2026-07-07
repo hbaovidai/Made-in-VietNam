@@ -243,7 +243,7 @@ export function SupplierProfile() {
             <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
               <Building2 size={40} strokeWidth={1.5} />
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">Khởi tạo Hồ sơ Doanh nghiệp</h1>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">{t('khoi_tao_ho_so_doanh_nghiep')}</h1>
             <p className="text-base text-slate-500 max-w-md mx-auto">
               Hồ sơ doanh nghiệp giúp bạn xây dựng uy tín, tiếp cận hàng ngàn người mua tiềm năng trên nền tảng MIVN.
             </p>
@@ -298,7 +298,7 @@ export function SupplierProfile() {
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                      Người đại diện
+                      {t('nguoi_dai_dien')}
                     </label>
                     <input 
                       type="text" 
@@ -454,7 +454,7 @@ export function SupplierProfile() {
               <span className="text-sm font-semibold text-slate-800">{supplier?.taxCode || 'N/A'}</span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Người đại diện</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('nguoi_dai_dien')}</span>
               <span className="text-sm font-semibold text-slate-800">{supplier?.legalRepresentative || 'N/A'}</span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-slate-100">
@@ -491,7 +491,7 @@ export function SupplierProfile() {
             </button>
           </div>
           <div className="space-y-3">
-            {certifications.length === 0 && <p className="text-sm text-slate-400 italic py-4">Chưa có chứng nhận nào.</p>}
+            {certifications.length === 0 && <p className="text-sm text-slate-400 italic py-4">{t('chua_co_chung_nhan_nao')}</p>}
             {certifications.map((cert) => (
               <div key={cert.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between group hover:border-slate-200 transition-colors">
                 <div className="flex items-center gap-3">
@@ -527,7 +527,7 @@ export function SupplierProfile() {
           <Shield size={16} className="text-primary" /> {t('featured_products_profile')}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {supplierProducts.length === 0 && <p className="text-sm text-slate-400 italic col-span-4">Chưa có sản phẩm nào.</p>}
+          {supplierProducts.length === 0 && <p className="text-sm text-slate-400 italic col-span-4">{t('chua_co_san_pham_nao')}</p>}
           {supplierProducts.map(product => (
             <div key={product.id} className="rounded-xl overflow-hidden border border-slate-100 group hover:shadow-md transition-shadow">
               <div className="aspect-square relative overflow-hidden bg-slate-100">
@@ -567,7 +567,7 @@ export function SupplierProfile() {
             */}
 
             <div className="space-y-2">
-              <label className="input-label">Người đại diện</label>
+              <label className="input-label">{t('nguoi_dai_dien')}</label>
               <input type="text" className="input" value={editForm.legalRepresentative} onChange={(e) => setEditForm({...editForm, legalRepresentative: e.target.value})} />
             </div>
             <div className="space-y-2">
@@ -606,7 +606,7 @@ export function SupplierProfile() {
             <input type="text" className="input" placeholder={t('cert_issuer_placeholder')} required value={certForm.issuedBy} onChange={(e) => setCertForm({...certForm, issuedBy: e.target.value})} />
           </div>
           <div className="space-y-2">
-            <label className="input-label">Ảnh/File chứng nhận</label>
+            <label className="input-label">{t('anhfile_chung_nhan')}</label>
             <div className="relative">
               <input
                 type="file"
@@ -618,7 +618,7 @@ export function SupplierProfile() {
             {certFile && (
               <p className="text-xs text-emerald-600 font-medium">✓ Đã chọn: {certFile.name}</p>
             )}
-            <p className="text-[11px] text-slate-400">Hỗ trợ: Ảnh (JPG, PNG) hoặc PDF. Tối đa 5MB.</p>
+            <p className="text-[11px] text-slate-400">{t('ho_tro_anh_jpg_png_hoac_pdf_toi_da_5mb')}</p>
           </div>
           <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
             <button type="button" onClick={() => setIsCertModalOpen(false)} className="btn-ghost">{t('cancel_btn')}</button>

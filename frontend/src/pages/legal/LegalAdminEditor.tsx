@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Upload, Trash2, Plus, ChevronUp, ChevronDown, Loader2, Pencil, X, Eye, EyeOff, Save } from 'lucide-react';
 import { api } from '../../lib/api';
@@ -105,6 +106,7 @@ export function LegalAdminEditor({
   pageTitle,
   settingsKeys,
 }: LegalAdminEditorProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'settings' | 'sections'>('sections');
   
   // Settings state
@@ -281,7 +283,7 @@ export function LegalAdminEditor({
       {activeTab === 'sections' && (
         <div style={card}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>Cấu trúc trang (Section-based)</h3>
+            <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>{t('cau_truc_trang_sectionbased')}</h3>
             <button 
               className="wp-btn wp-btn-primary" 
               onClick={() => setSectionModal({ id: '', titleVi: '', titleEn: '', slug: '', contentVi: '', contentEn: '', sortOrder: sections.length, isActive: true })}
@@ -292,7 +294,7 @@ export function LegalAdminEditor({
           </div>
 
           {sectionsLoading ? (
-            <div style={{ textAlign: 'center', padding: '24px', color: '#646970', fontSize: 13 }}>Đang tải danh sách...</div>
+            <div style={{ textAlign: 'center', padding: '24px', color: '#646970', fontSize: 13 }}>{t('dang_tai_danh_sach')}</div>
           ) : sections.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px 16px', color: '#646970', fontSize: 13 }}>
               Chưa có phần nội dung nào trong database. Vui lòng bấm "Thêm phần mới" để bắt đầu.
@@ -306,7 +308,7 @@ export function LegalAdminEditor({
                     <th>Tiêu đề</th>
                     <th style={{ width: 180 }}>Slug</th>
                     <th style={{ width: 100, textAlign: 'center' }}>Trạng thái</th>
-                    <th style={{ width: 80, textAlign: 'center' }}>Thứ tự</th>
+                    <th style={{ width: 80, textAlign: 'center' }}>{t('thu_tu')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -322,7 +324,7 @@ export function LegalAdminEditor({
                           <div className="wp-row-actions">
                             <a href="#" onClick={e => { e.preventDefault(); setSectionModal({ ...sec }); }}>Sửa</a>
                             <span className="sep">|</span>
-                            <button type="button" className="delete" onClick={() => handleDeleteSection(sec.id)}>Xoá</button>
+                            <button type="button" className="delete" onClick={() => handleDeleteSection(sec.id)}>{t('xoa')}</button>
                           </div>
                         </div>
                       </td>
@@ -350,12 +352,12 @@ export function LegalAdminEditor({
           <h3 style={cardTitle}>Thông tin trang {pageTitle}</h3>
           
           {settingsLoading ? (
-            <div style={{ textAlign: 'center', padding: '24px', color: '#646970', fontSize: 13 }}>Đang tải cài đặt...</div>
+            <div style={{ textAlign: 'center', padding: '24px', color: '#646970', fontSize: 13 }}>{t('dang_tai_cai_dat')}</div>
           ) : (
             <div className="space-y-4">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>
-                  <label style={fieldLabel}>Tiêu đề (Tiếng Việt)</label>
+                  <label style={fieldLabel}>{t('tieu_de_tieng_viet')}</label>
                   <input style={inputStyle} value={settings[settingsKeys.titleVi] || ''} onChange={e => updateSetting(settingsKeys.titleVi, e.target.value)} placeholder="Nhập tiêu đề tiếng Việt" />
                 </div>
                 <div>
@@ -366,7 +368,7 @@ export function LegalAdminEditor({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
                 <div>
-                  <label style={fieldLabel}>Mô tả ngắn (Tiếng Việt)</label>
+                  <label style={fieldLabel}>{t('mo_ta_ngan_tieng_viet_1')}</label>
                   <textarea style={{ ...inputStyle, minHeight: 60 }} value={settings[settingsKeys.subtitleVi] || ''} onChange={e => updateSetting(settingsKeys.subtitleVi, e.target.value)} placeholder="Nhập mô tả tiếng Việt..." />
                 </div>
                 <div>
@@ -377,7 +379,7 @@ export function LegalAdminEditor({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
                 <div>
-                  <label style={fieldLabel}>Ngày cập nhật cuối cùng (Format hiển thị)</label>
+                  <label style={fieldLabel}>{t('ngay_cap_nhat_cuoi_cung_format_hien_thi')}</label>
                   <input style={inputStyle} value={settings[settingsKeys.lastUpdated] || ''} onChange={e => updateSetting(settingsKeys.lastUpdated, e.target.value)} placeholder="24/06/2026" />
                 </div>
                 <div>
@@ -387,7 +389,7 @@ export function LegalAdminEditor({
                     label="Ảnh nền Hero / Banner (Hỗ trợ GIF)"
                     height={100}
                   />
-                  <span style={fieldDesc}>Để trống để dùng ảnh mặc định của trang. Hỗ trợ định dạng GIF, PNG, JPG.</span>
+                  <span style={fieldDesc}>{t('de_trong_de_dung_anh_mac_dinh_cua_trang_')}</span>
                 </div>
               </div>
 
@@ -420,7 +422,7 @@ export function LegalAdminEditor({
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 12 }}>
               <div>
-                <label style={fieldLabel}>Tiêu đề (Tiếng Việt) *</label>
+                <label style={fieldLabel}>{t('tieu_de_tieng_viet_2')}</label>
                 <input style={inputStyle} value={sectionModal.titleVi} onChange={e => setSectionModal({ ...sectionModal, titleVi: e.target.value })} placeholder="Nhập tiêu đề tiếng Việt" />
               </div>
               <div>
@@ -430,7 +432,7 @@ export function LegalAdminEditor({
             </div>
 
             <div style={{ marginBottom: 16 }}>
-              <label style={fieldLabel}>Đường dẫn tĩnh (Slug) *</label>
+              <label style={fieldLabel}>{t('duong_dan_tinh_slug')}</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input style={{ ...inputStyle, flex: 1 }} value={sectionModal.slug} onChange={e => setSectionModal({ ...sectionModal, slug: e.target.value })} placeholder="nhap-slug-viet-lien-khong-dau" />
                 <button 
@@ -442,17 +444,17 @@ export function LegalAdminEditor({
                   Tạo tự động
                 </button>
               </div>
-              <span style={fieldDesc}>Slug duy nhất, dùng làm ID neo mục lục cuộn tới.</span>
+              <span style={fieldDesc}>{t('slug_duy_nhat_dung_lam_id_neo_muc_luc_cu')}</span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
               <div>
-                <label style={fieldLabel}>Nội dung (Tiếng Việt) - Định dạng HTML</label>
+                <label style={fieldLabel}>{t('noi_dung_tieng_viet_dinh_dang_html')}</label>
                 <textarea 
                   style={{ ...inputStyle, minHeight: 180, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }} 
                   value={sectionModal.contentVi} 
                   onChange={e => setSectionModal({ ...sectionModal, contentVi: e.target.value })} 
-                  placeholder="<p>Nhập nội dung dạng HTML...</p>" 
+                  placeholder="<p>{t('nhap_noi_dung_dang_html')}</p>" 
                 />
               </div>
               <div>
@@ -468,11 +470,11 @@ export function LegalAdminEditor({
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
               <div>
-                <label style={fieldLabel}>Thứ tự hiển thị (Sort Order)</label>
+                <label style={fieldLabel}>{t('thu_tu_hien_thi_sort_order')}</label>
                 <input type="number" style={inputStyle} value={sectionModal.sortOrder} onChange={e => setSectionModal({ ...sectionModal, sortOrder: parseInt(e.target.value) || 0 })} />
               </div>
               <div>
-                <label style={fieldLabel}>Trạng thái hoạt động</label>
+                <label style={fieldLabel}>{t('trang_thai_hoat_dong')}</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                   <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
                     <input type="checkbox" checked={sectionModal.isActive} onChange={e => setSectionModal({ ...sectionModal, isActive: e.target.checked })} style={{ opacity: 0, width: 0, height: 0 }} />
@@ -488,7 +490,7 @@ export function LegalAdminEditor({
             </div>
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', paddingTop: 12, borderTop: '1px solid #f0f0f1' }}>
-              <button className="wp-btn" onClick={() => setSectionModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>Huỷ</button>
+              <button className="wp-btn" onClick={() => setSectionModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>{t('huy')}</button>
               <button className="wp-btn wp-btn-primary" onClick={handleSaveSection} disabled={sectionSaving} style={{ padding: '7px 16px', fontSize: 12 }}>
                 {sectionSaving ? 'Đang lưu...' : (sectionModal.id ? 'Cập nhật' : 'Tạo mới')}
               </button>

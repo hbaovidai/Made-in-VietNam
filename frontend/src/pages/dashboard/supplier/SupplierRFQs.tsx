@@ -116,8 +116,8 @@ export function SupplierRFQs() {
               <Lock size={20} />
             </div>
             <div>
-              <p className="text-sm font-bold text-amber-800">Tài khoản chưa xác thực</p>
-              <p className="text-xs text-amber-600 mt-0.5">Bạn chỉ thấy tiêu đề RFQ. Để xem chi tiết và gửi báo giá, hãy hoàn tất <strong>Xác thực Doanh nghiệp (KYB)</strong>.</p>
+              <p className="text-sm font-bold text-amber-800">{t('tai_khoan_chua_xac_thuc')}</p>
+              <p className="text-xs text-amber-600 mt-0.5">{t('ban_chi_thay_tieu_de_rfq_de_xem_chi_tiet')} <strong>{t('xac_thuc_doanh_nghiep_kyb')}</strong>.</p>
             </div>
           </div>
           <Link to="/dashboard/supplier/profile" className="shrink-0 px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors inline-flex items-center gap-1.5">
@@ -155,7 +155,7 @@ export function SupplierRFQs() {
                 {isRestricted && (
                   <div className="flex items-center gap-1.5 mt-1">
                     <Lock size={10} className="text-slate-300" />
-                    <span className="text-[10px] font-bold text-slate-400 italic">Mô tả chi tiết, ngân sách, địa điểm bị ẩn</span>
+                    <span className="text-[10px] font-bold text-slate-400 italic">{t('mo_ta_chi_tiet_ngan_sach_dia_diem_bi_an')}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
@@ -268,12 +268,12 @@ export function SupplierRFQs() {
                   <span className="font-bold text-slate-900">{selectedRfq.quantity} {selectedRfq.quantityUnit}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Điểm đến</span>
+                  <span className="text-slate-500">{t('diem_den')}</span>
                   <span className="font-bold text-slate-900">{selectedRfq.destination}</span>
                 </div>
                 {selectedRfq.budget && (
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Ngân sách</span>
+                    <span className="text-slate-500">{t('ngan_sach')}</span>
                     <span className="font-bold text-[#A2875E]">{selectedRfq.budget}</span>
                   </div>
                 )}
@@ -281,7 +281,7 @@ export function SupplierRFQs() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá đơn vị *</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('gia_don_vi')}</label>
                   <input 
                     type="number" 
                     step="0.01"
@@ -293,7 +293,7 @@ export function SupplierRFQs() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Đơn vị tiền</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('don_vi_tien')}</label>
                   <select 
                     value={quoteForm.currency}
                     onChange={(e) => setQuoteForm({...quoteForm, currency: e.target.value})}
@@ -307,7 +307,7 @@ export function SupplierRFQs() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Thời gian giao hàng *</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('thoi_gian_giao_hang')}</label>
                 <input 
                   type="text" 
                   required
@@ -319,7 +319,7 @@ export function SupplierRFQs() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ghi chú cho người mua</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('ghi_chu_cho_nguoi_mua')}</label>
                 <textarea 
                   rows={3}
                   value={quoteForm.message}

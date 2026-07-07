@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
@@ -79,6 +80,7 @@ const toastStyle: React.CSSProperties = {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminVerificationRequests() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<VerificationRequest[]>(mockRequests);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -185,10 +187,10 @@ export function AdminVerificationRequests() {
       <div className="wp-table-top">
         <div className="wp-bulk-actions">
           <select className="wp-bulk-select" value={bulkAction} onChange={e => setBulkAction(e.target.value)}>
-            <option value="">Thao tác hàng loạt</option>
-            <option value="approve">Duyệt xác minh</option>
+            <option value="">{t('thao_tac_hang_loat')}</option>
+            <option value="approve">{t('duyet_xac_minh')}</option>
             <option value="reject">Từ chối</option>
-            <option value="request_info">Yêu cầu bổ sung</option>
+            <option value="request_info">{t('yeu_cau_bo_sung')}</option>
           </select>
           <button className="wp-btn" onClick={handleBulkAction}>Áp dụng</button>
         </div>
@@ -213,7 +215,7 @@ export function AdminVerificationRequests() {
                   <input type="checkbox" checked={selectedIds.length === filtered.length && filtered.length > 0} onChange={toggleAll} />
                 </th>
                 <th>Tên công ty</th>
-                <th>Loại yêu cầu</th>
+                <th>{t('loai_yeu_cau')}</th>
                 <th>Loại nhà cung cấp</th>
                 <th>Ngày gửi</th>
                 <th>Trạng thái</th>
@@ -238,11 +240,11 @@ export function AdminVerificationRequests() {
                         {(r.status === 'PENDING' || r.status === 'NEED_MORE_INFO') && (
                           <>
                             <span className="sep">|</span>
-                            <button style={{ color: '#00a32a' }} onClick={() => handleApprove(r.id)}>Duyệt xác minh</button>
+                            <button style={{ color: '#00a32a' }} onClick={() => handleApprove(r.id)}>{t('duyet_xac_minh')}</button>
                             <span className="sep">|</span>
                             <button className="delete" onClick={() => handleReject(r.id)}>Từ chối</button>
                             <span className="sep">|</span>
-                            <button style={{ color: '#dba617' }} onClick={() => handleRequestInfo(r.id)}>Yêu cầu bổ sung</button>
+                            <button style={{ color: '#dba617' }} onClick={() => handleRequestInfo(r.id)}>{t('yeu_cau_bo_sung')}</button>
                           </>
                         )}
                       </div>

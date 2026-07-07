@@ -264,7 +264,7 @@ export function Header() {
               </button>
               {isLangDropdownOpen && (
                 <div className="absolute top-full right-0 mt-4 w-40 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 z-[100]">
-                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('vi') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇻🇳 Tiếng Việt</button>
+                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('vi') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>{t('tieng_viet')}</button>
                   <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('en') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇬🇧 English</button>
                 </div>
               )}

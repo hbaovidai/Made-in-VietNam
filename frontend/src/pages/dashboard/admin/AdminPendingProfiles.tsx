@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { PendingProfileDetail, ProfileStatus } from './PendingProfileDetail';
@@ -74,6 +75,7 @@ const toastStyle: React.CSSProperties = {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminPendingProfiles() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
@@ -207,10 +209,10 @@ export function AdminPendingProfiles() {
       <div className="wp-table-top">
         <div className="wp-bulk-actions">
           <select className="wp-bulk-select" value={bulkAction} onChange={e => setBulkAction(e.target.value)}>
-            <option value="">Thao tác hàng loạt</option>
+            <option value="">{t('thao_tac_hang_loat')}</option>
             <option value="approve">Duyệt</option>
             <option value="reject">Từ chối</option>
-            <option value="request_info">Yêu cầu bổ sung</option>
+            <option value="request_info">{t('yeu_cau_bo_sung')}</option>
           </select>
           <button className="wp-btn" onClick={handleBulkAction}>Áp dụng</button>
         </div>
@@ -236,7 +238,7 @@ export function AdminPendingProfiles() {
                 </th>
                 <th>Tên công ty</th>
                 <th>Mã số thuế</th>
-                <th>Người liên hệ</th>
+                <th>{t('nguoi_lien_he')}</th>
                 <th>Ngày gửi</th>
                 <th>Trạng thái</th>
               </tr>
@@ -267,7 +269,7 @@ export function AdminPendingProfiles() {
                           <span className="sep">|</span>
                           <button className="delete" onClick={() => handleReject(p.id)}>Từ chối</button>
                           <span className="sep">|</span>
-                          <button style={{ color: '#dba617' }} onClick={() => handleRequestInfo(p.id)}>Yêu cầu bổ sung</button>
+                          <button style={{ color: '#dba617' }} onClick={() => handleRequestInfo(p.id)}>{t('yeu_cau_bo_sung')}</button>
                         </>
                       )}
                     </div>

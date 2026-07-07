@@ -306,7 +306,7 @@ export function SearchResults() {
 
             {/* Chips Suggestions */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gợi ý:</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('goi_y')}</span>
               {['Phụ tùng CNC', 'Inox 304', 'Nhôm định hình', 'Động cơ điện'].map(chip => (
                 <button
                   key={chip}
@@ -424,7 +424,7 @@ export function SearchResults() {
                   <Search size={28} className="text-slate-400" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">Không tìm thấy sản phẩm</h3>
-                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-4">Thử nhập từ khóa khác hoặc xóa bộ lọc.</p>
+                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-4">{t('thu_nhap_tu_khoa_khac_hoac_xoa_bo_loc')}</p>
                 <button
                   onClick={() => setSearchParams({})}
                   className="text-primary font-bold text-sm hover:underline"
@@ -441,7 +441,7 @@ export function SearchResults() {
               {loadingMore && (
                 <div className="flex items-center gap-2 text-primary">
                   <Loader2 size={20} className="animate-spin" />
-                  <span className="text-xs font-semibold text-slate-500">Đang tải thêm sản phẩm...</span>
+                  <span className="text-xs font-semibold text-slate-500">{t('dang_tai_them_san_pham')}</span>
                 </div>
               )}
             </div>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Package, MapPin, Search, Truck, CheckCircle2 } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { useToast } from '../../../components/ui/Toast';
 
 export function SupplierOrders() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToast } = useToast();
@@ -57,7 +59,7 @@ export function SupplierOrders() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-8 text-center text-slate-500">{t('dang_tai_du_lieu')}</div>;
 
   return (
     <div className="space-y-6">
@@ -67,7 +69,7 @@ export function SupplierOrders() {
             <ShoppingBag className="text-blue-600" />
             ĐƠN HÀNG LẺ CỦA KHÁCH
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Quản lý và xử lý các đơn đặt hàng trực tiếp qua Giỏ hàng</p>
+          <p className="text-sm text-slate-500 mt-1">{t('quan_ly_va_xu_ly_cac_don_dat_hang_truc_t')}</p>
         </div>
         
         <div className="relative w-full sm:w-64">
@@ -83,8 +85,8 @@ export function SupplierOrders() {
       {orders.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-12 text-center">
           <Package size={48} className="mx-auto text-slate-200 mb-4" />
-          <h3 className="text-lg font-bold text-slate-700 mb-2">Chưa có đơn hàng nào</h3>
-          <p className="text-slate-500">Khi có khách hàng đặt mua trực tiếp, đơn hàng sẽ hiển thị tại đây.</p>
+          <h3 className="text-lg font-bold text-slate-700 mb-2">{t('chua_co_don_hang_nao')}</h3>
+          <p className="text-slate-500">{t('khi_co_khach_hang_dat_mua_truc_tiep_don_')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -99,12 +101,12 @@ export function SupplierOrders() {
                   </div>
                   <div className="hidden sm:block w-px h-8 bg-slate-200"></div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">Người đặt</div>
+                    <div className="text-xs text-slate-500 font-medium">{t('nguoi_dat')}</div>
                     <div className="font-bold text-slate-900">{order.buyer?.fullName || 'Khách hàng'}</div>
                   </div>
                   <div className="hidden sm:block w-px h-8 bg-slate-200"></div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">Ngày đặt</div>
+                    <div className="text-xs text-slate-500 font-medium">{t('ngay_dat')}</div>
                     <div className="font-bold text-slate-900">{new Date(order.createdAt).toLocaleDateString('vi-VN')} {new Date(order.createdAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
                   </div>
                 </div>
@@ -134,14 +136,14 @@ export function SupplierOrders() {
                 {/* Right: Info & Actions */}
                 <div className="w-full lg:w-80 px-6 py-4 bg-slate-50/30 flex flex-col justify-between">
                   <div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Thông tin giao hàng</div>
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">{t('thong_tin_giao_hang')}</div>
                     <div className="text-sm font-bold text-slate-900">{order.recipientName}</div>
                     <div className="text-sm text-slate-600">{order.recipientPhone}</div>
                     <div className="text-sm text-slate-600 mt-1 line-clamp-2" title={order.shippingAddress}>{order.shippingAddress}</div>
                     
                     {order.note && (
                       <div className="mt-3 p-2 bg-amber-50 border border-amber-100 rounded text-xs text-amber-800">
-                        <span className="font-bold">Ghi chú:</span> {order.note}
+                        <span className="font-bold">{t('ghi_chu')}</span> {order.note}
                       </div>
                     )}
                   </div>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, ExternalLink } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 import { PAGE_REGISTRY, getPageGroups } from '../../../utils/pageRegistry';
 
 export function AdminPages() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterGroup, setFilterGroup] = useState('all');
@@ -45,11 +47,11 @@ export function AdminPages() {
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">Tất cả trang</span>
+        <span className="wp-breadcrumb-current">{t('tat_ca_trang')}</span>
       </div>
 
       <div className="wp-page-header">
-        <h1 className="wp-page-title">Tất cả trang</h1>
+        <h1 className="wp-page-title">{t('tat_ca_trang')}</h1>
       </div>
       <p style={{ fontSize: 12, color: '#646970', marginTop: -12, marginBottom: 16 }}>
         Danh sách tự động cập nhật từ Page Registry. Thêm trang mới tại <code style={{ background: '#f0f0f1', padding: '1px 5px', borderRadius: 3 }}>src/utils/pageRegistry.ts</code>
@@ -72,14 +74,14 @@ export function AdminPages() {
       <div className="wp-table-top">
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           <select className="wp-bulk-select" value={filterGroup} onChange={e => { setFilterGroup(e.target.value); setPage(1); }}>
-            <option value="all">Tất cả nhóm</option>
+            <option value="all">{t('tat_ca_nhom')}</option>
             {groups.map(g => <option key={g} value={g}>{g}</option>)}
           </select>
         </div>
         <div className="wp-table-search">
           <input type="text" placeholder="Tìm trang..." value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }} />
-          <button className="wp-btn"><Search size={14} /> Tìm</button>
+          <button className="wp-btn"><Search size={14} /> {t('tim')}</button>
         </div>
       </div>
 
@@ -89,37 +91,37 @@ export function AdminPages() {
           <thead>
             <tr>
               <th style={{ width: 30 }}><input type="checkbox" checked={selectedIds.length === paginated.length && paginated.length > 0} onChange={toggleAll} /></th>
-              <th>Tên trang</th>
-              <th style={{ width: 200 }}>Đường dẫn</th>
-              <th style={{ width: 100 }}>Nhóm</th>
+              <th>{t('ten_trang')}</th>
+              <th style={{ width: 200 }}>{t('duong_dan')}</th>
+              <th style={{ width: 100 }}>{t('nhom')}</th>
               <th style={{ width: 100 }}>Trạng thái</th>
-              <th style={{ width: 100 }}>Tác giả</th>
+              <th style={{ width: 100 }}>{t('tac_gia')}</th>
               <th style={{ width: 100 }}>Cập nhật</th>
             </tr>
           </thead>
           <tbody>
             {paginated.length === 0 ? (
-              <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40, color: '#646970' }}>Không tìm thấy trang nào.</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40, color: '#646970' }}>{t('khong_tim_thay_trang_nao')}</td></tr>
             ) : paginated.map(p => (
               <tr key={p.id}>
                 <td><input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => toggleOne(p.id)} /></td>
                 <td>
                   <div>
                     <span className="wp-row-title">{p.title}</span>
-                    {p.status === 'Draft' && <span style={{ color: 'var(--wp-text-muted)', fontWeight: 400 }}> — Bản nháp</span>}
+                    {p.status === 'Draft' && <span style={{ color: 'var(--wp-text-muted)', fontWeight: 400 }}> {t('ban_nhap_1')}</span>}
                     {p.description && <div style={{ fontSize: 11, color: '#646970', marginTop: 1 }}>{p.description}</div>}
                     <div className="wp-row-actions">
                       <a href={p.path} target="_blank" rel="noopener noreferrer">Xem trang <ExternalLink size={10} style={{ verticalAlign: -1 }} /></a>
                       {p.id === 'p-terms' && (
                         <>
                           <span className="wp-row-actions-sep"> | </span>
-                          <Link to="/dashboard/admin/legal">Thiết lập điều khoản</Link>
+                          <Link to="/dashboard/admin/legal">{t('thiet_lap_dieu_khoan')}</Link>
                         </>
                       )}
                       {p.id === 'p-privacy' && (
                         <>
                           <span className="wp-row-actions-sep"> | </span>
-                          <Link to="/dashboard/admin/legal/privacy">Thiết lập chính sách</Link>
+                          <Link to="/dashboard/admin/legal/privacy">{t('thiet_lap_chinh_sach')}</Link>
                         </>
                       )}
                     </div>

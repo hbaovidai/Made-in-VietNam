@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, Plus, Eye, X, Briefcase } from 'lucide-react';
 import { careersDb, CareerJob } from '../../../utils/careersDb';
@@ -23,6 +24,7 @@ const emptyForm = (): Omit<CareerJob, 'id'> => ({
 });
 
 export function AdminCareers() {
+  const { t } = useTranslation();
   const [jobs, setJobs] = useState<CareerJob[]>([]);
   const [search, setSearch] = useState('');
   const [filterDept, setFilterDept] = useState('');
@@ -116,13 +118,13 @@ export function AdminCareers() {
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">Quản lý tuyển dụng</span>
+        <span className="wp-breadcrumb-current">{t('quan_ly_tuyen_dung')}</span>
       </div>
 
       <div className="wp-page-header">
         <h1 className="wp-page-title">
-          Quản lý tuyển dụng
-          <button className="wp-page-title-btn" onClick={openAdd}><Plus size={14} /> Thêm vị trí</button>
+          {t('quan_ly_tuyen_dung')}
+          <button className="wp-page-title-btn" onClick={openAdd}><Plus size={14} /> {t('them_vi_tri')}</button>
         </h1>
       </div>
       <p style={{ fontSize: 12, color: '#646970', marginTop: -12, marginBottom: 16 }}>
@@ -133,27 +135,27 @@ export function AdminCareers() {
       <div className="wp-table-top">
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <select className="wp-bulk-select" value={filterDept} onChange={e => setFilterDept(e.target.value)}>
-            <option value="">Tất cả phòng ban</option>
+            <option value="">{t('tat_ca_phong_ban')}</option>
             {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
           <select className="wp-bulk-select" value={filterLoc} onChange={e => setFilterLoc(e.target.value)}>
-            <option value="">Tất cả địa điểm</option>
+            <option value="">{t('tat_ca_dia_diem')}</option>
             {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
           <select className="wp-bulk-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
-            <option value="">Tất cả hình thức</option>
+            <option value="">{t('tat_ca_hinh_thuc')}</option>
             {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
           <select className="wp-bulk-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
             <option value="">Tất cả trạng thái</option>
-            <option value="OPEN">Đang tuyển</option>
+            <option value="OPEN">{t('dang_tuyen')}</option>
             <option value="CLOSED">Đã đóng</option>
-            <option value="DRAFT">Bản nháp</option>
+            <option value="DRAFT">{t('ban_nhap')}</option>
           </select>
         </div>
         <div className="wp-table-search">
           <input type="text" placeholder="Tìm theo tiêu đề..." value={search} onChange={e => setSearch(e.target.value)} />
-          <button className="wp-btn"><Search size={14} /> Tìm</button>
+          <button className="wp-btn"><Search size={14} /> {t('tim')}</button>
         </div>
       </div>
 
@@ -163,18 +165,18 @@ export function AdminCareers() {
           <thead>
             <tr>
               <th>Tiêu đề</th>
-              <th style={{ width: 120 }}>Phòng ban</th>
-              <th style={{ width: 110 }}>Địa điểm</th>
-              <th style={{ width: 90 }}>Hình thức</th>
+              <th style={{ width: 120 }}>{t('phong_ban')}</th>
+              <th style={{ width: 110 }}>{t('dia_diem')}</th>
+              <th style={{ width: 90 }}>{t('hinh_thuc')}</th>
               <th style={{ width: 100 }}>Kinh nghiệm</th>
-              <th style={{ width: 120 }}>Mức lương</th>
+              <th style={{ width: 120 }}>{t('muc_luong')}</th>
               <th style={{ width: 90, textAlign: 'center' }}>Trạng thái</th>
-              <th style={{ width: 90 }}>Ngày đăng</th>
+              <th style={{ width: 90 }}>{t('ngay_dang')}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: '#646970' }}>Không tìm thấy vị trí tuyển dụng nào.</td></tr>
+              <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: '#646970' }}>{t('khong_tim_thay_vi_tri_tuyen_dung_nao')}</td></tr>
             ) : filtered.map(job => (
               <tr key={job.id}>
                 <td>
@@ -192,7 +194,7 @@ export function AdminCareers() {
                       <span className="sep">|</span>
                       <button type="button" onClick={() => setPreviewJob(job)}>Xem trước</button>
                       <span className="sep">|</span>
-                      <button type="button" className="delete" onClick={() => setConfirmDelete({ isOpen: true, job })}>Xoá</button>
+                      <button type="button" className="delete" onClick={() => setConfirmDelete({ isOpen: true, job })}>{t('xoa')}</button>
                     </div>
                   </div>
                 </td>
@@ -291,7 +293,7 @@ export function AdminCareers() {
 
               {/* Actions */}
               <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end', borderTop: '1px solid #dcdcde', paddingTop: 16 }}>
-                <button type="button" className="wp-btn" onClick={() => setIsModalOpen(false)}>Huỷ</button>
+                <button type="button" className="wp-btn" onClick={() => setIsModalOpen(false)}>{t('huy')}</button>
                 <button type="submit" className="wp-btn wp-btn-primary" disabled={!!slugError}>
                   {editingId ? 'Cập nhật' : 'Thêm vị trí'}
                 </button>
@@ -321,9 +323,9 @@ export function AdminCareers() {
                 <span>💰 {previewJob.salary.vi}</span>
               </div>
               {previewJob.shortDescription.vi && <p style={{ color: '#444', marginBottom: 16 }}>{previewJob.shortDescription.vi}</p>}
-              {previewJob.description.vi && <><h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Mô tả công việc</h4><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, color: '#444', lineHeight: 1.6, marginBottom: 16, fontFamily: 'inherit' }}>{previewJob.description.vi}</pre></>}
+              {previewJob.description.vi && <><h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{t('mo_ta_cong_viec')}</h4><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, color: '#444', lineHeight: 1.6, marginBottom: 16, fontFamily: 'inherit' }}>{previewJob.description.vi}</pre></>}
               {previewJob.requirements.vi && <><h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Yêu cầu</h4><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, color: '#444', lineHeight: 1.6, marginBottom: 16, fontFamily: 'inherit' }}>{previewJob.requirements.vi}</pre></>}
-              {previewJob.benefits.vi && <><h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Quyền lợi</h4><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, color: '#444', lineHeight: 1.6, fontFamily: 'inherit' }}>{previewJob.benefits.vi}</pre></>}
+              {previewJob.benefits.vi && <><h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{t('quyen_loi')}</h4><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, color: '#444', lineHeight: 1.6, fontFamily: 'inherit' }}>{previewJob.benefits.vi}</pre></>}
               {previewJob.deadline && <p style={{ fontSize: 11, color: '#646970', marginTop: 16 }}>Hạn nộp: {previewJob.deadline}</p>}
             </div>
           </div>

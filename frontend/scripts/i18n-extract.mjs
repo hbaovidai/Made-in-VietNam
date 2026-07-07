@@ -16,7 +16,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCjfn3Kpdf7Au6L6WGYyXcxUN8I-GU70hU';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.error('❌ Missing GEMINI_API_KEY env variable. Run: GEMINI_API_KEY=your_key node scripts/i18n-extract.mjs');
+  process.exit(1);
+}
 const GEMINI_MODEL = 'gemini-2.0-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 

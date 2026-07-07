@@ -54,7 +54,7 @@ export function SupplierInquiries() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900">Quản lý Yêu cầu</h1>
+        <h1 className="text-xl font-bold text-slate-900">{t('quan_ly_yeu_cau')}</h1>
         <p className="text-sm text-slate-500 mt-1">Phản hồi các yêu cầu nhắn tin từ người mua — {inquiries.length} cuộc hội thoại</p>
       </div>
       {loading ? (
@@ -66,7 +66,7 @@ export function SupplierInquiries() {
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
             <Inbox size={40} className="text-slate-200" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">Chưa có yêu cầu nào</h3>
+          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('chua_co_yeu_cau_nao')}</h3>
           <p className="text-slate-500 text-sm max-w-xs mx-auto">
             Khi người mua gửi tin nhắn hoặc inquiry về sản phẩm của bạn, chúng sẽ xuất hiện tại đây.
           </p>
@@ -77,7 +77,7 @@ export function SupplierInquiries() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Người mua</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Tin nhắn mới nhất</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{t('tin_nhan_moi_nhat')}</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Thời gian</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Trạng thái</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Hành động</th>

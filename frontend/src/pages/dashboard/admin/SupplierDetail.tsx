@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Building2, User, Shield, FileText, Package, Globe, Download, Eye } from 'lucide-react';
 
@@ -113,9 +114,10 @@ const statusBadge = (status?: string) => {
 // ═══ Tab Components ═══════════════════════════════════════════
 
 function TabOverview({ data }: { data: SupplierProfile }) {
+  const { t } = useTranslation();
   return (
     <div style={s.card}>
-      <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> Thông tin doanh nghiệp</div>
+      <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> {t('thong_tin_doanh_nghiep')}</div>
       <div style={s.cardBody}>
         <Field label="Tên doanh nghiệp" value={data.companyName} />
         <Field label="Mã số thuế" value={data.taxCode} mono />
@@ -132,6 +134,7 @@ function TabOverview({ data }: { data: SupplierProfile }) {
 }
 
 function TabContact({ data }: { data: SupplierProfile }) {
+  const { t } = useTranslation();
   return (
     <div style={s.card}>
       <div style={s.cardHead}><User size={16} color="#2271b1" /> Thông tin liên hệ</div>
@@ -148,9 +151,10 @@ function TabContact({ data }: { data: SupplierProfile }) {
 }
 
 function TabLegal({ data }: { data: SupplierProfile }) {
+  const { t } = useTranslation();
   return (
     <div style={s.card}>
-      <div style={s.cardHead}><Shield size={16} color="#2271b1" /> Thông tin pháp lý</div>
+      <div style={s.cardHead}><Shield size={16} color="#2271b1" /> {t('thong_tin_phap_ly')}</div>
       <div style={s.cardBody}>
         <Field label="Tên DN theo ĐKKD" value={data.companyName} />
         <Field label="Mã số thuế" value={data.taxCode} mono />
@@ -163,6 +167,7 @@ function TabLegal({ data }: { data: SupplierProfile }) {
 }
 
 function TabManufacturer() {
+  const { t } = useTranslation();
   return (
     <>
       <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
@@ -178,7 +183,7 @@ function TabManufacturer() {
       </div>
 
       <div style={{ ...s.card, opacity: 0.5 }}>
-        <div style={s.cardHead}><Package size={16} color="#2271b1" /> Chi tiết năng lực sản xuất</div>
+        <div style={s.cardHead}><Package size={16} color="#2271b1" /> {t('chi_tiet_nang_luc_san_xuat')}</div>
         <div style={s.cardBody}>
           <Field label="Trạng thái duyệt Manufacturer" />
           <Field label="Hình thức sản xuất" />
@@ -197,6 +202,7 @@ function TabManufacturer() {
 }
 
 function TabExporter() {
+  const { t } = useTranslation();
   return (
     <>
       <div style={{ ...s.card, borderLeft: '3px solid #dba617' }}>
@@ -212,7 +218,7 @@ function TabExporter() {
       </div>
 
       <div style={{ ...s.card, opacity: 0.5 }}>
-        <div style={s.cardHead}><Globe size={16} color="#2271b1" /> Chi tiết xuất khẩu</div>
+        <div style={s.cardHead}><Globe size={16} color="#2271b1" /> {t('chi_tiet_xuat_khau')}</div>
         <div style={s.cardBody}>
           <Field label="Trạng thái duyệt Exporter" />
           <Field label="Thị trường xuất khẩu" />
@@ -263,6 +269,7 @@ function TabDocuments() {
 }
 
 function TabProducts() {
+  const { t } = useTranslation();
   return (
     <div className="wp-table-wrap">
       <table className="wp-table">
@@ -291,6 +298,7 @@ function TabProducts() {
 
 // ═══ Main Component ═══════════════════════════════════════════
 export function SupplierDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   const supplierStatus = request.status || SupplierStatus.APPLICATION_PENDING;

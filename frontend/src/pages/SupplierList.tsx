@@ -126,7 +126,7 @@ export function SupplierList() {
               "ml-4 text-sm font-bold text-slate-700 whitespace-nowrap transition-opacity duration-200",
               sidebarHover ? "opacity-100" : "opacity-0"
             )}>
-              Ngành hàng
+              {t('nganh_hang')}
             </span>
           </div>
 
@@ -202,7 +202,7 @@ export function SupplierList() {
           )}
         >
           <div className="flex items-center justify-between h-14 px-5 border-b border-slate-100 shrink-0">
-            <span className="font-bold text-slate-900">Ngành hàng</span>
+            <span className="font-bold text-slate-900">{t('nganh_hang')}</span>
             <button onClick={() => setIsMobileSidebarOpen(false)} className="text-xs font-bold text-slate-400 uppercase">
               {t('close_action')}
             </button>

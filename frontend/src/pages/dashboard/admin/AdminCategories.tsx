@@ -168,12 +168,12 @@ export function AdminCategories() {
                 onChange={e => handleNameChange(e.target.value)}
                 placeholder="Nhập tên danh mục"
               />
-              <p className="wp-form-desc">Tên hiển thị trên website.</p>
+              <p className="wp-form-desc">{t('ten_hien_thi_tren_website')}</p>
             </div>
 
             {/* Slug */}
             <div className="wp-form-row">
-              <label className="wp-form-label">Đường dẫn (Slug)</label>
+              <label className="wp-form-label">{t('duong_dan_slug')}</label>
               <input
                 className="wp-form-input"
                 type="text"
@@ -181,23 +181,23 @@ export function AdminCategories() {
                 onChange={e => setFormSlug(e.target.value)}
                 placeholder="tu-dong-tao-tu-ten"
               />
-              <p className="wp-form-desc">Phiên bản thân thiện URL. Thường là chữ thường và chỉ chứa ký tự, số và dấu gạch ngang.</p>
+              <p className="wp-form-desc">{t('phien_ban_than_thien_url_thuong_la_chu_t')}</p>
             </div>
 
             {/* Parent Category */}
             <div className="wp-form-row">
-              <label className="wp-form-label">Danh mục cha</label>
+              <label className="wp-form-label">{t('danh_muc_cha_1')}</label>
               <select
                 className="wp-form-input"
                 value={formParent}
                 onChange={e => setFormParent(e.target.value)}
               >
-                <option value="">— Không (danh mục gốc) —</option>
+                <option value="">{t('khong_danh_muc_goc')}</option>
                 {parentOptions.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
-              <p className="wp-form-desc">Chọn danh mục cha nếu đây là danh mục con.</p>
+              <p className="wp-form-desc">{t('chon_danh_muc_cha_neu_day_la_danh_muc_co')}</p>
             </div>
 
             {/* Description */}
@@ -211,7 +211,7 @@ export function AdminCategories() {
                 placeholder="Mô tả ngắn về danh mục (không bắt buộc)"
                 style={{ resize: 'vertical' }}
               />
-              <p className="wp-form-desc">Mô tả mặc định không quan trọng nhưng một số giao diện có thể hiển thị nó.</p>
+              <p className="wp-form-desc">{t('mo_ta_mac_dinh_khong_quan_trong_nhung_mo')}</p>
             </div>
 
             {/* Buttons */}
@@ -231,7 +231,7 @@ export function AdminCategories() {
                   onClick={resetForm}
                   style={{ padding: '6px 16px', fontSize: 13 }}
                 >
-                  Huỷ
+                  {t('huy')}
                 </button>
               )}
             </div>
@@ -271,8 +271,8 @@ export function AdminCategories() {
                 <tr style={{ background: '#f6f7f7', borderBottom: '1px solid #c3c4c7' }}>
                   <th style={thStyle}>Tên</th>
                   <th style={{ ...thStyle, width: 140 }}>Mô tả</th>
-                  <th style={{ ...thStyle, width: 80, textAlign: 'center' }}>Đường dẫn</th>
-                  <th style={{ ...thStyle, width: 60, textAlign: 'center' }}>Số SP</th>
+                  <th style={{ ...thStyle, width: 80, textAlign: 'center' }}>{t('duong_dan')}</th>
+                  <th style={{ ...thStyle, width: 60, textAlign: 'center' }}>{t('so_sp')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -322,7 +322,7 @@ export function AdminCategories() {
                                     onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: cat }); }}
                                     style={{ color: '#b32d2e', textDecoration: 'none' }}
                                   >
-                                    Xoá
+                                    {t('xoa')}
                                   </a>
                                 </span>
                                 {' | '}
@@ -369,7 +369,7 @@ export function AdminCategories() {
                                   onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: sub }); }}
                                   style={{ color: '#b32d2e', textDecoration: 'none' }}
                                 >
-                                  Xoá
+                                  {t('xoa')}
                                 </a>
                               </span>
                             </div>

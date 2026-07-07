@@ -180,7 +180,7 @@ export function AdminSuppliers() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">Không tìm thấy doanh nghiệp nào</td></tr>
+                <tr><td colSpan={5} className="py-16 text-center text-slate-400 text-sm">{t('khong_tim_thay_doanh_nghiep_nao')}</td></tr>
               )}
             </tbody>
           </table>
@@ -210,11 +210,11 @@ export function AdminSuppliers() {
                 <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.taxCode || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Người đại diện</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('nguoi_dai_dien')}</p>
                 <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.legalRepresentative || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">SĐT Liên hệ</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('sdt_lien_he')}</p>
                 <p className="text-sm font-semibold text-slate-900 mt-0.5">{viewSupplier.companyPhone || 'N/A'}</p>
               </div>
               <div>
@@ -230,23 +230,23 @@ export function AdminSuppliers() {
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 border border-slate-200 rounded-xl bg-white hover:border-primary/30 transition-colors shadow-sm">
-                  <p className="text-xs font-bold text-slate-700 mb-3">Giấy Đăng Ký Kinh Doanh</p>
+                  <p className="text-xs font-bold text-slate-700 mb-3">{t('giay_dang_ky_kinh_doanh')}</p>
                   {viewSupplier.businessLicenseUrl ? (
                     <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${viewSupplier.businessLicenseUrl.replace('/api/v1', '')}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">
                       <Eye size={14} /> Xem tài liệu gốc
                     </a>
                   ) : (
-                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">Chưa tải lên</p>
+                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">{t('chua_tai_len')}</p>
                   )}
                 </div>
                 <div className="p-4 border border-slate-200 rounded-xl bg-white hover:border-primary/30 transition-colors shadow-sm">
-                  <p className="text-xs font-bold text-slate-700 mb-3">CCCD Người Đại Diện</p>
+                  <p className="text-xs font-bold text-slate-700 mb-3">{t('cccd_nguoi_dai_dien')}</p>
                   {viewSupplier.identityCardUrl ? (
                     <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${viewSupplier.identityCardUrl.replace('/api/v1', '')}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors">
                       <Eye size={14} /> Xem tài liệu gốc
                     </a>
                   ) : (
-                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">Chưa tải lên</p>
+                    <p className="text-xs text-slate-400 italic px-3 py-2 bg-slate-50 rounded-lg inline-block">{t('chua_tai_len')}</p>
                   )}
                 </div>
               </div>

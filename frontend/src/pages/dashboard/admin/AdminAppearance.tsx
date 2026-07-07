@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Upload, Trash2, Plus, ChevronUp, ChevronDown, Image as ImageIcon, Loader2, Pencil, X, Eye, EyeOff } from 'lucide-react';
 import { api } from '../../../lib/api';
@@ -81,6 +82,7 @@ function ImageUploader({ value, onChange, label, height = 120 }: { value: string
 
 // ═════════════════════════════════════════════════════════════
 export function AdminAppearance() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const tab = new URLSearchParams(location.search).get('tab') || 'branding';
@@ -236,7 +238,7 @@ export function AdminAppearance() {
           <div style={card}>
             <h3 style={cardTitle}>Logo</h3>
             <ImageUploader value={settings.site_logo || ''} onChange={url => update('site_logo', url)} label="Ảnh Logo" height={60} />
-            <p style={fieldDesc}>Để trống sẽ hiển thị logo text "VIEproduct" mặc định. Khuyến nghị: 200×60px, nền trong suốt (PNG).</p>
+            <p style={fieldDesc}>{t('de_trong_se_hien_thi_logo_text_vieproduc')}</p>
           </div>
 
           {/* Slogan */}
@@ -244,22 +246,22 @@ export function AdminAppearance() {
             <h3 style={cardTitle}>Slogan</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div>
-                <label style={fieldLabel}>Slogan (Tiếng Anh)</label>
+                <label style={fieldLabel}>{t('slogan_tieng_anh')}</label>
                 <input style={inputStyle} value={settings.site_slogan || ''} onChange={e => update('site_slogan', e.target.value)} placeholder="B2B Global Trade" />
               </div>
               <div>
-                <label style={fieldLabel}>Slogan (Tiếng Việt)</label>
+                <label style={fieldLabel}>{t('slogan_tieng_viet')}</label>
                 <input style={inputStyle} value={settings.site_slogan_vi || ''} onChange={e => update('site_slogan_vi', e.target.value)} placeholder="Thương mại B2B toàn cầu" />
               </div>
             </div>
-            <p style={fieldDesc}>Hiển thị dưới logo trên header trang web.</p>
+            <p style={fieldDesc}>{t('hien_thi_duoi_logo_tren_header_trang_web')}</p>
           </div>
 
 
           {/* Theme Presets */}
           <div style={card}>
             <h3 style={cardTitle}>Theme Preset</h3>
-            <p style={{ ...fieldDesc, marginBottom: 12 }}>Chọn nhanh bộ màu theo chủ đề. Có thể tùy chỉnh thêm ở phần Màu chủ đạo bên dưới.</p>
+            <p style={{ ...fieldDesc, marginBottom: 12 }}>{t('chon_nhanh_bo_mau_theo_chu_de_co_the_tuy')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
               {THEME_PRESETS.map(p => {
                 const active = settings.site_theme === p.id;
@@ -280,10 +282,10 @@ export function AdminAppearance() {
 
           {/* Color pickers */}
           <div style={card}>
-            <h3 style={cardTitle}>Màu giao diện</h3>
+            <h3 style={cardTitle}>{t('mau_giao_dien')}</h3>
 
             {/* ── Màu chủ đạo ── */}
-            <p style={{ ...fieldDesc, marginBottom: 14 }}>Màu chủ đạo</p>
+            <p style={{ ...fieldDesc, marginBottom: 14 }}>{t('mau_chu_dao')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {[
                 { key: 'primary_color', label: 'Primary', def: '#003366' },
@@ -300,13 +302,13 @@ export function AdminAppearance() {
                       <input type="color" value={valid ? val : c.def} onChange={e => update(c.key, e.target.value)} style={{ width: 36, height: 30, border: '1px solid #dcdcde', borderRadius: 4, cursor: 'pointer', padding: 0 }} />
                       <input style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12, borderColor: valid ? undefined : '#d63638' }} value={val} onChange={e => update(c.key, e.target.value)} />
                     </div>
-                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>Mã HEX không hợp lệ</span>}
+                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>{t('ma_hex_khong_hop_le')}</span>}
                   </div>
                 );
               })}
             </div>
             <div style={{ marginTop: 12, padding: 12, background: '#f9fafb', borderRadius: 6, border: '1px solid #f0f0f1' }}>
-              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>Preview — Màu chủ đạo</div>
+              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>{t('preview_mau_chu_dao')}</div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                 <span style={{ padding: '5px 16px', background: settings.primary_color || '#003366', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Primary</span>
                 <span style={{ padding: '5px 16px', background: settings.primary_color_light || '#004080', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Light</span>
@@ -316,7 +318,7 @@ export function AdminAppearance() {
             </div>
 
             {/* ── Giao diện tổng thể ── */}
-            <p style={{ ...fieldDesc, marginTop: 24, marginBottom: 14 }}>Giao diện tổng thể</p>
+            <p style={{ ...fieldDesc, marginTop: 24, marginBottom: 14 }}>{t('giao_dien_tong_the')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
               {[
                 { key: 'bg_color', label: 'Background', def: '#F8FAFC' },
@@ -332,16 +334,16 @@ export function AdminAppearance() {
                       <input type="color" value={valid ? val : c.def} onChange={e => update(c.key, e.target.value)} style={{ width: 36, height: 30, border: '1px solid #dcdcde', borderRadius: 4, cursor: 'pointer', padding: 0 }} />
                       <input style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12, borderColor: valid ? undefined : '#d63638' }} value={val} onChange={e => update(c.key, e.target.value)} />
                     </div>
-                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>Mã HEX không hợp lệ</span>}
+                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>{t('ma_hex_khong_hop_le')}</span>}
                   </div>
                 );
               })}
             </div>
             <div style={{ marginTop: 12, padding: 16, background: settings.bg_color || '#F8FAFC', borderRadius: 6, border: `1px solid ${settings.border_color || '#E2E8F0'}` }}>
-              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>Preview — Giao diện tổng thể</div>
+              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>{t('preview_giao_dien_tong_the')}</div>
               <div style={{ padding: 12, background: '#fff', border: `1px solid ${settings.border_color || '#E2E8F0'}`, borderRadius: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: settings.text_color || '#1E293B' }}>Tiêu đề mẫu</span>
-                <p style={{ fontSize: 12, color: settings.text_color || '#1E293B', opacity: 0.7, marginTop: 4, marginBottom: 0 }}>Đây là đoạn văn bản mẫu hiển thị trên nền background với viền border.</p>
+                <span style={{ fontSize: 14, fontWeight: 700, color: settings.text_color || '#1E293B' }}>{t('tieu_de_mau')}</span>
+                <p style={{ fontSize: 12, color: settings.text_color || '#1E293B', opacity: 0.7, marginTop: 4, marginBottom: 0 }}>{t('day_la_doan_van_ban_mau_hien_thi_tren_ne')}</p>
               </div>
             </div>
 
@@ -363,7 +365,7 @@ export function AdminAppearance() {
                       <input type="color" value={valid ? val : c.def} onChange={e => update(c.key, e.target.value)} style={{ width: 36, height: 30, border: '1px solid #dcdcde', borderRadius: 4, cursor: 'pointer', padding: 0 }} />
                       <input style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12, borderColor: valid ? undefined : '#d63638' }} value={val} onChange={e => update(c.key, e.target.value)} />
                     </div>
-                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>Mã HEX không hợp lệ</span>}
+                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>{t('ma_hex_khong_hop_le')}</span>}
                   </div>
                 );
               })}
@@ -379,7 +381,7 @@ export function AdminAppearance() {
               <div style={{ padding: '10px 16px', background: settings.footer_bg || '#043365', color: settings.footer_text || '#CBD5E1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 11, fontWeight: 600 }}>© 2026 VIEproduct</span>
                 <div style={{ display: 'flex', gap: 12, fontSize: 10 }}>
-                  <span>Về chúng tôi</span><span>Chính sách</span>
+                  <span>Về chúng tôi</span><span>{t('chinh_sach')}</span>
                 </div>
               </div>
             </div>
@@ -402,13 +404,13 @@ export function AdminAppearance() {
                       <input type="color" value={valid ? val : c.def} onChange={e => update(c.key, e.target.value)} style={{ width: 36, height: 30, border: '1px solid #dcdcde', borderRadius: 4, cursor: 'pointer', padding: 0 }} />
                       <input style={{ ...inputStyle, fontFamily: 'monospace', fontSize: 12, borderColor: valid ? undefined : '#d63638' }} value={val} onChange={e => update(c.key, e.target.value)} />
                     </div>
-                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>Mã HEX không hợp lệ</span>}
+                    {!valid && <span style={{ fontSize: 10, color: '#d63638' }}>{t('ma_hex_khong_hop_le')}</span>}
                   </div>
                 );
               })}
             </div>
             <div style={{ marginTop: 12, padding: 12, background: '#f9fafb', borderRadius: 6, border: '1px solid #f0f0f1' }}>
-              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>Preview — Trạng thái</div>
+              <div style={{ fontSize: 10, color: '#a7aaad', marginBottom: 8 }}>{t('preview_trang_thai')}</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <span style={{ padding: '4px 12px', borderRadius: 10, fontSize: 11, fontWeight: 600, color: '#fff', background: settings.pending_color || '#F59E0B' }}>Chờ duyệt</span>
                 <span style={{ padding: '4px 12px', borderRadius: 10, fontSize: 11, fontWeight: 600, color: '#fff', background: settings.approved_color || '#16A34A' }}>Đã duyệt</span>
@@ -429,7 +431,7 @@ export function AdminAppearance() {
             <div style={card} className="flex flex-col justify-between">
               <div>
                 <h3 style={{ ...cardTitle, borderBottom: '1px solid #e2e8f0', paddingBottom: 8, marginBottom: 12 }}>Banner Header</h3>
-                <p style={{ ...fieldDesc, fontSize: 13, color: '#475569', marginBottom: 16 }}>Ảnh nền hiển thị phía sau Header.</p>
+                <p style={{ ...fieldDesc, fontSize: 13, color: '#475569', marginBottom: 16 }}>{t('anh_nen_hien_thi_phia_sau_header')}</p>
                 <div className="space-y-4">
                   <ImageUploader 
                     value={settings.header_banner_image || ''} 
@@ -447,7 +449,7 @@ export function AdminAppearance() {
             <div style={card} className="flex flex-col justify-between">
               <div>
                 <h3 style={{ ...cardTitle, borderBottom: '1px solid #e2e8f0', paddingBottom: 8, marginBottom: 12 }}>Banner Footer</h3>
-                <p style={{ ...fieldDesc, fontSize: 13, color: '#475569', marginBottom: 16 }}>Ảnh nền hiển thị phía sau Footer.</p>
+                <p style={{ ...fieldDesc, fontSize: 13, color: '#475569', marginBottom: 16 }}>{t('anh_nen_hien_thi_phia_sau_footer')}</p>
                 <div className="space-y-4">
                   <ImageUploader 
                     value={settings.footer_banner_image || ''} 
@@ -466,7 +468,7 @@ export function AdminAppearance() {
           <div style={card}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-slate-200">
               <div>
-                <h3 style={{ ...cardTitle, borderBottom: 'none', margin: 0, padding: 0 }}>Hero Banner Slides (Trang chủ)</h3>
+                <h3 style={{ ...cardTitle, borderBottom: 'none', margin: 0, padding: 0 }}>{t('hero_banner_slides_trang_chu')}</h3>
                 <p style={{ ...fieldDesc, margin: 0, marginTop: 4, fontSize: 13, color: '#475569' }}>
                   Quản lý danh sách slide hiển thị trên banner trang chủ.
                 </p>
@@ -483,8 +485,8 @@ export function AdminAppearance() {
             {getBanners().length === 0 ? (
               <div className="text-center py-12 border border-dashed border-slate-200 rounded-lg bg-slate-50">
                 <ImageIcon size={48} className="mx-auto text-slate-400 mb-3" />
-                <p className="text-slate-600 font-medium">Chưa có banner slide nào.</p>
-                <p className="text-xs text-slate-400 mt-1">Bấm nút "Thêm slide" ở góc trên bên phải để bắt đầu.</p>
+                <p className="text-slate-600 font-medium">{t('chua_co_banner_slide_nao')}</p>
+                <p className="text-xs text-slate-400 mt-1">{t('bam_nut_them_slide_o_goc_tren_ben_phai_d')}</p>
               </div>
             ) : (
               <div className="wp-table-wrap">
@@ -493,8 +495,8 @@ export function AdminAppearance() {
                     <tr>
                       <th style={{ width: 60, textShadow: 'none', textAlign: 'center' }}>STT</th>
                       <th style={{ width: 100 }}>Ảnh Thumbnail</th>
-                      <th>Tiêu đề (VI) / Hành động</th>
-                      <th>Tiêu đề (EN)</th>
+                      <th>{t('tieu_de_vi_hanh_dong')}</th>
+                      <th>{t('tieu_de_en')}</th>
                       <th>CTA Link</th>
                       <th style={{ width: 100, textAlign: 'center' }}>Trạng thái</th>
                     </tr>
@@ -572,7 +574,7 @@ export function AdminAppearance() {
         <div>
           <div style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>Popup khuyến mãi</h3>
+              <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>{t('popup_khuyen_mai')}</h3>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
                 <input type="checkbox" checked={settings.popup_enabled === 'true'} onChange={e => update('popup_enabled', e.target.checked ? 'true' : 'false')} style={{ width: 18, height: 18 }} />
                 <span style={{ fontWeight: 600, color: settings.popup_enabled === 'true' ? '#00a32a' : '#646970' }}>
@@ -589,7 +591,7 @@ export function AdminAppearance() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
                     <div><label style={fieldLabel}>Tiêu đề</label><input style={inputStyle} value={p.title} onChange={e => updatePopup('title', e.target.value)} placeholder="Khuyến mãi mùa hè!" /></div>
-                    <div><label style={fieldLabel}>Text nút</label><input style={inputStyle} value={p.buttonText} onChange={e => updatePopup('buttonText', e.target.value)} placeholder="Xem ngay" /></div>
+                    <div><label style={fieldLabel}>{t('text_nut')}</label><input style={inputStyle} value={p.buttonText} onChange={e => updatePopup('buttonText', e.target.value)} placeholder="Xem ngay" /></div>
                   </div>
 
                   <div style={{ marginTop: 12 }}>
@@ -598,13 +600,13 @@ export function AdminAppearance() {
                   </div>
 
                   <div style={{ marginTop: 12 }}>
-                    <label style={fieldLabel}>Link khi bấm nút</label>
+                    <label style={fieldLabel}>{t('link_khi_bam_nut')}</label>
                     <input style={inputStyle} value={p.link} onChange={e => updatePopup('link', e.target.value)} placeholder="/products" />
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
-                    <div><label style={fieldLabel}>Ngày bắt đầu</label><input type="date" style={inputStyle} value={p.startDate} onChange={e => updatePopup('startDate', e.target.value)} /></div>
-                    <div><label style={fieldLabel}>Ngày kết thúc</label><input type="date" style={inputStyle} value={p.endDate} onChange={e => updatePopup('endDate', e.target.value)} /></div>
+                    <div><label style={fieldLabel}>{t('ngay_bat_dau')}</label><input type="date" style={inputStyle} value={p.startDate} onChange={e => updatePopup('startDate', e.target.value)} /></div>
+                    <div><label style={fieldLabel}>{t('ngay_ket_thuc')}</label><input type="date" style={inputStyle} value={p.endDate} onChange={e => updatePopup('endDate', e.target.value)} /></div>
                   </div>
 
                   <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, fontSize: 12, cursor: 'pointer' }}>
@@ -622,8 +624,8 @@ export function AdminAppearance() {
       {tab === 'branding' && (
         <div>
           <div style={card}>
-            <h3 style={cardTitle}>Hiệu ứng trang trí</h3>
-            <p style={{ ...fieldDesc, marginBottom: 16 }}>Bật hiệu ứng hình ảnh trên trang web. Có thể đặt lịch tự bật/tắt theo ngày.</p>
+            <h3 style={cardTitle}>{t('hieu_ung_trang_tri')}</h3>
+            <p style={{ ...fieldDesc, marginBottom: 16 }}>{t('bat_hieu_ung_hinh_anh_tren_trang_web_co_')}</p>
             {EFFECT_OPTIONS.map(eff => {
               const effects: Record<string, EffectConfig> = (() => { try { return JSON.parse(settings.theme_effects || '{}'); } catch { return {}; } })();
               const cfg: EffectConfig = effects[eff.key] || { enabled: false, startDate: '', endDate: '' };
@@ -650,14 +652,14 @@ export function AdminAppearance() {
                   {cfg.enabled && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginLeft: 34 }}>
                       <div>
-                        <label style={fieldLabel}>Ngày bắt đầu</label>
+                        <label style={fieldLabel}>{t('ngay_bat_dau')}</label>
                         <input type="date" style={inputStyle} value={cfg.startDate} onChange={e => updateEffect('startDate', e.target.value)} />
-                        <p style={{ fontSize: 10, color: '#a7aaad', marginTop: 2 }}>Để trống = bật ngay</p>
+                        <p style={{ fontSize: 10, color: '#a7aaad', marginTop: 2 }}>{t('de_trong_bat_ngay')}</p>
                       </div>
                       <div>
-                        <label style={fieldLabel}>Ngày kết thúc</label>
+                        <label style={fieldLabel}>{t('ngay_ket_thuc')}</label>
                         <input type="date" style={inputStyle} value={cfg.endDate} onChange={e => updateEffect('endDate', e.target.value)} />
-                        <p style={{ fontSize: 10, color: '#a7aaad', marginTop: 2 }}>Để trống = không tự tắt</p>
+                        <p style={{ fontSize: 10, color: '#a7aaad', marginTop: 2 }}>{t('de_trong_khong_tu_tat')}</p>
                       </div>
                     </div>
                   )}
@@ -675,8 +677,8 @@ export function AdminAppearance() {
           <div style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>Câu hỏi thường gặp (FAQ)</h3>
-                <p style={{ ...fieldDesc, marginTop: 4 }}>Quản lý danh sách FAQ hiển thị ở trang Trung tâm trợ giúp. Dữ liệu lưu trực tiếp vào database.</p>
+                <h3 style={{ ...cardTitle, margin: 0, border: 'none', padding: 0 }}>{t('cau_hoi_thuong_gap_faq')}</h3>
+                <p style={{ ...fieldDesc, marginTop: 4 }}>{t('quan_ly_danh_sach_faq_hien_thi_o_trang_t')}</p>
               </div>
               <button className="wp-btn wp-btn-primary" onClick={() => setFaqModal({ id: '', questionVi: '', answerVi: '', questionEn: '', answerEn: '', sortOrder: faqList.length, isActive: true })} style={{ padding: '6px 14px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Plus size={14} /> Thêm FAQ
@@ -686,16 +688,16 @@ export function AdminAppearance() {
             {faqLoading ? (
               <div style={{ textAlign: 'center', padding: '24px', color: '#646970', fontSize: 13 }}>Đang tải...</div>
             ) : faqList.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '32px 16px', color: '#646970', fontSize: 13 }}>Chưa có câu hỏi nào. Bấm "Thêm FAQ" để bắt đầu.</div>
+              <div style={{ textAlign: 'center', padding: '32px 16px', color: '#646970', fontSize: 13 }}>{t('chua_co_cau_hoi_nao_bam_them_faq_de_bat_')}</div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: '#f6f7f7', borderBottom: '1px solid #c3c4c7' }}>
                     <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#1d2327', width: 40 }}>STT</th>
-                    <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#1d2327' }}>Câu hỏi (VI)</th>
+                    <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#1d2327' }}>{t('cau_hoi_vi')}</th>
                     <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#1d2327' }}>Question (EN)</th>
                     <th style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600, color: '#1d2327', width: 80 }}>Trạng thái</th>
-                    <th style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600, color: '#1d2327', width: 60 }}>Thứ tự</th>
+                    <th style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600, color: '#1d2327', width: 60 }}>{t('thu_tu')}</th>
                     <th style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600, color: '#1d2327', width: 100 }}>Thao tác</th>
                   </tr>
                 </thead>
@@ -703,7 +705,7 @@ export function AdminAppearance() {
                   {faqList.map((faq, idx) => (
                     <tr key={faq.id} style={{ borderBottom: '1px solid #f0f0f1', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
                       <td style={{ padding: '10px 12px', color: '#646970' }}>{idx + 1}</td>
-                      <td style={{ padding: '10px 12px', color: '#1d2327', maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{faq.questionVi || <span style={{ color: '#a7aaad', fontStyle: 'italic' }}>Chưa nhập</span>}</td>
+                      <td style={{ padding: '10px 12px', color: '#1d2327', maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{faq.questionVi || <span style={{ color: '#a7aaad', fontStyle: 'italic' }}>{t('chua_nhap')}</span>}</td>
                       <td style={{ padding: '10px 12px', color: '#1d2327', maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{faq.questionEn || <span style={{ color: '#a7aaad', fontStyle: 'italic' }}>Empty</span>}</td>
                       <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                         <button onClick={() => toggleFaqActive(faq)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} title={faq.isActive ? 'Đang hiển thị' : 'Đang ẩn'}>
@@ -737,7 +739,7 @@ export function AdminAppearance() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={fieldLabel}>Câu hỏi (Tiếng Việt) *</label>
+                <label style={fieldLabel}>{t('cau_hoi_tieng_viet')}</label>
                 <input style={inputStyle} value={faqModal.questionVi} onChange={e => setFaqModal({ ...faqModal, questionVi: e.target.value })} placeholder="VD: Làm sao để xác minh nhà cung cấp?" />
               </div>
               <div>
@@ -748,7 +750,7 @@ export function AdminAppearance() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={fieldLabel}>Trả lời (Tiếng Việt) *</label>
+                <label style={fieldLabel}>{t('tra_loi_tieng_viet')}</label>
                 <textarea style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={faqModal.answerVi} onChange={e => setFaqModal({ ...faqModal, answerVi: e.target.value })} placeholder="Nhập câu trả lời bằng tiếng Việt..." />
               </div>
               <div>
@@ -759,7 +761,7 @@ export function AdminAppearance() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
               <div>
-                <label style={fieldLabel}>Thứ tự hiển thị (Sort Order)</label>
+                <label style={fieldLabel}>{t('thu_tu_hien_thi_sort_order')}</label>
                 <input type="number" style={inputStyle} value={faqModal.sortOrder} onChange={e => setFaqModal({ ...faqModal, sortOrder: parseInt(e.target.value) || 0 })} />
               </div>
               <div>
@@ -777,7 +779,7 @@ export function AdminAppearance() {
             </div>
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-              <button className="wp-btn" onClick={() => setFaqModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>Huỷ</button>
+              <button className="wp-btn" onClick={() => setFaqModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>{t('huy')}</button>
               <button className="wp-btn wp-btn-primary" onClick={saveFaq} disabled={faqSaving || !faqModal.questionVi || !faqModal.answerVi} style={{ padding: '7px 16px', fontSize: 12 }}>
                 {faqSaving ? 'Đang lưu...' : (faqModal.id ? 'Cập nhật' : 'Tạo mới')}
               </button>
@@ -797,44 +799,44 @@ export function AdminAppearance() {
 
             <div style={{ marginBottom: 16 }}>
               <ImageUploader value={slideModal.image} onChange={url => setSlideModal({ ...slideModal, image: url })} label="Hình ảnh slide *" height={160} />
-              <p style={{ ...fieldDesc, marginTop: 4 }}>Khuyến nghị ảnh kích thước lớn, tỉ lệ banner (VD: 1200x450 hoặc 1920x720).</p>
+              <p style={{ ...fieldDesc, marginTop: 4 }}>{t('khuyen_nghi_anh_kich_thuoc_lon_ti_le_ban')}</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={fieldLabel}>Tiêu đề (Tiếng Việt)</label>
+                <label style={fieldLabel}>{t('tieu_de_tieng_viet')}</label>
                 <input style={inputStyle} value={slideModal.titleVi} onChange={e => setSlideModal({ ...slideModal, titleVi: e.target.value })} placeholder="VD: Nhà cung cấp hàng đầu Việt Nam" />
               </div>
               <div>
-                <label style={fieldLabel}>Tiêu đề (English)</label>
+                <label style={fieldLabel}>{t('tieu_de_english')}</label>
                 <input style={inputStyle} value={slideModal.title} onChange={e => setSlideModal({ ...slideModal, title: e.target.value })} placeholder="e.g. Vietnam's Top Suppliers" />
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={fieldLabel}>Mô tả (Tiếng Việt)</label>
+                <label style={fieldLabel}>{t('mo_ta_tieng_viet')}</label>
                 <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={slideModal.descVi} onChange={e => setSlideModal({ ...slideModal, descVi: e.target.value })} placeholder="Mô tả ngắn bằng Tiếng Việt..." />
               </div>
               <div>
-                <label style={fieldLabel}>Mô tả (English)</label>
+                <label style={fieldLabel}>{t('mo_ta_english')}</label>
                 <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={slideModal.desc} onChange={e => setSlideModal({ ...slideModal, desc: e.target.value })} placeholder="Short description in English..." />
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
               <div>
-                <label style={fieldLabel}>CTA Link (Đường dẫn nút bấm)</label>
+                <label style={fieldLabel}>{t('cta_link_duong_dan_nut_bam')}</label>
                 <input style={inputStyle} value={slideModal.link} onChange={e => setSlideModal({ ...slideModal, link: e.target.value })} placeholder="VD: /products" />
               </div>
               <div>
-                <label style={fieldLabel}>Thứ tự sắp xếp (Sort Order)</label>
+                <label style={fieldLabel}>{t('thu_tu_sap_xep_sort_order')}</label>
                 <input type="number" style={inputStyle} value={slideModal.sortOrder ?? 0} onChange={e => setSlideModal({ ...slideModal, sortOrder: parseInt(e.target.value) || 0 })} />
               </div>
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: '#1d2327', display: 'block', marginBottom: 4 }}>Trạng thái hiển thị</label>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#1d2327', display: 'block', marginBottom: 4 }}>{t('trang_thai_hien_thi')}</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                 <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
                   <input type="checkbox" checked={slideModal.status !== 'hidden'} onChange={e => setSlideModal({ ...slideModal, status: e.target.checked ? 'active' : 'hidden' })} style={{ opacity: 0, width: 0, height: 0 }} />
@@ -847,7 +849,7 @@ export function AdminAppearance() {
             </div>
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-              <button className="wp-btn" onClick={() => setSlideModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>Huỷ</button>
+              <button className="wp-btn" onClick={() => setSlideModal(null)} style={{ padding: '7px 16px', fontSize: 12 }}>{t('huy')}</button>
               <button className="wp-btn wp-btn-primary" onClick={() => handleSaveSlide(slideModal)} disabled={!slideModal.image} style={{ padding: '7px 16px', fontSize: 12 }}>
                 Lưu slide
               </button>
@@ -861,7 +863,7 @@ export function AdminAppearance() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setPreviewSlide(null)}>
           <div style={{ background: '#fff', borderRadius: 8, width: '100%', maxWidth: 720, padding: 20, boxShadow: '0 8px 32px rgba(0,0,0,.3)' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1d2327', margin: 0 }}>Xem trước slide banner</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1d2327', margin: 0 }}>{t('xem_truoc_slide_banner')}</h3>
               <button onClick={() => setPreviewSlide(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}><X size={18} /></button>
             </div>
 
@@ -888,22 +890,22 @@ export function AdminAppearance() {
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
                   <ImageIcon size={48} className="mb-2" />
-                  <span>Không có hình ảnh</span>
+                  <span>{t('khong_co_hinh_anh')}</span>
                 </div>
               )}
             </div>
 
             <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, fontSize: 12, color: '#475569', borderTop: '1px solid #f1f5f9', paddingTop: 12 }}>
               <div>
-                <strong>Tiêu đề (VI):</strong> {previewSlide.titleVi || '—'}<br />
-                <strong>Mô tả (VI):</strong> {previewSlide.descVi || '—'}
+                <strong>{t('tieu_de_vi')}</strong> {previewSlide.titleVi || '—'}<br />
+                <strong>{t('mo_ta_vi')}</strong> {previewSlide.descVi || '—'}
               </div>
               <div>
-                <strong>Tiêu đề (EN):</strong> {previewSlide.title || '—'}<br />
-                <strong>Mô tả (EN):</strong> {previewSlide.desc || '—'}
+                <strong>{t('tieu_de_en_1')}</strong> {previewSlide.title || '—'}<br />
+                <strong>{t('mo_ta_en')}</strong> {previewSlide.desc || '—'}
               </div>
               <div style={{ gridColumn: 'span 2' }}>
-                <strong>Đường dẫn (CTA Link):</strong> <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>{previewSlide.link || '—'}</code>
+                <strong>{t('duong_dan_cta_link')}</strong> <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>{previewSlide.link || '—'}</code>
               </div>
             </div>
           </div>

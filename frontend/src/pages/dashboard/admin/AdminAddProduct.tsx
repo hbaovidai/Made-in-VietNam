@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload, X, HelpCircle, Settings, FileText, ChevronDown, ChevronUp, Image, Plus, Trash2, Tag } from 'lucide-react';
 import { api } from '../../../lib/api';
 
@@ -17,6 +18,7 @@ interface PriceTier {
 }
 
 export function AdminAddProduct() {
+  const { t } = useTranslation();
   // State chung cho form
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -490,7 +492,7 @@ export function AdminAddProduct() {
           {/* 3. Khối Dữ liệu sản phẩm dạng tab dọc (WooCommerce style) */}
           <div className="wp-card" style={{ marginBottom: 20 }}>
             <div className="wp-card-header" style={{ background: '#f6f7f7' }}>
-              <span className="wp-card-title" style={{ fontSize: 13, fontWeight: 600 }}>Dữ liệu sản phẩm — <span style={{ color: '#2271b1' }}>Sản phẩm đơn giản</span></span>
+              <span className="wp-card-title" style={{ fontSize: 13, fontWeight: 600 }}>{t('du_lieu_san_pham')} <span style={{ color: '#2271b1' }}>{t('san_pham_don_gian')}</span></span>
             </div>
             <div className="wc-product-data">
               {/* Vertical Tabs Sidebar */}
@@ -509,7 +511,7 @@ export function AdminAddProduct() {
                   onClick={() => setActiveTab('pricing')}
                 >
                   <Tag size={14} />
-                  <span>Giá số lượng</span>
+                  <span>{t('gia_so_luong')}</span>
                 </button>
                 <button
                   type="button"
@@ -528,7 +530,7 @@ export function AdminAddProduct() {
                   <table className="wp-form-table">
                     <tbody>
                       <tr>
-                        <th style={{ width: 140, fontSize: 13 }}>Giá bán thường (₫)</th>
+                        <th style={{ width: 140, fontSize: 13 }}>{t('gia_ban_thuong')}</th>
                         <td>
                           <input
                             type="number"
@@ -541,7 +543,7 @@ export function AdminAddProduct() {
                         </td>
                       </tr>
                       <tr>
-                        <th style={{ fontSize: 13 }}>Giá khuyến mãi (₫)</th>
+                        <th style={{ fontSize: 13 }}>{t('gia_khuyen_mai')}</th>
                         <td>
                           <input
                             type="number"
@@ -554,7 +556,7 @@ export function AdminAddProduct() {
                         </td>
                       </tr>
                       <tr>
-                        <th style={{ fontSize: 13 }}>Đơn vị tính</th>
+                        <th style={{ fontSize: 13 }}>{t('don_vi_tinh')}</th>
                         <td>
                           <input
                             type="text"
@@ -580,7 +582,7 @@ export function AdminAddProduct() {
                         </td>
                       </tr>
                       <tr>
-                        <th style={{ fontSize: 13 }}>Tình trạng kho</th>
+                        <th style={{ fontSize: 13 }}>{t('tinh_trang_kho')}</th>
                         <td>
                           <select
                             className="wp-bulk-select"
@@ -588,9 +590,9 @@ export function AdminAddProduct() {
                             onChange={e => setStockStatus(e.target.value)}
                             style={{ width: 200 }}
                           >
-                            <option value="instock">Còn hàng</option>
-                            <option value="outofstock">Hết hàng</option>
-                            <option value="onbackorder">Chờ hàng</option>
+                            <option value="instock">{t('con_hang')}</option>
+                            <option value="outofstock">{t('het_hang')}</option>
+                            <option value="onbackorder">{t('cho_hang')}</option>
                           </select>
                         </td>
                       </tr>
@@ -614,7 +616,7 @@ export function AdminAddProduct() {
                 {/* 3.2. Tab Giá số lượng (Bulk/Tiered Pricing) */}
                 {activeTab === 'pricing' && (
                   <div>
-                    <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--wp-text)' }}>Cấu hình giá số lượng (Tiered Pricing)</h3>
+                    <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--wp-text)' }}>{t('cau_hinh_gia_so_luong_tiered_pricing')}</h3>
                     
                     {pricingError && (
                       <div style={{ color: 'var(--wp-danger)', background: '#fdf2f2', border: '1px solid #f8b4b4', padding: '8px 12px', borderRadius: 4, fontSize: 13, marginBottom: 12 }}>
@@ -626,9 +628,9 @@ export function AdminAddProduct() {
                     <table className="wp-table" style={{ marginBottom: 16 }}>
                       <thead>
                         <tr>
-                          <th>Từ số lượng</th>
-                          <th>Đến số lượng</th>
-                          <th>Giá (₫)</th>
+                          <th>{t('tu_so_luong')}</th>
+                          <th>{t('den_so_luong')}</th>
+                          <th>{t('gia')}</th>
                           <th style={{ width: 60, textAlign: 'center' }}>Xóa</th>
                         </tr>
                       </thead>
@@ -643,7 +645,7 @@ export function AdminAddProduct() {
                           priceTiers.map((tier) => (
                             <tr key={tier.id}>
                               <td><strong>{tier.minQty}</strong></td>
-                              <td>{tier.maxQty === null ? <span style={{ color: 'var(--wp-text-muted)', fontStyle: 'italic' }}>Không giới hạn</span> : <strong>{tier.maxQty}</strong>}</td>
+                              <td>{tier.maxQty === null ? <span style={{ color: 'var(--wp-text-muted)', fontStyle: 'italic' }}>{t('khong_gioi_han')}</span> : <strong>{tier.maxQty}</strong>}</td>
                               <td style={{ color: '#2271b1', fontWeight: 600 }}>{tier.price.toLocaleString()} ₫</td>
                               <td style={{ textAlign: 'center' }}>
                                 <button
@@ -663,10 +665,10 @@ export function AdminAddProduct() {
 
                     {/* Add tier form inline */}
                     <form onSubmit={handleAddPriceTier} style={{ border: '1px solid var(--wp-border-light)', padding: 12, background: '#f6f7f7', borderRadius: 4 }}>
-                      <h4 style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', color: 'var(--wp-text-muted)' }}>Thêm mức giá sỉ mới</h4>
+                      <h4 style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', color: 'var(--wp-text-muted)' }}>{t('them_muc_gia_si_moi')}</h4>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
                         <div style={{ width: 100 }}>
-                          <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>Từ số lượng</label>
+                          <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>{t('tu_so_luong')}</label>
                           <input
                             type="number"
                             className="wp-form-input"
@@ -680,7 +682,7 @@ export function AdminAddProduct() {
 
                         <div style={{ width: 140 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                            <label style={{ fontSize: 12 }}>Đến số lượng</label>
+                            <label style={{ fontSize: 12 }}>{t('den_so_luong')}</label>
                             <label style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}>
                               <input
                                 type="checkbox"
@@ -706,7 +708,7 @@ export function AdminAddProduct() {
                         </div>
 
                         <div style={{ flex: 1, minWidth: 120 }}>
-                          <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>Giá bán (₫)</label>
+                          <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>{t('gia_ban_1')}</label>
                           <input
                             type="number"
                             className="wp-form-input"
@@ -737,7 +739,7 @@ export function AdminAddProduct() {
                         value={selectedAttrToCreate}
                         onChange={e => setSelectedAttrToCreate(e.target.value)}
                       >
-                        <option value="">— Chọn thuộc tính sản phẩm —</option>
+                        <option value="">{t('chon_thuoc_tinh_san_pham')}</option>
                         {availableAttributes.map(attr => (
                           <option key={attr.id || attr.slug} value={attr.id || attr.slug}>{attr.name}</option>
                         ))}
@@ -787,7 +789,7 @@ export function AdminAddProduct() {
                               <div className="wc-attribute-row-body">
                                 <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: 12 }}>
                                   <div>
-                                    <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>Tên thuộc tính</div>
+                                    <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{t('ten_thuoc_tinh')}</div>
                                     <div style={{ fontSize: 13, color: '#000', fontWeight: 600 }}>{attr.name}</div>
                                     <div style={{ marginTop: 12 }}>
                                       <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer', marginBottom: 4 }}>
@@ -809,7 +811,7 @@ export function AdminAddProduct() {
                                     </div>
                                   </div>
                                   <div>
-                                    <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>Giá trị</div>
+                                    <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{t('gia_tri')}</div>
                                     <textarea
                                       className="wp-form-input"
                                       rows={3}
@@ -818,7 +820,7 @@ export function AdminAddProduct() {
                                       value={attr.values}
                                       onChange={(e) => updateAttributeField(attr.id, 'values', e.target.value)}
                                     />
-                                    <p className="wp-form-desc" style={{ fontSize: 11 }}>Nhập các thuật ngữ thuộc tính sản phẩm, phân tách bằng dấu đứng "|"</p>
+                                    <p className="wp-form-desc" style={{ fontSize: 11 }}>{t('nhap_cac_thuat_ngu_thuoc_tinh_san_pham_p')}</p>
                                   </div>
                                 </div>
                               </div>
@@ -845,12 +847,12 @@ export function AdminAddProduct() {
             {!collapsedBoxes.publish && (
               <div className="wp-metabox-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <button type="button" className="wp-btn" onClick={() => alert('Đã lưu bản nháp sỉ thành công!')}>Lưu nháp</button>
+                  <button type="button" className="wp-btn" onClick={() => alert('Đã lưu bản nháp sỉ thành công!')}>{t('luu_nhap')}</button>
                   <button type="button" className="wp-btn" onClick={() => alert('Xem trước sản phẩm sỉ (Mock)')}>Xem trước</button>
                 </div>
                 <div style={{ borderTop: '1px solid var(--wp-border-light)', paddingTop: 10, fontSize: 13 }}>
                   <div style={{ padding: '4px 0', display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--wp-text-muted)' }}>Trạng thái:</span>
+                    <span style={{ color: 'var(--wp-text-muted)' }}>{t('trang_thai')}</span>
                     <span>
                       <strong style={{ textTransform: 'capitalize' }}>{status === 'draft' ? 'Bản nháp' : 'Công khai'}</strong>
                       <button
@@ -863,7 +865,7 @@ export function AdminAddProduct() {
                     </span>
                   </div>
                   <div style={{ padding: '4px 0', display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--wp-text-muted)' }}>Khả năng hiển thị:</span>
+                    <span style={{ color: 'var(--wp-text-muted)' }}>{t('kha_nang_hien_thi')}</span>
                     <span>
                       <strong>{visibility === 'public' ? 'Công khai' : 'Riêng tư'}</strong>
                       <button
@@ -924,14 +926,14 @@ export function AdminAddProduct() {
                         value={newCatParent}
                         onChange={e => setNewCatParent(e.target.value)}
                       >
-                        <option value="">— Danh mục cha —</option>
+                        <option value="">{t('danh_muc_cha')}</option>
                         {categories.filter(c => !c.parentId).map(c => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
                     </div>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button type="submit" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }}>Thêm</button>
+                      <button type="submit" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }}>{t('them')}</button>
                       <button type="button" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }} onClick={() => setShowAddCat(false)}>Hủy</button>
                     </div>
                   </form>
@@ -983,7 +985,7 @@ export function AdminAddProduct() {
                       />
                     </div>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button type="submit" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }}>Thêm</button>
+                      <button type="submit" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }}>{t('them')}</button>
                       <button type="button" className="wp-btn" style={{ fontSize: 12, padding: '3px 8px' }} onClick={() => setShowAddBrand(false)}>Hủy</button>
                     </div>
                   </form>
@@ -995,7 +997,7 @@ export function AdminAddProduct() {
           {/* 4. Meta Box: Ảnh sản phẩm (Product image) */}
           <div className="wp-metabox">
             <div className="wp-metabox-header" onClick={() => toggleBoxCollapse('image')} style={{ cursor: 'pointer' }}>
-              <span>Ảnh sản phẩm</span>
+              <span>{t('anh_san_pham')}</span>
               {collapsedBoxes.image ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </div>
             {!collapsedBoxes.image && (
@@ -1003,7 +1005,7 @@ export function AdminAddProduct() {
                 {!productImage ? (
                   <div className="wp-image-select-placeholder" onClick={handleSetProductImage}>
                     <Image size={24} style={{ margin: '0 auto 8px', display: 'block' }} />
-                    <span style={{ fontSize: 13, textDecoration: 'underline' }}>Thiết lập ảnh sản phẩm</span>
+                    <span style={{ fontSize: 13, textDecoration: 'underline' }}>{t('thiet_lap_anh_san_pham')}</span>
                   </div>
                 ) : (
                   <div>
@@ -1034,7 +1036,7 @@ export function AdminAddProduct() {
           {/* 5. Meta Box: Thư viện hình ảnh sản phẩm (Product gallery) */}
           <div className="wp-metabox">
             <div className="wp-metabox-header" onClick={() => toggleBoxCollapse('gallery')} style={{ cursor: 'pointer' }}>
-              <span>Thư viện hình ảnh sản phẩm</span>
+              <span>{t('thu_vien_hinh_anh_san_pham')}</span>
               {collapsedBoxes.gallery ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </div>
             {!collapsedBoxes.gallery && (

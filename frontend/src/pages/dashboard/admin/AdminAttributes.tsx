@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const initialAttributes = [
   { id: '1', name: 'Màu sắc', slug: 'color', terms: ['Đỏ', 'Xanh', 'Vàng', 'Trắng', 'Đen'] },
@@ -9,6 +10,7 @@ const initialAttributes = [
 ];
 
 export function AdminAttributes() {
+  const { t } = useTranslation();
   const [attributes, setAttributes] = useState(initialAttributes);
   const [form, setForm] = useState({ name: '', slug: '' });
   const [editId, setEditId] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export function AdminAttributes() {
 
   return (
     <div>
-      <h1 className="wp-page-title">Thuộc tính sản phẩm</h1>
+      <h1 className="wp-page-title">{t('thuoc_tinh_san_pham')}</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 20, alignItems: 'start' }}>
         {/* Left: Add Form */}
@@ -61,13 +63,13 @@ export function AdminAttributes() {
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Tên</label>
                 <input className="wp-form-input" style={{ maxWidth: '100%' }} value={form.name}
                   onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Ví dụ: Màu sắc" />
-                <p className="wp-form-desc">Tên thuộc tính cho quản trị.</p>
+                <p className="wp-form-desc">{t('ten_thuoc_tinh_cho_quan_tri')}</p>
               </div>
               <div style={{ marginBottom: 12 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Slug</label>
                 <input className="wp-form-input" style={{ maxWidth: '100%' }} value={form.slug}
                   onChange={e => setForm(prev => ({ ...prev, slug: e.target.value }))} placeholder="mau-sac" />
-                <p className="wp-form-desc">Mã định danh duy nhất.</p>
+                <p className="wp-form-desc">{t('ma_dinh_danh_duy_nhat')}</p>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="submit" className="wp-btn wp-btn-primary">{editId ? 'Cập nhật' : 'Thêm thuộc tính'}</button>
@@ -85,7 +87,7 @@ export function AdminAttributes() {
                 <th style={{ width: 30 }}><input type="checkbox" /></th>
                 <th>Tên</th>
                 <th>Slug</th>
-                <th>Giá trị</th>
+                <th>{t('gia_tri')}</th>
               </tr>
             </thead>
             <tbody>
@@ -137,7 +139,7 @@ export function AdminAttributes() {
                           <input className="wp-form-input" style={{ maxWidth: 200 }} placeholder="Thêm giá trị mới..."
                             value={newTerm} onChange={e => setNewTerm(e.target.value)}
                             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTerm(attr.id); } }} />
-                          <button className="wp-btn" type="button" onClick={() => addTerm(attr.id)}>Thêm</button>
+                          <button className="wp-btn" type="button" onClick={() => addTerm(attr.id)}>{t('them')}</button>
                         </div>
                       </td>
                     </tr>
