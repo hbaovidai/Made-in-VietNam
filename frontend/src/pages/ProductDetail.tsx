@@ -384,10 +384,10 @@ export function ProductDetail() {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(product.specifications ? Object.entries(product.specifications) : [
-                      ['Xuất xứ', product.origin || 'Việt Nam'],
-                      ['Đơn vị', product.unit || 'cái'],
-                      ['MOQ', `${product.moq || 1}`],
-                      ['Thương hiệu', product.brand || '—'],
+                      [t('spec_origin'), product.origin || t('vietnam')],
+                      [t('spec_unit'), product.unit || t('spec_unit_piece')],
+                      [t('spec_moq'), `${product.moq || 1}`],
+                      [t('spec_brand'), product.brand || '—'],
                     ]).map(([key, val]: any, i: number) => (
                       <div key={i} className="flex justify-between items-center py-2 px-3 border-b border-slate-100 text-sm">
                         <span className="font-medium text-slate-500">{key}</span>

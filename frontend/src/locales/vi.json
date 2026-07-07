@@ -2379,5 +2379,10 @@
   "address": "Địa chỉ",
   "global": "Toàn cầu",
   "business_type_label": "Loại hình",
-  "certifications_label": "Chứng nhận"
+  "certifications_label": "Chứng nhận",
+  "spec_origin": "Xuất xứ",
+  "spec_unit": "Đơn vị",
+  "spec_moq": "MOQ",
+  "spec_brand": "Thương hiệu",
+  "spec_unit_piece": "cái"
 }

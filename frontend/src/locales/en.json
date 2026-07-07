@@ -2379,5 +2379,10 @@
   "address": "Address",
   "global": "Global",
   "business_type_label": "Business Type",
-  "certifications_label": "Certifications"
+  "certifications_label": "Certifications",
+  "spec_origin": "Origin",
+  "spec_unit": "Unit",
+  "spec_moq": "MOQ",
+  "spec_brand": "Brand",
+  "spec_unit_piece": "piece"
 }
