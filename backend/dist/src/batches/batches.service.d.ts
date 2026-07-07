@@ -5,47 +5,47 @@ export declare class BatchesService {
     private readonly QR_SECRET;
     constructor(prisma: PrismaService);
     getSupplierBatches(supplierId: string): Promise<({
-        product: {
-            name: string;
-            slug: string;
-        };
         _count: {
             qrCodes: number;
         };
+        product: {
+            slug: string;
+            name: string;
+        };
     } & {
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.BatchStatus;
         supplierId: string;
+        expiryDate: Date;
         productId: string;
         batchNumber: string;
         manufactureDate: Date;
-        expiryDate: Date;
         quantity: number;
-        status: import("@prisma/client").$Enums.BatchStatus;
         qrGenerated: boolean;
-        createdAt: Date;
     })[]>;
     getSupplierQRCodes(supplierId: string): Promise<({
         batch: {
             product: {
-                name: string;
                 slug: string;
+                name: string;
             };
         } & {
             id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.BatchStatus;
             supplierId: string;
+            expiryDate: Date;
             productId: string;
             batchNumber: string;
             manufactureDate: Date;
-            expiryDate: Date;
             quantity: number;
-            status: import("@prisma/client").$Enums.BatchStatus;
             qrGenerated: boolean;
-            createdAt: Date;
         };
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.QRStatus;
         createdAt: Date;
+        status: import("@prisma/client").$Enums.QRStatus;
         batchId: string;
         code: string;
         secretHash: string;
@@ -54,15 +54,15 @@ export declare class BatchesService {
     })[]>;
     createBatch(supplierId: string, dto: CreateBatchDto): Promise<{
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.BatchStatus;
         supplierId: string;
+        expiryDate: Date;
         productId: string;
         batchNumber: string;
         manufactureDate: Date;
-        expiryDate: Date;
         quantity: number;
-        status: import("@prisma/client").$Enums.BatchStatus;
         qrGenerated: boolean;
-        createdAt: Date;
     }>;
     generateQRCodes(supplierId: string, dto: GenerateQRCodesDto): Promise<{
         message: string;
@@ -76,13 +76,12 @@ export declare class BatchesService {
         warning: string;
         data: {
             id: string;
-            supplierId: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
-            name: string;
-            nameEn: string | null;
             slug: string;
             description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -90,13 +89,12 @@ export declare class BatchesService {
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
             rfqMinQuantity: number | null;
-            updatedAt: Date;
             attributes: import("@prisma/client/runtime/library").JsonValue | null;
             brand: string | null;
             customizations: string[];
@@ -107,19 +105,20 @@ export declare class BatchesService {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         };
     } | {
         valid: boolean;
         data: {
             product: {
                 id: string;
-                supplierId: string;
-                status: import("@prisma/client").$Enums.ProductStatus;
-                createdAt: Date;
-                name: string;
-                nameEn: string | null;
                 slug: string;
                 description: string | null;
+                createdAt: Date;
+                updatedAt: Date;
+                name: string;
+                nameEn: string | null;
                 descriptionEn: string | null;
                 minPrice: number;
                 maxPrice: number;
@@ -127,13 +126,12 @@ export declare class BatchesService {
                 unit: string;
                 moq: number;
                 moqUnit: string;
-                categoryId: string;
                 images: string[];
+                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
                 rfqMinQuantity: number | null;
-                updatedAt: Date;
                 attributes: import("@prisma/client/runtime/library").JsonValue | null;
                 brand: string | null;
                 customizations: string[];
@@ -144,6 +142,8 @@ export declare class BatchesService {
                 productionCapacity: string | null;
                 sku: string | null;
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                supplierId: string;
+                categoryId: string;
             };
             supplier: {
                 companyName: string;

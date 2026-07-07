@@ -146,33 +146,7 @@ export function Header() {
     }
   ];
 
-  const buyerMenuSections = [
-    {
-      title: t('service'),
-      links: [
-        { label: t('new_user_guide'), href: "/help/user-guide" },
-        // { label: t('audited_suppliers_reports'), href: "/reports" }, // Ẩn tạm — chưa có nội dung
-        // { label: t('secured_trading_service'), href: "/services/secured-trading" },
-        { label: t('buyer_center'), href: "/dashboard/buyer" },
-        { label: t('contact_us'), href: "/contact" },
-      ]
-    },
-    {
-      title: t('search'),
-      links: [
-        { label: t('product_directory'), href: "/products" },
-        { label: t('supplier_discover'), href: "/suppliers" },
-        { label: t('post_sourcing_request'), href: "/rfq" },
-      ]
-    },
-    {
-      title: t('quick_links'),
-      links: [
-        { label: t('my_favorites'), href: "/dashboard/buyer/saved" },
-        { label: t('browsing_history'), href: "/dashboard/buyer/history" },
-      ]
-    }
-  ];
+
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -495,11 +469,6 @@ export function Header() {
                     <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
                   </NavDropdown>
                 )}
-              <NavDropdown label={t('buyer')} to="/dashboard/buyer" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
-                <MegaMenu sections={buyerMenuSections} columns={3} className="w-[720px]" />
-              </NavDropdown>
-              <Link to="/help" className="hover:text-primary">{t('help')}</Link>
-              {/*<Link to="/apps" className="hover:text-primary flex items-center gap-1"><Smartphone size={12} /> {t('apps')}</Link>*/}
             </div>
           </div>
         </div>

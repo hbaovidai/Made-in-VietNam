@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, ChevronLeft, Award, Globe, Loader2, Menu, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings } from 'lucide-react';
+import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, ChevronLeft, Award, Globe, Loader2, Menu, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Zap, FlaskConical, Leaf, TreePine, Sofa, Hammer, Package, Layers } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { SupplierCard } from '../components/SupplierCard';
@@ -8,15 +8,24 @@ import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 
-// Icon map for sidebar industries matching the category icons style
-const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
-  0: <Sprout size={20} />,
-  1: <ShieldAlert size={20} />,
-  2: <Truck size={20} />,
-  3: <Factory size={20} />,
-  4: <Shirt size={20} />,
-  5: <Wrench size={20} />,
+// Icon map by category slug — add new entries when creating categories
+const SLUG_ICON_MAP: Record<string, React.ReactNode> = {
+  'bao-bi-in-an':               <Package size={20} />,
+  'co-khi-gia-cong-kim-loai':   <Wrench size={20} />,
+  'det-may-thoi-trang':         <Shirt size={20} />,
+  'hoa-chat-duoc-pham':         <FlaskConical size={20} />,
+  'logistics-van-tai':          <Truck size={20} />,
+  'nong-nghiep-thuc-pham':      <Sprout size={20} />,
+  'nang-luong-moi-truong':      <Leaf size={20} />,
+  'noi-that-trang-tri':         <Sofa size={20} />,
+  'vat-lieu-xay-dung':          <Hammer size={20} />,
+  'dien-dien-tu':               <Zap size={20} />,
+  'do-go-noi-that':             <TreePine size={20} />,
 };
+
+function getCategoryIcon(slug: string, size = 20): React.ReactNode {
+  return SLUG_ICON_MAP[slug] || <Layers size={size} />;
+}
 
 export function SupplierList() {
   const { t } = useTranslation();
@@ -155,7 +164,7 @@ export function SupplierList() {
                 )}
               >
                 {selectedIndustry === cat.name && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
-                <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={20} />}</span>
+                <span className="shrink-0">{getCategoryIcon(cat.slug)}</span>
                 <span className={cn(
                   "text-sm font-semibold whitespace-nowrap transition-opacity duration-200 truncate",
                   sidebarHover ? "opacity-100" : "opacity-0"
@@ -218,7 +227,7 @@ export function SupplierList() {
                   selectedIndustry === cat.name ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
                 )}
               >
-                <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={18} />}</span>
+                <span className="shrink-0">{getCategoryIcon(cat.slug, 18)}</span>
                 {cat.name}
               </button>
             ))}

@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShieldCheck, MessageSquare, ChevronRight, MapPin, Loader2, Building2, Clock, Package, Globe, Award, Factory, Users, Calendar, ExternalLink, Heart, Play, Check, Zap, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
-import { ProductCard } from '../components/ProductCard';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -215,12 +214,14 @@ export function ProductDetail() {
               {hasPricing ? (
                 <div className="grid grid-cols-3 gap-3">
                   {/* Tier 1 */}
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => setRfqQuantity(50)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all",
+                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
                       rfqQuantity < 100
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10"
-                        : "border-slate-200/70 bg-slate-50/50"
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
+                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
                     )}
                   >
                     <div className="text-[10px] font-medium text-slate-500 mb-1">
@@ -232,15 +233,17 @@ export function ProductDetail() {
                     <div className="text-[9px] text-slate-400">
                       {product.currency || 'VND'}
                     </div>
-                  </div>
+                  </button>
 
                   {/* Tier 2 */}
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => setRfqQuantity(500)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all",
+                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
                       rfqQuantity >= 100 && rfqQuantity < 1000
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10"
-                        : "border-slate-200/70 bg-slate-50/50"
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
+                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
                     )}
                   >
                     <div className="text-[10px] font-medium text-slate-500 mb-1">
@@ -252,15 +255,17 @@ export function ProductDetail() {
                     <div className="text-[9px] text-slate-400">
                       {product.currency || 'VND'}
                     </div>
-                  </div>
+                  </button>
 
                   {/* Tier 3 */}
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => setRfqQuantity(1000)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all",
+                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
                       rfqQuantity >= 1000
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10"
-                        : "border-slate-200/70 bg-slate-50/50"
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
+                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
                     )}
                   >
                     <div className="text-[10px] font-medium text-slate-500 mb-1">
@@ -272,7 +277,7 @@ export function ProductDetail() {
                     <div className="text-[9px] text-slate-400">
                       {product.currency || 'VND'}
                     </div>
-                  </div>
+                  </button>
                 </div>
               ) : (
                 <div className="bg-slate-50 border border-slate-200 border-dashed rounded-lg p-6 text-center">
@@ -464,7 +469,65 @@ export function ProductDetail() {
           <h2 className="text-base font-bold text-slate-900 mb-4">Các sản phẩm tương tự</h2>
           {relatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {relatedProducts.slice(0, 5).map(p => <ProductCard key={p.id} product={p} />)}
+              {relatedProducts.slice(0, 5).map((rp: any) => {
+                const rpImage = rp.images?.[0] || rp.image || 'https://via.placeholder.com/300';
+                const rpPrice = (() => {
+                  if (rp.minPrice != null && rp.maxPrice != null && rp.minPrice !== rp.maxPrice) {
+                    return `${rp.minPrice.toLocaleString('vi-VN')} - ${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
+                  }
+                  if (rp.minPrice != null) return `${rp.minPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
+                  if (rp.maxPrice != null) return `${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
+                  return rp.priceRange || 'Liên hệ';
+                })();
+                const rpMoq = rp.moq ? `${rp.moq.toLocaleString('vi-VN')} ${rp.moqUnit || rp.unit || 'cái'}` : null;
+                const rpSupplier = rp.supplier?.companyName || '';
+
+                return (
+                  <Link
+                    key={rp.id}
+                    to={`/products/${rp.slug || rp.id}`}
+                    className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-300 flex flex-col h-full"
+                  >
+                    {/* Image — 60% height */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                      <img
+                        src={rpImage}
+                        alt={rp.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-3.5 flex flex-col flex-1">
+                      {/* Product Name — bold, 2 lines max */}
+                      <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-snug mb-2">
+                        {rp.name}
+                      </h3>
+
+                      {/* Price — prominent, dark blue */}
+                      <p className="text-base font-extrabold text-[#0f2a4a] mb-1">
+                        {rpPrice}
+                      </p>
+
+                      {/* MOQ */}
+                      {rpMoq && (
+                        <p className="text-xs text-slate-500 mb-auto">
+                          MOQ: <span className="font-semibold text-slate-600">{rpMoq}</span>
+                        </p>
+                      )}
+
+                      {/* Supplier — with separator */}
+                      {rpSupplier && (
+                        <div className="mt-3 pt-2.5 border-t border-slate-100">
+                          <p className="text-[11px] text-slate-400 truncate">
+                            Nhà cung cấp: <span className="font-medium text-slate-500">{rpSupplier}</span>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="py-8 text-center text-slate-400 text-sm">

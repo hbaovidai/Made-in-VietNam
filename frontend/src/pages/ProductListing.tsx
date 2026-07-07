@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, Menu, ShieldCheck, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
@@ -21,6 +21,7 @@ const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
 export function ProductListing() {
   const { t } = useTranslation();
   const localized = useLocalized();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -462,7 +463,7 @@ export function ProductListing() {
 
                         {/* Contact button */}
                         <button
-                          onClick={(e) => { e.preventDefault(); }}
+                          onClick={(e) => { e.preventDefault(); navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`); }}
                           className="w-full py-1.5 border border-primary text-primary text-[11px] font-bold rounded-lg hover:bg-primary hover:text-white transition-colors duration-200 mb-2"
                         >
                           Liên hệ

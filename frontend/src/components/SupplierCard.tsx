@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SupplierStatus } from '../lib/enums';
@@ -11,6 +11,7 @@ interface SupplierCardProps {
 
 export function SupplierCard({ supplier }: SupplierCardProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const name = supplier.companyName || supplier.name;
 
   const isVerified = 
@@ -43,7 +44,10 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   }
 
   return (
-    <div className="group bg-white rounded-xl border border-slate-200 p-5 md:p-6 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+    <div
+      onClick={() => navigate(`/suppliers/${supplier.id}`)}
+      className="group bg-white rounded-xl border border-slate-200 p-5 md:p-6 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+    >
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-stretch">
         
         {/* LEFT — Square Logo Container */}
@@ -63,12 +67,9 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           {/* Top Info Row */}
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-              <Link 
-                to={`/suppliers/${supplier.id}`}
-                className="text-lg md:text-xl font-bold text-[#1a3a6b] hover:text-primary transition-colors tracking-tight line-clamp-1 block"
-              >
+              <span className="text-lg md:text-xl font-bold text-[#1a3a6b] group-hover:text-primary transition-colors tracking-tight line-clamp-1 block">
                 {name}
-              </Link>
+              </span>
               
               {isVerified && (
                 <div className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold border bg-[#d1f5e0] text-[#0d6b3e] border-[#8edcb3] shrink-0">

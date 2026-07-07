@@ -4,47 +4,37 @@ export declare class CategoriesController {
     private categoriesService;
     constructor(categoriesService: CategoriesService);
     findAll(): Promise<({
-        name: string;
         id: string;
-        nameEn: string | null;
         slug: string;
-        parentId: string | null;
         createdAt: Date;
+        name: string;
+        nameEn: string | null;
+        parentId: string | null;
     } & {
         children: ({
-            name: string;
             id: string;
-            nameEn: string | null;
             slug: string;
-            parentId: string | null;
             createdAt: Date;
+            name: string;
+            nameEn: string | null;
+            parentId: string | null;
         } & any)[];
     })[]>;
     findBySlug(slug: string): Promise<{
-        children: {
-            name: string;
-            id: string;
-            nameEn: string | null;
-            slug: string;
-            parentId: string | null;
-            createdAt: Date;
-        }[];
         products: ({
             supplier: {
-                slug: string;
                 companyName: string;
+                slug: string;
                 is_verified: boolean | null;
             };
         } & {
-            name: string;
             id: string;
-            nameEn: string | null;
             slug: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
             description: string | null;
+            createdAt: Date;
             updatedAt: Date;
-            supplierId: string;
+            name: string;
+            nameEn: string | null;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -52,8 +42,8 @@ export declare class CategoriesController {
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -68,36 +58,46 @@ export declare class CategoriesController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         })[];
         _count: {
             products: number;
         };
+        children: {
+            id: string;
+            slug: string;
+            createdAt: Date;
+            name: string;
+            nameEn: string | null;
+            parentId: string | null;
+        }[];
     } & {
-        name: string;
         id: string;
-        nameEn: string | null;
         slug: string;
-        parentId: string | null;
         createdAt: Date;
+        name: string;
+        nameEn: string | null;
+        parentId: string | null;
     }>;
     create(dto: CreateCategoryDto): Promise<{
-        name: string;
         id: string;
-        nameEn: string | null;
         slug: string;
-        parentId: string | null;
         createdAt: Date;
+        name: string;
+        nameEn: string | null;
+        parentId: string | null;
     }>;
     update(id: string, dto: {
         name?: string;
         parentId?: string;
     }): Promise<{
-        name: string;
         id: string;
-        nameEn: string | null;
         slug: string;
-        parentId: string | null;
         createdAt: Date;
+        name: string;
+        nameEn: string | null;
+        parentId: string | null;
     }>;
     delete(id: string): Promise<{
         message: string;

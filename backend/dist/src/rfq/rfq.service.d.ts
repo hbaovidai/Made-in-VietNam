@@ -8,20 +8,20 @@ export declare class RfqService {
     constructor(prisma: PrismaService, notificationsService: NotificationsService);
     createRFQ(buyerId: string, dto: CreateRFQDto): Promise<{
         id: string;
-        productName: string;
-        category: string;
-        quantity: number;
-        quantityUnit: string;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        category: string;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        quantity: number;
+        productName: string;
+        quantityUnit: string;
         budget: string | null;
         destination: string;
         contactName: string | null;
         contactEmail: string | null;
         contactPhone: string | null;
-        status: import("@prisma/client").$Enums.RFQStatus;
         expiresAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
         buyerId: string;
     }>;
     getBuyerRFQs(buyerId: string): Promise<({
@@ -30,32 +30,32 @@ export declare class RfqService {
         };
     } & {
         id: string;
-        productName: string;
-        category: string;
-        quantity: number;
-        quantityUnit: string;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        category: string;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        quantity: number;
+        productName: string;
+        quantityUnit: string;
         budget: string | null;
         destination: string;
         contactName: string | null;
         contactEmail: string | null;
         contactPhone: string | null;
-        status: import("@prisma/client").$Enums.RFQStatus;
         expiresAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
         buyerId: string;
     })[]>;
     submitQuote(supplierId: string, dto: CreateQuoteDto): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.QuoteStatus;
         createdAt: Date;
-        price: number;
         currency: string;
+        status: import("@prisma/client").$Enums.QuoteStatus;
         leadTime: string;
+        supplierId: string;
         message: string | null;
         rfqId: string;
-        supplierId: string;
+        price: number;
     }>;
     getRFQDetails(id: string): Promise<{
         quotes: ({
@@ -68,14 +68,14 @@ export declare class RfqService {
             };
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.QuoteStatus;
             createdAt: Date;
-            price: number;
             currency: string;
+            status: import("@prisma/client").$Enums.QuoteStatus;
             leadTime: string;
+            supplierId: string;
             message: string | null;
             rfqId: string;
-            supplierId: string;
+            price: number;
         })[];
         buyer: {
             id: string;
@@ -85,20 +85,20 @@ export declare class RfqService {
         };
     } & {
         id: string;
-        productName: string;
-        category: string;
-        quantity: number;
-        quantityUnit: string;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        category: string;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        quantity: number;
+        productName: string;
+        quantityUnit: string;
         budget: string | null;
         destination: string;
         contactName: string | null;
         contactEmail: string | null;
         contactPhone: string | null;
-        status: import("@prisma/client").$Enums.RFQStatus;
         expiresAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
         buyerId: string;
     }>;
     acceptQuote(quoteId: string, buyerId: string): Promise<{
@@ -129,27 +129,27 @@ export declare class RfqService {
         _restricted: boolean;
     }[] | {
         _restricted: boolean;
-        buyer: {
-            fullName: string;
-        };
         _count: {
             quotes: number;
         };
+        buyer: {
+            fullName: string;
+        };
         id: string;
-        productName: string;
-        category: string;
-        quantity: number;
-        quantityUnit: string;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        category: string;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        quantity: number;
+        productName: string;
+        quantityUnit: string;
         budget: string | null;
         destination: string;
         contactName: string | null;
         contactEmail: string | null;
         contactPhone: string | null;
-        status: import("@prisma/client").$Enums.RFQStatus;
         expiresAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
         buyerId: string;
     }[]>;
 }

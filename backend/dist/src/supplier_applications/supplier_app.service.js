@@ -30,7 +30,7 @@ let SupplierApplicationService = class SupplierApplicationService {
         if (query.id)
             where.id = query.id;
         const [supp_apps, total_apps_count] = await Promise.all([
-            this.prisma.supplierApplication.findMany({
+            this.prisma.supplier_applications.findMany({
                 take: limit,
                 skip: (page - 1) * limit,
                 orderBy: {
@@ -38,7 +38,7 @@ let SupplierApplicationService = class SupplierApplicationService {
                 },
                 where: where,
             }),
-            this.prisma.supplierApplication.count({}),
+            this.prisma.supplier_applications.count({}),
         ]);
         return {
             data: supp_apps,
@@ -52,7 +52,7 @@ let SupplierApplicationService = class SupplierApplicationService {
     }
     async deleteApplication(id) {
         try {
-            const deleted_user = await this.prisma.supplierApplication.delete({
+            const deleted_user = await this.prisma.supplier_applications.delete({
                 where: {
                     id: id,
                 },
@@ -75,7 +75,7 @@ let SupplierApplicationService = class SupplierApplicationService {
     }
     async updateApplicationStatus(id, newStatus) {
         try {
-            const updatedApplication = await this.prisma.supplierApplication.update({
+            const updatedApplication = await this.prisma.supplier_applications.update({
                 data: {
                     status: newStatus,
                 },

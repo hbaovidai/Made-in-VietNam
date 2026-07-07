@@ -200,8 +200,8 @@ export function AdminSettings() {
       title: 'Social Media',
       fields: [
         { key: 'facebook_url', label: 'Facebook URL', desc: '' },
-        { key: 'twitter_url', label: 'Twitter URL', desc: '' },
         { key: 'linkedin_url', label: 'LinkedIn URL', desc: '' },
+        { key: 'tiktok_url', label: 'TikTok URL', desc: '' },
       ]
     },
     {

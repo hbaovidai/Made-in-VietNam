@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Globe, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Globe, Facebook, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+
+const TikTokIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.51a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V9.37a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.8z" />
+  </svg>
+);
 import { useTranslation } from 'react-i18next';
 import { useAppearance } from '../contexts/AppearanceContext';
 
@@ -14,9 +20,7 @@ export function Footer() {
     contact_phone: ctx.contact_phone || '+84 899 123 456',
     contact_address: ctx.contact_address || '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
     facebook_url: ctx.facebook_url || '',
-    twitter_url: ctx.twitter_url || '',
     linkedin_url: ctx.linkedin_url || '',
-    instagram_url: ctx.instagram_url || '',
   };
 
   return (
@@ -48,35 +52,23 @@ export function Footer() {
               {t('footer_description')}
             </p>
             <div className="flex items-center gap-4">
-              {settings.facebook_url && (
+              {settings.facebook_url ? (
                 <a href={settings.facebook_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
                   <Facebook size={18} />
                 </a>
+              ) : (
+                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Facebook size={18} /></a>
               )}
-              {settings.twitter_url && (
-                <a href={settings.twitter_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                  <Twitter size={18} />
-                </a>
-              )}
-              {settings.linkedin_url && (
+              {settings.linkedin_url ? (
                 <a href={settings.linkedin_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
                   <Linkedin size={18} />
                 </a>
+              ) : (
+                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Linkedin size={18} /></a>
               )}
-              {settings.instagram_url && (
-                <a href={settings.instagram_url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
-                  <Instagram size={18} />
-                </a>
-              )}
-              {/* Show placeholders if no social links set */}
-              {!settings.facebook_url && !settings.twitter_url && !settings.linkedin_url && !settings.instagram_url && (
-                <>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Facebook size={18} /></a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Twitter size={18} /></a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Linkedin size={18} /></a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white"><Instagram size={18} /></a>
-                </>
-              )}
+              <a href={ctx.tiktok_url || '#'} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-viet-gold hover:text-[#043365] transition-all text-white">
+                <TikTokIcon size={18} />
+              </a>
             </div>
           </div>
 

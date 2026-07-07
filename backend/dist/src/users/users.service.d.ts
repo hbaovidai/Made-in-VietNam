@@ -4,18 +4,18 @@ export declare class UsersService {
     constructor(prisma: PrismaService);
     findAll(query?: any): Promise<{
         data: {
-            id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
-            createdAt: Date;
             supplier: {
                 id: string;
                 companyName: string;
                 is_verified: boolean | null;
             } | null;
+            id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
         }[];
         meta: {
             total: number;
@@ -26,17 +26,17 @@ export declare class UsersService {
     }>;
     toggleUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<{
         id: string;
-        email: string;
-        role: import("@prisma/client").$Enums.Role;
-        fullName: string;
         status: import("@prisma/client").$Enums.UserStatus;
+        email: string;
+        fullName: string;
+        role: import("@prisma/client").$Enums.Role;
     }>;
     updateUserRole(userId: string, role: 'ADMIN' | 'SUPPLIER' | 'BUYER'): Promise<{
         id: string;
-        email: string;
-        role: import("@prisma/client").$Enums.Role;
-        fullName: string;
         status: import("@prisma/client").$Enums.UserStatus;
+        email: string;
+        fullName: string;
+        role: import("@prisma/client").$Enums.Role;
     }>;
     deleteUser(userId: string): Promise<{
         id: string;
@@ -46,8 +46,8 @@ export declare class UsersService {
     getSavedProducts(userId: string): Promise<any[]>;
     saveProduct(userId: string, productId: string): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
+        createdAt: Date;
         productId: string;
     } | {
         success: boolean;
