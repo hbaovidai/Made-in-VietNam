@@ -141,22 +141,7 @@ export function SearchHeader() {
           {/* ═══ RIGHT: Icon Actions ═══ */}
           <div className="flex items-center gap-1 shrink-0">
 
-            {/* Language Switcher */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <button
-                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors flex items-center gap-1"
-              >
-                <Globe size={20} />
-                <span className="text-sm font-bold uppercase hidden sm:inline">{i18n.language?.startsWith('vi') ? 'VI' : 'EN'}</span>
-              </button>
-              {isLangDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden py-2 z-[100]">
-                  <button onClick={() => changeLanguage('vi')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('vi') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>{t('tieng_viet')}</button>
-                  <button onClick={() => changeLanguage('en')} className={cn("w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors flex items-center gap-2", i18n.language?.startsWith('en') ? "text-primary font-bold bg-blue-50/50" : "text-slate-700")}>🇬🇧 English</button>
-                </div>
-              )}
-            </div>
+
 
             {/* Notification Bell */}
             <div className="relative" onClick={(e) => e.stopPropagation()}>

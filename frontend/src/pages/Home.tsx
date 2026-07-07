@@ -68,7 +68,34 @@ export function Home() {
         ]);
         setProducts(prodRes.data.data);
         setSuppliers(suppRes.data.data);
-        setCategories(catRes.data.filter((c: any) => !c.parentId));
+        
+        // Extract level 3 categories from the tree
+        const lvl3: any[] = [];
+        catRes.data.forEach((lvl1: any) => {
+          lvl1.children?.forEach((lvl2: any) => {
+            lvl2.children?.forEach((lvl3Cat: any) => {
+              lvl3.push(lvl3Cat);
+            });
+          });
+        });
+
+        let finalCategories = lvl3;
+        if (finalCategories.length === 0) {
+          // Fallback to level 2
+          const lvl2: any[] = [];
+          catRes.data.forEach((lvl1: any) => {
+            lvl1.children?.forEach((lvl2Cat: any) => {
+              lvl2.push(lvl2Cat);
+            });
+          });
+          finalCategories = lvl2;
+        }
+        if (finalCategories.length === 0) {
+          // Fallback to level 1
+          finalCategories = catRes.data;
+        }
+
+        setCategories(finalCategories);
       } catch (error) {
         console.error('Home Loading Error:', error);
       } finally {
