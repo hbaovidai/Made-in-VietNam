@@ -377,7 +377,7 @@
   "about_hero_desc": "VIEProduct không chỉ là một sàn thương mại điện tử. Chúng tôi là cầu nối kết nối nhu cầu thế giới với sự khéo léo và chất lượng của các nhà sản xuất Việt Nam.",
   "products_listed": "Sản phẩm được niêm yết",
   "global_buyers": "Người mua toàn cầu",
-  "export_markets": "Thị trường xuất khẩu",
+  "export_markets": "Thị trường XK",
   "our_mission": "Sứ mệnh của chúng tôi",
   "mission_desc": "Được thành lập vào năm 2024, VIEProduct ra đời từ mong muốn giới thiệu khả năng sản xuất tuyệt vời của Việt Nam. Chúng tôi tin rằng các sản phẩm Việt Nam xứng đáng có một sân khấu toàn cầu và người mua toàn cầu xứng đáng có một cách đáng tin cậy để tìm nguồn cung ứng chúng.",
   "mission_point_1": "Thúc đẩy sản xuất bền vững và đạo đức",
@@ -2375,5 +2375,9 @@
   "trader": "Thương mại",
   "employees_default": "50 - 100 người",
   "contact_sidebar": "Liên hệ",
-  "org_cert": "Tổ chức chứng nhận"
+  "org_cert": "Tổ chức chứng nhận",
+  "address": "Địa chỉ",
+  "global": "Toàn cầu",
+  "business_type_label": "Loại hình",
+  "certifications_label": "Chứng nhận"
 }

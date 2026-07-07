@@ -2375,5 +2375,9 @@
   "trader": "Trader",
   "employees_default": "50 - 100 people",
   "contact_sidebar": "Contact",
-  "org_cert": "Certification body"
+  "org_cert": "Certification body",
+  "address": "Address",
+  "global": "Global",
+  "business_type_label": "Business Type",
+  "certifications_label": "Certifications"
 }

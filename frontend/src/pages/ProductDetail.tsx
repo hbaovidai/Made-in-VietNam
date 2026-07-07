@@ -443,12 +443,12 @@ export function ProductDetail() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
                   {[
-                    { icon: Calendar, label: 'Năm thành lập', value: supplier.yearEstablished || memberSince },
-                    { icon: Users, label: 'Quy mô', value: supplier.employeeCount || '—' },
-                    { icon: MapPin, label: 'Địa chỉ', value: `${supplier.city || ''} ${supplier.province || ''}`.trim() || 'Việt Nam' },
-                    { icon: Globe, label: 'Thị trường XK', value: supplier.exportMarkets?.join(', ') || 'Toàn cầu' },
-                    { icon: Factory, label: 'Loại hình', value: supplier.businessType || '—' },
-                    { icon: Award, label: 'Chứng nhận', value: supplier.certifications?.map((c: any) => c.name).join(', ') || '—' },
+                    { icon: Calendar, label: t('year_established'), value: supplier.yearEstablished || memberSince },
+                    { icon: Users, label: t('employee_scale'), value: supplier.employeeCount || '—' },
+                    { icon: MapPin, label: t('address'), value: `${supplier.city || ''} ${supplier.province || ''}`.trim() || t('vietnam') },
+                    { icon: Globe, label: t('export_markets'), value: supplier.exportMarkets?.join(', ') || t('global') },
+                    { icon: Factory, label: t('business_type_label'), value: supplier.businessType || '—' },
+                    { icon: Award, label: t('certifications_label'), value: supplier.certifications?.map((c: any) => c.name).join(', ') || '—' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
                       <item.icon size={15} className="text-primary mt-0.5 shrink-0" />
