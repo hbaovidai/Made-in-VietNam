@@ -121,26 +121,35 @@ export function SupplierProfile() {
                   <MapPin size={14} className="text-slate-400 shrink-0" />
                   <span>{location}</span>
                 </div>
-                {/* Badges — supports up to 3 from supplier.badges[], falls back to verified badge */}
+                {/* Badges — auto-generated from verification status, business type & export markets */}
                 {(() => {
                   const badgeStyles = [
                     { bg: 'bg-[#d1f5e0]', text: 'text-[#0d6b3e]', border: 'border-[#8edcb3]' },
                     { bg: 'bg-[#dbeafe]', text: 'text-[#1e40af]', border: 'border-[#93c5fd]' },
                     { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', border: 'border-[#fcd34d]' },
                   ];
-                  const badges: { label: string; icon?: any }[] = supplier.badges?.slice(0, 3) || [];
-                  if (badges.length === 0 && isVerified) {
+                  const badges: { label: string }[] = [];
+                  // Badge 1: Verified Supplier (always if verified)
+                  if (isVerified) {
                     badges.push({ label: t('verified_supplier') });
+                  }
+                  // Badge 2: Verified Manufacturer (if businessType is manufacturer)
+                  if (isVerified && supplier.businessType === 'manufacturer') {
+                    badges.push({ label: t('verified_manufacturer') });
+                  }
+                  // Badge 3: Verified Exporter (if has export markets)
+                  if (isVerified && markets.length > 0) {
+                    badges.push({ label: t('verified_exporter') });
                   }
                   if (badges.length === 0) return null;
                   return (
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                      {badges.map((badge: any, idx: number) => {
+                      {badges.slice(0, 3).map((badge, idx) => {
                         const style = badgeStyles[idx % badgeStyles.length];
                         return (
                           <div key={idx} className={`inline-flex items-center gap-1.5 ${style.bg} ${style.text} px-3 py-1 rounded-full text-xs font-bold border ${style.border}`}>
                             <CheckCircle2 size={13} />
-                            {badge.label || badge.name || badge}
+                            {badge.label}
                           </div>
                         );
                       })}
