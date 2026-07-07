@@ -51,7 +51,7 @@ export function SupplierProfile() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold text-slate-900">{t('khong_tim_thay_doanh_nghiep')}</h2>
-        <Link to="/suppliers" className="text-primary font-bold underline">Quay lại danh sách</Link>
+        <Link to="/suppliers" className="text-primary font-bold underline">{t('back_to_list', 'Quay lại danh sách')}</Link>
       </div>
     </div>
   );
@@ -92,7 +92,7 @@ export function SupplierProfile() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1280px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-            <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+            <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
             <ChevronRight size={12} className="text-slate-300" />
             <Link to="/suppliers" className="hover:text-primary transition-colors">{t('danh_sach_nha_cung_cap')}</Link>
             <ChevronRight size={12} className="text-slate-300" />
@@ -130,7 +130,7 @@ export function SupplierProfile() {
                   ];
                   const badges: { label: string; icon?: any }[] = supplier.badges?.slice(0, 3) || [];
                   if (badges.length === 0 && isVerified) {
-                    badges.push({ label: 'Nhà cung cấp xác thực' });
+                    badges.push({ label: t('verified_supplier') });
                   }
                   if (badges.length === 0) return null;
                   return (
@@ -157,14 +157,14 @@ export function SupplierProfile() {
                 className="flex items-center justify-center gap-2 bg-[#1a2e4a] text-white font-bold text-xs px-4 py-2 hover:bg-[#243c5e] transition-colors"
               >
                 <FileText size={14} />
-                Gửi yêu cầu báo giá
+                {t('send_rfq')}
               </button>
               <button
                 onClick={handleContact}
                 className="flex items-center justify-center gap-2 bg-white text-[#1a2e4a] font-bold text-xs px-4 py-2 border-2 border-[#1a2e4a] hover:bg-slate-50 transition-colors"
               >
                 <MessageSquare size={14} />
-                Gửi tin nhắn
+                {t('send_message')}
               </button>
             </div>
           </div>
@@ -193,10 +193,10 @@ export function SupplierProfile() {
               <div className="border-t border-slate-200 mb-4" />
               <div className="divide-y divide-slate-100">
                 {[
-                  { label: 'Mã số thuế', value: supplier.taxCode || '0312345678' },
-                  { label: 'Loại hình doanh nghiệp', value: supplier.businessType === 'manufacturer' ? 'Nhà sản xuất' : (supplier.businessType === 'trader' ? 'Thương mại' : (supplier.businessType || 'Nhà sản xuất & Xuất khẩu')) },
-                  { label: 'Năm thành lập', value: supplier.yearEstablished || memberSince },
-                  { label: 'Quy mô nhân sự', value: supplier.employee_count || supplier.employeeCount || '50 - 100 người' },
+                  { label: t('tax_code'), value: supplier.taxCode || '0312345678' },
+                  { label: t('business_type'), value: supplier.businessType === 'manufacturer' ? t('manufacturer') : (supplier.businessType === 'trader' ? t('trader') : (supplier.businessType || t('manufacturer_exporter'))) },
+                  { label: t('year_established'), value: supplier.yearEstablished || memberSince },
+                  { label: t('employee_scale'), value: supplier.employee_count || supplier.employeeCount || t('employees_default') },
                 ].map((row, i) => (
                   <div key={i} className="flex items-center justify-between py-3.5">
                     <span className="text-sm text-slate-500 font-medium">{row.label}</span>
@@ -210,13 +210,13 @@ export function SupplierProfile() {
             <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider">
-                  Các sản phẩm tiêu biểu
+                  {t('featured_products')}
                 </h2>
                 <Link
                   to={`/products?supplierId=${supplier.id}`}
                   className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
                 >
-                  Xem tất cả sản phẩm <ChevronRight size={14} />
+                  {t('view_all_products')} <ChevronRight size={14} />
                 </Link>
               </div>
               <div className="border-t border-slate-200 mb-5" />
@@ -262,7 +262,7 @@ export function SupplierProfile() {
 
             {/* Block: LIÊN HỆ */}
             <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">Liên hệ</h3>
+              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('contact_sidebar')}</h3>
               <div className="border-t border-slate-200 mb-4" />
               <div className="space-y-3.5">
                 <a
@@ -325,7 +325,7 @@ export function SupplierProfile() {
                       <Award size={18} className="text-blue-500 shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-bold text-slate-800 group-hover/cert:text-primary transition-colors">{cert.name}</div>
-                        <div className="text-xs text-slate-400 mt-0.5">{cert.issuedBy || 'Tổ chức chứng nhận'}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{cert.issuedBy || t('org_cert')}</div>
                       </div>
                       <ExternalLink size={13} className="text-slate-200 group-hover/cert:text-primary shrink-0 transition-colors" />
                     </div>

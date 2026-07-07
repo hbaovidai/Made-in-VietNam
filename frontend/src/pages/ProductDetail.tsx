@@ -291,12 +291,12 @@ export function ProductDetail() {
             {/* RFQ Form Card */}
             <div className="bg-white border border-slate-200/80 rounded-xl p-6">
               <h3 className="text-base font-bold text-slate-900 mb-4">
-                Tạo yêu cầu Báo giá
+                {t('create_rfq')}
               </h3>
               <form onSubmit={handleLocalRFQSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Số lượng dự kiến
+                    {t('expected_quantity')}
                   </label>
                   <input
                     type="number"
@@ -309,13 +309,13 @@ export function ProductDetail() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Yêu cầu
+                    {t('requirements')}
                   </label>
                   <textarea
                     rows={4}
                     value={rfqMessage}
                     onChange={(e) => setRfqMessage(e.target.value)}
-                    placeholder="Nhập các yêu cầu cụ thể về dung sai, đóng gói, hoặc thời gian giao hàng..."
+                    placeholder={t('rfq_placeholder')}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-400"
                   />
                 </div>
@@ -325,14 +325,14 @@ export function ProductDetail() {
                     type="submit"
                     className="bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition-colors text-sm flex items-center justify-center gap-2 shadow-sm"
                   >
-                    <Send size={15} /> Gửi yêu cầu báo giá
+                    <Send size={15} /> {t('send_rfq')}
                   </button>
                   <button
                     type="button"
                     onClick={handleContact}
                     className="border border-primary text-primary font-bold py-3 px-4 rounded-lg hover:bg-primary/5 transition-colors text-sm flex items-center justify-center gap-2"
                   >
-                    <MessageSquare size={15} /> Chat với Nhà cung cấp
+                    <MessageSquare size={15} /> {t('chat_with_supplier')}
                   </button>
                 </div>
               </form>
@@ -347,9 +347,9 @@ export function ProductDetail() {
           {/* Tab Headers */}
           <div className="flex border-b border-slate-100 overflow-x-auto bg-slate-50/50">
             {[
-              { id: 'overview', name: 'Mô tả' },
-              { id: 'certs', name: 'Chứng nhận' },
-              { id: 'company', name: 'Thông tin Nhà cung cấp' }
+              { id: 'overview', name: t('tab_description') },
+              { id: 'certs', name: t('tab_certifications') },
+              { id: 'company', name: t('tab_supplier_info') }
             ].map(tab => (
               <button
                 key={tab.id}
