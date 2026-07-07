@@ -168,10 +168,9 @@ export function Header() {
     {
       title: t('marketplace'),
       links: [
-        { icon: <Package size={18} />, label: t('products'), href: "/products" },
-        { icon: <User size={18} />, label: t('suppliers'), href: "/suppliers" },
         { icon: <Menu size={18} />, label: t('all_categories'), href: "/products" },
-        { icon: <ShoppingCart size={18} />, label: t('inquiry_basket', 'Giỏ yêu cầu'), href: "/cart" },
+        { icon: <User size={18} />, label: t('supplier_directory'), href: "/suppliers" },
+        { icon: <FileText size={18} />, label: t('vie_share'), href: "/blog" },
       ]
     },
     {
