@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, ChevronLeft, Award, Globe, Loader2, Menu, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Zap, FlaskConical, Leaf, TreePine, Sofa, Hammer, Package, Layers } from 'lucide-react';
+import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, ChevronLeft, Award, Globe, Loader2, Menu, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Zap, FlaskConical, Leaf, TreePine, Sofa, Hammer, Package, Layers, Send } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { SupplierCard } from '../components/SupplierCard';
@@ -109,45 +109,32 @@ export function SupplierList() {
         canonical="/suppliers"
       />
 
-      <div className="flex min-h-[calc(100vh-64px)] relative">
-        {/* ═══ Sidebar — Collapsed icon bar, expands on hover ═══ */}
-        <aside
-          className={cn(
-            "hidden lg:flex flex-col bg-white border-r border-slate-200 shrink-0 sticky top-0 h-screen z-30 transition-all duration-300 ease-in-out overflow-hidden",
-            sidebarHover ? "w-[260px] shadow-xl" : "w-[72px]"
-          )}
-          onMouseEnter={() => setSidebarHover(true)}
-          onMouseLeave={() => setSidebarHover(false)}
-        >
-          {/* Menu icon at top */}
+      <div className="flex min-h-[calc(100vh-112px)] relative">
+        {/* ═══ Sidebar — Sticky, always visible ═══ */}
+        <aside className="hidden lg:flex flex-col bg-white border-r border-slate-200 shrink-0 self-start sticky top-[112px] h-[calc(100vh-112px)] z-30 w-[260px] overflow-y-auto">
+          {/* Header */}
           <div className="flex items-center h-14 px-5 border-b border-slate-100 shrink-0">
             <Menu size={22} className="text-slate-500 shrink-0" />
-            <span className={cn(
-              "ml-4 text-sm font-bold text-slate-700 whitespace-nowrap transition-opacity duration-200",
-              sidebarHover ? "opacity-100" : "opacity-0"
-            )}>
+            <span className="ml-4 text-sm font-bold text-slate-700 whitespace-nowrap">
               {t('nganh_hang')}
             </span>
           </div>
 
           {/* Category items */}
-          <nav className="flex-1 py-3 overflow-y-auto">
+          <nav className="py-3 overflow-y-auto">
             {/* "All" item */}
             <button
               onClick={() => setSelectedIndustry(null)}
               className={cn(
-                "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-200 relative group/item",
+                "w-full flex items-center gap-3 px-5 py-2 text-left transition-all duration-200 relative group/item",
                 !selectedIndustry
                   ? "text-primary bg-primary/5"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
               )}
             >
               {!selectedIndustry && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
-              <Search size={20} className="shrink-0" />
-              <span className={cn(
-                "text-sm font-semibold whitespace-nowrap transition-opacity duration-200",
-                sidebarHover ? "opacity-100" : "opacity-0"
-              )}>
+              <Search size={18} className="shrink-0" />
+              <span className="text-[13px] font-semibold whitespace-nowrap">
                 Tất cả ngành hàng
               </span>
             </button>
@@ -157,7 +144,7 @@ export function SupplierList() {
                 key={cat.slug || cat.id}
                 onClick={() => setSelectedIndustry(cat.name)}
                 className={cn(
-                  "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-200 relative group/item",
+                  "w-full flex items-center gap-3 px-5 py-2 text-left transition-all duration-200 relative group/item",
                   selectedIndustry === cat.name
                     ? "text-primary bg-primary/5"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
@@ -165,15 +152,23 @@ export function SupplierList() {
               >
                 {selectedIndustry === cat.name && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
                 <span className="shrink-0">{getCategoryIcon(cat.slug)}</span>
-                <span className={cn(
-                  "text-sm font-semibold whitespace-nowrap transition-opacity duration-200 truncate",
-                  sidebarHover ? "opacity-100" : "opacity-0"
-                )}>
+                <span className="text-[13px] font-semibold whitespace-nowrap truncate">
                   {cat.name}
                 </span>
               </button>
             ))}
           </nav>
+
+          {/* RFQ Button — pinned near bottom */}
+          <div className="mt-auto px-4 py-5 border-t border-slate-100">
+            <Link
+              to="/rfq"
+              className="flex items-center justify-center gap-2 w-full bg-[#1a2e4a] text-white text-sm font-bold py-3 rounded-lg hover:bg-[#243b5c] transition-colors shadow-sm"
+            >
+              <Send size={16} />
+              {t('send_rfq')}
+            </Link>
+          </div>
         </aside>
 
         {/* Mobile Sidebar Toggle Button */}

@@ -117,14 +117,14 @@ export function ProductDetail() {
           <span className="text-slate-800 font-semibold truncate max-w-[250px]">{product.name}</span>
         </nav>
 
-        {/* Two-Column Grid: Left (~42% lg:col-span-5), Right (~58% lg:col-span-7) */}
+        {/* Two-Column Grid: Left (50% lg:col-span-6), Right (50% lg:col-span-6) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
           {/* LEFT COLUMN: Gallery & Supplier Card */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-6 space-y-6">
             
             {/* Gallery Card */}
-            <div className="bg-white border border-slate-200/80 rounded-xl p-5">
+            <div className="bg-white border border-slate-300 rounded-xl p-5">
               <div className="aspect-square bg-slate-50 rounded-lg overflow-hidden mb-4 relative group flex items-center justify-center">
                 <img src={images[activeImage]} alt={product.name} className="max-h-full max-w-full object-contain" />
                 <button
@@ -180,7 +180,7 @@ export function ProductDetail() {
           </div>
 
           {/* RIGHT COLUMN: Product Info, Price Tiers, RFQ Form */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-6 space-y-6">
             
             {/* Product Info — no card, sits on background */}
             <div className="mb-6">
@@ -206,7 +206,7 @@ export function ProductDetail() {
             </div>
 
             {/* Price Tiers Card */}
-            <div className="bg-white border border-slate-200/80 rounded-xl p-6">
+            <div className="bg-white border border-slate-300 rounded-xl p-6">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
                 {t('product_moq_pricing')}
               </h3>
@@ -289,7 +289,7 @@ export function ProductDetail() {
             </div>
 
             {/* RFQ Form Card */}
-            <div className="bg-white border border-slate-200/80 rounded-xl p-6">
+            <div className="bg-white border border-slate-300 rounded-xl p-6">
               <h3 className="text-base font-bold text-slate-900 mb-4">
                 {t('create_rfq')}
               </h3>
@@ -343,7 +343,7 @@ export function ProductDetail() {
         </div>
 
         {/* Tabbed Info Section */}
-        <div className="mt-8 bg-white border border-slate-200/80 rounded-xl overflow-hidden">
+        <div className="mt-8 bg-white border border-slate-300 rounded-xl overflow-hidden">
           {/* Tab Headers */}
           <div className="flex border-b border-slate-100 overflow-x-auto bg-slate-50/50">
             {[
@@ -424,48 +424,99 @@ export function ProductDetail() {
               </div>
             )}
 
-            {activeTab === 'company' && supplier && (
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
-                    {supplier.logo ? <img src={supplier.logo} alt="" className="w-full h-full object-cover" /> : <Building2 size={28} className="text-slate-300" />}
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900">{supplier.companyName}</h3>
-                    {supplier.status === SupplierStatus.VERIFIED && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1">
-                        <ShieldCheck size={11} /> {t('status_verified')}
-                      </span>
-                    )}
-                    <p className="text-sm text-slate-500 mt-2 leading-relaxed">{supplier.description || 'Chưa có mô tả.'}</p>
-                  </div>
-                </div>
+            {activeTab === 'company' && supplier && (() => {
+              const memberSinceYear = supplier.yearEstablished || (supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024);
+              const verifiedYears = new Date().getFullYear() - memberSinceYear;
+              const supplierLocation = supplier.streetAddress || supplier.address
+                ? `${supplier.streetAddress || supplier.address}${supplier.city ? `, ${supplier.city}` : ''}${supplier.province ? `, ${supplier.province}` : ''}`
+                : (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
+              const channels: { name: string; url?: string; color?: string }[] = Array.isArray(supplier.salesChannels)
+                ? supplier.salesChannels
+                : [{ name: 'Shopee', color: '#ee4d2d' }, { name: 'Facebook', color: '#1877f2' }, { name: 'Website', color: '#475569' }];
+              const colorMap: Record<string, string> = {
+                shopee: '#ee4d2d', facebook: '#1877f2', tiktok: '#000000',
+                instagram: '#e4405f', website: '#475569', zalo: '#0068ff',
+              };
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-                  {[
-                    { icon: Calendar, label: t('year_established'), value: supplier.yearEstablished || memberSince },
-                    { icon: Users, label: t('employee_scale'), value: supplier.employeeCount || '—' },
-                    { icon: MapPin, label: t('address'), value: `${supplier.city || ''} ${supplier.province || ''}`.trim() || t('vietnam') },
-                    { icon: Globe, label: t('export_markets'), value: supplier.exportMarkets?.join(', ') || t('global') },
-                    { icon: Factory, label: t('business_type_label'), value: supplier.businessType || '—' },
-                    { icon: Award, label: t('certifications_label'), value: supplier.certifications?.map((c: any) => c.name).join(', ') || '—' },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-                      <item.icon size={15} className="text-primary mt-0.5 shrink-0" />
-                      <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.label}</div>
-                        <div className="text-sm font-semibold text-slate-700">{item.value}</div>
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* ── Left Column: Company Details ── */}
+                  <div>
+                    <h3 className="text-lg font-extrabold text-[#1a2e4a] mb-2 leading-snug">
+                      {supplier.companyName}
+                    </h3>
+                    {supplier.status === SupplierStatus.VERIFIED && (
+                      <div className="flex items-center gap-1.5 text-sm text-emerald-600 font-bold mb-5">
+                        <ShieldCheck size={16} className="shrink-0" />
+                        <span>{t('verified_supplier_years')} ({verifiedYears} {t('years_count')})</span>
+                      </div>
+                    )}
+
+                    <div className="divide-y divide-slate-100">
+                      {[
+                        { label: t('tax_code_label'), value: supplier.taxCode || '—' },
+                        { label: t('office_address'), value: supplierLocation },
+                        { label: t('factory_address'), value: supplier.factoryAddress || supplierLocation },
+                        { label: t('contact_email'), value: supplier.companyEmail || supplier.user?.email || '—', isEmail: true },
+                        { label: t('hotline'), value: supplier.companyPhone || '—' },
+                      ].map((row, i) => (
+                        <div key={i} className="flex flex-col sm:flex-row py-3.5 gap-1 sm:gap-0">
+                          <span className="text-sm text-slate-400 font-medium sm:w-[140px] shrink-0">{row.label}</span>
+                          {row.isEmail ? (
+                            <a href={`mailto:${row.value}`} className="text-sm text-primary font-bold hover:underline break-all">{row.value}</a>
+                          ) : (
+                            <span className="text-sm text-slate-900 font-bold">{row.value}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── Right Column: Sales Channels + Short Intro ── */}
+                  <div className="space-y-6">
+                    {/* Sales & Communication Channels */}
+                    <div>
+                      <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-3">
+                        {t('sales_channels_title')}
+                      </h4>
+                      <div className="flex flex-wrap gap-2.5">
+                        {channels.map((ch) => {
+                          const bg = ch.color || colorMap[ch.name.toLowerCase()] || '#475569';
+                          return (
+                            <a
+                              key={ch.name}
+                              href={ch.url || supplier.website || '#'}
+                              target={ch.url || supplier.website ? '_blank' : undefined}
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-white text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
+                              style={{ backgroundColor: bg }}
+                            >
+                              <ExternalLink size={13} />
+                              {ch.name}
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
-                  ))}
+
+                    {/* Short Introduction */}
+                    <div className="bg-slate-50 border-l-4 border-primary rounded-r-lg p-5">
+                      <h4 className="text-sm font-extrabold text-slate-800 italic mb-2">
+                        {t('short_intro')}
+                      </h4>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {supplier.description || t('no_description')}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         </div>
 
         {/* Related Products Section */}
-        <div className="mt-8 bg-white border border-slate-200/80 rounded-xl p-6">
+        <div className="mt-8 bg-white border border-slate-300 rounded-xl p-6">
           <h2 className="text-base font-bold text-slate-900 mb-4">{t('product_similar_items')}</h2>
           {relatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
