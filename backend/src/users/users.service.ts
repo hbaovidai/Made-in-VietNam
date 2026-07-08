@@ -16,16 +16,9 @@ export class UsersService {
         where,
         orderBy: { createdAt: 'desc' },
         select: {
-          id: true,
-          email: true,
-          fullName: true,
-          role: true,
-          phone: true,
-          status: true,
-          createdAt: true,
-          supplier: {
-            select: { id: true, companyName: true, is_verified: true },
-          },
+          id: true, email: true, fullName: true, role: true, 
+          phone: true, status: true, createdAt: true,
+          supplier: { select: { id: true, companyName: true, status: true, is_verified: true } }
         },
         skip: (+page - 1) * +limit,
         take: +limit,

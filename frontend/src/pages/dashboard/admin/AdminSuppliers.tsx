@@ -30,6 +30,7 @@ function Row( {
   handleStatusChange, handleDelete,
 } ) {
   const { t } = useTranslation();
+
   return (
     <tr key={supp.id}>
       <td><input type="checkbox" checked={selectedIds.includes(supp.id)} onChange={() => toggleOne(supp.id)} /></td>
@@ -38,7 +39,7 @@ function Row( {
 
           <div>
             <span className="wp-row-title"
-              onClick={() => navigate(`#`)}
+              onClick={() => navigate(`#`)} // TODO: we need to do something about this
               // onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
             >
               {supp.companyName}

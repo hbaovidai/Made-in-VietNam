@@ -6,32 +6,38 @@ import {
   IsString,
   MinLength,
   IsIn,
+  IsNumber,
+  IsArray,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+import {
+  Role, SupplierAccountHolderRole, SupplierStatus, SupplierType, UserStatus,
+  BusinessType
+} from '@prisma/client';
+import { DefaultValuePipe } from '@nestjs/common';
 
-export class RegisterDto {
+export class UserRegisterDto {
   @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6, { message: 'Mật khẩu tối thiểu 6 ký tự' })
-  password: string;
+  password?: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Tên không được để trống' })
   fullName: string;
 
-  @IsIn(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' })
+  @IsIn([Role.BUYER, Role.SUPPLIER], { message: 'Role phải là BUYER hoặc SUPPLIER' })
   role: Role;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   phone?: string;
 
-  // Only for SUPPLIER
-  @IsString()
   @IsOptional()
-  companyName?: string;
+  @IsEnum(UserStatus)
+  status?: UserStatus;
 }
 
 export class LoginDto {
@@ -82,4 +88,31 @@ export class GoogleLoginDto {
   @IsString()
   @IsOptional()
   picture?: string;
+}
+
+// ---- supplier auth dto ---- //
+export class SupplierRegisterDto {
+  // legal info
+  @IsString() companyName: string;
+  @IsString() taxCode: string;
+  @IsString() legalRepName: string;
+  @IsString() legalRepGovId: string;
+  @IsString() province: string;
+  @IsString() ward: string;
+  @IsString() streetAddress: string;
+  @IsEnum(BusinessType) businessType: BusinessType;
+
+  @IsString({each: true}) legalRepGovIdUrl: string[];
+  @IsString({each: true}) businessLicenseUrl: string[];
+
+  // contact info
+  @IsString() accountHolderName: string;
+  @IsString() contactPhone: string;
+  @IsString() contactEmail: string;
+  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
+  @IsString({ each: true }) @IsOptional() authorizationLetterUrl: string[];
+
+  // other info
+  @IsEnum(SupplierType) supplierType: SupplierType;
+  @IsString({each: true}) @IsOptional() extraDocsUrl: string[];
 }

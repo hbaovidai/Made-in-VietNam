@@ -35,43 +35,66 @@ model User {
 }
 
 model Supplier {
-  id                   String                      @id @default(uuid())
-  userId               String                      @unique @map("user_id")
+  id              String   @unique @id @default(uuid())
+  slug            String   @unique
+  userId          String?   @unique @map("user_id")
+
+  // contact info
+  contactEmail String? @map("contact_email")
+  contactPhone String? @map("contact_phone")
+  accountHolderName String? @map("account_holder_name")
+  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+  authorizationLetterUrl String[] @map("authorization_letter_url")
+
+  // legal info
   companyName          String                      @map("company_name")
-  slug                 String                      @unique
+  taxCode              String?                     @map("tax_code")
+  businessType         String?                     @map("business_type")
+  taxCode             String?  @map("tax_code") @unique
+  legalRepName String? @map("legal_rep_name")
+  legalRepGovId String? @map("legal_rep_gov_id")
+
+  province String?
+  ward String?
+  streetAddress             String? @map("address")
+  businessLicenseUrl   String[]                     @map("business_license_url")
+  legalRepGovIdUrl String[] @map("legal_rep_gov_id_url")
+
+  // pics
   logo                 String?
   banner               String?
+
+  // extra info
   description          String?
-  businessType         String?                     @map("business_type")
-  yearEstablished      Int?                        @map("year_established")
   employee_count       String?
-  streetAddress        String?                     @map("address")
-  city                 String?
-  province             String?
+  yearEstablished      Int?                        @map("year_established")
   website              String?
-  taxCode              String?                     @map("tax_code")
-  companyEmail         String?                     @map("company_email")
-  companyPhone         String?                     @map("company_phone")
-  legal_representative String?
-  businessLicenseUrl   String?                     @map("business_license_url")
-  identity_card_url    String?
   salesChannels        Json?                       @map("sales_channels")
-  is_verified          Boolean?                    @default(false)
   createdAt            DateTime                    @default(now()) @map("created_at")
   updatedAt            DateTime                    @updatedAt @map("updated_at")
-  verification_status  SupplierVerificationStatus? @default(UNVERIFIED)
-  batches              Batch[]
-  certifications       Certification[]
-  orders               Order[]
-  products             Product[]
-  quotes               Quote[]
-  industries           SupplierIndustry[]
-  markets              SupplierMarket[]
-  user                 User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status               SupplierStatus              @default(UNVERIFIED)
+  supplierType     SupplierType?  @map("supplier_type")
 
+  // to remove
+  is_verified          Boolean?                    @default(false)
+  verification_status  SupplierVerificationStatus? @default(UNVERIFIED)
+
+  // Relations
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]
+  certifications Certification[]
+  industries     SupplierIndustry[]
+  markets        SupplierMarket[]
+  batches        Batch[]
+  quotes         Quote[]
+  orders         Order[]
+
+
+  @@index([id])
   @@index([companyName])
   @@index([updatedAt])
   @@index([verification_status])
+  @@index([taxCode])
   @@map("suppliers")
 }
 
@@ -617,7 +640,31 @@ enum SupplierApplicationStatus {
   REJECTED
 }
 
-enum SupplierVerificationStatus {
+enum SupplierStatus {
   VERIFIED
-  UNVERIFIED
+  SUSPENDED
+  APPLICATION_REJECTED
+  APPLICATION_PENDING
 }
+
+enum SupplierAccountHolderRole {
+  OWNER
+  MANAGER
+  LEGAL_REP
+  EMPLOYEE
+}
+
+enum SupplierType {
+  DISTRIBUTOR
+  MANUFACTURER
+  EXPORTER
+  DIGITAL_GOODS
+  MANU_EXPORT
+}
+
+enum BusinessType {
+  PRIVATE
+  LIMITED_LIABILITY
+  JOINT_STOCK
+}
+

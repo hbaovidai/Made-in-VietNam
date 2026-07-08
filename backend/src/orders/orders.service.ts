@@ -157,7 +157,7 @@ export class OrdersService {
             id: true,
             companyName: true,
             logo: true,
-            companyPhone: true,
+            contactPhone: true,
           },
         },
         buyer: {

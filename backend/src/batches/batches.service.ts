@@ -126,7 +126,7 @@ export class BatchesService {
         batch: {
           include: {
             product: true,
-            supplier: { select: { companyName: true, is_verified: true } },
+            supplier: { select: { companyName: true, is_verified: true, status: true, verification_status: true } },
           },
         },
       },

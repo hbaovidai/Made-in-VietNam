@@ -9,11 +9,14 @@ import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  RegisterDto,
+  UserRegisterDto,
   LoginDto,
   UpdateProfileDto,
   ChangePasswordDto,
+  SupplierRegisterDto,
 } from './dto/auth.dto';
+import { Role } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +44,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async register(dto: RegisterDto) {
+  async register(dto: UserRegisterDto) {
     // Check if email already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -52,7 +55,9 @@ export class AuthService {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    let passwordHash: string =
+      (dto.password)? await bcrypt.hash(dto.password, 10) :
+                      await bcrypt.hash(uuidv4(), 10) ;
 
     // Create user
     const user = await this.prisma.user.create({
@@ -60,8 +65,9 @@ export class AuthService {
         email: dto.email,
         passwordHash,
         fullName: dto.fullName,
-        role: dto.role,
+        role: Role.BUYER,
         phone: dto.phone,
+        status: dto.status,
       },
       select: {
         id: true,
@@ -73,23 +79,6 @@ export class AuthService {
       },
     });
 
-    let supplierProfile = null;
-    // If supplier, create supplier profile
-    if (dto.role === 'SUPPLIER' && dto.companyName) {
-      const slug = dto.companyName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      supplierProfile = await this.prisma.supplier.create({
-        data: {
-          userId: user.id,
-          companyName: dto.companyName,
-          slug: `${slug}-${Date.now()}`,
-        },
-      });
-    }
-
     // Tạo JWT token
     const token = this.generateToken(user);
 
@@ -97,10 +86,65 @@ export class AuthService {
       message: 'Đăng ký thành công',
       user: {
         ...user,
-        supplier: supplierProfile,
       },
       token,
     };
+  }
+  
+  async supplierRegister(dto: SupplierRegisterDto) {
+    // TODO: remove before push
+    console.log(dto);
+    return {
+      success: true,
+      message: 'for testing purposes, this is a success, check the logs',
+    };
+    const userDto = new UserRegisterDto();
+    userDto.email = dto.contactEmail;
+    userDto.phone = dto.contactPhone;
+    userDto.fullName = dto.companyName;
+    userDto.role = Role.SUPPLIER;
+
+    try {
+      const { user } = await this.register(userDto);
+
+      // TODO: prevent duplicate suppliers
+      const existingCompany = await this.prisma.supplier.findUnique({
+        where: {
+          taxCode: dto.taxCode,
+        },
+      });
+
+
+      if ( existingCompany ) {
+        return {
+          message: 'Doanh nghiệp đã tồn tại.',
+          success: false
+        };
+      }
+
+      const slug = dto.companyName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+      // maybe do some logging later, idk bro
+      const supplierProfile = await this.prisma.supplier.create({
+        data: {
+          userId: user.id,
+          slug: `${slug}-${Date.now()}`,
+          ...dto
+        },
+      });
+
+      return {
+        message: 'Đã tạo hồ sơ nhà cung cấp',
+        success: true,
+      };
+
+    } catch (error) {
+      console.log(error.message);
+      return { message: error.message, success: false, }
+    }
   }
 
   async login(dto: LoginDto) {
@@ -113,6 +157,7 @@ export class AuthService {
             id: true,
             companyName: true,
             slug: true,
+            status: true
             is_verified: true,
             verification_status: true,
           },
@@ -165,6 +210,7 @@ export class AuthService {
             slug: true,
             is_verified: true,
             verification_status: true,
+            status: true
           },
         },
       },
@@ -192,6 +238,7 @@ export class AuthService {
               slug: true,
               is_verified: true,
               verification_status: true,
+              status: true,
             },
           },
         },
@@ -226,6 +273,7 @@ export class AuthService {
             id: true,
             companyName: true,
             slug: true,
+            status: true,
             is_verified: true,
             verification_status: true,
             logo: true,

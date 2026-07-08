@@ -88,10 +88,12 @@ export enum SupplierAccountHolderRole {
 };
 
 export enum SupplierType {
-  NORMAL = "NORMAL",
+  NORMAL = "NORMAL", // TODO: migrate everything that uses this to use DISTRIBUTOR
+  DISTRIBUTOR = 'DISTRIBUTOR',
   MANUFACTURER = "MANUFACTURER",
   EXPORTER = "EXPORTER",
-  MANU_EXPORT = 'MANU_EXPORT'
+  MANU_EXPORT = 'MANU_EXPORT',
+  DIGITAL_GOODS = 'DIGITAL_GOODS',
 };
 
 export enum BusinessType {
@@ -99,3 +101,15 @@ export enum BusinessType {
   LIMITED_LIABILITY = 'LIMITED_LIABILITY',
   JOINT_STOCK = 'JOINT_STOCK'
 };
+
+export enum Market {
+  US = 'US', EU = 'EU', JAP = 'JAP', SKOR = 'SKOR',
+  CHINA = 'CHINA', ASEAN = 'ASEAN', AUS = 'AUS', MID_EAST = 'MID_EAST',
+  AFRICA = 'AFRICA', OTHER = 'OTHER',
+};
+
+export enum Incoterm {
+  EXW = 'EXW', FOB = 'FOB', CIF = 'CIF',
+  CFR = 'CFR', DDR = 'DDR', DAP = 'DAP',
+};
+
