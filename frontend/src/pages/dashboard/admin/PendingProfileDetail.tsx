@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Building2, MapPin, User, Shield, FileText, Download, Eye, X } from 'lucide-react';
 
@@ -159,6 +160,7 @@ interface Props {
 }
 
 export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Props) {
+  const { t } = useTranslation();
   const profile = mockProfileDetails[profileId];
   const [adminNote, setAdminNote] = useState('');
   const [toast, setToast] = useState('');
@@ -171,7 +173,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
     return (
       <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>
         <p>Không tìm thấy hồ sơ với ID: {profileId}</p>
-        <button onClick={onBack} style={s.btn('#2271b1', '#fff')}>← Quay lại danh sách</button>
+        <button onClick={onBack} style={s.btn('#2271b1', '#fff')}>{t('quay_lai_danh_sach')}</button>
       </div>
     );
   }
@@ -210,7 +212,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
         <span className="wp-breadcrumb-sep">›</span>
         <Link to="/dashboard/admin/pending-profiles">Hồ sơ cần duyệt</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">Chi tiết hồ sơ</span>
+        <span className="wp-breadcrumb-current">{t('chi_tiet_ho_so')}</span>
       </div>
 
       {/* Header */}
@@ -219,7 +221,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
           <ArrowLeft size={20} />
         </button>
         <div style={{ flex: 1 }}>
-          <h1 className="wp-page-title" style={{ margin: 0 }}>Chi tiết hồ sơ</h1>
+          <h1 className="wp-page-title" style={{ margin: 0 }}>{t('chi_tiet_ho_so')}</h1>
         </div>
       </div>
 
@@ -244,7 +246,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
         <div>
           {/* 1. Thông tin doanh nghiệp */}
           <div style={s.card}>
-            <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> Thông tin doanh nghiệp</div>
+            <div style={s.cardHead}><Building2 size={16} color="#2271b1" /> {t('thong_tin_doanh_nghiep')}</div>
             <div style={s.cardBody}>
               <Field label="Tên doanh nghiệp" value={profile.companyName} />
               <Field label="Mã số thuế" value={profile.taxCode} />
@@ -255,7 +257,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
 
           {/* 2. Địa chỉ trụ sở */}
           <div style={s.card}>
-            <div style={s.cardHead}><MapPin size={16} color="#2271b1" /> Địa chỉ trụ sở chính</div>
+            <div style={s.cardHead}><MapPin size={16} color="#2271b1" /> {t('dia_chi_tru_so_chinh')}</div>
             <div style={s.cardBody}>
               <Field label="Tỉnh/Thành phố" value={profile.province} />
               <Field label="Quận/Huyện" value={profile.district} />
@@ -266,7 +268,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
 
           {/* 3. Người đại diện pháp lý */}
           <div style={s.card}>
-            <div style={s.cardHead}><User size={16} color="#2271b1" /> Người đại diện pháp lý</div>
+            <div style={s.cardHead}><User size={16} color="#2271b1" /> {t('nguoi_dai_dien_phap_ly')}</div>
             <div style={s.cardBody}>
               <Field label="Họ và tên" value={profile.legalRepName} />
               <Field label="Số điện thoại" value={profile.legalRepPhone} last />
@@ -275,7 +277,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
 
           {/* 4. Người kiểm soát tài khoản */}
           <div style={s.card}>
-            <div style={s.cardHead}><Shield size={16} color="#2271b1" /> Người kiểm soát tài khoản</div>
+            <div style={s.cardHead}><Shield size={16} color="#2271b1" /> {t('nguoi_kiem_soat_tai_khoan')}</div>
             <div style={s.cardBody}>
               <Field label="Họ và tên" value={profile.accountHolderName} />
               <Field label="Số điện thoại" value={profile.accountHolderPhone} />
@@ -287,7 +289,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
 
           {/* 5. Hồ sơ đính kèm */}
           <div style={s.card}>
-            <div style={s.cardHead}><FileText size={16} color="#2271b1" /> Hồ sơ đính kèm</div>
+            <div style={s.cardHead}><FileText size={16} color="#2271b1" /> {t('ho_so_dinh_kem')}</div>
             <div style={s.cardBody}>
               {profile.documents.map((doc, i) => (
                 <div key={i} style={s.fileCard}>
@@ -319,7 +321,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
         <div>
           {/* Review Summary */}
           <div style={s.card}>
-            <div style={s.cardHead}>Tổng quan xét duyệt</div>
+            <div style={s.cardHead}>{t('tong_quan_xet_duyet')}</div>
             <div style={s.cardBody}>
               <Field label="Trạng thái" value={st.label} />
               <Field label="Ngày gửi" value={new Date(profile.submittedAt).toLocaleDateString('vi-VN') + ' ' + new Date(profile.submittedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} />
@@ -330,7 +332,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
 
           {/* Admin Review */}
           <div style={s.card}>
-            <div style={s.cardHead}>Ghi chú nội bộ</div>
+            <div style={s.cardHead}>{t('ghi_chu_noi_bo')}</div>
             <div style={s.cardBody}>
               <textarea
                 placeholder="Nhập ghi chú nội bộ cho hồ sơ này..."
@@ -349,7 +351,7 @@ export function PendingProfileDetail({ profileId, onBack, onStatusChange }: Prop
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
           <button className="wp-btn wp-btn-primary" onClick={() => setModal('approve')}>Duyệt</button>
           <button className="wp-btn wp-btn-danger" onClick={() => setModal('reject')}>Từ chối</button>
-          <button className="wp-btn" onClick={() => setModal('info')}>Bổ sung</button>
+          <button className="wp-btn" onClick={() => setModal('info')}>{t('bo_sung')}</button>
         </div>
       )}
 

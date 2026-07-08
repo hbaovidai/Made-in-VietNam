@@ -61,7 +61,7 @@ let CategoriesService = class CategoriesService {
                     take: 20,
                     include: {
                         supplier: {
-                            select: { companyName: true, slug: true, isVerified: true },
+                            select: { companyName: true, slug: true, is_verified: true },
                         },
                     },
                 },

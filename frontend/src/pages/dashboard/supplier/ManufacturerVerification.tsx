@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Shield, Loader2, Upload, FileText, X, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -67,6 +68,7 @@ interface FormState {
 }
 
 export function ManufacturerVerification() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addToast } = useToast();
@@ -299,7 +301,7 @@ export function ManufacturerVerification() {
     return (
       <div className="flex flex-col items-center justify-center py-20 min-h-[50vh]">
         <Loader2 className="animate-spin text-primary" size={40} />
-        <p className="text-slate-500 text-sm mt-3 font-medium">Đang tải dữ liệu doanh nghiệp...</p>
+        <p className="text-slate-500 text-sm mt-3 font-medium">{t('dang_tai_du_lieu_doanh_nghiep')}</p>
       </div>
     );
   }
@@ -310,7 +312,7 @@ export function ManufacturerVerification() {
         <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-100">
           <AlertCircle size={32} />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Chưa tìm thấy Hồ sơ Nhà cung cấp</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-2">{t('chua_tim_thay_ho_so_nha_cung_cap')}</h2>
         <p className="text-slate-500 text-sm max-w-md mx-auto mb-6">
           Bạn chưa khởi tạo hồ sơ doanh nghiệp. Vui lòng hoàn tất đăng ký thông tin nhà cung cấp trước khi yêu cầu xác minh Nhà sản xuất.
         </p>
@@ -342,7 +344,7 @@ export function ManufacturerVerification() {
         <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
           <Shield className="text-primary fill-primary/10" size={24} /> Apply for Verified Manufacturer
         </h1>
-        <p className="text-sm text-slate-500 mt-1">Cung cấp năng lực sản xuất của doanh nghiệp để nâng cấp huy hiệu Verified Manufacturer.</p>
+        <p className="text-sm text-slate-500 mt-1">{t('cung_cap_nang_luc_san_xuat_cua_doanh_ngh')}</p>
       </div>
 
 
@@ -351,7 +353,7 @@ export function ManufacturerVerification() {
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8 flex items-start gap-3">
           <AlertCircle className="text-amber-500 shrink-0 mt-0.5" size={20} />
           <div>
-            <h4 className="text-sm font-bold text-amber-800">Yêu cầu đang chờ phê duyệt</h4>
+            <h4 className="text-sm font-bold text-amber-800">{t('yeu_cau_dang_cho_phe_duyet')}</h4>
             <p className="text-xs text-amber-700 mt-1 leading-relaxed">
               Yêu cầu Verified Manufacturer của bạn đang chờ admin duyệt. Vui lòng chờ kết quả từ bộ phận kiểm duyệt.
             </p>
@@ -368,7 +370,7 @@ export function ManufacturerVerification() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Tên doanh nghiệp *</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('ten_doanh_nghiep_1')}</label>
               <input
                 type="text"
                 placeholder="Tên doanh nghiệp"
@@ -388,7 +390,7 @@ export function ManufacturerVerification() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Loại hình tổ chức</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('loai_hinh_to_chuc')}</label>
               <input
                 type="text"
                 placeholder="Ví dụ: Công ty TNHH, Cổ phần..."
@@ -424,7 +426,7 @@ export function ManufacturerVerification() {
 
           {/* Production Form */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Hình thức sản xuất *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('hinh_thuc_san_xuat')}</label>
             <input
               type="text"
               placeholder="Ví dụ: Sở hữu nhà xưởng, Thuê nhà xưởng, Hợp tác sản xuất..."
@@ -437,14 +439,14 @@ export function ManufacturerVerification() {
 
           {/* Factory Address */}
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Địa chỉ nhà xưởng *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('dia_chi_nha_xuong')}</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <select
                 value={form.province}
                 onChange={e => setForm(prev => ({ ...prev, province: e.target.value }))}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
-                <option value="">Chọn Tỉnh/Thành phố</option>
+                <option value="">{t('chon_tinhthanh_pho')}</option>
                 {VIETNAM_PROVINCES.map(p => (
                   <option key={p} value={p}>{p}</option>
                 ))}
@@ -474,20 +476,20 @@ export function ManufacturerVerification() {
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mt-2"
             />
             {(errors.province || errors.district || errors.ward || errors.streetAddress) && (
-              <p className="text-xs text-red-500 mt-1">Vui lòng hoàn thành đầy đủ thông tin địa chỉ nhà xưởng.</p>
+              <p className="text-xs text-red-500 mt-1">{t('vui_long_hoan_thanh_day_du_thong_tin_dia')}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Scale */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Quy mô nhà xưởng *</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('quy_mo_nha_xuong')}</label>
               <select
                 value={form.factoryScale}
                 onChange={e => setForm(prev => ({ ...prev, factoryScale: e.target.value }))}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Chọn quy mô...</option>
+                <option value="">{t('chon_quy_mo')}</option>
                 {FACTORY_SCALES.map(s => (
                   <option key={s.value} value={s.value}>{s.label}</option>
                 ))}
@@ -497,13 +499,13 @@ export function ManufacturerVerification() {
 
             {/* Workers count */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Số lượng nhân sự sản xuất *</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('so_luong_nhan_su_san_xuat')}</label>
               <select
                 value={form.workerCount}
                 onChange={e => setForm(prev => ({ ...prev, workerCount: e.target.value }))}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Chọn số lượng...</option>
+                <option value="">{t('chon_so_luong')}</option>
                 {WORKER_COUNTS.map(w => (
                   <option key={w.value} value={w.value}>{w.label}</option>
                 ))}
@@ -514,7 +516,7 @@ export function ManufacturerVerification() {
 
           {/* Monthly Capacity */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Năng lực sản xuất mỗi tháng *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('nang_luc_san_xuat_moi_thang')}</label>
             <input
               type="text"
               placeholder="Ví dụ: 100.000 sản phẩm / tháng"
@@ -527,7 +529,7 @@ export function ManufacturerVerification() {
 
           {/* Main Industries Multi-select */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Ngành sản xuất chính *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('nganh_san_xuat_chinh')}</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl max-h-48 overflow-y-auto">
               {INDUSTRIES_LIST.map(ind => (
                 <label key={ind} className="flex items-center gap-2 cursor-pointer text-xs text-slate-700 py-1 hover:text-slate-900">
@@ -546,7 +548,7 @@ export function ManufacturerVerification() {
 
           {/* Main Products */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Sản phẩm chính đang sản xuất *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('san_pham_chinh_dang_san_xuat')}</label>
             <textarea
               placeholder="Liệt kê các dòng sản phẩm chính của nhà xưởng..."
               rows={3}
@@ -566,7 +568,7 @@ export function ManufacturerVerification() {
 
           {/* Google Drive Link */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Link Google Drive chứa hồ sơ sản xuất *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('link_google_drive_chua_ho_so_san_xuat')}</label>
             <input
               type="text"
               placeholder="https://drive.google.com/..."
@@ -579,7 +581,7 @@ export function ManufacturerVerification() {
 
           {/* Multiple factory images */}
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Ảnh nhà xưởng / máy móc / dây chuyền (Tối thiểu 1 ảnh) *</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('anh_nha_xuong_may_moc_day_chuyen_toi_thi')}</label>
             <div className="flex items-center gap-3">
               <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-primary transition-all">
                 <Upload size={20} className="text-slate-400" />
@@ -616,13 +618,13 @@ export function ManufacturerVerification() {
               </div>
             </div>
             {errors.files && <p className="text-xs text-red-500">{errors.files}</p>}
-            <p className="text-[10px] text-slate-400">Định dạng hỗ trợ: PNG, JPG, PDF. Tối đa 10MB/file.</p>
+            <p className="text-[10px] text-slate-400">{t('dinh_dang_ho_tro_png_jpg_pdf_toi_da_10mb')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Safety Certificate */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Giấy chứng nhận nhà xưởng / an toàn / môi trường (Không bắt buộc)</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('giay_chung_nhan_nha_xuong_an_toan_moi_tr')}</label>
               <div className="relative">
                 <input
                   type="file"
@@ -636,7 +638,7 @@ export function ManufacturerVerification() {
 
             {/* ISO Certificate */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Chứng chỉ sản xuất ISO / HACCP / GMP / FDA / CO-CQ (Không bắt buộc)</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('chung_chi_san_xuat_iso_haccp_gmp_fda_coc')}</label>
               <div className="relative">
                 <input
                   type="file"
@@ -651,7 +653,7 @@ export function ManufacturerVerification() {
 
           {/* Admin notes */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Ghi chú cho admin (Không bắt buộc)</label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('ghi_chu_cho_admin_khong_bat_buoc')}</label>
             <textarea
               placeholder="Thêm tin nhắn hoặc thông tin gửi tới Admin duyệt hồ sơ..."
               rows={3}

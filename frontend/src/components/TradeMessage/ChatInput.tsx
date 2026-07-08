@@ -41,10 +41,10 @@ export function ChatInput({ onSendMessage, onSendFile }: ChatInputProps) {
   };
 
   const attachItems = [
-    { name: 'Buyer_Specs_Sheet_V4.pdf', size: '1.8 MB', label: 'Product Specification', color: '#ef4444' },
-    { name: 'Technical_Drawing_CAD.pdf', size: '4.2 MB', label: 'Blueprints / CAD', color: '#3b82f6' },
-    { name: 'Material_Inspection_Report.pdf', size: '950 KB', label: 'Quality Cert / Test Report', color: '#10b981' },
-    { name: 'Reference_Product_Photo.png', size: '2.1 MB', label: 'Product Image', color: '#8b5cf6' },
+    { name: 'Buyer_Specs_Sheet_V4.pdf', size: '1.8 MB', label: 'Thông số sản phẩm', color: '#ef4444' },
+    { name: 'Technical_Drawing_CAD.pdf', size: '4.2 MB', label: 'Bản vẽ thiết kế', color: '#3b82f6' },
+    { name: 'Material_Inspection_Report.pdf', size: '950 KB', label: 'Chứng nhận chất lượng', color: '#10b981' },
+    { name: 'Reference_Product_Photo.png', size: '2.1 MB', label: 'Hình ảnh sản phẩm', color: '#8b5cf6' },
   ];
 
   return (
@@ -71,7 +71,7 @@ export function ChatInput({ onSendMessage, onSendFile }: ChatInputProps) {
             boxShadow: '0 4px 12px rgba(0,0,0,.1)', padding: 6, zIndex: 50,
           }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', padding: '4px 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Attachments
+              Tệp đính kèm
             </div>
             {attachItems.map(item => (
               <button
@@ -98,7 +98,7 @@ export function ChatInput({ onSendMessage, onSendFile }: ChatInputProps) {
       {/* Input */}
       <input
         type="text"
-        placeholder="Type a message..."
+        placeholder="Nhập tin nhắn..."
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}

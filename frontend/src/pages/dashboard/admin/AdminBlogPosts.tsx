@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Eye, Edit, Trash2, EyeOff, X, Image as ImageIcon } from 'lucide-react';
 import { blogDb, BlogPost, BlogCategory } from '../../../utils/blogDb';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminBlogPosts() {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   
@@ -212,9 +214,9 @@ export function AdminBlogPosts() {
             style={{ height: 30, fontSize: 12, padding: '0 8px', border: '1px solid #8c8f94', borderRadius: 3, outline: 'none' }}
           >
             <option value="ALL">Tất cả trạng thái</option>
-            <option value="PUBLISHED">Công khai (Published)</option>
-            <option value="DRAFT">Nháp (Draft)</option>
-            <option value="HIDDEN">Bị ẩn (Hidden)</option>
+            <option value="PUBLISHED">{t('cong_khai_published')}</option>
+            <option value="DRAFT">{t('nhap_draft')}</option>
+            <option value="HIDDEN">{t('bi_an_hidden')}</option>
           </select>
         </div>
 
@@ -240,11 +242,11 @@ export function AdminBlogPosts() {
           <thead>
             <tr>
               <th style={{ width: 80 }}>Thumbnail</th>
-              <th>Tiêu đề bài viết</th>
+              <th>{t('tieu_de_bai_viet')}</th>
               <th style={{ width: 140 }}>Danh mục</th>
-              <th style={{ width: 100 }}>Tác giả</th>
-              <th style={{ width: 110 }}>Ngày đăng</th>
-              <th style={{ width: 70, textAlign: 'center' }}>Thứ tự</th>
+              <th style={{ width: 100 }}>{t('tac_gia')}</th>
+              <th style={{ width: 110 }}>{t('ngay_dang')}</th>
+              <th style={{ width: 70, textAlign: 'center' }}>{t('thu_tu')}</th>
               <th style={{ width: 100, textAlign: 'center' }}>Trạng thái</th>
             </tr>
           </thead>
@@ -299,7 +301,7 @@ export function AdminBlogPosts() {
                             onClick={() => setConfirmDelete({ isOpen: true, post })}
                             className="delete"
                           >
-                            Xoá
+                            {t('xoa')}
                           </button>
                         </div>
                       </div>
@@ -357,7 +359,7 @@ export function AdminBlogPosts() {
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Tiêu đề Tiếng Việt *</label>
+                  <label className="wp-form-label">{t('tieu_de_tieng_viet_1')}</label>
                   <input
                     required
                     type="text"
@@ -371,7 +373,7 @@ export function AdminBlogPosts() {
                   />
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Tiêu đề English *</label>
+                  <label className="wp-form-label">{t('tieu_de_english_1')}</label>
                   <input
                     required
                     type="text"
@@ -384,7 +386,7 @@ export function AdminBlogPosts() {
               </div>
 
               <div className="wp-form-row" style={{ margin: 0 }}>
-                <label className="wp-form-label">Đường dẫn (Slug)</label>
+                <label className="wp-form-label">{t('duong_dan_slug')}</label>
                 <input
                   required
                   type="text"
@@ -397,7 +399,7 @@ export function AdminBlogPosts() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Mô tả ngắn Tiếng Việt</label>
+                  <label className="wp-form-label">{t('mo_ta_ngan_tieng_viet')}</label>
                   <textarea
                     rows={2}
                     className="wp-form-input"
@@ -408,7 +410,7 @@ export function AdminBlogPosts() {
                   />
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Mô tả ngắn English</label>
+                  <label className="wp-form-label">{t('mo_ta_ngan_english')}</label>
                   <textarea
                     rows={2}
                     className="wp-form-input"
@@ -422,7 +424,7 @@ export function AdminBlogPosts() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Nội dung Tiếng Việt *</label>
+                  <label className="wp-form-label">{t('noi_dung_tieng_viet')}</label>
                   <textarea
                     required
                     rows={6}
@@ -434,7 +436,7 @@ export function AdminBlogPosts() {
                   />
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Nội dung English *</label>
+                  <label className="wp-form-label">{t('noi_dung_english')}</label>
                   <textarea
                     required
                     rows={6}
@@ -449,7 +451,7 @@ export function AdminBlogPosts() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, alignItems: 'end' }}>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Đường dẫn ảnh Thumbnail (URL)</label>
+                  <label className="wp-form-label">{t('duong_dan_anh_thumbnail_url')}</label>
                   <input
                     type="url"
                     className="wp-form-input"
@@ -462,7 +464,7 @@ export function AdminBlogPosts() {
                   {thumbnail ? (
                     <img src={thumbnail} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <span style={{ fontSize: 10, color: '#8c8f94' }}>Không có ảnh</span>
+                    <span style={{ fontSize: 10, color: '#8c8f94' }}>{t('khong_co_anh')}</span>
                   )}
                 </div>
               </div>
@@ -481,7 +483,7 @@ export function AdminBlogPosts() {
                   </select>
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Tác giả</label>
+                  <label className="wp-form-label">{t('tac_gia')}</label>
                   <input
                     type="text"
                     className="wp-form-input"
@@ -490,7 +492,7 @@ export function AdminBlogPosts() {
                   />
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Ngày đăng</label>
+                  <label className="wp-form-label">{t('ngay_dang')}</label>
                   <input
                     type="date"
                     className="wp-form-input"
@@ -499,22 +501,22 @@ export function AdminBlogPosts() {
                   />
                 </div>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Trạng thái *</label>
+                  <label className="wp-form-label">{t('trang_thai_1')}</label>
                   <select
                     className="wp-form-input"
                     value={status}
                     onChange={e => setStatus(e.target.value as any)}
                   >
-                    <option value="PUBLISHED">Công khai (Published)</option>
-                    <option value="DRAFT">Bản nháp (Draft)</option>
-                    <option value="HIDDEN">Ẩn bài viết (Hidden)</option>
+                    <option value="PUBLISHED">{t('cong_khai_published')}</option>
+                    <option value="DRAFT">{t('ban_nhap_draft')}</option>
+                    <option value="HIDDEN">{t('an_bai_viet_hidden')}</option>
                   </select>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 12 }}>
                 <div className="wp-form-row" style={{ margin: 0 }}>
-                  <label className="wp-form-label">Thứ tự</label>
+                  <label className="wp-form-label">{t('thu_tu')}</label>
                   <input
                     type="number"
                     className="wp-form-input"

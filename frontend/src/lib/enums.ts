@@ -1,5 +1,6 @@
 export enum Role {
   USER = 'USER',
+  BUYER = 'BUYER',
   SUPPLIER = 'SUPPLIER',
   ADMIN = 'ADMIN'
 };
@@ -87,6 +88,7 @@ export enum SupplierAccountHolderRole {
 };
 
 export enum SupplierType {
+  NORMAL = "NORMAL", // TODO: migrate everything that uses this to use DISTRIBUTOR
   DISTRIBUTOR = 'DISTRIBUTOR',
   MANUFACTURER = "MANUFACTURER",
   EXPORTER = "EXPORTER",

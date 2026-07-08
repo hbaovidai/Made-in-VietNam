@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { WPPagination } from '../../../components/admin/WPPagination';
@@ -6,6 +7,7 @@ import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export function AdminUsers() {
+  const { t } = useTranslation();
   const { user: me } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -207,7 +209,7 @@ export function AdminUsers() {
       <div className="wp-table-top">
         <div className="wp-bulk-actions">
           <select className="wp-bulk-select" value={bulkAction} onChange={e => setBulkAction(e.target.value)}>
-            <option value="">Thao tác hàng loạt</option>
+            <option value="">{t('thao_tac_hang_loat')}</option>
             <option value="delete">Xóa</option>
             <option value="lock">Khóa tài khoản</option>
             <option value="unlock">Mở khóa tài khoản</option>
@@ -227,7 +229,7 @@ export function AdminUsers() {
 
       {/* Table */}
       {loading ? (
-        <div className="wp-loading">Đang tải dữ liệu người dùng...</div>
+        <div className="wp-loading">{t('dang_tai_du_lieu_nguoi_dung')}</div>
       ) : (
         <div className="wp-table-wrap">
           <table className="wp-table">
@@ -246,7 +248,7 @@ export function AdminUsers() {
             </thead>
             <tbody>
               {paginated.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không tìm thấy người dùng nào.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>{t('khong_tim_thay_nguoi_dung_nao')}</td></tr>
               ) : paginated.map(u => (
                 <tr key={u.id}>
                   <td><input type="checkbox" checked={selectedIds.includes(u.id)} onChange={() => toggleOne(u.id)} /></td>

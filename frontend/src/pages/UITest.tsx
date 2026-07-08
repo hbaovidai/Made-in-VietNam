@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '../components/ui/Toast';
 import { Modal, ConfirmDialog } from '../components/ui/Modal';
 import { Skeleton } from '../components/ui/Skeleton';
@@ -8,6 +9,7 @@ import { Tabs } from '../components/ui/Tabs';
 import { ArchiveX, Check, AlertTriangle, Star } from 'lucide-react';
 
 export function UITest() {
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -22,7 +24,7 @@ export function UITest() {
 
         {/* 1. Buttons */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">1. Nút bấm (Buttons & Hover states)</h2>
+          <h2 className="text-xl font-bold text-slate-800">{t('1_nut_bam_buttons_hover_states')}</h2>
           <div className="flex flex-wrap gap-4 p-6 bg-white rounded-xl border border-slate-200">
             <button className="btn-primary">Primary Button</button>
             <button className="btn-secondary">Secondary Button</button>
@@ -31,12 +33,12 @@ export function UITest() {
             <button className="btn-ghost">Ghost Button</button>
             <button className="btn-primary" disabled>Disabled</button>
           </div>
-          <p className="text-sm text-slate-500">Thử click và hover để xem hiệu ứng mượt mà (scale, shadow).</p>
+          <p className="text-sm text-slate-500">{t('thu_click_va_hover_de_xem_hieu_ung_muot_')}</p>
         </section>
 
         {/* 2. Toasts */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">2. Thông báo (Toast Notifications)</h2>
+          <h2 className="text-xl font-bold text-slate-800">{t('2_thong_bao_toast_notifications')}</h2>
           <div className="flex flex-wrap gap-4 p-6 bg-white rounded-xl border border-slate-200">
             <button 
               className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg font-bold hover:bg-emerald-200 transition-colors"
@@ -67,7 +69,7 @@ export function UITest() {
 
         {/* 3. Modals */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">3. Cửa sổ bật lên (Modals & Dialogs)</h2>
+          <h2 className="text-xl font-bold text-slate-800">{t('3_cua_so_bat_len_modals_dialogs')}</h2>
           <div className="flex flex-wrap gap-4 p-6 bg-white rounded-xl border border-slate-200">
             <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
               Mở Modal Form (Tạo mới)
@@ -85,7 +87,7 @@ export function UITest() {
               footer={
                 <>
                   <button className="btn-ghost" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                  <button className="btn-primary" onClick={() => { setIsModalOpen(false); addToast({type: 'success', title: 'Đã lưu!'}); }}>Lưu sản phẩm</button>
+                  <button className="btn-primary" onClick={() => { setIsModalOpen(false); addToast({type: 'success', title: 'Đã lưu!'}); }}>{t('luu_san_pham')}</button>
                 </>
               }
             >
@@ -95,9 +97,9 @@ export function UITest() {
                   <input type="text" className="input" placeholder="Nhập tên..." />
                 </div>
                 <div>
-                  <label className="input-label">Giá bán</label>
+                  <label className="input-label">{t('gia_ban')}</label>
                   <input type="text" className="input-error" placeholder="VD: 100.000đ" />
-                  <span className="input-error-text">Giá bán không được để trống</span>
+                  <span className="input-error-text">{t('gia_ban_khong_duoc_de_trong')}</span>
                 </div>
               </div>
             </Modal>
@@ -116,20 +118,20 @@ export function UITest() {
 
         {/* 4. Badges */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">4. Thẻ trạng thái (Badges)</h2>
+          <h2 className="text-xl font-bold text-slate-800">{t('4_the_trang_thai_badges')}</h2>
           <div className="flex flex-wrap gap-4 p-6 bg-white rounded-xl border border-slate-200 items-center">
             <Badge variant="success" icon={<Check size={12}/>}>Hoạt động</Badge>
-            <Badge variant="warning" icon={<AlertTriangle size={12}/>}>Sắp hết hạn</Badge>
+            <Badge variant="warning" icon={<AlertTriangle size={12}/>}>{t('sap_het_han')}</Badge>
             <Badge variant="danger">Khóa</Badge>
             <Badge variant="info">Đang chờ</Badge>
             <Badge variant="primary" icon={<Star size={12}/>}>Premium</Badge>
-            <Badge variant="default">Nháp (Draft)</Badge>
+            <Badge variant="default">{t('nhap_draft')}</Badge>
           </div>
         </section>
 
         {/* 5. Skeleton */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">5. Hiệu ứng tải (Skeleton Loading)</h2>
+          <h2 className="text-xl font-bold text-slate-800">{t('5_hieu_ung_tai_skeleton_loading')}</h2>
           <div className="p-6 bg-white rounded-xl border border-slate-200">
             <button 
               className="mb-6 btn-secondary text-sm" 
@@ -150,8 +152,8 @@ export function UITest() {
               <div className="flex gap-4 items-center animate-fade-in">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-2xl">👤</div>
                 <div>
-                  <div className="font-bold text-slate-900">Huỳnh Lê Hoài Bảo</div>
-                  <div className="text-sm text-slate-500">Giám đốc sản xuất</div>
+                  <div className="font-bold text-slate-900">{t('huynh_le_hoai_bao')}</div>
+                  <div className="text-sm text-slate-500">{t('giam_doc_san_xuat')}</div>
                 </div>
               </div>
             )}
@@ -167,7 +169,7 @@ export function UITest() {
                 {
                   id: 'tab1',
                   label: 'Sản phẩm đang bán',
-                  content: <div className="p-6 text-slate-600">Nội dung sản phẩm đang bán sẽ nằm ở đây...</div>
+                  content: <div className="p-6 text-slate-600">{t('noi_dung_san_pham_dang_ban_se_nam_o_day')}</div>
                 },
                 {
                   id: 'tab2',
@@ -177,7 +179,7 @@ export function UITest() {
                       icon={<ArchiveX size={40} className="text-slate-300" />}
                       title="Không có sản phẩm nào"
                       description="Bạn chưa có sản phẩm nào trong danh mục bị hết hàng. Hãy kiểm tra lại kho hoặc tạo lô hàng mới."
-                      action={<button className="btn-primary">Tạo lô hàng mới</button>}
+                      action={<button className="btn-primary">{t('tao_lo_hang_moi')}</button>}
                     />
                   )
                 }

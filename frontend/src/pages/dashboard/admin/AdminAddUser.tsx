@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../../lib/api';
 import { Eye, EyeOff } from 'lucide-react';
 
 export function AdminAddUser() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: '',
@@ -68,7 +70,7 @@ export function AdminAddUser() {
         <span className="wp-breadcrumb-current">Thêm người dùng</span>
       </div>
 
-      <h1 className="wp-page-title">Thêm người dùng mới</h1>
+      <h1 className="wp-page-title">{t('them_nguoi_dung_moi')}</h1>
 
       <p style={{ color: 'var(--wp-text-muted)', fontSize: 13, marginBottom: 20 }}>
         Tạo tài khoản mới cho người dùng. Người dùng sẽ nhận thông tin đăng nhập qua email.
@@ -76,8 +78,8 @@ export function AdminAddUser() {
 
       {success && (
         <div style={{ background: '#d1e4dd', border: '1px solid #00a32a', padding: '12px 16px', marginBottom: 20, borderRadius: 4, fontSize: 13 }}>
-          <strong>Thành công!</strong> Người dùng mới đã được tạo.{' '}
-          <Link to="/dashboard/admin/users" style={{ color: 'var(--wp-accent)' }}>← Quay lại danh sách</Link>
+          <strong>{t('thanh_cong')}</strong> Người dùng mới đã được tạo.{' '}
+          <Link to="/dashboard/admin/users" style={{ color: 'var(--wp-accent)' }}>{t('quay_lai_danh_sach')}</Link>
           {' '}hoặc{' '}
           <button onClick={() => setSuccess(false)} style={{ color: 'var(--wp-accent)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
             tạo thêm người dùng khác
@@ -87,7 +89,7 @@ export function AdminAddUser() {
 
       {error && (
         <div style={{ background: '#fcf0f1', border: '1px solid var(--wp-danger)', padding: '12px 16px', marginBottom: 20, borderRadius: 4, fontSize: 13, color: 'var(--wp-danger)' }}>
-          <strong>Lỗi:</strong> {error}
+          <strong>{t('loi')}</strong> {error}
         </div>
       )}
 
@@ -173,14 +175,14 @@ export function AdminAddUser() {
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
-                    <p className="wp-form-desc">Mật khẩu phải có ít nhất 6 ký tự.</p>
+                    <p className="wp-form-desc">{t('mat_khau_phai_co_it_nhat_6_ky_tu')}</p>
                   </td>
                 </tr>
 
                 {/* Confirm Password */}
                 <tr>
                   <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>
-                    <label>Xác nhận mật khẩu <span style={{ color: 'var(--wp-danger)' }}>*</span></label>
+                    <label>{t('xac_nhan_mat_khau')} <span style={{ color: 'var(--wp-danger)' }}>*</span></label>
                   </th>
                   <td>
                     <div style={{ position: 'relative', maxWidth: 400 }}>
@@ -216,9 +218,9 @@ export function AdminAddUser() {
                       value={form.role}
                       onChange={e => handleChange('role', e.target.value)}
                     >
-                      <option value="BUYER">Khách hàng (Customer)</option>
-                      <option value="SUPPLIER">Doanh nghiệp (Business)</option>
-                      <option value="ADMIN">Quản trị viên (Administrator)</option>
+                      <option value="BUYER">{t('khach_hang_customer')}</option>
+                      <option value="SUPPLIER">{t('doanh_nghiep_business')}</option>
+                      <option value="ADMIN">{t('quan_tri_vien_administrator')}</option>
                     </select>
                     <p className="wp-form-desc">
                       {form.role === 'ADMIN' && 'Quản trị viên có toàn quyền quản lý hệ thống.'}
@@ -232,7 +234,7 @@ export function AdminAddUser() {
                 {form.role === 'SUPPLIER' && (
                   <tr>
                     <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>
-                      <label>Tên doanh nghiệp <span style={{ color: 'var(--wp-danger)' }}>*</span></label>
+                      <label>{t('ten_doanh_nghiep')} <span style={{ color: 'var(--wp-danger)' }}>*</span></label>
                     </th>
                     <td>
                       <input

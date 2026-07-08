@@ -135,7 +135,7 @@ export function AdminVerifications() {
   // ═══════════════════════════════════════════════════════════
   if (tab === 'detail' && detailId) {
     const detail = mockDetails[detailId];
-    if (!detail) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
+    if (!detail) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>{t('khong_tim_thay_ho_so')}</div>;
     return (
       <VerificationDetail
         request={detail}
@@ -156,9 +156,9 @@ export function AdminVerifications() {
         <div className="wp-breadcrumb">
           <Link to="/dashboard/admin">Dashboard</Link><span className="wp-breadcrumb-sep">›</span>
           <span>Doanh nghiệp</span><span className="wp-breadcrumb-sep">›</span>
-          <span className="wp-breadcrumb-current">Tất cả doanh nghiệp</span>
+          <span className="wp-breadcrumb-current">{t('tat_ca_doanh_nghiep')}</span>
         </div>
-        <div className="wp-page-header"><h1 className="wp-page-title">Tất cả doanh nghiệp</h1></div>
+        <div className="wp-page-header"><h1 className="wp-page-title">{t('tat_ca_doanh_nghiep')}</h1></div>
 
         <div className="wp-filter-tabs">
           {Object.entries(statusCounts).map(([key, count], idx) => (
@@ -173,7 +173,7 @@ export function AdminVerifications() {
 
         <div className="wp-table-top">
           <div className="wp-bulk-actions">
-            <select className="wp-bulk-select"><option>Thao tác hàng loạt</option><option>Phê duyệt</option><option>Từ chối</option><option>Xóa</option></select>
+            <select className="wp-bulk-select"><option>{t('thao_tac_hang_loat')}</option><option>{t('phe_duyet')}</option><option>Từ chối</option><option>Xóa</option></select>
             <button className="wp-btn">Áp dụng</button>
           </div>
           <div className="wp-table-search">
@@ -187,12 +187,12 @@ export function AdminVerifications() {
             <thead>
               <tr>
                 <th style={{ width: 30 }}><input type="checkbox" checked={selectedIds.length === paginated.length && paginated.length > 0} onChange={toggleAll} /></th>
-                <th>Tên Công Ty</th><th>Mã số thuế</th><th>Ngành nghề</th><th>Email</th><th>Ngày nộp</th><th>Trạng thái</th>
+                <th>{t('ten_cong_ty')}</th><th>Mã số thuế</th><th>Ngành nghề</th><th>Email</th><th>{t('ngay_nop')}</th><th>Trạng thái</th>
               </tr>
             </thead>
             <tbody>
               {paginated.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không tìm thấy doanh nghiệp nào.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>{t('khong_tim_thay_doanh_nghiep_nao_1')}</td></tr>
               ) : paginated.map(app => (
                 <tr key={app.id}>
                   <td><input type="checkbox" checked={selectedIds.includes(app.id)} onChange={() => toggleOne(app.id)} /></td>
@@ -207,9 +207,9 @@ export function AdminVerifications() {
                         <div className="wp-row-actions">
                           <button onClick={() => navigate(`/dashboard/admin/verifications?tab=detail&id=${app.id}`)}>Xem</button>
                           <span className="sep">|</span>
-                          {app.status === 'Pending' && (<><button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, 'Invited')}>Phê duyệt</button><span className="sep">|</span><button className="delete" onClick={() => handleStatusChange(app.id, 'Rejected')}>Từ chối</button></>)}
-                          {app.status === 'Invited' && (<><button style={{ color: '#2271b1' }} onClick={() => app.inviteToken && handleCopyLink(app.inviteToken)}>{copiedToken === app.inviteToken ? '✓ Đã copy' : 'Copy link'}</button><span className="sep">|</span><button className="delete" onClick={() => handleStatusChange(app.id, 'Pending')}>Thu hồi</button></>)}
-                          {app.status === 'Registered' && (<><span className="sep">|</span><button style={{ color: '#8c5ae2' }} onClick={() => handleStatusChange(app.id, 'Approved')}>Cấp tick xanh</button></>)}
+                          {app.status === 'Pending' && (<><button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(app.id, 'Invited')}>{t('phe_duyet')}</button><span className="sep">|</span><button className="delete" onClick={() => handleStatusChange(app.id, 'Rejected')}>Từ chối</button></>)}
+                          {app.status === 'Invited' && (<><button style={{ color: '#2271b1' }} onClick={() => app.inviteToken && handleCopyLink(app.inviteToken)}>{copiedToken === app.inviteToken ? '✓ Đã copy' : 'Copy link'}</button><span className="sep">|</span><button className="delete" onClick={() => handleStatusChange(app.id, 'Pending')}>{t('thu_hoi')}</button></>)}
+                          {app.status === 'Registered' && (<><span className="sep">|</span><button style={{ color: '#8c5ae2' }} onClick={() => handleStatusChange(app.id, 'Approved')}>{t('cap_tick_xanh')}</button></>)}
                           {(app.status === 'Rejected' || app.status === 'Approved') && (<><span className="sep">|</span><button className="delete" onClick={() => handleDelete(app.id)}>Xóa</button></>)}
                         </div>
                       </div>
@@ -241,28 +241,28 @@ export function AdminVerifications() {
         <span>Doanh nghiệp</span><span className="wp-breadcrumb-sep">›</span>
         <span className="wp-breadcrumb-current">Link mời</span>
       </div>
-      <div className="wp-page-header"><h1 className="wp-page-title">Quản lý Link Mời</h1></div>
+      <div className="wp-page-header"><h1 className="wp-page-title">{t('quan_ly_link_moi')}</h1></div>
       <div className="wp-table-wrap">
         <table className="wp-table">
-          <thead><tr><th>Doanh nghiệp</th><th>Token</th><th>Ngày cấp</th><th>Hạn dùng</th><th>Trạng thái</th></tr></thead>
+          <thead><tr><th>Doanh nghiệp</th><th>Token</th><th>{t('ngay_cap')}</th><th>{t('han_dung')}</th><th>Trạng thái</th></tr></thead>
           <tbody>
             {tokensData.length === 0 ? (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Chưa có link mời nào.</td></tr>
+              <tr><td colSpan={5} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>{t('chua_co_link_moi_nao')}</td></tr>
             ) : tokensData.map(app => (
               <tr key={app.id}>
                 <td>
                   <span className="wp-row-title">{app.companyName}</span>
                   <div className="wp-row-actions">
                     <button onClick={() => app.inviteToken && handleCopyLink(app.inviteToken)}>{copiedToken === app.inviteToken ? '✓ Đã copy' : 'Sao chép link'}</button>
-                    <span className="sep">|</span><button onClick={() => alert(`Gửi email tới ${app.email}`)}>Gửi mail</button>
+                    <span className="sep">|</span><button onClick={() => alert(`Gửi email tới ${app.email}`)}>{t('gui_mail')}</button>
                     <span className="sep">|</span>
-                    {app.status === 'Registered' && (<><button style={{ color: '#8c5ae2' }} onClick={() => handleStatusChange(app.id, 'Approved')}>Cấp tick xanh</button><span className="sep">|</span></>)}
-                    <button className="delete" onClick={() => handleStatusChange(app.id, 'Pending')}>Thu hồi</button>
+                    {app.status === 'Registered' && (<><button style={{ color: '#8c5ae2' }} onClick={() => handleStatusChange(app.id, 'Approved')}>{t('cap_tick_xanh')}</button><span className="sep">|</span></>)}
+                    <button className="delete" onClick={() => handleStatusChange(app.id, 'Pending')}>{t('thu_hoi')}</button>
                   </div>
                 </td>
                 <td style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--wp-accent)' }}>{app.inviteToken}</td>
                 <td style={{ fontSize: 12, color: 'var(--wp-text-muted)' }}>{app.submittedDate}</td>
-                <td><div style={{ fontSize: 12 }}>{app.tokenExpiresAt}</div><div style={{ fontSize: 10, color: '#00a32a', fontWeight: 600 }}>Còn 7 ngày</div></td>
+                <td><div style={{ fontSize: 12 }}>{app.tokenExpiresAt}</div><div style={{ fontSize: 10, color: '#00a32a', fontWeight: 600 }}>{t('con_7_ngay')}</div></td>
                 <td><span className={`wp-badge ${app.status === 'Registered' ? 'wp-badge-draft' : 'wp-badge-published'}`}>{app.status === 'Registered' ? 'Đã sử dụng' : 'Hoạt động'}</span></td>
               </tr>
             ))}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ExternalLink, CheckCircle, ArrowLeft, X } from 'lucide-react';
 
@@ -62,6 +63,7 @@ const statusMap: Record<string, { label: string; bg: string; color: string; bord
 
 // ═════════════════════════════════════════════════════════════
 export function VerificationDetail({ request, onApprove, onReject, onDelete, onBack }: Props) {
+  const { t } = useTranslation();
   const [showRejectBox, setShowRejectBox] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -87,7 +89,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--wp-accent)', display: 'flex' }}>
           <ArrowLeft size={20} />
         </button>
-        <h1 className="wp-page-title" style={{ margin: 0 }}>Chi tiết hồ sơ xác minh</h1>
+        <h1 className="wp-page-title" style={{ margin: 0 }}>{t('chi_tiet_ho_so_xac_minh')}</h1>
       </div>
 
       {/* ═══ 2-column layout ═══ */}
@@ -98,14 +100,14 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
           {/* Card 1: Thông tin doanh nghiệp */}
           <div style={card}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Thông tin doanh nghiệp
+              {t('thong_tin_doanh_nghiep')}
             </h3>
             <div style={grid2}>
               <div><div style={label}>TÊN CÔNG TY</div><div style={value}>{request.companyName}</div></div>
               <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.taxId}</div></div>
               <div><div style={label}>LOẠI HÌNH DOANH NGHIỆP</div><div style={value}>{request.companyType}</div></div>
               <div><div style={label}>NĂM THÀNH LẬP</div><div style={value}>{request.foundedYear}</div></div>
-              <div><div style={label}>ĐỊA CHỈ</div><div style={value}>{request.address}</div></div>
+              <div><div style={label}>{t('dia_chi')}</div><div style={value}>{request.address}</div></div>
               <div><div style={label}>TỈNH / THÀNH PHỐ</div><div style={value}>{request.province}</div></div>
               {request.website && (
                 <div style={{ gridColumn: '1 / -1' }}>
@@ -126,7 +128,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
               <div><div style={label}>CHỨC DANH</div><div style={value}>{request.repTitle}</div></div>
               <div><div style={label}>SỐ CCCD</div><div style={{ ...value, fontFamily: 'monospace' }}>{request.repIdCard}</div></div>
               <div><div style={label}>EMAIL</div><div style={value}><a href={`mailto:${request.repEmail}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repEmail}</a></div></div>
-              <div><div style={label}>SỐ ĐIỆN THOẠI</div><div style={value}><a href={`tel:${request.repPhone}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repPhone}</a></div></div>
+              <div><div style={label}>{t('so_dien_thoai')}</div><div style={value}><a href={`tel:${request.repPhone}`} style={{ color: 'var(--wp-accent)', textDecoration: 'none' }}>{request.repPhone}</a></div></div>
             </div>
           </div>
 
@@ -180,7 +182,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
               <ExternalLink size={16} /> Mở hồ sơ trên Google Drive
             </a>
 
-            <div style={label}>DANH SÁCH TÀI LIỆU ĐÃ NỘP</div>
+            <div style={label}>{t('danh_sach_tai_lieu_da_nop')}</div>
             <ul style={{ listStyle: 'none', padding: 0, margin: '8px 0 14px' }}>
               {request.documentList.map(doc => (
                 <li key={doc} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', fontSize: 13, color: '#1d2327' }}>
@@ -211,7 +213,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
               <div><div style={label}>NGÀY GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleDateString('vi-VN')}</div></div>
               <div><div style={label}>GIỜ GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>{new Date(request.submittedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div></div>
               <div><div style={label}>NGUỒN GỬI</div><div style={{ fontSize: 13, color: '#1d2327', marginBottom: 8 }}>Landing Page</div></div>
-              <div><div style={label}>ĐỊA CHỈ IP</div><div style={{ fontSize: 13, color: '#1d2327', fontFamily: 'monospace' }}>14.161.12.34</div></div>
+              <div><div style={label}>{t('dia_chi_ip')}</div><div style={{ fontSize: 13, color: '#1d2327', fontFamily: 'monospace' }}>14.161.12.34</div></div>
             </div>
           </div>
 
@@ -274,7 +276,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
           {/* Ghi chú nội bộ */}
           <div style={card}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1d2327', borderBottom: '1px solid #f0f0f1', paddingBottom: 10, marginBottom: 14 }}>
-              Ghi chú nội bộ
+              {t('ghi_chu_noi_bo')}
             </h3>
             <textarea
               value={localNotes}
@@ -288,7 +290,7 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
                 ? <span style={{ fontSize: 11, color: '#00a32a', fontWeight: 600 }}>✓ Đã lưu lúc {new Date().toLocaleString('vi-VN')}</span>
                 : <span style={{ fontSize: 11, color: '#8c8f94' }}>{request.notes ? `Lưu lần cuối: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
               }
-              <button onClick={handleSaveNotes} className="wp-btn" style={{ fontSize: 12 }}>Lưu ghi chú</button>
+              <button onClick={handleSaveNotes} className="wp-btn" style={{ fontSize: 12 }}>{t('luu_ghi_chu')}</button>
             </div>
           </div>
         </div>
@@ -301,13 +303,13 @@ export function VerificationDetail({ request, onApprove, onReject, onDelete, onB
             <button onClick={() => setShowApproveModal(false)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#646970' }}>
               <X size={18} />
             </button>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1d2327', marginBottom: 16 }}>Xác nhận phê duyệt</h3>
-            <p style={{ fontSize: 13, color: '#646970', marginBottom: 16 }}>Bạn sắp phê duyệt hồ sơ xác minh và tạo link mời cho doanh nghiệp:</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1d2327', marginBottom: 16 }}>{t('xac_nhan_phe_duyet')}</h3>
+            <p style={{ fontSize: 13, color: '#646970', marginBottom: 16 }}>{t('ban_sap_phe_duyet_ho_so_xac_minh_va_tao_')}</p>
             <div style={{ background: '#f6f7f7', borderRadius: 8, padding: 14, marginBottom: 16, fontSize: 13 }}>
               <div style={grid2}>
                 <div><div style={label}>TÊN CÔNG TY</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.companyName}</div></div>
                 <div><div style={label}>MÃ SỐ THUẾ</div><div style={{ fontWeight: 600, color: '#1d2327', fontFamily: 'monospace', marginBottom: 8 }}>{request.taxId}</div></div>
-                <div><div style={label}>NGƯỜI ĐẠI DIỆN</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repName}</div></div>
+                <div><div style={label}>{t('nguoi_dai_dien_1')}</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repName}</div></div>
                 <div><div style={label}>EMAIL</div><div style={{ fontWeight: 600, color: '#1d2327', marginBottom: 8 }}>{request.repEmail}</div></div>
               </div>
             </div>

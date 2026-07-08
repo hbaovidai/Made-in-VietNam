@@ -18,7 +18,7 @@ export class UsersService {
         select: {
           id: true, email: true, fullName: true, role: true, 
           phone: true, status: true, createdAt: true,
-          supplier: { select: { id: true, companyName: true, status: true } }
+          supplier: { select: { id: true, companyName: true, status: true, is_verified: true } }
         },
         skip: (+page - 1) * +limit,
         take: +limit,

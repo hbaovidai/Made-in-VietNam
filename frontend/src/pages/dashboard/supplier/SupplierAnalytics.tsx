@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BarChart3, Eye, Package, TrendingUp, ArrowUpRight, Loader2 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -19,6 +20,7 @@ interface AnalyticsData {
 }
 
 export function SupplierAnalytics() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,7 +106,7 @@ export function SupplierAnalytics() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Eye size={16} className="text-amber-500" />
-            <h2 className="text-sm font-bold text-slate-900">Lượt xem hồ sơ & sản phẩm</h2>
+            <h2 className="text-sm font-bold text-slate-900">{t('luot_xem_ho_so_san_pham')}</h2>
           </div>
           <div className="flex bg-slate-100 rounded-lg p-0.5">
             <button
@@ -147,7 +149,7 @@ export function SupplierAnalytics() {
             <div className="text-center">
               <BarChart3 size={40} className="text-slate-200 mx-auto mb-3" />
               <p className="text-sm font-medium text-slate-400">Chưa có dữ liệu lượt xem</p>
-              <p className="text-xs text-slate-400 mt-1">Biểu đồ sẽ cập nhật khi sản phẩm có lượt truy cập.</p>
+              <p className="text-xs text-slate-400 mt-1">{t('bieu_do_se_cap_nhat_khi_san_pham_co_luot')}</p>
             </div>
           </div>
         )}
@@ -158,7 +160,7 @@ export function SupplierAnalytics() {
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Package size={16} className="text-blue-500" />
-            <h2 className="text-sm font-bold text-slate-900">Hiệu suất sản phẩm</h2>
+            <h2 className="text-sm font-bold text-slate-900">{t('hieu_suat_san_pham')}</h2>
           </div>
           <span className="text-xs text-slate-400">Top 10</span>
         </div>

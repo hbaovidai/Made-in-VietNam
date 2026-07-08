@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
-  rightActionText: string;
-  rightActionLink: string;
+  rightActionText?: string;
+  rightActionLink?: string;
 }
 
 export function AuthLayout({ children, rightActionText, rightActionLink }: AuthLayoutProps) {

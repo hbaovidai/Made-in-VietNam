@@ -152,9 +152,13 @@ export class RfqService {
         quotes: {
           include: {
             supplier: {
-              select: { 
-                id: true, companyName: true, logo: true, 
-                status: true, userId: true 
+              select: {
+                id: true,
+                companyName: true,
+                logo: true,
+                is_verified: true,
+                status: true,
+                userId: true,
               },
             },
           },

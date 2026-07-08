@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { WPPagination } from '../../../components/admin/WPPagination';
 
@@ -22,6 +23,7 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function AdminReviews() {
+  const { t } = useTranslation();
   const [reviews, setReviews] = useState(initialReviews);
   const [filterStatus, setFilterStatus] = useState('all');
   const [page, setPage] = useState(1);
@@ -80,7 +82,7 @@ export function AdminReviews() {
           <thead>
             <tr>
               <th style={{ width: 30 }}><input type="checkbox" /></th>
-              <th>Người đánh giá</th>
+              <th>{t('nguoi_danh_gia')}</th>
               <th>Đánh giá</th>
               <th>Sản phẩm</th>
               <th>Ngày</th>
@@ -89,7 +91,7 @@ export function AdminReviews() {
           </thead>
           <tbody>
             {paginated.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không có đánh giá nào.</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>{t('khong_co_danh_gia_nao')}</td></tr>
             ) : paginated.map(r => (
               <tr key={r.id} style={{ fontWeight: r.status === 'pending' ? 600 : 400 }}>
                 <td><input type="checkbox" /></td>

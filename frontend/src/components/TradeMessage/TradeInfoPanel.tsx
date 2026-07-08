@@ -31,17 +31,17 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
       {/* Toast simulated notifications */}
       {showInquiryModal && (
         <div className="fixed top-10 right-10 bg-slate-900 text-white text-xs px-3.5 py-2 rounded-lg shadow-xl z-50 font-semibold animate-bounce flex items-center gap-2">
-          <span>📄 Opening inquiry document {conversation.inquiryId}...</span>
+          <span>📄 Đang mở tài liệu yêu cầu {conversation.inquiryId}...</span>
         </div>
       )}
       {showProductModal && (
         <div className="fixed top-10 right-10 bg-slate-900 text-white text-xs px-3.5 py-2 rounded-lg shadow-xl z-50 font-semibold animate-bounce flex items-center gap-2">
-          <span>🛍️ Redirecting to Product Catalog Page...</span>
+          <span>🛍️ Đang chuyển hướng đến trang sản phẩm...</span>
         </div>
       )}
       {showSupplierModal && (
         <div className="fixed top-10 right-10 bg-slate-900 text-white text-xs px-3.5 py-2 rounded-lg shadow-xl z-50 font-semibold animate-bounce flex items-center gap-2">
-          <span>🏢 Loading Supplier Showroom Profile...</span>
+          <span>🏢 Đang tải hồ sơ nhà cung cấp...</span>
         </div>
       )}
 
@@ -49,32 +49,32 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 pb-1.5 border-b border-slate-100 flex items-center gap-1.5">
           <Calendar size={14} className="text-blue-600" />
-          <span>Inquiry Info</span>
+          <span>Thông tin yêu cầu báo giá</span>
         </h3>
         <div className="space-y-2.5 text-xs">
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Inquiry ID:</span>
+            <span className="text-slate-400 font-medium">Mã yêu cầu:</span>
             <span className="font-semibold text-slate-800">{conversation.inquiryId}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Created Date:</span>
-            <span className="font-semibold text-slate-800">June 20, 2026</span>
+            <span className="text-slate-400 font-medium">Ngày tạo:</span>
+            <span className="font-semibold text-slate-800">{conversation.createdDate || '20/06/2026'}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-slate-400 font-medium">Status:</span>
+            <span className="text-slate-400 font-medium">Trạng thái:</span>
             <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-              In Negotiation
+              Đang thương lượng
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Inquiry Qty:</span>
+            <span className="text-slate-400 font-medium">Số lượng:</span>
             <span className="font-bold text-slate-800 flex items-center gap-0.5">
               <Package size={12} className="text-slate-400" />
               <span>{conversation.quantity}</span>
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Target Price:</span>
+            <span className="text-slate-400 font-medium">Giá mục tiêu:</span>
             <span className="font-bold text-slate-800 flex items-center gap-0.5">
               <DollarSign size={12} className="text-slate-400 animate-pulse" />
               <span className="text-blue-600">{conversation.targetPrice}</span>
@@ -85,7 +85,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
           onClick={handleInquiryAction}
           className="w-full mt-4 py-2 px-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 transition-all flex items-center justify-center gap-1.5"
         >
-          <span>View Inquiry Details</span>
+          <span>Xem chi tiết yêu cầu</span>
           <ExternalLink size={12} />
         </button>
       </div>
@@ -94,7 +94,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 pb-1.5 border-b border-slate-100 flex items-center gap-1.5">
           <Award size={14} className="text-blue-600" />
-          <span>Product Details</span>
+          <span>Chi tiết sản phẩm</span>
         </h3>
         <div className="flex gap-3 mb-3">
           <img
@@ -107,7 +107,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
               {conversation.productName}
             </h4>
             <p className="text-[10px] text-slate-400 font-medium truncate mt-1">
-              Category: {conversation.category.split('/')[0]}
+              Ngành hàng: {conversation.category ? conversation.category.split('/')[0] : 'B2B'}
             </p>
           </div>
         </div>
@@ -115,7 +115,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
           onClick={handleProductAction}
           className="w-full py-2 px-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 transition-all flex items-center justify-center gap-1.5"
         >
-          <span>View Product Page</span>
+          <span>Xem trang sản phẩm</span>
           <ExternalLink size={12} />
         </button>
       </div>
@@ -124,7 +124,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 pb-1.5 border-b border-slate-100 flex items-center gap-1.5">
           <Globe size={14} className="text-blue-600" />
-          <span>Supplier Profile</span>
+          <span>Hồ sơ nhà cung cấp</span>
         </h3>
         <div className="flex items-center gap-3 mb-4">
           <div className={`w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-white font-bold text-xs ${conversation.avatarBg}`}>
@@ -145,18 +145,18 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
 
         <div className="space-y-2 text-xs border-t border-slate-50 pt-3">
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Platform Tenure:</span>
+            <span className="text-slate-400 font-medium">Thời gian hoạt động:</span>
             <span className="font-semibold text-slate-800 flex items-center gap-1">
               <Sparkles size={11} className="text-amber-500 fill-amber-100" />
-              <span>{conversation.yearsOnPlatform} Years</span>
+              <span>{conversation.yearsOnPlatform} Năm</span>
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Response Rate:</span>
+            <span className="text-slate-400 font-medium">Tỷ lệ phản hồi:</span>
             <span className="font-semibold text-slate-800">{conversation.responseRate}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-medium">Response Speed:</span>
+            <span className="text-slate-400 font-medium">Tốc độ phản hồi:</span>
             <span className="font-semibold text-slate-800">{conversation.responseTime}</span>
           </div>
         </div>
@@ -165,7 +165,7 @@ export function TradeInfoPanel({ conversation }: TradeInfoPanelProps) {
           onClick={handleSupplierAction}
           className="w-full mt-4 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
         >
-          <span>View Showroom</span>
+          <span>Xem gian hàng</span>
           <ExternalLink size={12} />
         </button>
       </div>

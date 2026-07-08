@@ -217,8 +217,8 @@ export function SupplierOverview() {
           ) : recentInquiries.length === 0 ? (
             <div className="p-12 text-center">
               <Inbox size={32} className="text-slate-200 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-400">Chưa có yêu cầu nào</p>
-              <p className="text-xs text-slate-400 mt-1">Khi người mua liên hệ, yêu cầu sẽ hiển thị tại đây.</p>
+              <p className="text-sm font-medium text-slate-400">{t('chua_co_yeu_cau_nao')}</p>
+              <p className="text-xs text-slate-400 mt-1">{t('khi_nguoi_mua_lien_he_yeu_cau_se_hien_th')}</p>
             </div>
           ) : (
             <div>

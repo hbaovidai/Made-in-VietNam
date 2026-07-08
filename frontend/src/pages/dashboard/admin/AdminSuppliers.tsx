@@ -29,6 +29,8 @@ function Row( {
   navigate, toggleOne,
   handleStatusChange, handleDelete,
 } ) {
+  const { t } = useTranslation();
+
   return (
     <tr key={supp.id}>
       <td><input type="checkbox" checked={selectedIds.includes(supp.id)} onChange={() => toggleOne(supp.id)} /></td>
@@ -37,7 +39,7 @@ function Row( {
 
           <div>
             <span className="wp-row-title"
-              onClick={() => navigate(`#`)}
+              onClick={() => navigate(`#`)} // TODO: we need to do something about this
               // onClick={() => navigate(`/dashboard/admin/suppliers?tab=detail&id=${supp.id}`)}
             >
               {supp.companyName}
@@ -46,11 +48,11 @@ function Row( {
               {supp.status === SupplierStatus.APPLICATION_PENDING && (
                 <>
                 <button style={{ color: '#00a32a' }} onClick={() => handleStatusChange(supp.id, SupplierStatus.VERIFIED)}>
-                  Xác minh
+                  {t('xac_minh')}
                 </button>
                 <span className="sep">|</span>
                 <button className="delete" onClick={() => handleDelete(supp.id)}>
-                  Xoá
+                  {t('xoa')}
                 </button>
                 </>
               )}
@@ -58,7 +60,7 @@ function Row( {
               {supp.status === SupplierStatus.VERIFIED && (
                 <>
                 <button className="delete" onClick={() => handleStatusChange(supp.id, SupplierStatus.APPLICATION_PENDING)}>
-                  Huỷ xác minh
+                  {t('huy_xac_minh')}
                 </button>
                 <span className="sep">|</span>
                 <button className="delete" onClick={() => handleDelete(supp.id)}>
@@ -83,6 +85,7 @@ function Row( {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminSuppliers() {
+  const { t } = useTranslation();
   const fetchSuppliers = async (
     page: number = 1,
     limit: number = PROFILES_PER_PAGE
@@ -105,7 +108,7 @@ export function AdminSuppliers() {
     }
   }
 
-  const { t } = useTranslation();
+
   const location = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
@@ -233,7 +236,7 @@ export function AdminSuppliers() {
       if (app.id === detailId) return app;
     });
 
-    if (filtered.length === 0) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>Không tìm thấy hồ sơ.</div>;
+    if (filtered.length === 0) return <div style={{ padding: 40, textAlign: 'center', color: '#646970' }}>{t('khong_tim_thay_ho_so')}</div>;
     return (
       <SupplierDetail
         request={filtered[0]}
@@ -254,9 +257,9 @@ export function AdminSuppliers() {
         <div className="wp-breadcrumb">
           <Link to="/dashboard/admin">Dashboard</Link><span className="wp-breadcrumb-sep">›</span>
           <span>Nhà cung cấp</span><span className="wp-breadcrumb-sep">›</span>
-          <span className="wp-breadcrumb-current">Tất cả nhà cung cấp</span>
+          <span className="wp-breadcrumb-current">{t('tat_ca_nha_cung_cap')}</span>
         </div>
-        <div className="wp-page-header"><h1 className="wp-page-title">Tất cả nhà cung cấp</h1></div>
+        <div className="wp-page-header"><h1 className="wp-page-title">{t('tat_ca_nha_cung_cap')}</h1></div>
 
         <div className="wp-filter-tabs">
           {Object.entries(statusCounts).map(([key, count], idx) => (
@@ -271,7 +274,7 @@ export function AdminSuppliers() {
 
         <div className="wp-table-top">
           <div className="wp-bulk-actions">
-            <select className="wp-bulk-select"><option>Thao tác hàng loạt</option><option>Xác minh</option><option>Huỷ xác minh</option><option>Xóa</option></select>
+            <select className="wp-bulk-select"><option>{t('thao_tac_hang_loat')}</option><option>{t('xac_minh')}</option><option>{t('huy_xac_minh')}</option><option>Xóa</option></select>
             <button className="wp-btn">Áp dụng</button>
           </div>
           <form onSubmit={handleSearchSubmit} className="wp-table-search">
@@ -285,13 +288,13 @@ export function AdminSuppliers() {
             <thead>
               <tr>
                 <th style={{ width: 30 }}><input type="checkbox" checked={selectedIds.length === suppliers.length && suppliers.length > 0} onChange={toggleAll} /></th>
-                <th>Tên doanh nghiệp</th><th>Sđt</th><th>Email</th><th>Mã số thuế</th><th>Trạng thái</th>
+                <th>{t('ten_doanh_nghiep')}</th><th>{t('sdt')}</th><th>Email</th><th>Mã số thuế</th><th>Trạng thái</th>
               </tr>
             </thead>
 
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>Không tìm thấy ứng viên nào.</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 30, color: 'var(--wp-text-muted)' }}>{t('khong_tim_thay_ung_vien_nao')}</td></tr>
               ) : filtered.map(supp => (
                 <Row selectedIds={selectedIds} supp={supp}
                   handleStatusChange={handleStatusChange} handleDelete={handleDelete}

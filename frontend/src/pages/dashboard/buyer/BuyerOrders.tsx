@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Package, MapPin, Search, ChevronRight, XCircle } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
 
 export function BuyerOrders() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -60,7 +62,7 @@ export function BuyerOrders() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-8 text-center text-slate-500">{t('dang_tai_du_lieu')}</div>;
 
   return (
     <div className="space-y-6">
@@ -70,7 +72,7 @@ export function BuyerOrders() {
             <ShoppingBag className="text-emerald-600" />
             ĐƠN MUA CỦA TÔI
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Quản lý và theo dõi các đơn hàng bạn đã mua trên VIEproduct</p>
+          <p className="text-sm text-slate-500 mt-1">{t('quan_ly_va_theo_doi_cac_don_hang_ban_da_')}</p>
         </div>
         
         <div className="relative w-full sm:w-64">
@@ -86,8 +88,8 @@ export function BuyerOrders() {
       {orders.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-12 text-center">
           <Package size={48} className="mx-auto text-slate-200 mb-4" />
-          <h3 className="text-lg font-bold text-slate-700 mb-2">Chưa có đơn hàng nào</h3>
-          <p className="text-slate-500">Bạn chưa thực hiện bất kỳ đơn mua hàng nào.</p>
+          <h3 className="text-lg font-bold text-slate-700 mb-2">{t('chua_co_don_hang_nao')}</h3>
+          <p className="text-slate-500">{t('ban_chua_thuc_hien_bat_ky_don_mua_hang_n')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -102,7 +104,7 @@ export function BuyerOrders() {
                   </div>
                   <div className="hidden sm:block w-px h-8 bg-slate-200"></div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">Ngày đặt</div>
+                    <div className="text-xs text-slate-500 font-medium">{t('ngay_dat')}</div>
                     <div className="font-bold text-slate-900">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
                   </div>
                 </div>

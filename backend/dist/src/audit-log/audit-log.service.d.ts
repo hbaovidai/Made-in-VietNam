@@ -12,8 +12,8 @@ export declare class AuditLogService {
         ipAddress?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         userId: string;
+        createdAt: Date;
         action: string;
         targetType: string;
         targetId: string | null;
@@ -31,14 +31,14 @@ export declare class AuditLogService {
             user: {
                 id: string;
                 email: string;
-                role: import("@prisma/client").$Enums.Role;
                 fullName: string;
+                role: import("@prisma/client").$Enums.Role;
                 avatar: string | null;
             };
         } & {
             id: string;
-            createdAt: Date;
             userId: string;
+            createdAt: Date;
             action: string;
             targetType: string;
             targetId: string | null;

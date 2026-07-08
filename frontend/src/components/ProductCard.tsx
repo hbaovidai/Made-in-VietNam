@@ -63,10 +63,10 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </Link>
         <Link
-          to={`/rfq?product=${product.id}`}
+          to={`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`}
           className="w-full py-3 px-4 bg-white border-2 border-[#1E293B] text-[#1E293B] font-bold text-sm text-center rounded hover:bg-[#1E293B] hover:text-white transition-colors duration-300 flex items-center justify-center gap-2 group/btn"
         >
-          Request Quote
+          Liên hệ
           <svg className="w-4 h-4 fill-current group-hover/btn:translate-x-1 transition-transform" viewBox="0 0 24 24">
              <path d="M8 5v14l11-7z" />
           </svg>

@@ -7,15 +7,15 @@ export declare class SupplierApplicationController {
     getAllApplications(query: SupplierApplicationDto): Promise<{
         data: {
             id: number;
+            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
             email: string;
             phone: string;
-            status: import("@prisma/client").$Enums.SupplierApplicationStatus;
-            createdAt: Date;
-            lastName: string;
-            firstName: string;
-            applicantRole: import("@prisma/client").$Enums.SupplierApplicantRole;
-            govId: string;
-            govIdPicUrl: string[];
+            first_name: string;
+            last_name: string;
+            applicant_role: import("@prisma/client").$Enums.SupplierApplicantRole;
+            gov_id: string;
+            created_at: Date;
+            gov_id_pic_url: string[];
         }[];
         meta: {
             total_apps_count: number;

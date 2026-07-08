@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { api } from '../../../lib/api';
 import { aboutDb, AboutData, AboutStat } from '../../../utils/aboutDb';
@@ -11,6 +12,7 @@ const inputStyle: React.CSSProperties = { width: '100%', padding: '6px 10px', bo
 
 // ─── About Tab Component ─────────────────────────────────────
 function AboutTabContent() {
+  const { t } = useTranslation();
   const [data, setData] = useState<AboutData>(aboutDb.getData());
   const [saved, setSaved] = useState(false);
 
@@ -58,28 +60,28 @@ function AboutTabContent() {
       <div style={card}>
         <h3 style={cardTitle}>Hero Section</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div><label style={fieldLabel}>Tiêu đề Hero (VI)</label><input style={inputStyle} value={data.heroTitleVi} onChange={e => update('heroTitleVi', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Tiêu đề Hero (EN)</label><input style={inputStyle} value={data.heroTitleEn} onChange={e => update('heroTitleEn', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Mô tả Hero (VI)</label><textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={data.heroDescVi} onChange={e => update('heroDescVi', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Mô tả Hero (EN)</label><textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={data.heroDescEn} onChange={e => update('heroDescEn', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('tieu_de_hero_vi')}</label><input style={inputStyle} value={data.heroTitleVi} onChange={e => update('heroTitleVi', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('tieu_de_hero_en')}</label><input style={inputStyle} value={data.heroTitleEn} onChange={e => update('heroTitleEn', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('mo_ta_hero_vi')}</label><textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={data.heroDescVi} onChange={e => update('heroDescVi', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('mo_ta_hero_en')}</label><textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={data.heroDescEn} onChange={e => update('heroDescEn', e.target.value)} /></div>
         </div>
       </div>
 
       {/* Statistics */}
       <div style={card}>
-        <h3 style={cardTitle}>Số liệu thống kê (4 ô)</h3>
+        <h3 style={cardTitle}>{t('so_lieu_thong_ke_4_o')}</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {data.stats.map((stat, idx) => (
             <div key={idx} style={{ padding: 12, border: '1px solid #f0f0f1', borderRadius: 6, background: '#fafafa' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#646970', marginBottom: 8 }}>Ô #{idx + 1}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: 8 }}>
                 <div>
-                  <label style={fieldLabel}>Giá trị</label>
+                  <label style={fieldLabel}>{t('gia_tri')}</label>
                   <input style={{ ...inputStyle, textAlign: 'center', fontWeight: 700, fontSize: 16 }} value={stat.value} onChange={e => updateStat(idx, 'value', e.target.value)} placeholder="50+" />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  <div><label style={fieldLabel}>Nhãn (VI)</label><input style={inputStyle} value={stat.labelVi} onChange={e => updateStat(idx, 'labelVi', e.target.value)} /></div>
-                  <div><label style={fieldLabel}>Nhãn (EN)</label><input style={inputStyle} value={stat.labelEn} onChange={e => updateStat(idx, 'labelEn', e.target.value)} /></div>
+                  <div><label style={fieldLabel}>{t('nhan_vi')}</label><input style={inputStyle} value={stat.labelVi} onChange={e => updateStat(idx, 'labelVi', e.target.value)} /></div>
+                  <div><label style={fieldLabel}>{t('nhan_en')}</label><input style={inputStyle} value={stat.labelEn} onChange={e => updateStat(idx, 'labelEn', e.target.value)} /></div>
                 </div>
               </div>
             </div>
@@ -89,19 +91,19 @@ function AboutTabContent() {
 
       {/* Mission Section */}
       <div style={card}>
-        <h3 style={cardTitle}>Sứ mệnh</h3>
+        <h3 style={cardTitle}>{t('su_menh')}</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div><label style={fieldLabel}>Tiêu đề (VI)</label><input style={inputStyle} value={data.missionTitleVi} onChange={e => update('missionTitleVi', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Tiêu đề (EN)</label><input style={inputStyle} value={data.missionTitleEn} onChange={e => update('missionTitleEn', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Mô tả (VI)</label><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={data.missionDescVi} onChange={e => update('missionDescVi', e.target.value)} /></div>
-          <div><label style={fieldLabel}>Mô tả (EN)</label><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={data.missionDescEn} onChange={e => update('missionDescEn', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('tieu_de_vi_1')}</label><input style={inputStyle} value={data.missionTitleVi} onChange={e => update('missionTitleVi', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('tieu_de_en')}</label><input style={inputStyle} value={data.missionTitleEn} onChange={e => update('missionTitleEn', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('mo_ta_vi_1')}</label><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={data.missionDescVi} onChange={e => update('missionDescVi', e.target.value)} /></div>
+          <div><label style={fieldLabel}>{t('mo_ta_en_1')}</label><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={data.missionDescEn} onChange={e => update('missionDescEn', e.target.value)} /></div>
         </div>
 
         {/* Points */}
         <div style={{ marginTop: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <label style={fieldLabel}>Điểm nổi bật (bullet points)</label>
-            <button onClick={addPoint} style={{ background: 'none', border: '1px solid #2271b1', borderRadius: 4, padding: '3px 10px', cursor: 'pointer', fontSize: 11, color: '#2271b1' }}>+ Thêm</button>
+            <label style={fieldLabel}>{t('diem_noi_bat_bullet_points')}</label>
+            <button onClick={addPoint} style={{ background: 'none', border: '1px solid #2271b1', borderRadius: 4, padding: '3px 10px', cursor: 'pointer', fontSize: 11, color: '#2271b1' }}>{t('them_1')}</button>
           </div>
           {data.missionPoints.map((pt, idx) => (
             <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 30px', gap: 8, marginBottom: 6 }}>
@@ -115,14 +117,14 @@ function AboutTabContent() {
         {/* Image & Quote */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
           <div>
-            <label style={fieldLabel}>URL hình ảnh sứ mệnh</label>
+            <label style={fieldLabel}>{t('url_hinh_anh_su_menh')}</label>
             <input style={inputStyle} value={data.missionImage} onChange={e => update('missionImage', e.target.value)} placeholder="https://..." />
             {data.missionImage && <img src={data.missionImage} alt="" style={{ marginTop: 8, width: '100%', height: 120, objectFit: 'cover', borderRadius: 6, border: '1px solid #dcdcde' }} referrerPolicy="no-referrer" />}
           </div>
           <div>
-            <label style={fieldLabel}>Trích dẫn (VI)</label>
+            <label style={fieldLabel}>{t('trich_dan_vi')}</label>
             <textarea style={{ ...inputStyle, minHeight: 50, resize: 'vertical', marginBottom: 8 }} value={data.missionQuoteVi} onChange={e => update('missionQuoteVi', e.target.value)} />
-            <label style={fieldLabel}>Trích dẫn (EN)</label>
+            <label style={fieldLabel}>{t('trich_dan_en')}</label>
             <textarea style={{ ...inputStyle, minHeight: 50, resize: 'vertical' }} value={data.missionQuoteEn} onChange={e => update('missionQuoteEn', e.target.value)} />
           </div>
         </div>
@@ -131,7 +133,7 @@ function AboutTabContent() {
       {/* Actions */}
       <div style={{ display: 'flex', gap: 10 }}>
         <button className="wp-btn wp-btn-primary" onClick={handleSave} style={{ padding: '8px 20px', fontSize: 13 }}>Lưu thay đổi</button>
-        <button className="wp-btn" onClick={handleReset} style={{ padding: '8px 20px', fontSize: 13, background: '#fff', border: '1px solid #c3c4c7', color: '#d63638', cursor: 'pointer' }}>Khôi phục mặc định</button>
+        <button className="wp-btn" onClick={handleReset} style={{ padding: '8px 20px', fontSize: 13, background: '#fff', border: '1px solid #c3c4c7', color: '#d63638', cursor: 'pointer' }}>{t('khoi_phuc_mac_dinh')}</button>
       </div>
     </div>
   );
@@ -139,6 +141,7 @@ function AboutTabContent() {
 
 // ═════════════════════════════════════════════════════════════
 export function AdminSettings() {
+  const { t } = useTranslation();
   const location = useLocation();
   const tab = new URLSearchParams(location.search).get('tab') || 'general';
 
@@ -200,8 +203,8 @@ export function AdminSettings() {
       title: 'Social Media',
       fields: [
         { key: 'facebook_url', label: 'Facebook URL', desc: '' },
-        { key: 'twitter_url', label: 'Twitter URL', desc: '' },
         { key: 'linkedin_url', label: 'LinkedIn URL', desc: '' },
+        { key: 'tiktok_url', label: 'TikTok URL', desc: '' },
       ]
     },
     {

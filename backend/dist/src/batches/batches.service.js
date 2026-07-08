@@ -140,7 +140,7 @@ let BatchesService = class BatchesService {
                 batch: {
                     include: {
                         product: true,
-                        supplier: { select: { companyName: true, isVerified: true } },
+                        supplier: { select: { companyName: true, is_verified: true } },
                     },
                 },
             },

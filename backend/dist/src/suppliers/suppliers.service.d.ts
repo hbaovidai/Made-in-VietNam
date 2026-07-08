@@ -7,8 +7,7 @@ export declare class SuppliersService {
     findAll(query: SupplierQueryDto): Promise<{
         data: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
+            userId: string;
             companyName: string;
             slug: string;
             logo: string | null;
@@ -16,20 +15,22 @@ export declare class SuppliersService {
             description: string | null;
             businessType: string | null;
             yearEstablished: number | null;
-            employeeCount: string | null;
-            address: string | null;
+            employee_count: string | null;
+            streetAddress: string | null;
             city: string | null;
             province: string | null;
             website: string | null;
             taxCode: string | null;
             companyEmail: string | null;
             companyPhone: string | null;
-            legalRepresentative: string | null;
+            legal_representative: string | null;
             businessLicenseUrl: string | null;
-            identityCardUrl: string | null;
-            verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-            isVerified: boolean | null;
-            userId: string;
+            identity_card_url: string | null;
+            salesChannels: Prisma.JsonValue | null;
+            is_verified: boolean | null;
+            createdAt: Date;
+            updatedAt: Date;
+            verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
         }[];
         meta: {
             total: number;
@@ -39,52 +40,6 @@ export declare class SuppliersService {
         };
     }>;
     findBySlug(slugOrId: string): Promise<{
-        user: {
-            email: string;
-            fullName: string;
-        };
-        _count: {
-            products: number;
-        };
-        products: ({
-            category: {
-                slug: string;
-                name: string;
-            };
-        } & {
-            id: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
-            updatedAt: Date;
-            slug: string;
-            description: string | null;
-            name: string;
-            nameEn: string | null;
-            descriptionEn: string | null;
-            supplierId: string;
-            minPrice: number;
-            maxPrice: number;
-            currency: string;
-            unit: string;
-            moq: number;
-            moqUnit: string;
-            categoryId: string;
-            images: string[];
-            rating: number;
-            reviewCount: number;
-            viewCount: number;
-            rfqMinQuantity: number | null;
-            origin: string | null;
-            leadTime: string | null;
-            brand: string | null;
-            sku: string | null;
-            productionCapacity: string | null;
-            port: string | null;
-            exportMarkets: string | null;
-            attributes: Prisma.JsonValue | null;
-            customizations: string[];
-            specifications: Prisma.JsonValue | null;
-        })[];
         certifications: {
             id: string;
             name: string;
@@ -94,16 +49,61 @@ export declare class SuppliersService {
             expiryDate: Date | null;
             documentUrl: string | null;
         }[];
+        products: ({
+            category: {
+                slug: string;
+                name: string;
+            };
+        } & {
+            id: string;
+            slug: string;
+            description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
+            minPrice: number;
+            maxPrice: number;
+            currency: string;
+            unit: string;
+            moq: number;
+            moqUnit: string;
+            images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
+            rating: number;
+            reviewCount: number;
+            viewCount: number;
+            rfqMinQuantity: number | null;
+            attributes: Prisma.JsonValue | null;
+            brand: string | null;
+            customizations: string[];
+            exportMarkets: string | null;
+            leadTime: string | null;
+            origin: string | null;
+            port: string | null;
+            productionCapacity: string | null;
+            sku: string | null;
+            specifications: Prisma.JsonValue | null;
+            supplierId: string;
+            categoryId: string;
+        })[];
         industries: {
             industry: string;
         }[];
         markets: {
             market: string;
         }[];
+        user: {
+            email: string;
+            fullName: string;
+        };
+        _count: {
+            products: number;
+        };
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
         slug: string;
         logo: string | null;
@@ -111,25 +111,26 @@ export declare class SuppliersService {
         description: string | null;
         businessType: string | null;
         yearEstablished: number | null;
-        employeeCount: string | null;
-        address: string | null;
+        employee_count: string | null;
+        streetAddress: string | null;
         city: string | null;
         province: string | null;
         website: string | null;
         taxCode: string | null;
         companyEmail: string | null;
         companyPhone: string | null;
-        legalRepresentative: string | null;
+        legal_representative: string | null;
         businessLicenseUrl: string | null;
-        identityCardUrl: string | null;
-        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-        isVerified: boolean | null;
-        userId: string;
+        identity_card_url: string | null;
+        salesChannels: Prisma.JsonValue | null;
+        is_verified: boolean | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
     }>;
     createProfile(userId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
         slug: string;
         logo: string | null;
@@ -137,68 +138,24 @@ export declare class SuppliersService {
         description: string | null;
         businessType: string | null;
         yearEstablished: number | null;
-        employeeCount: string | null;
-        address: string | null;
+        employee_count: string | null;
+        streetAddress: string | null;
         city: string | null;
         province: string | null;
         website: string | null;
         taxCode: string | null;
         companyEmail: string | null;
         companyPhone: string | null;
-        legalRepresentative: string | null;
+        legal_representative: string | null;
         businessLicenseUrl: string | null;
-        identityCardUrl: string | null;
-        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-        isVerified: boolean | null;
-        userId: string;
+        identity_card_url: string | null;
+        salesChannels: Prisma.JsonValue | null;
+        is_verified: boolean | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
     }>;
     update(supplierId: string, dto: UpdateSupplierDto): Promise<{
-        user: {
-            email: string;
-            fullName: string;
-        };
-        _count: {
-            products: number;
-        };
-        products: ({
-            category: {
-                slug: string;
-                name: string;
-            };
-        } & {
-            id: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
-            updatedAt: Date;
-            slug: string;
-            description: string | null;
-            name: string;
-            nameEn: string | null;
-            descriptionEn: string | null;
-            supplierId: string;
-            minPrice: number;
-            maxPrice: number;
-            currency: string;
-            unit: string;
-            moq: number;
-            moqUnit: string;
-            categoryId: string;
-            images: string[];
-            rating: number;
-            reviewCount: number;
-            viewCount: number;
-            rfqMinQuantity: number | null;
-            origin: string | null;
-            leadTime: string | null;
-            brand: string | null;
-            sku: string | null;
-            productionCapacity: string | null;
-            port: string | null;
-            exportMarkets: string | null;
-            attributes: Prisma.JsonValue | null;
-            customizations: string[];
-            specifications: Prisma.JsonValue | null;
-        })[];
         certifications: {
             id: string;
             name: string;
@@ -208,16 +165,61 @@ export declare class SuppliersService {
             expiryDate: Date | null;
             documentUrl: string | null;
         }[];
+        products: ({
+            category: {
+                slug: string;
+                name: string;
+            };
+        } & {
+            id: string;
+            slug: string;
+            description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            nameEn: string | null;
+            descriptionEn: string | null;
+            minPrice: number;
+            maxPrice: number;
+            currency: string;
+            unit: string;
+            moq: number;
+            moqUnit: string;
+            images: string[];
+            status: import("@prisma/client").$Enums.ProductStatus;
+            rating: number;
+            reviewCount: number;
+            viewCount: number;
+            rfqMinQuantity: number | null;
+            attributes: Prisma.JsonValue | null;
+            brand: string | null;
+            customizations: string[];
+            exportMarkets: string | null;
+            leadTime: string | null;
+            origin: string | null;
+            port: string | null;
+            productionCapacity: string | null;
+            sku: string | null;
+            specifications: Prisma.JsonValue | null;
+            supplierId: string;
+            categoryId: string;
+        })[];
         industries: {
             industry: string;
         }[];
         markets: {
             market: string;
         }[];
+        user: {
+            email: string;
+            fullName: string;
+        };
+        _count: {
+            products: number;
+        };
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
         slug: string;
         logo: string | null;
@@ -225,20 +227,22 @@ export declare class SuppliersService {
         description: string | null;
         businessType: string | null;
         yearEstablished: number | null;
-        employeeCount: string | null;
-        address: string | null;
+        employee_count: string | null;
+        streetAddress: string | null;
         city: string | null;
         province: string | null;
         website: string | null;
         taxCode: string | null;
         companyEmail: string | null;
         companyPhone: string | null;
-        legalRepresentative: string | null;
+        legal_representative: string | null;
         businessLicenseUrl: string | null;
-        identityCardUrl: string | null;
-        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-        isVerified: boolean | null;
-        userId: string;
+        identity_card_url: string | null;
+        salesChannels: Prisma.JsonValue | null;
+        is_verified: boolean | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
     }>;
     addCertification(supplierId: string, data: {
         name: string;
@@ -258,8 +262,7 @@ export declare class SuppliersService {
     }>;
     verifySupplier(supplierId: string, isVerified: boolean): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
+        userId: string;
         companyName: string;
         slug: string;
         logo: string | null;
@@ -267,20 +270,22 @@ export declare class SuppliersService {
         description: string | null;
         businessType: string | null;
         yearEstablished: number | null;
-        employeeCount: string | null;
-        address: string | null;
+        employee_count: string | null;
+        streetAddress: string | null;
         city: string | null;
         province: string | null;
         website: string | null;
         taxCode: string | null;
         companyEmail: string | null;
         companyPhone: string | null;
-        legalRepresentative: string | null;
+        legal_representative: string | null;
         businessLicenseUrl: string | null;
-        identityCardUrl: string | null;
-        verificationStatus: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-        isVerified: boolean | null;
-        userId: string;
+        identity_card_url: string | null;
+        salesChannels: Prisma.JsonValue | null;
+        is_verified: boolean | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
     }>;
     getStats(supplierId: string): Promise<{
         products: number;

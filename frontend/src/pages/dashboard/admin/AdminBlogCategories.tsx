@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { blogDb, BlogCategory } from '../../../utils/blogDb';
 import { ConfirmDialog } from '../../../components/ui/Modal';
 
 export function AdminBlogCategories() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   
   // Search & Filter state
@@ -147,7 +149,7 @@ export function AdminBlogCategories() {
           <form onSubmit={handleSubmit}>
             {/* Tên VI */}
             <div className="wp-form-row">
-              <label className="wp-form-label">Tên danh mục (Tiếng Việt) *</label>
+              <label className="wp-form-label">{t('ten_danh_muc_tieng_viet')}</label>
               <input
                 ref={nameInputRef}
                 required
@@ -157,12 +159,12 @@ export function AdminBlogCategories() {
                 onChange={e => handleNameViChange(e.target.value)}
                 placeholder="Ví dụ: Xu hướng Thị trường"
               />
-              <p className="wp-form-desc">Hiển thị khi chuyển sang giao diện Tiếng Việt.</p>
+              <p className="wp-form-desc">{t('hien_thi_khi_chuyen_sang_giao_dien_tieng')}</p>
             </div>
 
             {/* Tên EN */}
             <div className="wp-form-row">
-              <label className="wp-form-label">Tên danh mục (English) *</label>
+              <label className="wp-form-label">{t('ten_danh_muc_english')}</label>
               <input
                 required
                 className="wp-form-input"
@@ -171,12 +173,12 @@ export function AdminBlogCategories() {
                 onChange={e => setNameEn(e.target.value)}
                 placeholder="Example: Market Trends"
               />
-              <p className="wp-form-desc">Hiển thị khi chuyển giao diện Tiếng Anh.</p>
+              <p className="wp-form-desc">{t('hien_thi_khi_chuyen_giao_dien_tieng_anh')}</p>
             </div>
 
             {/* Slug */}
             <div className="wp-form-row">
-              <label className="wp-form-label">Slug (Khóa định danh) *</label>
+              <label className="wp-form-label">{t('slug_khoa_dinh_danh')}</label>
               <input
                 required
                 className="wp-form-input"
@@ -185,13 +187,13 @@ export function AdminBlogCategories() {
                 onChange={e => setSlug(e.target.value)}
                 placeholder="xu-huong-thi-truong"
               />
-              <p className="wp-form-desc">Đường dẫn tĩnh thân thiện URL, chữ thường không dấu.</p>
+              <p className="wp-form-desc">{t('duong_dan_tinh_than_thien_url_chu_thuong')}</p>
             </div>
 
             {/* Order & Visibility */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="wp-form-row">
               <div>
-                <label className="wp-form-label">Thứ tự</label>
+                <label className="wp-form-label">{t('thu_tu')}</label>
                 <input
                   type="number"
                   className="wp-form-input"
@@ -208,7 +210,7 @@ export function AdminBlogCategories() {
                   onChange={e => setIsVisible(e.target.value === 'true')}
                 >
                   <option value="true">Hiển thị</option>
-                  <option value="false">Ẩn danh mục</option>
+                  <option value="false">{t('an_danh_muc')}</option>
                 </select>
               </div>
             </div>
@@ -229,7 +231,7 @@ export function AdminBlogCategories() {
                   onClick={resetForm}
                   style={{ padding: '6px 16px', fontSize: 13 }}
                 >
-                  Huỷ
+                  {t('huy')}
                 </button>
               )}
             </div>
@@ -262,10 +264,10 @@ export function AdminBlogCategories() {
             <table className="wp-table">
               <thead>
                 <tr>
-                  <th style={{ width: 60, textAlign: 'center' }}>Thứ tự</th>
-                  <th>Tên danh mục VI</th>
-                  <th>Tên danh mục EN</th>
-                  <th style={{ width: 140 }}>Slug (Khóa)</th>
+                  <th style={{ width: 60, textAlign: 'center' }}>{t('thu_tu')}</th>
+                  <th>{t('ten_danh_muc_vi')}</th>
+                  <th>{t('ten_danh_muc_en')}</th>
+                  <th style={{ width: 140 }}>{t('slug_khoa')}</th>
                   <th style={{ width: 100, textAlign: 'center' }}>Trạng thái</th>
                 </tr>
               </thead>
@@ -306,7 +308,7 @@ export function AdminBlogCategories() {
                               onClick={() => setConfirmDelete({ isOpen: true, category: cat })}
                               className="delete"
                             >
-                              Xoá
+                              {t('xoa')}
                             </button>
                           </div>
                         </div>

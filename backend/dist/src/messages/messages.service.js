@@ -49,6 +49,43 @@ let MessagesService = class MessagesService {
             targetUser: p.conversation.participants[0]?.user || null,
         }));
     }
+    async getAllConversations() {
+        const conversations = await this.prisma.conversation.findMany({
+            include: {
+                participants: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                fullName: true,
+                                email: true,
+                                role: true,
+                                avatar: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: { updatedAt: 'desc' },
+        });
+        return conversations.map((c) => {
+            const buyerPart = c.participants.find((p) => p.user.role === 'BUYER');
+            const supplierPart = c.participants.find((p) => p.user.role === 'SUPPLIER');
+            return {
+                id: c.id,
+                buyerName: buyerPart?.user.fullName || 'Unknown',
+                buyerEmail: buyerPart?.user.email || 'N/A',
+                supplierName: supplierPart?.user.fullName || 'Unknown',
+                supplierEmail: supplierPart?.user.email || 'N/A',
+                lastMessage: c.lastMessage,
+                lastMessageAt: c.lastMessageAt,
+                updatedAt: c.updatedAt,
+                status: 'active',
+                unread: false,
+                participants: c.participants,
+            };
+        });
+    }
     async getMessages(conversationId, userId, limit = 50, skip = 0) {
         const participant = await this.prisma.conversationParticipant.findUnique({
             where: { conversationId_userId: { conversationId, userId } },

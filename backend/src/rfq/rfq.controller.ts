@@ -36,7 +36,7 @@ export class RfqController {
         where: { userId: currentUser.id },
       });
       // pls don't explode
-      isVerified = supplier?.status === SupplierStatus.VERIFIED;
+      isVerified = supplier?.status === SupplierStatus.VERIFIED || supplier?.is_verified ?? false ;
     }
     return this.rfqService.getOpenRFQs(isVerified);
   }
@@ -93,7 +93,7 @@ export class RfqController {
     });
     if (!supplier)
       throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
-    if (supplier.status !== SupplierStatus.VERIFIED)
+    if (supplier.status !== SupplierStatus.VERIFIED || !supplier.is_verified)
       throw new ForbiddenException(
         'Chỉ nhà cung cấp đã xác thực mới được gửi báo giá. Vui lòng hoàn tất Xác thực Doanh nghiệp (KYB).',
       );

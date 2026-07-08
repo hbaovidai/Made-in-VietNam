@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from 'lucide-react';
 import { api } from '../lib/api';
@@ -6,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 
 export function Cart() {
+  const { t } = useTranslation();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -60,8 +62,8 @@ export function Cart() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
         <ShoppingCart size={48} className="text-slate-300 mb-4" />
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Vui lòng đăng nhập</h2>
-        <p className="text-slate-500 mb-6">Bạn cần đăng nhập để xem Giỏ yêu cầu báo giá</p>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('cart_login_required')}</h2>
+        <p className="text-slate-500 mb-6">{t('cart_login_desc')}</p>
         <Link to="/login" className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-colors">
           Đăng nhập ngay
         </Link>
@@ -70,7 +72,7 @@ export function Cart() {
   }
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-500">Đang tải Giỏ yêu cầu...</div>;
+    return <div className="p-8 text-center text-slate-500">{t('cart_loading')}</div>;
   }
 
   if (cartItems.length === 0) {
@@ -79,8 +81,8 @@ export function Cart() {
         <h1 className="text-2xl font-black text-slate-900 mb-8 uppercase tracking-tight">Inquiry Basket</h1>
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-12 text-center">
           <ShoppingCart size={64} className="mx-auto text-slate-200 mb-4" />
-          <h2 className="text-xl font-bold text-slate-700 mb-2">Giỏ yêu cầu trống</h2>
-          <p className="text-slate-500 mb-6">Bạn chưa thêm sản phẩm nào vào Giỏ yêu cầu báo giá.</p>
+          <h2 className="text-xl font-bold text-slate-700 mb-2">{t('cart_empty_title')}</h2>
+          <p className="text-slate-500 mb-6">{t('cart_empty_desc')}</p>
           <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-colors">
             Khám phá sản phẩm <ArrowRight size={16} />
           </Link>
@@ -92,7 +94,7 @@ export function Cart() {
   return (
     <div className="bg-slate-50 min-h-screen pb-12">
       <div className="max-w-[1200px] mx-auto px-4 py-8">
-        <h1 className="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tight">Giỏ yêu cầu báo giá (Inquiry Basket)</h1>
+        <h1 className="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tight">{t('cart_page_title')}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -155,25 +157,25 @@ export function Cart() {
           {/* Inquiry Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-24">
-              <h2 className="text-lg font-bold text-slate-900 mb-6 uppercase tracking-widest">Tóm tắt yêu cầu</h2>
+              <h2 className="text-lg font-bold text-slate-900 mb-6 uppercase tracking-widest">{t('cart_inquiry_summary')}</h2>
               
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-slate-600">
-                  <span>Tổng sản phẩm</span>
+                  <span>{t('cart_total_products')}</span>
                   <span className="font-bold">{cartItems.length}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
-                  <span>Tổng lượng yêu cầu</span>
+                  <span>{t('cart_total_quantity')}</span>
                   <span className="font-bold">
                     {cartItems.reduce((acc, curr) => acc + (parseInt(curr.quantity) || 1), 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-600">
-                  <span>Tạm tính (Tham khảo)</span>
+                  <span>{t('cart_subtotal_ref')}</span>
                   <span className="font-bold">{calculateTotal().toLocaleString()} VND</span>
                 </div>
                 <div className="border-t border-slate-100 pt-4 flex justify-between">
-                  <span className="font-bold text-slate-900">Ước tính tổng cộng</span>
+                  <span className="font-bold text-slate-900">{t('cart_estimated_total')}</span>
                   <span className="text-xl font-black text-primary">{calculateTotal().toLocaleString()} VND</span>
                 </div>
               </div>
@@ -182,12 +184,12 @@ export function Cart() {
                 to="/checkout"
                 className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase tracking-widest text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]"
               >
-                Gửi yêu cầu Báo giá hàng loạt <ArrowRight size={16} />
+                {t('checkout_bulk_rfq_title')} <ArrowRight size={16} />
               </Link>
               
               <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-400">
                 <ShoppingCart size={12} />
-                <span>Giao dịch Trung gian B2B An toàn</span>
+                <span>{t('cart_b2b_safe_trading')}</span>
               </div>
             </div>
           </div>

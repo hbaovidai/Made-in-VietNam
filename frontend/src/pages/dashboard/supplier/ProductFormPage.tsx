@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X, Image as ImageIcon, Loader2, Trash2 } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
@@ -11,6 +12,7 @@ interface CategoryOption {
 }
 
 export function ProductFormPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();
@@ -198,7 +200,7 @@ export function ProductFormPage() {
                 value={formData.categoryId}
                 onChange={e => handleChange('categoryId', e.target.value)}
               >
-                <option value="">Chọn danh mục...</option>
+                <option value="">{t('chon_danh_muc')}</option>
                 {categories.map(parent => (
                   <optgroup key={parent.id} label={parent.name}>
                     {parent.children?.map(child => (
@@ -213,7 +215,7 @@ export function ProductFormPage() {
           {/* Giá bán */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Giá bán (VNĐ) <span className="text-red-500">*</span></label>
+              <label className="text-sm font-bold text-slate-700">{t('gia_ban_vnd')} <span className="text-red-500">*</span></label>
               <input 
                 type="number" 
                 required
@@ -229,7 +231,7 @@ export function ProductFormPage() {
           {/* Đơn vị & MOQ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Đơn vị tính <span className="text-red-500">*</span></label>
+              <label className="text-sm font-bold text-slate-700">{t('don_vi_tinh')} <span className="text-red-500">*</span></label>
               <select 
                 required
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
@@ -242,7 +244,7 @@ export function ProductFormPage() {
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Số lượng đặt tối thiểu (MOQ) <span className="text-red-500">*</span></label>
+              <label className="text-sm font-bold text-slate-700">{t('so_luong_dat_toi_thieu_moq')} <span className="text-red-500">*</span></label>
               <input 
                 type="number" 
                 required
@@ -258,7 +260,7 @@ export function ProductFormPage() {
           {/* Ngưỡng báo giá */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Ngưỡng báo giá (đơn hàng lớn)</label>
+              <label className="text-sm font-bold text-slate-700">{t('nguong_bao_gia_don_hang_lon')}</label>
               <input 
                 type="number" 
                 min="1"
@@ -267,7 +269,7 @@ export function ProductFormPage() {
                 value={formData.rfqMinQuantity}
                 onChange={e => handleChange('rfqMinQuantity', e.target.value)}
               />
-              <p className="text-xs text-slate-400">Khi người mua đặt số lượng ≥ ngưỡng này, hệ thống sẽ yêu cầu gửi báo giá thay vì mua trực tiếp. Để trống nếu không áp dụng.</p>
+              <p className="text-xs text-slate-400">{t('khi_nguoi_mua_dat_so_luong_nguong_nay_he')}</p>
             </div>
           </div>
 
@@ -285,7 +287,7 @@ export function ProductFormPage() {
 
           {/* Hình ảnh sản phẩm */}
           <div className="space-y-4">
-            <label className="text-sm font-bold text-slate-700">Hình ảnh sản phẩm</label>
+            <label className="text-sm font-bold text-slate-700">{t('hinh_anh_san_pham')}</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
               {formData.images.map((url, idx) => (
                 url.trim() ? (
@@ -297,7 +299,7 @@ export function ProductFormPage() {
                       </button>
                     </div>
                     {idx === 0 && (
-                      <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Ảnh chính</span>
+                      <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{t('anh_chinh')}</span>
                     )}
                   </div>
                 ) : (
@@ -334,11 +336,11 @@ export function ProductFormPage() {
                   <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
                     <span className="text-xl font-bold text-slate-400">+</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400">Thêm ảnh</span>
+                  <span className="text-xs font-bold text-slate-400">{t('them_anh')}</span>
                 </button>
               )}
             </div>
-            <p className="text-xs text-slate-400">Chọn ảnh từ máy tính (tối đa 5 ảnh, mỗi ảnh ≤ 5MB). Hỗ trợ JPG, PNG, WEBP. Ảnh đầu tiên sẽ làm ảnh chính.</p>
+            <p className="text-xs text-slate-400">{t('chon_anh_tu_may_tinh_toi_da_5_anh_moi_an')}</p>
           </div>
 
         </div>

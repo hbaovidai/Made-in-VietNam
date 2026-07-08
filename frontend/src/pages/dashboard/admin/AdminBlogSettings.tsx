@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blogDb, BlogSettings, BlogPost } from '../../../utils/blogDb';
 
 export function AdminBlogSettings() {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   
   // Settings Form State
@@ -105,11 +107,11 @@ export function AdminBlogSettings() {
       <form onSubmit={handleSave} style={{ maxWidth: 780 }}>
         {/* SECTION 1: General Settings */}
         <div className="wp-form-section">
-          <h2 className="wp-form-section-title">Tiêu đề & Khẩu hiệu</h2>
+          <h2 className="wp-form-section-title">{t('tieu_de_khau_hieu')}</h2>
           <table className="wp-form-table">
             <tbody>
               <tr>
-                <th>Tiêu đề (Tiếng Việt)</th>
+                <th>{t('tieu_de_tieng_viet')}</th>
                 <td>
                   <input
                     required
@@ -118,11 +120,11 @@ export function AdminBlogSettings() {
                     value={titleVi}
                     onChange={e => setTitleVi(e.target.value)}
                   />
-                  <p className="wp-form-desc">Tiêu đề hiển thị ở đầu trang Blog của phiên bản tiếng Việt.</p>
+                  <p className="wp-form-desc">{t('tieu_de_hien_thi_o_dau_trang_blog_cua_ph')}</p>
                 </td>
               </tr>
               <tr>
-                <th>Tiêu đề (English)</th>
+                <th>{t('tieu_de_english')}</th>
                 <td>
                   <input
                     required
@@ -131,11 +133,11 @@ export function AdminBlogSettings() {
                     value={titleEn}
                     onChange={e => setTitleEn(e.target.value)}
                   />
-                  <p className="wp-form-desc">Tiêu đề hiển thị ở đầu trang Blog của phiên bản tiếng Anh.</p>
+                  <p className="wp-form-desc">{t('tieu_de_hien_thi_o_dau_trang_blog_cua_ph_1')}</p>
                 </td>
               </tr>
               <tr>
-                <th>Khẩu hiệu (Tiếng Việt)</th>
+                <th>{t('khau_hieu_tieng_viet')}</th>
                 <td>
                   <textarea
                     rows={2}
@@ -144,11 +146,11 @@ export function AdminBlogSettings() {
                     onChange={e => setSubtitleVi(e.target.value)}
                     style={{ resize: 'vertical' }}
                   />
-                  <p className="wp-form-desc">Slogan ngắn gọn dưới tiêu đề của phiên bản tiếng Việt.</p>
+                  <p className="wp-form-desc">{t('slogan_ngan_gon_duoi_tieu_de_cua_phien_b')}</p>
                 </td>
               </tr>
               <tr>
-                <th>Khẩu hiệu (English)</th>
+                <th>{t('khau_hieu_english')}</th>
                 <td>
                   <textarea
                     rows={2}
@@ -157,7 +159,7 @@ export function AdminBlogSettings() {
                     onChange={e => setSubtitleEn(e.target.value)}
                     style={{ resize: 'vertical' }}
                   />
-                  <p className="wp-form-desc">Slogan ngắn gọn dưới tiêu đề của phiên bản tiếng Anh.</p>
+                  <p className="wp-form-desc">{t('slogan_ngan_gon_duoi_tieu_de_cua_phien_b_1')}</p>
                 </td>
               </tr>
             </tbody>
@@ -166,11 +168,11 @@ export function AdminBlogSettings() {
 
         {/* SECTION 2: Features and Layout */}
         <div className="wp-form-section">
-          <h2 className="wp-form-section-title">Tính năng & Giao diện</h2>
+          <h2 className="wp-form-section-title">{t('tinh_nang_giao_dien')}</h2>
           <table className="wp-form-table">
             <tbody>
               <tr>
-                <th>Thanh tìm kiếm</th>
+                <th>{t('thanh_tim_kiem')}</th>
                 <td>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
                     <input
@@ -184,7 +186,7 @@ export function AdminBlogSettings() {
                 </td>
               </tr>
               <tr>
-                <th>Bộ lọc danh mục</th>
+                <th>{t('bo_loc_danh_muc')}</th>
                 <td>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
                     <input
@@ -198,7 +200,7 @@ export function AdminBlogSettings() {
                 </td>
               </tr>
               <tr>
-                <th>Bố cục hiển thị</th>
+                <th>{t('bo_cuc_hien_thi')}</th>
                 <td>
                   <select
                     className="wp-form-input"
@@ -206,14 +208,14 @@ export function AdminBlogSettings() {
                     onChange={e => setLayout(e.target.value as any)}
                     style={{ maxWidth: 200 }}
                   >
-                    <option value="grid">Dạng ô (Grid Layout)</option>
-                    <option value="list">Dạng danh sách (List Layout)</option>
+                    <option value="grid">{t('dang_o_grid_layout')}</option>
+                    <option value="list">{t('dang_danh_sach_list_layout')}</option>
                   </select>
-                  <p className="wp-form-desc">Kiểu hiển thị bài viết mặc định trên trang.</p>
+                  <p className="wp-form-desc">{t('kieu_hien_thi_bai_viet_mac_dinh_tren_tra')}</p>
                 </td>
               </tr>
               <tr>
-                <th>Số bài viết mỗi trang</th>
+                <th>{t('so_bai_viet_moi_trang')}</th>
                 <td>
                   <input
                     type="number"
@@ -224,11 +226,11 @@ export function AdminBlogSettings() {
                     max="24"
                     style={{ maxWidth: 100 }}
                   />
-                  <p className="wp-form-desc">Số lượng bài viết hiển thị trên mỗi trang trước khi phân trang.</p>
+                  <p className="wp-form-desc">{t('so_luong_bai_viet_hien_thi_tren_moi_tran')}</p>
                 </td>
               </tr>
               <tr>
-                <th>Bài viết nổi bật (Featured)</th>
+                <th>{t('bai_viet_noi_bat_featured')}</th>
                 <td>
                   <select
                     className="wp-form-input"
@@ -236,12 +238,12 @@ export function AdminBlogSettings() {
                     onChange={e => setFeaturedPostId(e.target.value)}
                     style={{ maxWidth: 300 }}
                   >
-                    <option value="">-- Không chọn bài viết nổi bật --</option>
+                    <option value="">{t('khong_chon_bai_viet_noi_bat')}</option>
                     {posts.map(p => (
                       <option key={p.id} value={p.id}>{p.title.vi}</option>
                     ))}
                   </select>
-                  <p className="wp-form-desc">Bài viết nổi bật sẽ được hiển thị to và đẹp hơn ở vị trí đầu tiên.</p>
+                  <p className="wp-form-desc">{t('bai_viet_noi_bat_se_duoc_hien_thi_to_va_')}</p>
                 </td>
               </tr>
             </tbody>
@@ -263,7 +265,7 @@ export function AdminBlogSettings() {
             onClick={handleReset}
             style={{ padding: '6px 18px', fontSize: 13 }}
           >
-            Khôi phục mặc định
+            {t('khoi_phuc_mac_dinh')}
           </button>
         </div>
       </form>

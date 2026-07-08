@@ -9,19 +9,19 @@ export declare class ContactController {
         message: string;
     }): Promise<{
         id: string;
-        email: string;
-        fullName: string;
         createdAt: Date;
         message: string;
+        email: string;
+        fullName: string;
         isRead: boolean;
         subject: string;
     }>;
     findAll(): Promise<{
         id: string;
-        email: string;
-        fullName: string;
         createdAt: Date;
         message: string;
+        email: string;
+        fullName: string;
         isRead: boolean;
         subject: string;
     }[]>;
@@ -29,19 +29,19 @@ export declare class ContactController {
         isRead: boolean;
     }): Promise<{
         id: string;
-        email: string;
-        fullName: string;
         createdAt: Date;
         message: string;
+        email: string;
+        fullName: string;
         isRead: boolean;
         subject: string;
     }>;
     delete(id: string): Promise<{
         id: string;
-        email: string;
-        fullName: string;
         createdAt: Date;
         message: string;
+        email: string;
+        fullName: string;
         isRead: boolean;
         subject: string;
     }>;

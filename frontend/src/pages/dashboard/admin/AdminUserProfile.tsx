@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -8,6 +9,7 @@ import { SupplierStatus } from '@/src/lib/enums';
 type TabKey = 'profile' | 'account' | 'password' | 'activity' | 'settings';
 
 export function AdminUserProfile() {
+  const { t } = useTranslation();
   const { user: me } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const userId = searchParams.get('id') || me?.id;
@@ -147,8 +149,8 @@ export function AdminUserProfile() {
     { key: 'profile', icon: User, label: 'Hồ sơ cá nhân' },
   ];
 
-  if (loading) return <div className="wp-loading">Đang tải hồ sơ...</div>;
-  if (!profile) return <div className="wp-loading">Không tìm thấy hồ sơ.</div>;
+  if (loading) return <div className="wp-loading">{t('dang_tai_ho_so')}</div>;
+  if (!profile) return <div className="wp-loading">{t('khong_tim_thay_ho_so')}</div>;
 
   const PwInput = ({ val, set, show, toggle, placeholder }: any) => (
     <div style={{ position: 'relative', maxWidth: 400 }}>
@@ -165,10 +167,10 @@ export function AdminUserProfile() {
       <div className="wp-breadcrumb">
         <Link to="/dashboard/admin">Dashboard</Link>
         <span className="wp-breadcrumb-sep">›</span>
-        <span className="wp-breadcrumb-current">Hồ sơ cá nhân</span>
+        <span className="wp-breadcrumb-current">{t('ho_so_ca_nhan')}</span>
       </div>
 
-      <h1 className="wp-page-title">Hồ sơ cá nhân</h1>
+      <h1 className="wp-page-title">{t('ho_so_ca_nhan')}</h1>
 
       {msg && (
         <div style={{ background: msg.type === 'success' ? '#d1e4dd' : '#fcf0f1', border: `1px solid ${msg.type === 'success' ? '#00a32a' : 'var(--wp-danger)'}`, padding: '10px 16px', marginBottom: 16, borderRadius: 4, fontSize: 13, color: msg.type === 'success' ? '#1e4620' : 'var(--wp-danger)' }}>
@@ -210,7 +212,7 @@ export function AdminUserProfile() {
       {/* ═══ Tab: Thông tin cá nhân ═══ */}
       {activeTab === 'profile' && (
         <div className="wp-card">
-          <div className="wp-card-header"><span className="wp-card-title">Hồ sơ cá nhân</span></div>
+          <div className="wp-card-header"><span className="wp-card-title">{t('ho_so_ca_nhan')}</span></div>
           <div className="wp-card-body">
             <form onSubmit={handleUpdateProfile}>
               <table className="wp-form-table">
@@ -222,12 +224,12 @@ export function AdminUserProfile() {
                         <div style={{ width: 64, height: 64, borderRadius: '50%', background: roleColors[profile.role], color: '#fff', fontSize: 22, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--wp-border)' }}>
                           {profile.fullName?.charAt(0) || '?'}
                         </div>
-                        <p className="wp-form-desc" style={{ margin: 0 }}>Ảnh đại diện quản lý qua <a href="https://gravatar.com" target="_blank" rel="noreferrer" style={{ color: 'var(--wp-accent)' }}>Gravatar</a>.</p>
+                        <p className="wp-form-desc" style={{ margin: 0 }}>{t('anh_dai_dien_quan_ly_qua')} <a href="https://gravatar.com" target="_blank" rel="noreferrer" style={{ color: 'var(--wp-accent)' }}>Gravatar</a>.</p>
                       </div>
                     </td>
                   </tr>
                   <tr><th style={{ fontSize: 13 }}>Họ và tên</th><td><input type="text" className="wp-form-input" style={{ maxWidth: 400 }} value={fullName} onChange={e => setFullName(e.target.value)} /></td></tr>
-                  <tr><th style={{ fontSize: 13 }}>Email</th><td><input type="email" className="wp-form-input" style={{ maxWidth: 400, background: '#f0f0f1' }} value={profile.email} disabled /><p className="wp-form-desc">Email không thể thay đổi.</p></td></tr>
+                  <tr><th style={{ fontSize: 13 }}>Email</th><td><input type="email" className="wp-form-input" style={{ maxWidth: 400, background: '#f0f0f1' }} value={profile.email} disabled /><p className="wp-form-desc">{t('email_khong_the_thay_doi')}</p></td></tr>
                   <tr><th style={{ fontSize: 13 }}>Số điện thoại</th><td><input type="tel" className="wp-form-input" style={{ maxWidth: 400 }} value={phone} onChange={e => setPhone(e.target.value)} placeholder="0901234567" /></td></tr>
                   <tr><th style={{ fontSize: 13 }}>Ngày tham gia</th><td style={{ fontSize: 13, color: 'var(--wp-text-muted)' }}>{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}</td></tr>
                   <tr>
@@ -241,10 +243,10 @@ export function AdminUserProfile() {
                         disabled={userId === me?.id}
                       >
                         <option value="BUYER">Khách hàng</option>
-                        <option value="SUPPLIER">Doanh nghiệp (Supplier)</option>
-                        <option value="ADMIN">Quản trị viên (Admin)</option>
+                        <option value="SUPPLIER">{t('doanh_nghiep_supplier')}</option>
+                        <option value="ADMIN">{t('quan_tri_vien_admin')}</option>
                       </select>
-                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>Bạn không thể tự thay đổi vai trò của chính mình.</p>}
+                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>{t('ban_khong_the_tu_thay_doi_vai_tro_cua_ch')}</p>}
                     </td>
                   </tr>
                   <tr>
@@ -260,7 +262,7 @@ export function AdminUserProfile() {
                         <option value="ACTIVE">Hoạt động</option>
                         <option value="SUSPENDED">Bị khóa</option>
                       </select>
-                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>Bạn không thể tự khóa tài khoản của chính mình.</p>}
+                      {userId === me?.id && <p className="wp-form-desc" style={{ marginTop: 4, marginBottom: 0 }}>{t('ban_khong_the_tu_khoa_tai_khoan_cua_chin')}</p>}
                     </td>
                   </tr>
                 </tbody>
@@ -276,12 +278,12 @@ export function AdminUserProfile() {
       {/* ═══ Tab: Thông tin tài khoản ═══ */}
       {activeTab === 'account' && (
         <div className="wp-card">
-          <div className="wp-card-header"><span className="wp-card-title">Thông tin tài khoản</span></div>
+          <div className="wp-card-header"><span className="wp-card-title">{t('thong_tin_tai_khoan')}</span></div>
           <div className="wp-card-body">
             <table className="wp-form-table">
               <tbody>
-                <tr><th style={{ width: 180, fontSize: 13 }}>Username</th><td><input className="wp-form-input" style={{ maxWidth: 400, background: '#f0f0f1' }} value={profile.email?.split('@')[0] || ''} disabled /><p className="wp-form-desc">Username không thể thay đổi.</p></td></tr>
-                <tr><th style={{ fontSize: 13 }}>Email đăng nhập</th><td style={{ fontSize: 13 }}>{profile.email}</td></tr>
+                <tr><th style={{ width: 180, fontSize: 13 }}>Username</th><td><input className="wp-form-input" style={{ maxWidth: 400, background: '#f0f0f1' }} value={profile.email?.split('@')[0] || ''} disabled /><p className="wp-form-desc">{t('username_khong_the_thay_doi')}</p></td></tr>
+                <tr><th style={{ fontSize: 13 }}>{t('email_dang_nhap')}</th><td style={{ fontSize: 13 }}>{profile.email}</td></tr>
                 <tr><th style={{ fontSize: 13 }}>Vai trò</th><td><span className={`wp-badge ${profile.role === 'ADMIN' ? 'wp-badge-published' : profile.role === 'SUPPLIER' ? 'wp-badge-pending' : 'wp-badge-draft'}`}>{roleLabels[profile.role]}</span></td></tr>
                 <tr><th style={{ fontSize: 13 }}>Trạng thái</th><td><span className={`wp-badge ${profile.status === 'ACTIVE' ? 'wp-badge-approved' : 'wp-badge-rejected'}`}>{profile.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa'}</span></td></tr>
                 {profile.supplier && (
@@ -303,8 +305,8 @@ export function AdminUserProfile() {
               <table className="wp-form-table">
                 <tbody>
                   <tr><th style={{ width: 180, fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Mật khẩu hiện tại</th><td><PwInput val={oldPw} set={setOldPw} show={showOld} toggle={() => setShowOld(!showOld)} placeholder="Nhập mật khẩu hiện tại" /></td></tr>
-                  <tr><th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Mật khẩu mới</th><td><PwInput val={newPw} set={setNewPw} show={showNew} toggle={() => setShowNew(!showNew)} placeholder="Tối thiểu 8 ký tự" /><p className="wp-form-desc">Mật khẩu mới phải có ít nhất 8 ký tự.</p></td></tr>
-                  <tr><th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Xác nhận mật khẩu</th><td><PwInput val={confirmPw} set={setConfirmPw} show={showConfirm} toggle={() => setShowConfirm(!showConfirm)} placeholder="Nhập lại mật khẩu mới" /></td></tr>
+                  <tr><th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Mật khẩu mới</th><td><PwInput val={newPw} set={setNewPw} show={showNew} toggle={() => setShowNew(!showNew)} placeholder="Tối thiểu 8 ký tự" /><p className="wp-form-desc">{t('mat_khau_moi_phai_co_it_nhat_8_ky_tu')}</p></td></tr>
+                  <tr><th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>{t('xac_nhan_mat_khau')}</th><td><PwInput val={confirmPw} set={setConfirmPw} show={showConfirm} toggle={() => setShowConfirm(!showConfirm)} placeholder="Nhập lại mật khẩu mới" /></td></tr>
                 </tbody>
               </table>
               <div style={{ borderTop: '1px solid var(--wp-border-light)', paddingTop: 16, marginTop: 8 }}>
@@ -323,11 +325,11 @@ export function AdminUserProfile() {
             {loadingActivity ? (
               <div className="wp-loading" style={{ padding: 30 }}>Đang tải...</div>
             ) : activities.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 40, color: 'var(--wp-text-muted)', fontSize: 13 }}>Chưa có hoạt động nào được ghi nhận.</div>
+              <div style={{ textAlign: 'center', padding: 40, color: 'var(--wp-text-muted)', fontSize: 13 }}>{t('chua_co_hoat_dong_nao_duoc_ghi_nhan')}</div>
             ) : (
               <table className="wp-table" style={{ margin: 0 }}>
                 <thead>
-                  <tr><th>Thời gian</th><th>Hành động</th><th>Đối tượng</th><th>Chi tiết</th></tr>
+                  <tr><th>Thời gian</th><th>Hành động</th><th>{t('doi_tuong')}</th><th>Chi tiết</th></tr>
                 </thead>
                 <tbody>
                   {activities.map((a, i) => (
@@ -353,7 +355,7 @@ export function AdminUserProfile() {
             <table className="wp-form-table">
               <tbody>
                 <tr>
-                  <th style={{ width: 180, fontSize: 13 }}>Ngôn ngữ hệ thống</th>
+                  <th style={{ width: 180, fontSize: 13 }}>{t('ngon_ngu_he_thong')}</th>
                   <td>
                     <select className="wp-bulk-select" style={{ width: 250 }} value={lang} onChange={e => setLang(e.target.value)}>
                       <option value="vi">Tiếng Việt</option>
@@ -375,7 +377,7 @@ export function AdminUserProfile() {
                   </td>
                 </tr>
                 <tr>
-                  <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Thông báo email</th>
+                  <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>{t('thong_bao_email')}</th>
                   <td>
                     <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
                       <input type="checkbox" checked={emailNotif} onChange={e => setEmailNotif(e.target.checked)} />
@@ -384,7 +386,7 @@ export function AdminUserProfile() {
                   </td>
                 </tr>
                 <tr>
-                  <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>Thông báo hệ thống</th>
+                  <th style={{ fontSize: 13, verticalAlign: 'top', paddingTop: 12 }}>{t('thong_bao_he_thong')}</th>
                   <td>
                     <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
                       <input type="checkbox" checked={sysNotif} onChange={e => setSysNotif(e.target.checked)} />

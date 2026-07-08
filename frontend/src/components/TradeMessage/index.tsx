@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { TradeMessageButton } from './TradeMessageButton';
 import { TradeMessageModal } from './TradeMessageModal';
-
+import { useAuth } from '../../contexts/AuthContext';
 export function TradeMessenger() {
+  const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -24,7 +25,7 @@ export function TradeMessenger() {
     <>
       {/* Show floating button only when messenger is closed */}
       {!isOpen && (
-        <TradeMessageButton onClick={handleOpen} unreadCount={3} />
+        <TradeMessageButton onClick={handleOpen} unreadCount={isAuthenticated ? 3 : 0} />
       )}
 
       {/* Show messenger workspace when open */}

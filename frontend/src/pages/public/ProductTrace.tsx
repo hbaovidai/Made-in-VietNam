@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, ShieldAlert, BadgeInfo, Building, Calendar, Package, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { api } from '../../lib/api';
 import { SupplierStatus } from '@/src/lib/enums';
 
 export function ProductTrace() {
+  const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   
   const [searchParams] = useSearchParams();
@@ -35,7 +37,7 @@ export function ProductTrace() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
         <div className="w-16 h-16 border-4 border-slate-200 border-t-primary rounded-full animate-spin mb-4" />
-        <h2 className="text-xl font-bold text-slate-800 animate-pulse">Đang định danh QR...</h2>
+        <h2 className="text-xl font-bold text-slate-800 animate-pulse">{t('dang_dinh_danh_qr')}</h2>
         <p className="text-slate-500 text-sm mt-2 font-mono">{code}</p>
       </div>
     );
@@ -45,11 +47,11 @@ export function ProductTrace() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
         <ShieldAlert size={64} className="text-red-500 mb-6" />
-        <h1 className="text-3xl font-black text-slate-900 mb-2">QR Code Không Hợp Lệ</h1>
+        <h1 className="text-3xl font-black text-slate-900 mb-2">{t('qr_code_khong_hop_le')}</h1>
         <p className="text-slate-500 mb-8 max-w-md text-center">
           {errorMsg || 'Mã vạch này không tồn tại trên hệ thống dữ liệu quốc gia MIVN. Hãy cẩn thận, đây có thể là tem giả.'}
         </p>
-        <Link to="/" className="btn-primary">Về Trang Chủ</Link>
+        <Link to="/" className="btn-primary">{t('ve_trang_chu')}</Link>
       </div>
     );
   }
@@ -95,8 +97,8 @@ export function ProductTrace() {
               <div className="flex items-start gap-3">
                 <Building className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Nguồn gốc sản xuất</div>
-                  <div className="text-sm font-medium text-slate-800">{supplier.companyName || 'Công ty TNHH chưa cập nhật'} {supplier.status == SupplierStatus.VERIFIED && <span className="text-green-600 font-bold ml-1">✓ Đã xác minh</span>}</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('nguon_goc_san_xuat')}</div>
+                  <div className="text-sm font-medium text-slate-800">{supplier.companyName || 'Công ty TNHH chưa cập nhật'} {supplier.status == SupplierStatus.VERIFIED && <span className="text-green-600 font-bold ml-1">{t('da_xac_minh')}</span>}</div>
                   <div className="text-xs text-slate-500 mt-0.5">Việt Nam</div>
                 </div>
               </div>
@@ -104,7 +106,7 @@ export function ProductTrace() {
               <div className="flex items-start gap-3">
                 <Package className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mã lô sản xuất</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('ma_lo_san_xuat')}</div>
                   <div className="text-sm font-bold font-mono text-slate-800">{batch?.batchNumber || 'N/A'}</div>
                 </div>
               </div>
@@ -112,7 +114,7 @@ export function ProductTrace() {
               <div className="flex items-start gap-3">
                 <Calendar className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Thời hạn</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('thoi_han')}</div>
                   <div className="text-sm font-medium text-slate-800">Sản xuất: {batch.mfgDate ? new Date(batch.mfgDate).toLocaleDateString() : 'N/A'}</div>
                   <div className="text-sm font-medium text-slate-800">Hết hạn: {batch.expDate ? new Date(batch.expDate).toLocaleDateString() : 'N/A'}</div>
                 </div>
@@ -121,8 +123,8 @@ export function ProductTrace() {
               <div className="flex items-start gap-3">
                 <BadgeInfo className="text-slate-400 shrink-0 mt-0.5" size={18} />
                 <div>
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ghi chú lịch sử quét</div>
-                  <div className="text-sm font-medium text-slate-800">Mã này đã được quét <span className="font-bold text-primary">{scanInfo.scantCount}</span> lần.</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('ghi_chu_lich_su_quet')}</div>
+                  <div className="text-sm font-medium text-slate-800">{t('ma_nay_da_duoc_quet')} <span className="font-bold text-primary">{scanInfo.scantCount}</span> {t('lan')}</div>
                 </div>
               </div>
             </div>

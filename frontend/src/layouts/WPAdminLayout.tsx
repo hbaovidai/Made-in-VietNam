@@ -212,7 +212,7 @@ export function WPAdminLayout() {
                   </div>
                 </div>
                 <div className="wp-admin-profile-divider" />
-                <Link to="/dashboard/admin/profile" className="wp-admin-profile-item" onClick={() => setProfileOpen(false)}><User size={14} /><span>Hồ sơ cá nhân</span></Link>
+                <Link to="/dashboard/admin/profile" className="wp-admin-profile-item" onClick={() => setProfileOpen(false)}><User size={14} /><span>{t('ho_so_ca_nhan')}</span></Link>
                 <div className="wp-admin-profile-divider" />
                 <Link to="/" className="wp-admin-profile-item"><Globe size={14} /><span>Xem trang web</span></Link>
                 <button onClick={handleLogout} className="wp-admin-profile-logout"><LogOut size={14} /><span>Đăng xuất</span></button>
@@ -292,7 +292,7 @@ export function WPAdminLayout() {
               onClick={() => setCollapsed(!collapsed)}
               title={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}>
               {collapsed ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
-              {!collapsed && <span className="wp-sidebar-item-label">Thu gọn menu</span>}
+              {!collapsed && <span className="wp-sidebar-item-label">{t('thu_gon_menu')}</span>}
             </button>
           </div>
         </aside>

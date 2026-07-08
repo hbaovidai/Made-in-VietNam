@@ -158,6 +158,8 @@ export class AuthService {
             companyName: true,
             slug: true,
             status: true
+            is_verified: true,
+            verification_status: true,
           },
         },
       },
@@ -202,7 +204,14 @@ export class AuthService {
       where: { email },
       include: {
         supplier: {
-          select: { id: true, companyName: true, slug: true, status: true },
+          select: {
+            id: true,
+            companyName: true,
+            slug: true,
+            is_verified: true,
+            verification_status: true,
+            status: true
+          },
         },
       },
     });
@@ -223,7 +232,14 @@ export class AuthService {
         },
         include: {
           supplier: {
-            select: { id: true, companyName: true, slug: true, status: true },
+            select: {
+              id: true,
+              companyName: true,
+              slug: true,
+              is_verified: true,
+              verification_status: true,
+              status: true,
+            },
           },
         },
       });
@@ -258,6 +274,8 @@ export class AuthService {
             companyName: true,
             slug: true,
             status: true,
+            is_verified: true,
+            verification_status: true,
             logo: true,
           },
         },
