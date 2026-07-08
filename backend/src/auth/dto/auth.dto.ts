@@ -28,7 +28,7 @@ export class UserRegisterDto {
   @IsNotEmpty({ message: 'Tên không được để trống' })
   fullName: string;
 
-  @IsIn(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' })
+  @IsIn([Role.BUYER, Role.SUPPLIER], { message: 'Role phải là BUYER hoặc SUPPLIER' })
   role: Role;
 
   @IsOptional()
@@ -92,25 +92,27 @@ export class GoogleLoginDto {
 
 // ---- supplier auth dto ---- //
 export class SupplierRegisterDto {
-  @IsString() accountHolderFullName: string;
-  @IsString() accountHolderGovId: string;
-  @IsString() accountHolderPhone: string;
-  @IsString() accountHolderEmail: string;
-  @IsArray() accountHolderGovIdUrl: string[];
-  @IsArray() authorizationLetterUrl: string[];
-  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
-
+  // legal info
   @IsString() companyName: string;
-  @IsEnum(BusinessType) businessType: BusinessType;
-  @IsArray() businessLicenseUrl: string[];
-
   @IsString() taxCode: string;
   @IsString() legalRepName: string;
-  @IsString() legalRepPhone: string;
+  @IsString() legalRepGovId: string;
   @IsString() province: string;
-  @IsString() district: string;
   @IsString() ward: string;
   @IsString() streetAddress: string;
+  @IsEnum(BusinessType) businessType: BusinessType;
 
+  @IsString({each: true}) legalRepGovIdUrl: string[];
+  @IsString({each: true}) businessLicenseUrl: string[];
+
+  // contact info
+  @IsString() accountHolderName: string;
+  @IsString() contactPhone: string;
+  @IsString() contactEmail: string;
+  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
+  @IsString({ each: true }) @IsOptional() authorizationLetterUrl: string[];
+
+  // other info
   @IsEnum(SupplierType) supplierType: SupplierType;
+  @IsString({each: true}) @IsOptional() extraDocsUrl: string[];
 }

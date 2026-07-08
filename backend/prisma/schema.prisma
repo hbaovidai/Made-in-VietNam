@@ -102,10 +102,11 @@ enum SupplierAccountHolderRole {
 }
 
 enum SupplierType {
-  NORMAL
+  DISTRIBUTOR
   MANUFACTURER
   EXPORTER
   MANU_EXPORT
+  DIGITAL_GOODS
 }
 
 enum BusinessType {
@@ -143,44 +144,46 @@ model User {
   auditLogs     AuditLog[]
 
   @@map("users")
+
+  // hopefully faster login
+  @@index([index])
 }
 
 // ==================== SUPPLIERS ====================
 
 model Supplier {
-  id              String   @id @default(uuid())
+  id              String   @unique @id @default(uuid())
   slug            String   @unique
   userId          String   @unique @map("user_id")
 
+  // legal info
   companyName     String   @map("company_name")
-  companyEmail        String?  @map("company_email")
-  companyPhone        String?  @map("company_phone")
-  description     String?
-  yearEstablished Int?     @map("year_established")
-  website             String?
-  businessType BusinessType? @map("business_type")
-
-  province String?
-  district String?
-  ward String?
-  streetAddress             String? @map("address")
-
   taxCode             String?  @map("tax_code") @unique
   legalRepName String? @map("legal_rep_name")
-  legalRepPhone String? @map("legal_rep_phone")
+  legalRepGovId String? @map("legal_rep_gov_id")
+  province String?
+  ward String?
+  streetAddress             String? @map("address")
+  businessType BusinessType? @map("business_type")
+  // url for legal info
+  legalRepGovIdUrl String[] @map("legal_rep_gov_id_url")
   businessLicenseUrl String[] @map("business_license_url")
-  
-  accountHolderFullName String? @map("account_holder_fullname")
-  accountHolderGovId String? @map("account_holder_gov_id")
-  accountHolderPhone String? @map("account_holder_phone")
-  accountHolderEmail String? @map("account_holder_email")
-  accountHolderRole SupplierAccountHolderRole? @map("account_holder_role")
-  accountHolderGovIdUrl String[] @map("account_holder_gov_id_url")
+
+  // contact info
+  contactEmail String? @map("contact_email")
+  contactPhone String? @map("contact_phone")
+  accountHolderName String? @map("account_holder_name")
+  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+
+  // url for account holder
   authorizationLetterUrl String[] @map("authorization_letter_url")
 
-  supplierType    SupplierType?  @map("supplier_type")
-  status SupplierStatus? @default(APPLICATION_PENDING)
-  // isVerified           Boolean?   @default(dbgenerated("(status = 'VERIFIED')")) @map("is_verified")
+  // additional info
+  description     String?
+  yearEstablished     Int?     @map("year_established")
+  website     String?
+  supplierType     SupplierType?  @map("supplier_type")
+  status     SupplierStatus? @default(APPLICATION_PENDING)
 
   logo            String?
   banner          String?

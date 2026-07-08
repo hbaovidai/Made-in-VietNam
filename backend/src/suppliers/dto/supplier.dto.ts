@@ -19,7 +19,7 @@ export class UpdateSupplierDto {
   @IsString() @IsOptional() companyPhone?: string;
   @IsString() @IsOptional() legalRepName?: string;
   @IsString() @IsOptional() legalRepPhone?: string;
-  @IsString() @IsString({ each: true }) businessLicenseUrl?: string[];
+  @IsString({ each: true }) @IsOptional() businessLicenseUrl?: string[];
   @IsString() @IsOptional() identityCardUrl?: string;
   @IsEnum(SupplierStatus) @IsOptional() status?: SupplierStatus;
   @IsArray() @IsString({ each: true }) @IsOptional() industries?: string[];

@@ -82,27 +82,29 @@ export class SuppliersService {
       // this is cursed
       select: {
         ...(isUUID ? { id: true } : { slug: true } ),
-        companyName: true,
-        province: true,
-        district: true,
-        ward: true,
-        supplierType: true,
-        businessType: true,
-        status: true,
 
-        streetAddress: true,
+        // legal info
+        companyName: true,
         taxCode: true,
         legalRepName: true,
-        legalRepPhone: true,
+        legalRepGovId: true,
+        province: true,
+        ward: true,
+        streetAddress: true,
+        businessType: true,
+        // url for legal info
+        legalRepGovIdUrl: true,
         businessLicenseUrl: true,
 
-        accountHolderFullName: true,
-        accountHolderPhone: true,
-        accountHolderEmail: true,
+        // contact info
+        contactPhone: true,
+        contactEmail: true,
+        accountHolderName: true,
         accountHolderRole: true,
-        accountHolderGovId: true,
-        accountHolderGovIdUrl: true,
         authorizationLetterUrl: true,
+
+        supplierType: true,
+        status: true,
       }
     });
 
@@ -132,7 +134,7 @@ export class SuppliersService {
         description: data.description,
         taxCode: data.taxCode,
         legalRepName: data.legalRepName,
-        legalRepPhone: data.legalRepPhone,
+        contactPhone: data.contactPhone,
         slug: `${slug}-${Date.now()}`,
         accountHolderRole: data.accountHolderRole,
       },

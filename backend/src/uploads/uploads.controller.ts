@@ -45,7 +45,7 @@ export class UploadsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // turn off so you can upload from the supplier registration form
   @UseInterceptors(
     FileInterceptor('file', {
       storage,

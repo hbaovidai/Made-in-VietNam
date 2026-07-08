@@ -92,9 +92,15 @@ export class AuthService {
   }
   
   async supplierRegister(dto: SupplierRegisterDto) {
+    // TODO: remove before push
+    console.log(dto);
+    return {
+      success: true,
+      message: 'for testing purposes, this is a success, check the logs',
+    };
     const userDto = new UserRegisterDto();
-    userDto.email = dto.accountHolderEmail;
-    userDto.phone = dto.accountHolderPhone;
+    userDto.email = dto.contactEmail;
+    userDto.phone = dto.contactPhone;
     userDto.fullName = dto.companyName;
     userDto.role = Role.SUPPLIER;
 
@@ -136,11 +142,6 @@ export class AuthService {
       };
 
     } catch (error) {
-      // var message = "An error occurred.";
-      // if ( error instanceof ConflictException ) {
-      //   message = error.message;
-      // } 
-
       console.log(error.message);
       return { message: error.message, success: false, }
     }
