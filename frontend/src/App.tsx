@@ -19,7 +19,6 @@ import { ProfileSubmission } from './pages/ProfileSubmission';
 // ============================================================
 
 // Main Public Pages
-// Main Public Pages
 const Home = React.lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const UITest = React.lazy(() => import('./pages/UITest').then(m => ({ default: m.UITest })));
 const VerifyProduct = React.lazy(() => import('./pages/public/VerifyProduct').then(m => ({ default: m.VerifyProduct })));
@@ -106,6 +105,10 @@ const AdminBlogSettings = React.lazy(() => import('./pages/dashboard/admin/Admin
 const AdminCareers = React.lazy(() => import('./pages/dashboard/admin/AdminCareers').then(m => ({ default: m.AdminCareers })));
 const AdminLegal = React.lazy(() => import('./pages/dashboard/admin/AdminLegal').then(m => ({ default: m.AdminLegal })));
 const AdminPrivacy = React.lazy(() => import('./pages/dashboard/admin/AdminPrivacy').then(m => ({ default: m.AdminPrivacy })));
+
+// Upgrade form pages
+const UpgradeFormExporter = React.lazy(() => import('./pages/UpgradeForms/Exporter').then(m => ({default: m.UpgradeFormExporter})));
+const UpgradeFormManufacturer = React.lazy(() => import('./pages/UpgradeForms/Manufacturer').then(m => ({default: m.UpgradeFormManufacturer})));
 
 // Redirect base dashboard based on role
 function DashboardRedirect() {
@@ -199,6 +202,10 @@ export default function App() {
             <Route path="/wp-login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile-submission" element={<ProfileSubmission />} />
+
+            {/* upgrade forms */}
+            <Route path='/upgrade-forms/exporter' element={<UpgradeFormExporter/>}/>
+            <Route path='/upgrade-forms/manufacturer' element={<UpgradeFormManufacturer/>}/>
 
             {/* Dashboard Root Redirect */}
             <Route path="/dashboard" element={
