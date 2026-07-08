@@ -26,8 +26,6 @@ export function Login() {
   const [searchParams] = useSearchParams();
   const redirect_to = searchParams.get('redirect_to');
 
-  // Check if user came from /admin, /wp-admin, or is literally on /wp-login
-  const isAdminPortal = location.pathname === '/wp-login' || (location.state as any)?.from?.pathname === '/dashboard/admin';
   const authBgImage = settings.auth_bg_image || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=1200&auto=format&fit=crop";
 
   const googleLogin = useGoogleLogin({
@@ -52,8 +50,8 @@ export function Login() {
         let from = redirect_to || (location.state as any)?.from?.pathname;
 
         // Admin Restriction
-        if (role === 'ADMIN' && !isAdminPortal) {
-          throw new Error('Quản trị viên vui lòng đăng nhập qua đường dẫn /admin hoặc /wp-admin');
+        if (role === 'ADMIN') {
+          throw new Error('Tài khoản quản trị vui lòng đăng nhập qua cổng Admin (/wp-login)');
         }
 
         loginUser(res.data.user, res.data.token);
@@ -61,7 +59,7 @@ export function Login() {
         
         navigate(role === 'BUYER' ? '/' : `/dashboard/${role.toLowerCase()}`);
       } catch (err: any) {
-        addToast({ type: 'error', title: 'Thất bại', message: err.response?.data?.message || 'Đăng nhập Google thất bại' });
+        addToast({ type: 'error', title: 'Thất bại', message: err.message || err.response?.data?.message || 'Đăng nhập Google thất bại' });
       } finally {
         setGoogleLoading(false);
       }
@@ -82,8 +80,8 @@ export function Login() {
       let from = redirect_to || (location.state as any)?.from?.pathname;
 
       // Admin Restriction
-      if (role === 'ADMIN' && !isAdminPortal) {
-        throw new Error('Đăng nhập thất bại');
+      if (role === 'ADMIN') {
+        throw new Error('Tài khoản quản trị vui lòng đăng nhập qua cổng Admin (/wp-login)');
       }
 
       loginUser(res.data.user, res.data.token);
@@ -125,10 +123,10 @@ export function Login() {
             Trợ giúp
           </Link>
           <Link
-            to={isAdminPortal ? "/" : "/register"}
+            to="/register"
             className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
           >
-            {isAdminPortal ? "Về trang chủ" : "Đăng ký"}
+            Đăng ký
           </Link>
         </div>
       </header>
@@ -151,13 +149,13 @@ export function Login() {
             {/* Header info */}
             <div className="mb-6">
               <div className="w-10 h-10 bg-[#0F172A] rounded-lg flex items-center justify-center text-white mb-4 shadow-sm">
-                {isAdminPortal ? <ShieldCheck size={20} strokeWidth={2} /> : <Factory size={20} strokeWidth={2} />}
+                <Factory size={20} strokeWidth={2} />
               </div>
               <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
-                {isAdminPortal ? "Cổng quản trị" : "Chào mừng trở lại"}
+                Chào mừng trở lại
               </h1>
               <p className="text-xs text-slate-400 font-medium">
-                {isAdminPortal ? "Đăng nhập an toàn cho quản trị viên hệ thống" : "Đăng nhập để tiếp tục sử dụng nền tảng."}
+                Đăng nhập để tiếp tục sử dụng nền tảng.
               </p>
             </div>
 
@@ -208,39 +206,33 @@ export function Login() {
               </button>
             </form>
 
-            {!isAdminPortal && (
-              <>
-                <div className="my-5 flex items-center">
-                  <div className="flex-1 border-t border-[#E5E7EB]" />
-                  <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoặc</span>
-                  <div className="flex-1 border-t border-[#E5E7EB]" />
-                </div>
+            <div className="my-5 flex items-center">
+              <div className="flex-1 border-t border-[#E5E7EB]" />
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoặc</span>
+              <div className="flex-1 border-t border-[#E5E7EB]" />
+            </div>
 
-                <button
-                  type="button"
-                  onClick={() => googleLogin()}
-                  disabled={googleLoading}
-                  className="w-full flex items-center justify-center gap-2.5 py-3 border border-[#E5E7EB] rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-xs font-bold text-slate-700 disabled:opacity-60 bg-white"
-                >
-                  {googleLoading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4.5 h-4.5" />
-                  )}
-                  {googleLoading ? 'Đang xử lý...' : 'Đăng nhập bằng Google'}
-                </button>
-              </>
-            )}
+            <button
+              type="button"
+              onClick={() => googleLogin()}
+              disabled={googleLoading}
+              className="w-full flex items-center justify-center gap-2.5 py-3 border border-[#E5E7EB] rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-xs font-bold text-slate-700 disabled:opacity-60 bg-white"
+            >
+              {googleLoading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4.5 h-4.5" />
+              )}
+              {googleLoading ? 'Đang xử lý...' : 'Đăng nhập bằng Google'}
+            </button>
 
             {/* Footer link */}
-            {!isAdminPortal && (
-              <div className="mt-8 pt-4 border-t border-[#E5E7EB] text-center">
-                <span className="text-xs text-slate-500 font-medium mr-1.5">Chưa có tài khoản?</span>
-                <Link to="/register" className="text-xs font-bold text-[#9B7A4F] hover:text-[#7A5F3A] hover:underline inline-flex items-center gap-0.5">
-                  Đăng ký ngay <span className="text-sm">→</span>
-                </Link>
-              </div>
-            )}
+            <div className="mt-8 pt-4 border-t border-[#E5E7EB] text-center">
+              <span className="text-xs text-slate-500 font-medium mr-1.5">Chưa có tài khoản?</span>
+              <Link to="/register" className="text-xs font-bold text-[#9B7A4F] hover:text-[#7A5F3A] hover:underline inline-flex items-center gap-0.5">
+                Đăng ký ngay <span className="text-sm">→</span>
+              </Link>
+            </div>
           </div>
         </div>
       </main>

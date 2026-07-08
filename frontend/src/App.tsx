@@ -11,6 +11,7 @@ import { ThemeEffects } from './components/ThemeEffects';
 import { PromoPopup } from './components/PromoPopup';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { AdminLogin } from './pages/AdminLogin';
 import { ProfileSubmission } from './pages/ProfileSubmission';
 
 // ============================================================
@@ -198,7 +199,7 @@ export default function App() {
 
             {/* Standalone Auth Routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/wp-login" element={<Login />} />
+            <Route path="/wp-login" element={<AdminLogin />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile-submission" element={<ProfileSubmission />} />
 
