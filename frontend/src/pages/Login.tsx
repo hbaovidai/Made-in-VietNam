@@ -122,13 +122,13 @@ export function Login() {
         </Link>
         <div className="flex items-center gap-6">
           <Link to="/help" className="text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors">
-            Help
+            Trợ giúp
           </Link>
           <Link
             to={isAdminPortal ? "/" : "/register"}
             className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
           >
-            {isAdminPortal ? "Go to Homepage" : "Register"}
+            {isAdminPortal ? "Về trang chủ" : "Đăng ký"}
           </Link>
         </div>
       </header>
@@ -154,10 +154,10 @@ export function Login() {
                 {isAdminPortal ? <ShieldCheck size={20} strokeWidth={2} /> : <Factory size={20} strokeWidth={2} />}
               </div>
               <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
-                {isAdminPortal ? "Admin Portal" : "Welcome Back"}
+                {isAdminPortal ? "Cổng quản trị" : "Chào mừng trở lại"}
               </h1>
               <p className="text-xs text-slate-400 font-medium">
-                {isAdminPortal ? "Secure login for system administrators" : "Đăng nhập để tiếp tục sử dụng nền tảng."}
+                {isAdminPortal ? "Đăng nhập an toàn cho quản trị viên hệ thống" : "Đăng nhập để tiếp tục sử dụng nền tảng."}
               </p>
             </div>
 
@@ -195,7 +195,7 @@ export function Login() {
               <div className="flex items-center justify-between pt-1 pb-1">
                 <div className="flex items-center gap-2">
                   <input type="checkbox" id="remember" className="w-4 h-4 rounded border-[#E5E7EB] text-[#0F172A] focus:ring-[#0F172A]" />
-                  <label htmlFor="remember" className="text-xs font-medium text-slate-500">Remember me</label>
+                  <label htmlFor="remember" className="text-xs font-medium text-slate-500">Ghi nhớ đăng nhập</label>
                 </div>
               </div>
 
@@ -204,7 +204,7 @@ export function Login() {
                 disabled={loading}
                 className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm"
               >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : "Sign In"}
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Đăng nhập"}
               </button>
             </form>
 
@@ -249,12 +249,12 @@ export function Login() {
       <footer className="w-full px-6 lg:px-12 py-5 flex flex-col md:flex-row items-center justify-between border-t border-[#E5E7EB] shrink-0 text-[11px] text-slate-400 bg-white z-10">
         <div className="mb-4 md:mb-0">
           <span className="font-bold text-slate-600 text-xs mr-2">VIEProduct</span>
-          <span>© 2026 VIEProduct. Vietnamese Industrial Excellence. All rights reserved.</span>
+          <span>© 2026 VIEProduct. Vietnamese Industrial Excellence. Mọi quyền được bảo lưu.</span>
         </div>
         <div className="flex items-center gap-6 font-semibold">
-          <Link to="/privacy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
-          <Link to="/contact" className="hover:text-slate-600 transition-colors">Contact Support</Link>
+          <Link to="/privacy" className="hover:text-slate-600 transition-colors">Chính sách bảo mật</Link>
+          <Link to="/terms" className="hover:text-slate-600 transition-colors">Điều khoản dịch vụ</Link>
+          <Link to="/contact" className="hover:text-slate-600 transition-colors">Liên hệ hỗ trợ</Link>
         </div>
       </footer>
     </div>

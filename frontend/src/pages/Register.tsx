@@ -115,13 +115,13 @@ export function Register() {
         </Link>
         <div className="flex items-center gap-6">
           <Link to="/help" className="text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors">
-            Help
+            Trợ giúp
           </Link>
           <Link
             to="/login"
             className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
           >
-            Sign In
+            Đăng nhập
           </Link>
         </div>
       </header>
@@ -147,7 +147,7 @@ export function Register() {
                 <UserPlus size={20} strokeWidth={2} />
               </div>
               <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
-                Create an Account
+                Tạo tài khoản
               </h1>
               <p className="text-xs text-slate-400 font-medium">
                 Tham gia cổng giao thương toàn cầu dành cho doanh nghiệp Việt.
@@ -164,7 +164,7 @@ export function Register() {
                   role === 'buyer' ? "bg-white text-[#0F172A] shadow-sm" : "text-slate-500 hover:text-slate-700"
                 )}
               >
-                I am a Buyer
+                Tôi là Người mua
               </button>
               <button 
                 type="button"
@@ -174,7 +174,7 @@ export function Register() {
                   role === 'supplier' ? "bg-white text-[#0F172A] shadow-sm" : "text-slate-500 hover:text-slate-700"
                 )}
               >
-                I am a Supplier
+                Tôi là Nhà cung cấp
               </button>
             </div>
 
@@ -183,19 +183,19 @@ export function Register() {
               {role === 'buyer' ? (
                 <>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Full Name</label>
+                    <label className="text-[12px] font-bold text-[#0F172A]">Họ và tên</label>
                     <input
                       required
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="John Doe"
+                      placeholder="Nguyễn Văn A"
                       className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400 placeholder:font-normal"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Corporate Email</label>
+                    <label className="text-[12px] font-bold text-[#0F172A]">Email doanh nghiệp</label>
                     <input
                       required
                       type="email"
@@ -207,7 +207,7 @@ export function Register() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Password</label>
+                    <label className="text-[12px] font-bold text-[#0F172A]">Mật khẩu</label>
                     <input
                       required
                       type="password"
@@ -223,7 +223,7 @@ export function Register() {
                     disabled={loading}
                     className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm mt-2"
                   >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Register"}
+                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Đăng ký"}
                   </button>
 
                   <div className="my-5 flex items-center">
@@ -330,7 +330,7 @@ export function Register() {
                     disabled={loading}
                     className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm mt-6"
                   >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Submit Application"}
+                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Gửi yêu cầu đăng ký"}
                   </button>
                 </>
               )}
@@ -351,12 +351,12 @@ export function Register() {
       <footer className="w-full px-6 lg:px-12 py-6 flex flex-col md:flex-row items-center justify-between border-t border-[#E5E7EB] mt-auto text-[11px] text-slate-400 bg-white">
         <div className="mb-4 md:mb-0">
           <span className="font-bold text-slate-600 text-xs mr-2">VIEProduct</span>
-          <span>© 2026 VIEProduct. Vietnamese Industrial Excellence. All rights reserved.</span>
+          <span>© 2026 VIEProduct. Vietnamese Industrial Excellence. Mọi quyền được bảo lưu.</span>
         </div>
         <div className="flex items-center gap-6 font-semibold">
-          <Link to="/privacy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
-          <Link to="/contact" className="hover:text-slate-600 transition-colors">Contact Support</Link>
+          <Link to="/privacy" className="hover:text-slate-600 transition-colors">Chính sách bảo mật</Link>
+          <Link to="/terms" className="hover:text-slate-600 transition-colors">Điều khoản dịch vụ</Link>
+          <Link to="/contact" className="hover:text-slate-600 transition-colors">Liên hệ hỗ trợ</Link>
         </div>
       </footer>
     </div>
