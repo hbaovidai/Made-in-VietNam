@@ -22,17 +22,10 @@ export function Register() {
   
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [role, setRole] = useState<'buyer' | 'supplier'>('buyer');
+  const role = 'buyer';
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
-
-  const [supplierName, setSupplierName] = useState("");
-  const [supplierPosition, setSupplierPosition] = useState("");
-  const [supplierIdNumber, setSupplierIdNumber] = useState("");
-  const [supplierIdFile, setSupplierIdFile] = useState<File | null>(null);
-  const [supplierEmail, setSupplierEmail] = useState("");
-  const [supplierPhone, setSupplierPhone] = useState("");
 
   const googleLogin = useGoogleLogin({
     flow: 'implicit',
@@ -66,13 +59,13 @@ export function Register() {
     },
   });
 
-  // Auto-detect role from URL query param if present
+  // If ?role=supplier is passed, redirect to /profile-submission page directly
   useEffect(() => {
     const urlRole = searchParams.get('role');
-    if (urlRole === 'supplier' || urlRole === 'buyer') {
-      setRole(urlRole);
+    if (urlRole === 'supplier') {
+      navigate('/profile-submission');
     }
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,186 +147,71 @@ export function Register() {
               </p>
             </div>
 
-            {/* Role selector */}
-            <div className="flex p-1 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl mb-6">
-              <button 
-                type="button"
-                onClick={() => setRole('buyer')}
-                className={cn(
-                  "flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer",
-                  role === 'buyer' ? "bg-white text-[#0F172A] shadow-sm" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                Tôi là Người mua
-              </button>
-              <button 
-                type="button"
-                onClick={() => setRole('supplier')}
-                className={cn(
-                  "flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer",
-                  role === 'supplier' ? "bg-white text-[#0F172A] shadow-sm" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                Tôi là Nhà cung cấp
-              </button>
-            </div>
-
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {role === 'buyer' ? (
-                <>
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Họ và tên</label>
-                    <input
-                      required
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Nguyễn Văn A"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400 placeholder:font-normal"
-                    />
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-[12px] font-bold text-[#0F172A]">Họ và tên</label>
+                <input
+                  required
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Nguyễn Văn A"
+                  className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400 placeholder:font-normal"
+                />
+              </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Email doanh nghiệp</label>
-                    <input
-                      required
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@company.com"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400 placeholder:font-normal"
-                    />
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-[12px] font-bold text-[#0F172A]">Email doanh nghiệp</label>
+                <input
+                  required
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400 placeholder:font-normal"
+                />
+              </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Mật khẩu</label>
-                    <input
-                      required
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                    />
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-[12px] font-bold text-[#0F172A]">Mật khẩu</label>
+                <input
+                  required
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
+                />
+              </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm mt-2"
-                  >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Đăng ký"}
-                  </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm mt-2"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Đăng ký"}
+              </button>
 
-                  <div className="my-5 flex items-center">
-                    <div className="flex-1 border-t border-[#E5E7EB]" />
-                    <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoặc</span>
-                    <div className="flex-1 border-t border-[#E5E7EB]" />
-                  </div>
+              <div className="my-5 flex items-center">
+                <div className="flex-1 border-t border-[#E5E7EB]" />
+                <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoặc</span>
+                <div className="flex-1 border-t border-[#E5E7EB]" />
+              </div>
 
-                  <button
-                    type="button"
-                    onClick={() => googleLogin()}
-                    disabled={googleLoading}
-                    className="w-full flex items-center justify-center gap-2.5 py-3 border border-[#E5E7EB] rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-xs font-bold text-slate-700 disabled:opacity-60 bg-white"
-                  >
-                    {googleLoading ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4.5 h-4.5" />
-                    )}
-                    {googleLoading ? 'Đang xử lý...' : 'Đăng ký bằng Google'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Họ và tên người đăng ký</label>
-                    <input
-                      required
-                      type="text"
-                      value={supplierName}
-                      onChange={(e) => setSupplierName(e.target.value)}
-                      placeholder="Nguyễn Văn A"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Chức vụ</label>
-                    <select
-                      required
-                      value={supplierPosition}
-                      onChange={(e) => setSupplierPosition(e.target.value)}
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold text-slate-700"
-                    >
-                      <option value="">Chọn chức vụ</option>
-                      <option value="LEGAL_REPRESENTATIVE">Người đại diện pháp luật</option>
-                      <option value="DIRECTOR">Giám đốc / Chủ doanh nghiệp</option>
-                      <option value="BUSINESS">Quản lý / Nhân viên kinh doanh</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Số CCCD / Passport</label>
-                    <input
-                      required
-                      type="text"
-                      value={supplierIdNumber}
-                      onChange={(e) => setSupplierIdNumber(e.target.value)}
-                      placeholder="012345678901"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Ảnh chụp CCCD / Passport</label>
-                    <input
-                      required
-                      type="file"
-                      accept=".png,.jpg,.jpeg,.pdf"
-                      onChange={(e) => setSupplierIdFile(e.target.files?.[0] || null)}
-                      className="w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#0F172A] file:text-white hover:file:bg-[#1E293B]"
-                    />
-                    <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                      Upload 2 mặt CCCD hoặc trang thông tin Passport. Định dạng PNG, JPG, PDF. Tối đa 5MB.
-                    </p>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Email cá nhân / công việc</label>
-                    <input
-                      required
-                      type="email"
-                      value={supplierEmail}
-                      onChange={(e) => setSupplierEmail(e.target.value)}
-                      placeholder="name@company.com"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold text-[#0F172A]">Số điện thoại liên hệ</label>
-                    <input
-                      required
-                      type="tel"
-                      value={supplierPhone}
-                      onChange={(e) => setSupplierPhone(e.target.value)}
-                      placeholder="+84 912 345 678"
-                      className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white py-3 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm mt-6"
-                  >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : "Gửi yêu cầu đăng ký"}
-                  </button>
-                </>
-              )}
+              <button
+                type="button"
+                onClick={() => googleLogin()}
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-2.5 py-3 border border-[#E5E7EB] rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-xs font-bold text-slate-700 disabled:opacity-60 bg-white"
+              >
+                {googleLoading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4.5 h-4.5" />
+                )}
+                {googleLoading ? 'Đang xử lý...' : 'Đăng ký bằng Google'}
+              </button>
             </form>
 
             {/* Footer link */}

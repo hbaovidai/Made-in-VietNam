@@ -23,27 +23,29 @@ export function Home() {
 
   const defaultSlides = [
     { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide1_title'), desc: t('hero_slide1_desc'), link: '/products' },
-    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide2_title'), desc: t('hero_slide2_desc'), link: '/register' },
+    { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide2_title'), desc: t('hero_slide2_desc'), link: '/profile-submission' },
     { image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=1200", title: t('secured_trading_service'), desc: t('trade_assurance'), link: '/products' },
   ];
 
   const heroSlides = React.useMemo(() => {
+    if (!siteSettings || !('hero_banners' in siteSettings)) {
+      return defaultSlides;
+    }
     try {
       const banners = JSON.parse(siteSettings.hero_banners || '[]');
       const validBanners = banners.filter((b: any) => b.image && b.image.trim() !== '' && b.status !== 'hidden');
-      if (validBanners.length > 0) {
-        return validBanners.map((b: any) => ({
-          image: b.image,
-          title: i18n.language?.startsWith('vi') ? (b.titleVi || b.title) : b.title,
-          desc: i18n.language?.startsWith('vi') ? (b.descVi || b.desc) : b.desc,
-          link: b.link || '/products',
-        }));
-      }
+      return validBanners.map((b: any) => ({
+        image: b.image,
+        title: i18n.language?.startsWith('vi') ? (b.titleVi || b.title) : b.title,
+        desc: i18n.language?.startsWith('vi') ? (b.descVi || b.desc) : b.desc,
+        link: b.link || '/products',
+      }));
     } catch {}
-    return defaultSlides;
-  }, [siteSettings.hero_banners, i18n.language]);
+    return [];
+  }, [siteSettings, i18n.language]);
 
   useEffect(() => {
+    if (heroSlides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 15000);
@@ -146,75 +148,83 @@ export function Home() {
       />
 
       {/* ═══ Hero Banner ═══ */}
-      <section>
-        <div className="relative group overflow-hidden bg-slate-200 h-[240px] sm:h-[360px] lg:h-[480px]">
-          {heroSlides.map((slide, idx) => (
-            <div
-              key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-              }`}
-            >
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6 sm:px-12 lg:px-16 text-white">
-                <motion.div
-                  key={`text-${idx}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="max-w-2xl space-y-3 sm:space-y-5"
-                >
-                  <h2 className="text-xl sm:text-3xl lg:text-5xl font-extrabold leading-tight drop-shadow-md">{slide.title}</h2>
-                  <p className="text-slate-200 text-xs sm:text-sm leading-relaxed drop-shadow-sm max-w-xl">{slide.desc}</p>
-                  
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    <Link to={slide.link} className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-lg flex items-center gap-1.5">
-                      {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
-                    </Link>
-                    <Link to="/about" className="border border-white/40 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-white/10 transition-all">
-                      {idx === 1 ? t('learn_process') : t('learn_more')}
-                    </Link>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          ))}
-
-          {/* Arrow Navigation */}
-          <button 
-            onClick={prevSlide}
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-            aria-label="Previous slide"
-          >
-            <ChevronLeft size={22} />
-          </button>
-          <button 
-            onClick={nextSlide}
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
-            aria-label="Next slide"
-          >
-            <ChevronRight size={22} />
-          </button>
-
-          {/* Slider Dots */}
-          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {heroSlides.map((_, idx) => (
-              <button
+      {heroSlides.length > 0 && (
+        <section>
+          <div className="relative group overflow-hidden bg-slate-200 h-[240px] sm:h-[360px] lg:h-[480px]">
+            {heroSlides.map((slide, idx) => (
+              <div
                 key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className={`transition-all duration-300 rounded-full outline-none ${
-                  idx === currentSlide ? 'w-7 h-2.5 bg-white' : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
                 }`}
-              />
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6 sm:px-12 lg:px-16 text-white">
+                  <motion.div
+                    key={`text-${idx}`}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="max-w-2xl space-y-3 sm:space-y-5"
+                  >
+                    <h2 className="text-xl sm:text-3xl lg:text-5xl font-extrabold leading-tight drop-shadow-md">{slide.title}</h2>
+                    <p className="text-slate-200 text-xs sm:text-sm leading-relaxed drop-shadow-sm max-w-xl">{slide.desc}</p>
+                    
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      <Link to={slide.link} className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-lg flex items-center gap-1.5">
+                        {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
+                      </Link>
+                      <Link to="/about" className="border border-white/40 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-white/10 transition-all">
+                        {idx === 1 ? t('learn_process') : t('learn_more')}
+                      </Link>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
             ))}
+
+            {/* Arrow Navigation */}
+            {heroSlides.length > 1 && (
+              <>
+                <button 
+                  onClick={prevSlide}
+                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button 
+                  onClick={nextSlide}
+                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </>
+            )}
+
+            {/* Slider Dots */}
+            {heroSlides.length > 1 && (
+              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`transition-all duration-300 rounded-full outline-none ${
+                      idx === currentSlide ? 'w-7 h-2.5 bg-white' : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
 
       {/* ═══ Featured Categories ═══ */}
@@ -395,7 +405,7 @@ export function Home() {
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center items-center">
-            <Link to="/register" className="bg-white text-[#0f3460] px-6 py-3 rounded-full text-sm font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
+            <Link to="/profile-submission" className="bg-white text-[#0f3460] px-6 py-3 rounded-full text-sm font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
               {t('register_now')} <ArrowRight size={16} />
             </Link>
             <Link to="/about" className="border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-white/5 transition-all">

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
-import { ShieldCheck, Loader2, Home } from 'lucide-react';
+import { Loader2, Home } from 'lucide-react';
 
 export function AdminLogin() {
   const { t } = useTranslation();
@@ -72,9 +72,6 @@ export function AdminLogin() {
         <div className="w-full max-w-[420px] bg-white border border-[#E2E8F0] shadow-sm rounded-none p-8 flex flex-col">
           {/* Header Info */}
           <div className="mb-6 text-center">
-            <div className="w-12 h-12 bg-[#0F172A] rounded-none flex items-center justify-center text-white mb-4 shadow-sm mx-auto">
-              <ShieldCheck size={24} strokeWidth={2} />
-            </div>
             <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
               Cổng Quản Trị Hệ Thống
             </h1>

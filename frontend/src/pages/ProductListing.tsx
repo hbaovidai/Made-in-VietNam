@@ -51,11 +51,27 @@ export function ProductListing() {
   // Top-level (L1) categories = roots
   const l1Categories = useMemo(() => allCategories.filter((c: any) => !c.parentId), [allCategories]);
 
+  // Find path of the current categoryFilter in the tree
+  const categoryPath = useMemo(() => {
+    if (!categoryFilter || allCategories.length === 0) return [];
+    const findPath = (list: any[], slug: string, path: any[] = []): any[] | null => {
+      for (const item of list) {
+        const current = [...path, item];
+        if (item.slug === slug) return current;
+        if (item.children && item.children.length > 0) {
+          const res = findPath(item.children, slug, current);
+          if (res) return res;
+        }
+      }
+      return null;
+    };
+    return findPath(allCategories, categoryFilter) || [];
+  }, [allCategories, categoryFilter]);
+
   // Find current active L1 category object
   const activeL1 = useMemo(() => {
-    if (!categoryFilter) return null;
-    return l1Categories.find(c => c.slug === categoryFilter) || null;
-  }, [categoryFilter, l1Categories]);
+    return categoryPath[0] || null;
+  }, [categoryPath]);
 
   // L2 = children of active L1
   const l2Categories = useMemo(() => activeL1?.children || [], [activeL1]);
@@ -78,21 +94,18 @@ export function ProductListing() {
   // L4 = children of active L3
   const l4Categories = useMemo(() => activeL3?.children || [], [activeL3]);
 
-  // Reset sub-selections when L1 changes — no auto-select
+  // Sync selected subcategories when categoryFilter or path changes
   useEffect(() => {
-    setSelectedL2(null);
-    setSelectedL3(null);
-    setSelectedL4(null);
-  }, [categoryFilter]);
-
-  useEffect(() => {
-    setSelectedL3(null);
-    setSelectedL4(null);
-  }, [selectedL2]);
-
-  useEffect(() => {
-    setSelectedL4(null);
-  }, [selectedL3]);
+    if (categoryPath.length > 0) {
+      setSelectedL2(categoryPath[1]?.slug || null);
+      setSelectedL3(categoryPath[2]?.slug || null);
+      setSelectedL4(categoryPath[3]?.slug || null);
+    } else {
+      setSelectedL2(null);
+      setSelectedL3(null);
+      setSelectedL4(null);
+    }
+  }, [categoryPath]);
 
   // Determine the deepest active filter slug for API
   const activeCategorySlug = selectedL4 || selectedL3 || selectedL2 || categoryFilter;
@@ -161,16 +174,22 @@ export function ProductListing() {
   const handleL2Click = (slug: string) => {
     if (selectedL2 === slug) {
       setSelectedL2(null);
+      setSelectedL3(null);
+      setSelectedL4(null);
     } else {
       setSelectedL2(slug);
+      setSelectedL3(null);
+      setSelectedL4(null);
     }
   };
 
   const handleL3Click = (slug: string) => {
     if (selectedL3 === slug) {
       setSelectedL3(null);
+      setSelectedL4(null);
     } else {
       setSelectedL3(slug);
+      setSelectedL4(null);
     }
   };
 
@@ -259,12 +278,12 @@ export function ProductListing() {
                 onClick={() => handleCategoryClick(cat.slug)}
                 className={cn(
                   "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-200 relative group/item",
-                  categoryFilter === cat.slug
+                  activeL1?.slug === cat.slug
                     ? "text-primary bg-primary/5"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                 )}
               >
-                {categoryFilter === cat.slug && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
+                {activeL1?.slug === cat.slug && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
                 <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={20} />}</span>
                 <span className={cn(
                   "text-sm font-semibold whitespace-nowrap transition-opacity duration-200 truncate",
@@ -548,7 +567,7 @@ export function ProductListing() {
                   onClick={() => { handleCategoryClick(cat.slug); setIsSidebarOpen(false); }}
                   className={cn(
                     "w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors",
-                    categoryFilter === cat.slug ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
+                    activeL1?.slug === cat.slug ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
                   )}
                 >
                   <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={18} />}</span>
