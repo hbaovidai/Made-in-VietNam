@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, ChevronLeft, Trash2, CheckSquare, MessageSquare, ExternalLink } from 'lucide-react';
+import { Search, ChevronLeft, Trash2, CheckSquare, MessageSquare, ExternalLink, Loader2 } from 'lucide-react';
+import { api } from '../../../lib/api';
 
 interface ChatMessage {
   sender: string;
@@ -116,11 +117,83 @@ export function AdminMessages() {
   const detailId = searchParams.get('id');
 
   // Local state
-  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [selectedReqs, setSelectedReqs] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [bulkAction, setBulkAction] = useState('');
   const [currentFilter, setCurrentFilter] = useState<'all' | 'unread' | 'active' | 'blocked'>('all');
+
+  const fetchConversations = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/messages/admin/all');
+      const mapped = res.data.map((c: any) => ({
+        id: c.id,
+        buyerName: c.buyerName,
+        buyerEmail: c.buyerEmail,
+        supplierName: c.supplierName,
+        supplierEmail: c.supplierEmail,
+        relatedType: 'rfq',
+        relatedId: 'RFQ-' + c.id.slice(0, 8).toUpperCase(),
+        lastMessage: c.lastMessage || 'Chưa có tin nhắn',
+        status: c.status || 'active',
+        unread: c.unread || false,
+        lastUpdated: c.lastMessageAt
+          ? new Date(c.lastMessageAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+          : new Date(c.updatedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        participants: c.participants,
+        messages: [],
+      }));
+      setConversations(mapped);
+    } catch (err) {
+      console.error('Failed to fetch admin conversations', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  // Selected conversation details
+  const selectedChat = useMemo(() => {
+    if (!detailId) return null;
+    return conversations.find(c => c.id === detailId) || null;
+  }, [detailId, conversations]);
+
+  const fetchMessages = async (chat: any) => {
+    if (!chat) return;
+    try {
+      setLoadingMessages(true);
+      const pId = chat.participants?.[0]?.userId || '';
+      const res = await api.get(`/messages/admin/${chat.id}/history?userId=${pId}`);
+      const formatted = res.data.reverse().map((m: any) => ({
+        sender: m.sender?.fullName || 'Người gửi',
+        text: m.content,
+        time: new Date(m.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      }));
+      
+      setConversations(prev => prev.map(c => {
+        if (c.id === chat.id) {
+          return { ...c, messages: formatted };
+        }
+        return c;
+      }));
+    } catch (err) {
+      console.error('Failed to fetch messages for admin', err);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedChat) {
+      fetchMessages(selectedChat);
+    }
+  }, [selectedChat]);
 
   const filteredConversations = useMemo(() => {
     return conversations.filter(c => {
@@ -165,28 +238,39 @@ export function AdminMessages() {
     }));
   };
 
-  const deleteConversation = (id: string) => {
+  const deleteConversation = async (id: string) => {
     if (confirm(t('msg_confirm_delete'))) {
-      setConversations(prev => prev.filter(c => c.id !== id));
-      if (detailId === id) {
-        setSearchParams({});
+      try {
+        await api.delete(`/messages/conversations/${id}`);
+        setConversations(prev => prev.filter(c => c.id !== id));
+        if (detailId === id) {
+          setSearchParams({});
+        }
+      } catch (err) {
+        console.error('Failed to delete conversation', err);
       }
     }
   };
 
   // Bulk actions handler
-  const handleBulkAction = () => {
+  const handleBulkAction = async () => {
     if (!bulkAction || selectedReqs.length === 0) return;
 
-    setConversations(prev => {
-      if (bulkAction === 'delete') {
-        if (confirm(t('msg_confirm_delete'))) {
+    if (bulkAction === 'delete') {
+      if (confirm(t('msg_confirm_delete'))) {
+        try {
+          await Promise.all(selectedReqs.map(id => api.delete(`/messages/conversations/${id}`)));
+          setConversations(prev => prev.filter(c => !selectedReqs.includes(c.id)));
           setSelectedReqs([]);
-          return prev.filter(c => !selectedReqs.includes(c.id));
+        } catch (err) {
+          console.error('Failed to bulk delete', err);
         }
-        return prev;
       }
+      setBulkAction('');
+      return;
+    }
 
+    setConversations(prev => {
       return prev.map(c => {
         if (selectedReqs.includes(c.id)) {
           if (bulkAction === 'block') return { ...c, status: 'blocked' };
@@ -201,15 +285,14 @@ export function AdminMessages() {
     setBulkAction('');
   };
 
-  // Selected conversation details
-  const selectedChat = useMemo(() => {
-    if (!detailId) return null;
-    return conversations.find(c => c.id === detailId) || null;
-  }, [detailId, conversations]);
-
   const relatedRequest = useMemo(() => {
     if (!selectedChat) return null;
-    return mockRequestDetails[selectedChat.relatedId] || null;
+    return mockRequestDetails[selectedChat.relatedId] || {
+      type: 'rfq',
+      title: 'Yêu cầu báo giá liên quan',
+      qty: 'Liên hệ',
+      statusText: 'Đang xử lý',
+    };
   }, [selectedChat]);
 
   // View switch render
@@ -259,39 +342,50 @@ export function AdminMessages() {
               </div>
 
               {/* Chat Timeline */}
-              <div style={{ flex: 1, padding: 16, background: '#fcfcfc', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {selectedChat.messages.map((m, index) => {
-                  const isBuyer = m.sender === selectedChat.buyerName;
+              <div style={{ flex: 1, padding: 16, background: '#fcfcfc', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14, minHeight: '300px', justifyContent: loadingMessages ? 'center' : 'flex-start', alignItems: loadingMessages ? 'center' : 'stretch' }}>
+                {loadingMessages ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'var(--wp-text-muted)' }}>
+                    <Loader2 className="animate-spin" size={24} style={{ color: 'var(--wp-accent)' }} />
+                    <span style={{ fontSize: 12 }}>Đang tải tin nhắn...</span>
+                  </div>
+                ) : !selectedChat.messages || selectedChat.messages.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: 20, color: 'var(--wp-text-muted)', fontSize: 12 }}>
+                    Chưa có tin nhắn nào.
+                  </div>
+                ) : (
+                  selectedChat.messages.map((m: any, index: number) => {
+                    const isBuyer = m.sender === selectedChat.buyerName;
 
-                  return (
-                    <div key={index} style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: isBuyer ? 'flex-start' : 'flex-end',
-                      maxWidth: '85%',
-                      alignSelf: isBuyer ? 'flex-start' : 'flex-end'
-                    }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--wp-text-muted)', marginBottom: 2 }}>
-                        {m.sender}
-                      </span>
-                      <div style={{
-                        padding: '10px 14px',
-                        borderRadius: 8,
-                        fontSize: 13,
-                        lineHeight: 1.4,
-                        background: isBuyer ? '#fff' : 'var(--wp-accent)',
-                        color: isBuyer ? 'var(--wp-text)' : '#fff',
-                        border: isBuyer ? '1px solid var(--wp-border-light)' : 'none',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                    return (
+                      <div key={index} style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: isBuyer ? 'flex-start' : 'flex-end',
+                        maxWidth: '85%',
+                        alignSelf: isBuyer ? 'flex-start' : 'flex-end'
                       }}>
-                        {m.text}
+                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--wp-text-muted)', marginBottom: 2 }}>
+                          {m.sender}
+                        </span>
+                        <div style={{
+                          padding: '10px 14px',
+                          borderRadius: 8,
+                          fontSize: 13,
+                          lineHeight: 1.4,
+                          background: isBuyer ? '#fff' : 'var(--wp-accent)',
+                          color: isBuyer ? 'var(--wp-text)' : '#fff',
+                          border: isBuyer ? '1px solid var(--wp-border-light)' : 'none',
+                          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                        }}>
+                          {m.text}
+                        </div>
+                        <span style={{ fontSize: 10, color: 'var(--wp-text-muted)', marginTop: 2 }}>
+                          {m.time}
+                        </span>
                       </div>
-                      <span style={{ fontSize: 10, color: 'var(--wp-text-muted)', marginTop: 2 }}>
-                        {m.time}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

@@ -10,6 +10,19 @@ export declare class MessagesService {
         lastMessageAt: any;
         targetUser: any;
     }[]>;
+    getAllConversations(): Promise<{
+        id: any;
+        buyerName: any;
+        buyerEmail: any;
+        supplierName: any;
+        supplierEmail: any;
+        lastMessage: any;
+        lastMessageAt: any;
+        updatedAt: any;
+        status: string;
+        unread: boolean;
+        participants: any;
+    }[]>;
     getMessages(conversationId: string, userId: string, limit?: number, skip?: number): Promise<({
         sender: {
             id: string;

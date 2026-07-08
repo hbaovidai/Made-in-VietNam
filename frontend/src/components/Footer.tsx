@@ -72,13 +72,11 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{t('tro_thanh_doi_tac')}</h3>
             <ul className="space-y-4 text-sm text-slate-400">
               <li><Link to="/register" className="hover:text-viet-gold transition-colors">{t('dang_ky_tham_gia')}</Link></li>
               <li><Link to="/help/seller-guide" className="hover:text-viet-gold transition-colors">{t('huong_dan_quy_trinh')}</Link></li>
-              <li><Link to="/" className="hover:text-viet-gold transition-colors">{t('tro_thanh_doi_tac_da_xac_minh')}</Link></li>
             </ul>
           </div>
 

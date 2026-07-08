@@ -13,10 +13,33 @@ import { MessagesService } from './messages.service';
 import { SendMessageDto, CreateConversationDto } from './dto/message.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+
 
 @Controller('messages')
 export class MessagesController {
   constructor(private messagesService: MessagesService) {}
+
+  // ADMIN: Xem tất cả các cuộc hội thoại
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('admin/all')
+  getAllConversations() {
+    return this.messagesService.getAllConversations();
+  }
+
+  // ADMIN: Xem chi tiết tin nhắn
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('admin/:conversationId/history')
+  getAdminMessages(
+    @Param('conversationId') conversationId: string,
+    @Query('userId') userId: string,
+  ) {
+    return this.messagesService.getMessages(conversationId, userId);
+  }
+
 
   // PROTECTED: Chỉ xem conversations của mình
   @UseGuards(JwtAuthGuard)

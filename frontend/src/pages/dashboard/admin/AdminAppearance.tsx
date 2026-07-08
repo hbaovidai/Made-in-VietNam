@@ -462,6 +462,24 @@ export function AdminAppearance() {
                 </div>
               </div>
             </div>
+
+            {/* Banner Auth Card */}
+            <div style={card} className="flex flex-col justify-between lg:col-span-2">
+              <div>
+                <h3 style={{ ...cardTitle, borderBottom: '1px solid #e2e8f0', paddingBottom: 8, marginBottom: 12 }}>Ảnh nền trang Đăng nhập / Đăng ký</h3>
+                <p style={{ ...fieldDesc, fontSize: 13, color: '#475569', marginBottom: 16 }}>Ảnh nền hiển thị ở phần cột bên trái của trang Đăng nhập và Đăng ký.</p>
+                <div className="space-y-4">
+                  <ImageUploader 
+                    value={settings.auth_bg_image || ''} 
+                    onChange={url => update('auth_bg_image', url)} 
+                    height={150} 
+                  />
+                  <div style={{ ...fieldDesc, fontSize: 12, color: '#64748b', marginTop: 8 }}>
+                    💡 Gợi ý kích thước: tỉ lệ ngang hoặc dọc lớn (ví dụ: <strong>1200×800px</strong> hoặc cao hơn), định dạng JPG/WebP
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Hero Banner Slides Management */}

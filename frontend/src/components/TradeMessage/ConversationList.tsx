@@ -39,7 +39,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
       <div className="p-4 border-b border-slate-200 shrink-0">
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare size={18} className="text-blue-600" />
-          <h2 className="text-sm font-bold text-slate-800 tracking-tight">Trade Message</h2>
+          <h2 className="text-sm font-bold text-slate-800 tracking-tight">Tin nhắn Thương mại</h2>
         </div>
 
         {/* Search Bar */}
@@ -49,7 +49,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
           </span>
           <input
             type="text"
-            placeholder="Search conversations, RFQ..."
+            placeholder="Tìm cuộc trò chuyện, RFQ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full text-xs pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-slate-700 font-medium placeholder-slate-400"
@@ -60,7 +60,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
       {/* Tabs */}
       <div className="px-2 pt-1 border-b border-slate-100 flex gap-1 shrink-0 bg-slate-50/50">
         {(['all', 'unread', 'starred'] as TabType[]).map((tab) => {
-          const label = tab.charAt(0).toUpperCase() + tab.slice(1);
+          const label = tab === 'all' ? 'Tất cả' : tab === 'unread' ? 'Chưa đọc' : 'Đã đánh dấu';
           const count = 
             tab === 'unread' 
               ? conversations.filter(c => c.unreadCount > 0).length 
@@ -105,8 +105,8 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
         ) : (
           <div className="p-8 text-center text-slate-400">
             <Filter size={24} className="mx-auto mb-2 text-slate-300 stroke-[1.5]" />
-            <p className="text-xs font-semibold">No conversations found</p>
-            <p className="text-[10px] text-slate-400 mt-1">Try resetting search or filters</p>
+            <p className="text-xs font-semibold">Không tìm thấy cuộc hội thoại nào</p>
+            <p className="text-[10px] text-slate-400 mt-1">Thử đặt lại tìm kiếm hoặc bộ lọc</p>
           </div>
         )}
       </div>

@@ -18,10 +18,18 @@ const messages_service_1 = require("./messages.service");
 const message_dto_1 = require("./dto/message.dto");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let MessagesController = class MessagesController {
     messagesService;
     constructor(messagesService) {
         this.messagesService = messagesService;
+    }
+    getAllConversations() {
+        return this.messagesService.getAllConversations();
+    }
+    getAdminMessages(conversationId, userId) {
+        return this.messagesService.getMessages(conversationId, userId);
     }
     getUserConversations(userId, currentUserId) {
         if (currentUserId !== userId)
@@ -42,6 +50,24 @@ let MessagesController = class MessagesController {
     }
 };
 exports.MessagesController = MessagesController;
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Get)('admin/all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "getAllConversations", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Get)('admin/:conversationId/history'),
+    __param(0, (0, common_1.Param)('conversationId')),
+    __param(1, (0, common_1.Query)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "getAdminMessages", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('conversations/:userId'),

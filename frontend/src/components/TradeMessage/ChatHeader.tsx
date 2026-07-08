@@ -55,7 +55,7 @@ export function ChatHeader({
             background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0',
             borderRadius: 12, padding: '2px 8px', fontSize: 10, fontWeight: 700, flexShrink: 0,
           }}>
-            <ShieldCheck size={10} /> Verified
+            <ShieldCheck size={10} /> Đã xác minh
           </span>
         )}
       </div>

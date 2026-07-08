@@ -23,13 +23,13 @@ export function AttachmentCard({ name, size, onDownload }: AttachmentCardProps) 
         <button 
           onClick={onDownload}
           className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors" 
-          title="Download Document"
+          title="Tải tài liệu"
         >
           <Download size={14} />
         </button>
         <button 
           className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors" 
-          title="View in Browser"
+          title="Xem trực tiếp"
         >
           <ExternalLink size={14} />
         </button>

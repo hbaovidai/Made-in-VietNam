@@ -42,15 +42,15 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 <FileSpreadsheet size={14} />
               </div>
               <span style={{ fontSize: 11, fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Quotation Summary
+                Tóm tắt báo giá
               </span>
             </div>
 
             {[
-              ['Unit Price', message.quotationSummary.unitPrice, '#2563eb'],
+              ['Đơn giá', message.quotationSummary.unitPrice, '#2563eb'],
               ['MOQ', message.quotationSummary.moq, '#334155'],
-              ['Lead Time', message.quotationSummary.leadTime, '#334155'],
-              ['Payment', message.quotationSummary.paymentTerm, '#334155'],
+              ['Thời gian sản xuất', message.quotationSummary.leadTime, '#334155'],
+              ['Thanh toán', message.quotationSummary.paymentTerm, '#334155'],
             ].map(([label, val, clr]) => (
               <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: 12 }}>
                 <span style={{ color: '#64748b', fontWeight: 500 }}>{label}:</span>
@@ -63,13 +63,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 flex: 1, padding: '6px 0', background: '#2563eb', color: '#fff', border: 'none',
                 borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
               }}>
-                Accept <ArrowRight size={11} />
+                Chấp nhận <ArrowRight size={11} />
               </button>
               <button style={{
                 flex: 1, padding: '6px 0', background: '#fff', color: '#334155', border: '1px solid #e2e8f0',
                 borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer',
               }}>
-                Counter Offer
+                Đàm phán lại
               </button>
             </div>
           </div>
