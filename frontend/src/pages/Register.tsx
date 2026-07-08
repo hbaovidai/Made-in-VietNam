@@ -80,12 +80,12 @@ export function Register() {
         email, 
         password, 
         fullName, 
-        role: role.toUpperCase() 
+        role: 'BUYER' 
       });
 
       loginUser(res.data.user, res.data.token);
       addToast({ type: 'success', title: 'Hoan nghênh!', message: 'Đăng ký tài khoản thành công.' });
-      navigate(role === 'buyer' ? '/' : `/dashboard/${role.toLowerCase()}`);
+      navigate('/');
     } catch (err: any) {
       addToast({ 
         type: 'error', 
