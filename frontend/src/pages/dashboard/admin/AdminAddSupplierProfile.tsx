@@ -68,8 +68,8 @@ export function AdminAppSupplier() {
 
       <div>
         <Label text="Địa chỉ"/>
-        <TextInput placeHolder="quận" value={province} setValue={setProvince}/>
-        <TextInput placeHolder="huyện" value={ward} setValue={setWard}/>
+        <TextInput placeHolder="tỉnh/thành" value={province} setValue={setProvince}/>
+        <TextInput placeHolder="huyện/phường" value={ward} setValue={setWard}/>
         <TextInput placeHolder="đường, số nhà" value={streetAddress} setValue={setStreetAddress}/>
       </div>
 
@@ -100,10 +100,14 @@ export function AdminAppSupplier() {
       </Select>
 
       <Select label="Loại hình hoạt động trên sàn">
-        <OptionButton label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}/>
-        <OptionButton label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}/>
-        <OptionButton label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}/>
-        <OptionButton label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}/>
+        <OptionButton label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.DISTRIBUTOR}/>
+        <OptionButton label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.MANUFACTURER}/>
+        <OptionButton label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.EXPORTER}/>
+        <OptionButton label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.DIGITAL_GOODS}/>
       </Select>
 
     </FormContainer>
