@@ -54,7 +54,7 @@ export function AdminAppSupplier() {
   }, [])
 
   return (
-    <div>
+    <div className="w-full">
     <FormContainer
       formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
       handleSubmit={handleSubmit}
@@ -74,9 +74,12 @@ export function AdminAppSupplier() {
       </div>
 
       <Select label="Loại hình tổ chức">
-        <OptionButton label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}/>
-        <OptionButton label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}/>
-        <OptionButton label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}/>
+        <OptionButton label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.PRIVATE}/>
+        <OptionButton label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.JOINT_STOCK}/>
+        <OptionButton label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.LIMITED_LIABILITY}/>
       </Select>
 
       <Label text="Thông tin liên hệ" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
@@ -86,10 +89,14 @@ export function AdminAppSupplier() {
       <FormFieldTextInput label="Email" value={contactEmail} setValue={setContactEmail}/>
 
       <Select label="Vai trò">
-        <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}/>
-        <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}/>
-        <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}/>
-        <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}/>
+        <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.EMPLOYEE}/>
+        <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.MANAGER}/>
+        <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.LEGAL_REP}/>
+        <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.OWNER}/>
       </Select>
 
       <Select label="Loại hình hoạt động trên sàn">
