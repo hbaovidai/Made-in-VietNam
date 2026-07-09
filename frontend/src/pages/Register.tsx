@@ -136,9 +136,6 @@ export function Register() {
           <div className="w-full max-w-[440px] flex flex-col">
             {/* Header info */}
             <div className="mb-6">
-              <div className="w-10 h-10 bg-[#0F172A] rounded-lg flex items-center justify-center text-white mb-4 shadow-sm">
-                <UserPlus size={20} strokeWidth={2} />
-              </div>
               <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
                 Tạo tài khoản
               </h1>

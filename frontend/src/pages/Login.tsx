@@ -148,9 +148,6 @@ export function Login() {
           <div className="w-full max-w-[400px] flex flex-col">
             {/* Header info */}
             <div className="mb-6">
-              <div className="w-10 h-10 bg-[#0F172A] rounded-lg flex items-center justify-center text-white mb-4 shadow-sm">
-                <Factory size={20} strokeWidth={2} />
-              </div>
               <h1 className="text-xl font-bold text-[#0F172A] mb-1.5 tracking-tight">
                 Chào mừng trở lại
               </h1>
