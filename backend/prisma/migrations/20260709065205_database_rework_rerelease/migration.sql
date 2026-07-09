@@ -1,20 +1,44 @@
 -- CreateEnum
-CREATE TYPE "SupplierApplicantRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
+DO $$ BEGIN
+    CREATE TYPE "SupplierApplicantRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "SupplierApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+DO $$ BEGIN
+    CREATE TYPE "SupplierApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "SupplierStatus" AS ENUM ('VERIFIED', 'SUSPENDED', 'APPLICATION_REJECTED', 'APPLICATION_PENDING');
+DO $$ BEGIN
+    CREATE TYPE "SupplierStatus" AS ENUM ('VERIFIED', 'SUSPENDED', 'APPLICATION_REJECTED', 'APPLICATION_PENDING');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "SupplierAccountHolderRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
+DO $$ BEGIN
+    CREATE TYPE "SupplierAccountHolderRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "SupplierType" AS ENUM ('DISTRIBUTOR', 'MANUFACTURER', 'EXPORTER', 'DIGITAL_GOODS', 'MANU_EXPORT');
+DO $$ BEGIN
+    CREATE TYPE "SupplierType" AS ENUM ('DISTRIBUTOR', 'MANUFACTURER', 'EXPORTER', 'DIGITAL_GOODS', 'MANU_EXPORT');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "BusinessType" AS ENUM ('PRIVATE', 'LIMITED_LIABILITY', 'JOINT_STOCK');
+DO $$ BEGIN
+    CREATE TYPE "BusinessType" AS ENUM ('PRIVATE', 'LIMITED_LIABILITY', 'JOINT_STOCK');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- DropIndex
 DROP INDEX IF EXISTS "suppliers_is_verified_idx";
