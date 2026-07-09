@@ -56,12 +56,7 @@ export function SupplierProfile() {
     </div>
   );
 
-  const isVerified =
-    supplier.is_verified === true ||
-    supplier.isVerified === true ||
-    supplier.status === SupplierStatus.VERIFIED ||
-    supplier.verificationStatus === 'VERIFIED' ||
-    supplier.verification_status === 'VERIFIED';
+  const isVerified = supplier.status === SupplierStatus.VERIFIED ;
 
   const memberSince = supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024;
   const certNames = supplier.certifications?.map((c: any) => c.name) || [];

@@ -5,6 +5,7 @@ import { ArrowLeft, Building2, Shield, Loader2, Upload, FileText, X, AlertCircle
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
 import { api } from '../../../lib/api';
+import { SupplierStatus } from '@/src/lib/enums';
 
 // Enum options for selectors
 const PRODUCTION_FORMS = [
@@ -139,9 +140,10 @@ export function ManufacturerVerification() {
         }));
 
         // Check if there is an existing pending request
-        if (s?.verificationStatus === 'PENDING' || reqRes?.data?.status === 'PENDING') {
-          setHasPendingRequest(true);
-        }
+        const requestExists = s?.status === SupplierStatus.APPLICATION_PENDING ||
+          reqRes?.data?.status === SupplierStatus.APPLICATION_PENDING;
+        if (requestExists) setHasPendingRequest(true);
+
       } catch (err) {
         console.error('Failed to load supplier/verification data', err);
       } finally {

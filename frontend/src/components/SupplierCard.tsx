@@ -14,12 +14,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   const navigate = useNavigate();
   const name = supplier.companyName || supplier.name;
 
-  const isVerified = 
-    supplier.is_verified === true || 
-    supplier.isVerified === true || 
-    supplier.status === 'VERIFIED' || 
-    supplier.verificationStatus === 'VERIFIED' || 
-    supplier.verification_status === 'VERIFIED';
+  const isVerified = supplier.status === SupplierStatus.VERIFIED;
 
   let location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province}` : (supplier.province || 'Việt Nam'));
   if (supplier.streetAddress) {

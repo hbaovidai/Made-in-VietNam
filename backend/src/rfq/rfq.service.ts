@@ -156,7 +156,6 @@ export class RfqService {
                 id: true,
                 companyName: true,
                 logo: true,
-                is_verified: true,
                 status: true,
                 userId: true,
               },

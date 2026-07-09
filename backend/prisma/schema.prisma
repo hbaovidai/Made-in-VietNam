@@ -74,10 +74,6 @@ model Supplier {
   status               SupplierStatus              @default(UNVERIFIED)
   supplierType     SupplierType?  @map("supplier_type")
 
-  // to remove
-  is_verified          Boolean?                    @default(false)
-  verification_status  SupplierVerificationStatus? @default(UNVERIFIED)
-
   // Relations
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
@@ -92,7 +88,7 @@ model Supplier {
   @@index([id])
   @@index([companyName])
   @@index([updatedAt])
-  @@index([verification_status])
+  @@index([status])
   @@index([taxCode])
   @@map("suppliers")
 }

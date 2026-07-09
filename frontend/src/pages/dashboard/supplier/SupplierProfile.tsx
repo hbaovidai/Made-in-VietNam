@@ -54,7 +54,7 @@ export function SupplierProfile() {
             ...user,
             supplier: {
               ...user.supplier!,
-              status: s.verificationStatus,
+              status: s.status,
             }
           });
         }
