@@ -188,7 +188,7 @@ CREATE INDEX IF NOT EXISTS "categories_name_idx" ON "categories"("name");
 CREATE INDEX IF NOT EXISTS "categories_name_en_idx" ON "categories"("name_en");
 CREATE INDEX IF NOT EXISTS "products_category_id_idx" ON "products"("category_id");
 CREATE UNIQUE INDEX IF NOT EXISTS "suppliers_id_key" ON "suppliers"("id");
-CREATE UNIQUE INDEX IF NOT EXISTS "suppliers_tax_code_key" ON "suppliers"("tax_code");
+CREATE INDEX IF NOT EXISTS "suppliers_tax_code_key" ON "suppliers"("tax_code");
 CREATE INDEX IF NOT EXISTS "suppliers_id_idx" ON "suppliers"("id");
 CREATE INDEX IF NOT EXISTS "suppliers_updated_at_idx" ON "suppliers"("updated_at");
 CREATE INDEX IF NOT EXISTS "suppliers_status_idx" ON "suppliers"("status");

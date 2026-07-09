@@ -48,7 +48,7 @@ model Supplier {
 
   // legal info
   companyName          String                      @map("company_name")
-  taxCode              String?  @map("tax_code") @unique
+  taxCode              String?  @map("tax_code")
   businessType         String?                     @map("business_type")
   legalRepName String? @map("legal_rep_name")
   legalRepGovId String? @map("legal_rep_gov_id")

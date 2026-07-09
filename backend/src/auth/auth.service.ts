@@ -108,7 +108,7 @@ export class AuthService {
       const { user } = await this.register(userDto);
 
       // TODO: prevent duplicate suppliers
-      const existingCompany = await this.prisma.supplier.findUnique({
+      const existingCompany = await this.prisma.supplier.findFirst({
         where: {
           taxCode: dto.taxCode,
         },
