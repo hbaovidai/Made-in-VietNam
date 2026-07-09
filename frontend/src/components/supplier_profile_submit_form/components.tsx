@@ -56,7 +56,7 @@ export function UploadField( props: UploadFieldProps) {
         <div></div>
         {props.Icon ?? <UploadIcon/>} <p>{props.uploadText ?? 'Nhấn để tải lên'}</p>
         <input type="file"
-          required={props.required ?? true}
+          required={props.required ?? false}
           className='hidden'
           multiple
           accept=".png,.jpg,.jpeg,.pdf,.webp"
@@ -89,7 +89,7 @@ export interface TextInputProps {
 export function TextInput( props: TextInputProps ) {
   return (
     <input
-      required={props.required ?? true}
+      required={props.required ?? false}
       type="text"
       value={props.value}
       onChange={(e) => props.setValue(e.target.value) }
@@ -115,7 +115,7 @@ export function FormFieldTextInput(props: FormFieldTextInputProps) {
         value={props.value}
         setValue={props.setValue}
         placeHolder={props.placeHolder ?? '...'}
-        required={props.required ?? true}
+        required={props.required ?? false}
         style={props.inputBoxStyle}
       />
     </div>
@@ -136,7 +136,7 @@ export function Select(props: SelectProps) {
       <Label text={props.label}/>
       <input
         type='text'
-        required={props.required ?? true}
+        required={props.required ?? false}
         className="sr-only"
         value={props.value}
         onChange={(e) => props.onButtonClick(e.target.value)}
@@ -164,7 +164,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
     <label
     >
       <input type='checkbox'
-        required={props.required ?? true}
+        required={props.required ?? false}
         // value='yes'
         className={checkBoxStyle}
         onChange={(e) => {props.setValue(e.target.checked)}}
@@ -212,7 +212,7 @@ export function FormContainer( props: FormContainerProps ) {
       {formTitleElement}
       <form 
         onSubmit={props.handleSubmit}
-        className={formStyle} noValidate={props.noValidate ?? true}
+        className={formStyle} noValidate={props.noValidate ?? false}
       >
         {props.children}
         {submitButton}
