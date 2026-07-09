@@ -1,7 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
-import { Prisma, SupplierStatus } from '@prisma/client';
+import { Prisma, Role, SupplierStatus } from '@prisma/client';
+import { CreateFakeSuppDto } from './dto/supplier.dto';
+import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class SuppliersService {
@@ -112,7 +115,56 @@ export class SuppliersService {
     return supplier;
   }
 
-  // note: idk what this for, we can create supplier profiles in the auth module
+  async createFakeProfile(dto: CreateFakeSuppDto) {
+    // find existing email
+    try {
+      const existingUser = await this.prisma.user.findUnique({ where: { email: dto.contactEmail }, });
+      if (existingUser) throw new ConflictException('Email đã được sử dụng');
+
+      const passwordHash = await bcrypt.hash(uuidv4(), 10);
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.contactEmail, phone: dto.contactPhone, passwordHash,
+          fullName: dto.companyName, role: Role.SUPPLIER,
+        },
+        select: {id: true}
+      });
+
+      // prevent duplicate suppliers
+      const existingCompany = await this.prisma.supplier.findFirst({
+        where: {
+          taxCode: dto.taxCode,
+        },
+      });
+
+      if ( existingCompany ) return { message: 'Doanh nghiệp đã tồn tại.', success: false };
+      const slug = dto.companyName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+      // maybe do some logging later, idk bro
+      const supplierProfile = await this.prisma.supplier.create({
+        data: {
+          userId: user.id,
+          slug: `${slug}-${Date.now()}`,
+          isFake: true,
+          status: SupplierStatus.VERIFIED,
+          ...dto
+        },
+      });
+
+      return {
+        message: 'Đã tạo hồ sơ nhà cung cấp',
+        success: true,
+      };
+
+    } catch (error) {
+      console.log(error.message);
+      return { message: error.message, success: false, }
+    }
+  }
+
   async createProfile(userId: string, data: any) {
     const existing = await this.prisma.supplier.findUnique({
       where: { userId },

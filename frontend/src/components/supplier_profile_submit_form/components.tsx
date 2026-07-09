@@ -182,6 +182,8 @@ export interface FormContainerProps {
   formTitleElement?: React.ReactNode;
   containerStyle?: string;
   formStyle?: string;
+  formTitle?: string;
+  submitButtonText?: string;
 }
 
 export function FormContainer( props: FormContainerProps ) {
@@ -189,7 +191,7 @@ export function FormContainer( props: FormContainerProps ) {
   const formStyle = props.formStyle ?? 'space-y-4 ';
 
   const formTitleElement = props.formTitleElement ?? (
-    <Label text='Xác Minh Nhà Xuất Khẩu' fontSize={FontSizes.FORM_TITLE}/>
+    <Label text={'Xác Minh Nhà Cung Cấp'} fontSize={FontSizes.FORM_TITLE}/>
   );
 
   const submitButton = props.submitButton ?? (
@@ -201,7 +203,7 @@ export function FormContainer( props: FormContainerProps ) {
         w-full m-auto
         " 
     >
-      Gửi hồ sơ xác minh
+      {props.submitButtonText ?? 'Gửi hồ sơ xác minh'}
     </button>
   );
   

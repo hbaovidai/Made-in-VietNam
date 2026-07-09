@@ -78,12 +78,12 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: MessageSquare, label: t('msg_menu_label'), path: '/dashboard/admin/messages',
   },
   {
-    icon: Shield, label: t('admin_suppliers_menu'), path: '/dashboard/admin/supplier_application_verification',
+    icon: Shield, label: t('admin_suppliers_menu'), path: '/dashboard/admin/suppliers/verified',
     children: [
-      { label: t('admin_pending_profiles'), path: '/dashboard/admin/pending-profiles' },
-      { label: t('admin_verification_requests'), path: '/dashboard/admin/verification-requests' },
-      { label: t('admin_suppliers_menu'), path: '/dashboard/admin/suppliers' },
-      { label: t('admin_invite_links'), path: '/dashboard/admin/verifications?tab=tokens' },
+      { label: t('admin_pending_profiles'), path: '/dashboard/admin/suppliers/pending-profiles' },
+      { label: t('admin_verification_requests'), path: '/dashboard/admin/suppliers/verification-requests' },
+      { label: t('admin_suppliers_verified'), path: '/dashboard/admin/suppliers/verified' },
+      { label: t('admin_add_fake_profile'), path: '/dashboard/admin/suppliers/add-fake-profile' },
     ],
   },
   {
