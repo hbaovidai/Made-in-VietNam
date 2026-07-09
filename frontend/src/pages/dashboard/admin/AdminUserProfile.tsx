@@ -10,7 +10,7 @@ type TabKey = 'profile' | 'account' | 'password' | 'activity' | 'settings';
 
 export function AdminUserProfile() {
   const { t } = useTranslation();
-  const { user: me } = useAuth();
+  const { user: me, loginUser, token } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const userId = searchParams.get('id') || me?.id;
   const initialTab = (searchParams.get('tab') as TabKey) || 'profile';
@@ -88,7 +88,7 @@ export function AdminUserProfile() {
     setSaving(true);
     try {
       // 1. Update basic profile
-      await api.put(`/auth/profile/${userId}`, { fullName, phone }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+      const res = await api.put(`/auth/profile/${userId}`, { fullName, phone }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
 
       // 2. Update role if changed & not self
       if (role !== profile.role && userId !== me?.id) {
@@ -98,6 +98,12 @@ export function AdminUserProfile() {
       // 3. Update status if changed & not self
       if (status !== profile.status && userId !== me?.id) {
         await api.put(`/users/${userId}/status`, { status }, { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+      }
+
+      // If updating self, update global context
+      if (userId === me?.id && token) {
+        const updatedUser = res.data.user || { ...me, fullName, phone };
+        loginUser(updatedUser, token);
       }
 
       setProfile((p: any) => ({ ...p, fullName, phone, role, status }));
@@ -147,6 +153,9 @@ export function AdminUserProfile() {
 
   const tabs: { key: TabKey; icon: React.ComponentType<any>; label: string }[] = [
     { key: 'profile', icon: User, label: 'Hồ sơ cá nhân' },
+    { key: 'account', icon: Shield, label: 'Thông tin tài khoản' },
+    { key: 'password', icon: Key, label: 'Đổi mật khẩu' },
+    { key: 'settings', icon: Settings, label: 'Cài đặt tài khoản' },
   ];
 
   if (loading) return <div className="wp-loading">{t('dang_tai_ho_so')}</div>;

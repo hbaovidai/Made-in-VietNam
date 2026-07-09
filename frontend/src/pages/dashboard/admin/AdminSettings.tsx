@@ -207,13 +207,6 @@ export function AdminSettings() {
         { key: 'tiktok_url', label: 'TikTok URL', desc: '' },
       ]
     },
-    {
-      title: 'Security Settings',
-      fields: [
-        { key: 'max_login_attempts', label: 'Max Login Attempts', desc: 'Number of allowed login attempts before lockout.' },
-        { key: 'session_timeout', label: 'Session Timeout (mins)', desc: 'Auto-logout after inactivity.' },
-      ]
-    },
   ];
 
   return (

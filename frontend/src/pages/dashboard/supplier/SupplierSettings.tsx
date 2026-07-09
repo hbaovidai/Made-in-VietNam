@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Globe, Bell, CreditCard, ChevronRight, Building2, Lock, BellRing, BellOff, Check, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,17 +10,14 @@ import { api } from '../../../lib/api';
 export function SupplierSettings() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loginUser, token } = useAuth();
   const { addToast } = useToast();
-  const nameParts = (user?.fullName || '').split(' ');
-  const lastName = nameParts.pop() || '';
-  const firstName = nameParts.join(' ') || '';
 
   const [profileForm, setProfileForm] = useState({
-    firstName,
-    lastName,
-    email: user?.email || '',
-    phone: user?.phone || '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
   });
 
   const [passwordForm, setPasswordForm] = useState({
@@ -29,6 +26,30 @@ export function SupplierSettings() {
   });
 
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const nameParts = (user.fullName || '').split(' ');
+      const lastName = nameParts.pop() || '';
+      const firstName = nameParts.join(' ') || '';
+      setProfileForm({
+        firstName,
+        lastName,
+        email: user.email || '',
+        phone: (user as any).phone || '',
+      });
+    }
+  }, [user]);
+
+  // Fetch latest profile from server to ensure fresh data
+  useEffect(() => {
+    if (user?.id && token) {
+      api.get(`/auth/profile/${user.id}`).then(res => {
+        const fresh = res.data;
+        if (token) loginUser({ ...user, ...fresh }, token);
+      }).catch(() => {});
+    }
+  }, []);
 
   // Notification settings (stored in localStorage)
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
@@ -51,10 +72,13 @@ export function SupplierSettings() {
     if (!user) return;
     setSaving(true);
     try {
-      await api.put(`/auth/profile/${user.id}`, {
-        fullName: `${profileForm.firstName} ${profileForm.lastName}`.trim(),
+      const fullName = `${profileForm.firstName} ${profileForm.lastName}`.trim();
+      const res = await api.put(`/auth/profile/${user.id}`, {
+        fullName,
         phone: profileForm.phone,
       });
+      const updatedUser = res.data.user || { ...user, fullName, phone: profileForm.phone };
+      if (token) loginUser(updatedUser, token);
       addToast({ type: 'success', title: t('save_changes'), message: 'Đã cập nhật thông tin cá nhân' });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật thông tin' });

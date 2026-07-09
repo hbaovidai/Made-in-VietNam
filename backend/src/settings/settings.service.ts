@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-// Default values for site settings
 const DEFAULTS: Record<string, string> = {
+  site_name: 'VIEProduct',
+  site_tagline: 'Vietnam B2B Trade & Sourcing Platform',
+  site_url: 'http://localhost:5173',
   contact_email: 'contact@vieproduct.com',
   contact_phone: '+84 899 123 456',
   contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
@@ -10,6 +12,9 @@ const DEFAULTS: Record<string, string> = {
   twitter_url: '',
   linkedin_url: '',
   instagram_url: '',
+  tiktok_url: '',
+  max_login_attempts: '5',
+  session_timeout: '30',
   hero_banners: JSON.stringify([
     {
       id: 'slide-1',

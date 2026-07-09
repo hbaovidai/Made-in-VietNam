@@ -13,6 +13,9 @@ exports.SettingsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const DEFAULTS = {
+    site_name: 'VIEProduct',
+    site_tagline: 'Vietnam B2B Trade & Sourcing Platform',
+    site_url: 'http://localhost:5173',
     contact_email: 'contact@vieproduct.com',
     contact_phone: '+84 899 123 456',
     contact_address: '123 Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam',
@@ -20,6 +23,9 @@ const DEFAULTS = {
     twitter_url: '',
     linkedin_url: '',
     instagram_url: '',
+    tiktok_url: '',
+    max_login_attempts: '5',
+    session_timeout: '30',
     hero_banners: JSON.stringify([
         {
             id: 'slide-1',
