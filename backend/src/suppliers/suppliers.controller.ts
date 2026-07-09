@@ -171,7 +171,7 @@ export class SuppliersController {
   @Roles('ADMIN')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create_fake_supplier')
-  async createFakeSupp(dto: CreateFakeSuppDto) {
+  async createFakeSupp(@Body() dto: CreateFakeSuppDto) {
     return this.suppliersService.createFakeProfile(dto);
   }
 }
