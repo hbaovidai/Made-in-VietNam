@@ -11,7 +11,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -165,13 +165,5 @@ export class SuppliersController {
       }
     }
     return this.suppliersService.deleteCertification(certId, supplierId);
-  }
-
-  // Protected: chỉ admin mới được thêm profile
-  @Roles('ADMIN')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('create_fake_supplier')
-  async createFakeSupp(@Body() dto: CreateFakeSuppDto) {
-    return this.suppliersService.createFakeProfile(dto);
   }
 }

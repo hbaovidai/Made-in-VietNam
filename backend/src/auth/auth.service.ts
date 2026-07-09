@@ -92,6 +92,12 @@ export class AuthService {
   }
   
   async supplierRegister(dto: SupplierRegisterDto) {
+    // TODO: remove before push
+    console.log(dto);
+    return {
+      success: true,
+      message: 'for testing purposes, this is a success, check the logs',
+    };
     const userDto = new UserRegisterDto();
     userDto.email = dto.contactEmail;
     userDto.phone = dto.contactPhone;

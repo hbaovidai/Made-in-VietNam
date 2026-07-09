@@ -73,7 +73,6 @@ model Supplier {
   updatedAt            DateTime                    @updatedAt @map("updated_at")
   status               SupplierStatus              @default(APPLICATION_PENDING)
   supplierType     SupplierType?  @map("supplier_type")
-  isFake Boolean? @default(false) @map("is_fake")
 
   // Relations
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)

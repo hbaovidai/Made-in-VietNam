@@ -56,7 +56,7 @@ export function UploadField( props: UploadFieldProps) {
         <div></div>
         {props.Icon ?? <UploadIcon/>} <p>{props.uploadText ?? 'Nhấn để tải lên'}</p>
         <input type="file"
-          required={props.required ?? false}
+          required={props.required ?? true}
           className='hidden'
           multiple
           accept=".png,.jpg,.jpeg,.pdf,.webp"
@@ -89,7 +89,7 @@ export interface TextInputProps {
 export function TextInput( props: TextInputProps ) {
   return (
     <input
-      required={props.required ?? false}
+      required={props.required ?? true}
       type="text"
       value={props.value}
       onChange={(e) => props.setValue(e.target.value) }
@@ -115,7 +115,7 @@ export function FormFieldTextInput(props: FormFieldTextInputProps) {
         value={props.value}
         setValue={props.setValue}
         placeHolder={props.placeHolder ?? '...'}
-        required={props.required ?? false}
+        required={props.required ?? true}
         style={props.inputBoxStyle}
       />
     </div>
@@ -136,7 +136,7 @@ export function Select(props: SelectProps) {
       <Label text={props.label}/>
       <input
         type='text'
-        required={props.required ?? false}
+        required={props.required ?? true}
         className="sr-only"
         value={props.value}
         onChange={(e) => props.onButtonClick(e.target.value)}
@@ -164,7 +164,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
     <label
     >
       <input type='checkbox'
-        required={props.required ?? false}
+        required={props.required ?? true}
         // value='yes'
         className={checkBoxStyle}
         onChange={(e) => {props.setValue(e.target.checked)}}
@@ -177,13 +177,11 @@ export function CheckboxField(props: CheckboxFieldProps) {
 
 export interface FormContainerProps {
   children: React.ReactNode;
-  handleSubmit: (e) => void; noValidate?: boolean;
+  handleSubmit: (e) => void;
   submitButton?: React.ReactNode;
   formTitleElement?: React.ReactNode;
   containerStyle?: string;
   formStyle?: string;
-  formTitle?: string;
-  submitButtonText?: string;
 }
 
 export function FormContainer( props: FormContainerProps ) {
@@ -191,7 +189,7 @@ export function FormContainer( props: FormContainerProps ) {
   const formStyle = props.formStyle ?? 'space-y-4 ';
 
   const formTitleElement = props.formTitleElement ?? (
-    <Label text={'Xác Minh Nhà Cung Cấp'} fontSize={FontSizes.FORM_TITLE}/>
+    <Label text='Xác Minh Nhà Xuất Khẩu' fontSize={FontSizes.FORM_TITLE}/>
   );
 
   const submitButton = props.submitButton ?? (
@@ -203,7 +201,7 @@ export function FormContainer( props: FormContainerProps ) {
         w-full m-auto
         " 
     >
-      {props.submitButtonText ?? 'Gửi hồ sơ xác minh'}
+      Gửi hồ sơ xác minh
     </button>
   );
   
@@ -212,7 +210,7 @@ export function FormContainer( props: FormContainerProps ) {
       {formTitleElement}
       <form 
         onSubmit={props.handleSubmit}
-        className={formStyle} noValidate={props.noValidate ?? false}
+        className={formStyle}
       >
         {props.children}
         {submitButton}

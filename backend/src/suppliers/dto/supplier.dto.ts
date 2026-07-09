@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { BusinessType, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
+import { BusinessType, SupplierStatus } from '@prisma/client';
 
 export class UpdateSupplierDto {
   @IsString() @IsOptional() companyName?: string;
@@ -40,25 +40,4 @@ export class AdminQueryDto {
   @IsOptional() @IsEnum(SupplierStatus) status?: SupplierStatus;
   // this looks cursed, but it's just a set of attributes copied over from the database. literally
   @IsOptional() @ValidateNested() @Type(() => UpdateSupplierDto) include?: UpdateSupplierDto;
-}
-
-export class CreateFakeSuppDto {
-  // legal info
-  @IsString() companyName: string;
-  @IsString() taxCode: string;
-  @IsString() legalRepName: string;
-  @IsString() legalRepGovId: string;
-  @IsString() province: string;
-  @IsString() ward: string;
-  @IsString() streetAddress: string;
-  @IsEnum(BusinessType) businessType: BusinessType;
-
-  // contact info
-  @IsString() accountHolderName: string;
-  @IsString() contactPhone: string;
-  @IsString() contactEmail: string;
-  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
-
-  // other info
-  @IsEnum(SupplierType) supplierType: SupplierType;
 }
