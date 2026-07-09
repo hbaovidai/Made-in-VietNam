@@ -196,7 +196,7 @@ export function FormContainer( props: FormContainerProps ) {
 
   const submitButton = props.submitButton ?? (
     <button
-      type="submit" formNoValidate={props.noValidate ?? true}
+      type="submit"
       /* we really need to standardize the styles man */
       className="
         bg-blue-600 hover:bg-blue-300 text-white p-2.5 rounded-xl font-bold transition-colors ease-in
@@ -212,7 +212,7 @@ export function FormContainer( props: FormContainerProps ) {
       {formTitleElement}
       <form 
         onSubmit={props.handleSubmit}
-        className={formStyle}
+        className={formStyle} noValidate={props.noValidate ?? true}
       >
         {props.children}
         {submitButton}
