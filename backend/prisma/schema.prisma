@@ -677,6 +677,6 @@ model SupplierCategoryMap {
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
-  @@id([supplierId, categoryId])
+  @@id([categoryId, supplierId])
   @@map("supplier_category_map")
 }
