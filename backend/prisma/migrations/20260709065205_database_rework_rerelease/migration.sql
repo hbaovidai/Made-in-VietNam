@@ -1,88 +1,140 @@
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "SupplierApplicantRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "SupplierApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "SupplierStatus" AS ENUM ('VERIFIED', 'SUSPENDED', 'APPLICATION_REJECTED', 'APPLICATION_PENDING');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "SupplierAccountHolderRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "SupplierType" AS ENUM ('DISTRIBUTOR', 'MANUFACTURER', 'EXPORTER', 'DIGITAL_GOODS', 'MANU_EXPORT');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- CreateEnum
+-- CreateEnum (Safe)
 DO $$ BEGIN
     CREATE TYPE "BusinessType" AS ENUM ('PRIVATE', 'LIMITED_LIABILITY', 'JOINT_STOCK');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- DropIndex
+-- DropIndex (Safe)
 DROP INDEX IF EXISTS "suppliers_is_verified_idx";
-
--- DropIndex
 DROP INDEX IF EXISTS "suppliers_verification_status_idx";
 
--- AlterTable
-ALTER TABLE "products" ADD COLUMN     "attributes" JSONB,
-ADD COLUMN     "brand" TEXT,
-ADD COLUMN     "customizations" TEXT[],
-ADD COLUMN     "export_markets" TEXT,
-ADD COLUMN     "lead_time" TEXT,
-ADD COLUMN     "origin" TEXT,
-ADD COLUMN     "port" TEXT,
-ADD COLUMN     "production_capacity" TEXT,
-ADD COLUMN     "sku" TEXT,
-ADD COLUMN     "specifications" JSONB;
+-- AlterTable products (Safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='attributes') THEN
+        ALTER TABLE "products" ADD COLUMN "attributes" JSONB;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='brand') THEN
+        ALTER TABLE "products" ADD COLUMN "brand" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='customizations') THEN
+        ALTER TABLE "products" ADD COLUMN "customizations" TEXT[];
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='export_markets') THEN
+        ALTER TABLE "products" ADD COLUMN "export_markets" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='lead_time') THEN
+        ALTER TABLE "products" ADD COLUMN "lead_time" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='origin') THEN
+        ALTER TABLE "products" ADD COLUMN "origin" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='port') THEN
+        ALTER TABLE "products" ADD COLUMN "port" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='production_capacity') THEN
+        ALTER TABLE "products" ADD COLUMN "production_capacity" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='sku') THEN
+        ALTER TABLE "products" ADD COLUMN "sku" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='specifications') THEN
+        ALTER TABLE "products" ADD COLUMN "specifications" JSONB;
+    END IF;
+END $$;
 
--- AlterTable
-ALTER TABLE "suppliers" DROP COLUMN IF EXISTS "city",
+-- AlterTable suppliers (Safe)
+ALTER TABLE "suppliers" 
+DROP COLUMN IF EXISTS "city",
 DROP COLUMN IF EXISTS "company_email",
 DROP COLUMN IF EXISTS "company_phone",
 DROP COLUMN IF EXISTS "identity_card_url",
 DROP COLUMN IF EXISTS "is_verified",
 DROP COLUMN IF EXISTS "legal_representative",
 DROP COLUMN IF EXISTS "verification_status",
-ADD COLUMN     "account_holder_name" TEXT,
-ADD COLUMN     "account_holder_role" "SupplierAccountHolderRole" NOT NULL,
-ADD COLUMN     "authorization_letter_url" TEXT[],
-ADD COLUMN     "contact_email" TEXT,
-ADD COLUMN     "contact_phone" TEXT,
-ADD COLUMN     "legal_rep_gov_id" TEXT,
-ADD COLUMN     "legal_rep_gov_id_url" TEXT[],
-ADD COLUMN     "legal_rep_name" TEXT,
-ADD COLUMN     "sales_channels" JSONB,
-ADD COLUMN     "status" "SupplierStatus" NOT NULL DEFAULT 'APPLICATION_PENDING',
-ADD COLUMN     "supplier_type" "SupplierType",
-ADD COLUMN     "ward" TEXT,
-DROP COLUMN IF EXISTS "business_license_url",
-ADD COLUMN     "business_license_url" TEXT[];
+DROP COLUMN IF EXISTS "business_license_url";
 
--- CreateTable
-CREATE TABLE "faqs" (
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='account_holder_name') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "account_holder_name" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='account_holder_role') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "account_holder_role" "SupplierAccountHolderRole" NOT NULL DEFAULT 'OWNER';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='authorization_letter_url') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "authorization_letter_url" TEXT[];
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='contact_email') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "contact_email" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='contact_phone') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "contact_phone" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='legal_rep_gov_id') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "legal_rep_gov_id" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='legal_rep_gov_id_url') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "legal_rep_gov_id_url" TEXT[];
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='legal_rep_name') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "legal_rep_name" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='sales_channels') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "sales_channels" JSONB;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='status') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "status" "SupplierStatus" NOT NULL DEFAULT 'APPLICATION_PENDING';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='supplier_type') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "supplier_type" "SupplierType";
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='ward') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "ward" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='business_license_url') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "business_license_url" TEXT[];
+    END IF;
+END $$;
+
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "faqs" (
     "id" TEXT NOT NULL,
     "question_vi" TEXT NOT NULL,
     "answer_vi" TEXT NOT NULL,
@@ -96,8 +148,8 @@ CREATE TABLE "faqs" (
     CONSTRAINT "faqs_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "legal_sections" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "legal_sections" (
     "id" TEXT NOT NULL,
     "title_vi" TEXT NOT NULL,
     "title_en" TEXT NOT NULL,
@@ -113,8 +165,8 @@ CREATE TABLE "legal_sections" (
     CONSTRAINT "legal_sections_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "supplier_applications" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "supplier_applications" (
     "id" SERIAL NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "last_name" TEXT NOT NULL,
@@ -129,35 +181,15 @@ CREATE TABLE "supplier_applications" (
     CONSTRAINT "supplier_applications_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "legal_sections_page_key_slug_key" ON "legal_sections"("page_key", "slug");
-
--- CreateIndex
-CREATE INDEX "categories_id_idx" ON "categories"("id");
-
--- CreateIndex
-CREATE INDEX "categories_name_idx" ON "categories"("name");
-
--- CreateIndex
-CREATE INDEX "categories_name_en_idx" ON "categories"("name_en");
-
--- CreateIndex
-CREATE INDEX "products_category_id_idx" ON "products"("category_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "suppliers_id_key" ON "suppliers"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "suppliers_tax_code_key" ON "suppliers"("tax_code");
-
--- CreateIndex
-CREATE INDEX "suppliers_id_idx" ON "suppliers"("id");
-
--- CreateIndex
-CREATE INDEX "suppliers_updated_at_idx" ON "suppliers"("updated_at");
-
--- CreateIndex
-CREATE INDEX "suppliers_status_idx" ON "suppliers"("status");
-
--- CreateIndex
-CREATE INDEX "suppliers_tax_code_idx" ON "suppliers"("tax_code");
+-- CreateIndex (Safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "legal_sections_page_key_slug_key" ON "legal_sections"("page_key", "slug");
+CREATE INDEX IF NOT EXISTS "categories_id_idx" ON "categories"("id");
+CREATE INDEX IF NOT EXISTS "categories_name_idx" ON "categories"("name");
+CREATE INDEX IF NOT EXISTS "categories_name_en_idx" ON "categories"("name_en");
+CREATE INDEX IF NOT EXISTS "products_category_id_idx" ON "products"("category_id");
+CREATE UNIQUE INDEX IF NOT EXISTS "suppliers_id_key" ON "suppliers"("id");
+CREATE UNIQUE INDEX IF NOT EXISTS "suppliers_tax_code_key" ON "suppliers"("tax_code");
+CREATE INDEX IF NOT EXISTS "suppliers_id_idx" ON "suppliers"("id");
+CREATE INDEX IF NOT EXISTS "suppliers_updated_at_idx" ON "suppliers"("updated_at");
+CREATE INDEX IF NOT EXISTS "suppliers_status_idx" ON "suppliers"("status");
+CREATE INDEX IF NOT EXISTS "suppliers_tax_code_idx" ON "suppliers"("tax_code");
