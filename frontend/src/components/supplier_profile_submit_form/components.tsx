@@ -177,7 +177,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
 
 export interface FormContainerProps {
   children: React.ReactNode;
-  handleSubmit: (e) => void;
+  handleSubmit: (e) => void; noValidate?: boolean;
   submitButton?: React.ReactNode;
   formTitleElement?: React.ReactNode;
   containerStyle?: string;
@@ -196,7 +196,7 @@ export function FormContainer( props: FormContainerProps ) {
 
   const submitButton = props.submitButton ?? (
     <button
-      type="submit"
+      type="submit" formNoValidate={props.noValidate ?? true}
       /* we really need to standardize the styles man */
       className="
         bg-blue-600 hover:bg-blue-300 text-white p-2.5 rounded-xl font-bold transition-colors ease-in

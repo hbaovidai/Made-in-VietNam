@@ -57,7 +57,7 @@ export function AdminAppSupplier() {
     <div className="w-full">
     <FormContainer
       formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
-      handleSubmit={handleSubmit}
+      handleSubmit={handleSubmit} noValidate={false}
     >
       <Label text="Thông tin pháp lý" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
 
