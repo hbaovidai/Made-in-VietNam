@@ -9,24 +9,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SupplierApplicationDto = exports.ApplicantRole = void 0;
+exports.SupplierApplicationDto = void 0;
+const client_1 = require("@prisma/client");
 const class_validator_1 = require("class-validator");
-var ApplicantRole;
-(function (ApplicantRole) {
-    ApplicantRole["Owner"] = "OWNER";
-    ApplicantRole["LegalRep"] = "LEGAL_REP";
-    ApplicantRole["Manager"] = "MANAGER";
-    ApplicantRole["Employee"] = "EMPLOYEE";
-})(ApplicantRole || (exports.ApplicantRole = ApplicantRole = {}));
 class SupplierApplicationDto {
     id;
-    first_name;
-    last_name;
-    applicant_role;
-    gov_id;
-    gov_id_url;
-    email;
-    phone;
+    accountHolderFullName;
+    accountHolderPhone;
+    accountHolderRole;
+    accountHolderGovId;
+    accountHolderGovIdUrl;
     page;
     limit;
 }
@@ -34,43 +26,33 @@ exports.SupplierApplicationDto = SupplierApplicationDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], SupplierApplicationDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "first_name", void 0);
+], SupplierApplicationDto.prototype, "accountHolderFullName", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "last_name", void 0);
+], SupplierApplicationDto.prototype, "accountHolderPhone", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(ApplicantRole),
+    (0, class_validator_1.IsEnum)(client_1.SupplierAccountHolderRole),
     __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "applicant_role", void 0);
+], SupplierApplicationDto.prototype, "accountHolderRole", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "gov_id", void 0);
+], SupplierApplicationDto.prototype, "accountHolderGovId", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
     __metadata("design:type", Array)
-], SupplierApplicationDto.prototype, "gov_id_url", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], SupplierApplicationDto.prototype, "phone", void 0);
+], SupplierApplicationDto.prototype, "accountHolderGovIdUrl", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),

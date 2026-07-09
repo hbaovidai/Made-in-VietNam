@@ -1,23 +1,24 @@
-export type SupplierVerificationStatus = 'UNVERIFIED' | 'VERIFIED';
+import { BusinessType, SupplierStatus } from '@prisma/client';
 export declare class UpdateSupplierDto {
     companyName?: string;
     description?: string;
     logo?: string;
     banner?: string;
-    businessType?: string;
+    businessType?: BusinessType;
     yearEstablished?: number;
     employeeCount?: string;
-    address?: string;
+    streetAddress?: string;
     city?: string;
     province?: string;
     website?: string;
     taxCode?: string;
     companyEmail?: string;
     companyPhone?: string;
-    legalRepresentative?: string;
-    businessLicenseUrl?: string;
+    legalRepName?: string;
+    legalRepPhone?: string;
+    businessLicenseUrl?: string[];
     identityCardUrl?: string;
-    verificationStatus?: SupplierVerificationStatus;
+    status?: SupplierStatus;
     industries?: string[];
     markets?: string[];
 }
@@ -26,5 +27,11 @@ export declare class SupplierQueryDto {
     industry?: string;
     page?: number;
     limit?: number;
-    verificationStatus?: SupplierVerificationStatus;
+    businessType?: BusinessType;
+    status?: SupplierStatus;
+}
+export declare class AdminQueryDto {
+    slugOrId?: string;
+    status?: SupplierStatus;
+    include?: UpdateSupplierDto;
 }

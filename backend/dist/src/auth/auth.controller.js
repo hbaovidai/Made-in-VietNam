@@ -26,6 +26,9 @@ let AuthController = class AuthController {
     register(dto) {
         return this.authService.register(dto);
     }
+    supplierRegister(dto) {
+        return this.authService.supplierRegister(dto);
+    }
     login(dto) {
         return this.authService.login(dto);
     }
@@ -56,9 +59,16 @@ __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_dto_1.RegisterDto]),
+    __metadata("design:paramtypes", [auth_dto_1.UserRegisterDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('turbo_secret_registration_form'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dto_1.SupplierRegisterDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "supplierRegister", null);
 __decorate([
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),

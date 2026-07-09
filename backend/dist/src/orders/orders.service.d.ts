@@ -131,9 +131,9 @@ export declare class OrdersService {
     getOrderDetail(userId: string, orderId: string): Promise<{
         supplier: {
             id: string;
+            contactPhone: string | null;
             companyName: string;
             logo: string | null;
-            companyPhone: string | null;
         };
         buyer: {
             id: string;

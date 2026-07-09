@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuppliersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const client_1 = require("@prisma/client");
 let SuppliersService = class SuppliersService {
     prisma;
     constructor(prisma) {
@@ -26,8 +27,8 @@ let SuppliersService = class SuppliersService {
         if (industry) {
             where.industries = { some: { industry } };
         }
-        if (query.verificationStatus)
-            where.verification_status = query.verificationStatus;
+        if (query.status)
+            where.status = query.status;
         const [suppliers, total] = await Promise.all([
             this.prisma.supplier.findMany({
                 where,
@@ -45,7 +46,10 @@ let SuppliersService = class SuppliersService {
     async findBySlug(slugOrId) {
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
         const supplier = await this.prisma.supplier.findFirst({
-            where: isUUID ? { id: slugOrId } : { slug: slugOrId },
+            where: {
+                status: client_1.SupplierStatus.VERIFIED,
+                ...(isUUID ? { id: slugOrId } : { slug: slugOrId }),
+            },
             include: {
                 user: { select: { fullName: true, email: true } },
                 industries: { select: { industry: true } },
@@ -61,6 +65,35 @@ let SuppliersService = class SuppliersService {
                 },
                 _count: { select: { products: true } },
             },
+        });
+        if (!supplier)
+            throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
+        return supplier;
+    }
+    async findBySlugAdmin(slugOrId) {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { ...(isUUID ? { id: slugOrId } : { slug: slugOrId }), },
+            select: {
+                ...(isUUID ? { id: true } : { slug: true }),
+                companyName: true,
+                taxCode: true,
+                legalRepName: true,
+                legalRepGovId: true,
+                province: true,
+                ward: true,
+                streetAddress: true,
+                businessType: true,
+                legalRepGovIdUrl: true,
+                businessLicenseUrl: true,
+                contactPhone: true,
+                contactEmail: true,
+                accountHolderName: true,
+                accountHolderRole: true,
+                authorizationLetterUrl: true,
+                supplierType: true,
+                status: true,
+            }
         });
         if (!supplier)
             throw new common_1.NotFoundException('Nhà cung cấp không tồn tại');
@@ -84,10 +117,10 @@ let SuppliersService = class SuppliersService {
                 businessType: data.businessType,
                 description: data.description,
                 taxCode: data.taxCode,
-                companyEmail: data.companyEmail,
-                companyPhone: data.companyPhone,
-                legal_representative: data.legalRepresentative,
+                legalRepName: data.legalRepName,
+                contactPhone: data.contactPhone,
                 slug: `${slug}-${Date.now()}`,
+                accountHolderRole: data.accountHolderRole,
             },
         });
         return supplier;
@@ -140,9 +173,8 @@ let SuppliersService = class SuppliersService {
         const updated = await this.prisma.supplier.update({
             where: { id: supplierId },
             data: {
-                is_verified: isVerified,
-                verification_status: isVerified ? 'VERIFIED' : 'UNVERIFIED',
-            },
+                status: isVerified ? client_1.SupplierStatus.VERIFIED : client_1.SupplierStatus.APPLICATION_PENDING
+            }
         });
         return updated;
     }

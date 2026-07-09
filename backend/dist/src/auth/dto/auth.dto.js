@@ -9,46 +9,47 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoogleLoginDto = exports.ChangePasswordDto = exports.UpdateProfileDto = exports.LoginDto = exports.RegisterDto = void 0;
+exports.SupplierRegisterDto = exports.GoogleLoginDto = exports.ChangePasswordDto = exports.UpdateProfileDto = exports.LoginDto = exports.UserRegisterDto = void 0;
 const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client");
-class RegisterDto {
+class UserRegisterDto {
     email;
     password;
     fullName;
     role;
     phone;
-    companyName;
+    status;
 }
-exports.RegisterDto = RegisterDto;
+exports.UserRegisterDto = UserRegisterDto;
 __decorate([
     (0, class_validator_1.IsEmail)({}, { message: 'Email không hợp lệ' }),
     __metadata("design:type", String)
-], RegisterDto.prototype, "email", void 0);
+], UserRegisterDto.prototype, "email", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6, { message: 'Mật khẩu tối thiểu 6 ký tự' }),
     __metadata("design:type", String)
-], RegisterDto.prototype, "password", void 0);
+], UserRegisterDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)({ message: 'Tên không được để trống' }),
     __metadata("design:type", String)
-], RegisterDto.prototype, "fullName", void 0);
+], UserRegisterDto.prototype, "fullName", void 0);
 __decorate([
-    (0, class_validator_1.IsIn)(['BUYER', 'SUPPLIER'], { message: 'Role phải là BUYER hoặc SUPPLIER' }),
+    (0, class_validator_1.IsIn)([client_1.Role.BUYER, client_1.Role.SUPPLIER], { message: 'Role phải là BUYER hoặc SUPPLIER' }),
     __metadata("design:type", String)
-], RegisterDto.prototype, "role", void 0);
+], UserRegisterDto.prototype, "role", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "phone", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], RegisterDto.prototype, "companyName", void 0);
+], UserRegisterDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.UserStatus),
+    __metadata("design:type", String)
+], UserRegisterDto.prototype, "status", void 0);
 class LoginDto {
     email;
     password;
@@ -125,4 +126,94 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], GoogleLoginDto.prototype, "picture", void 0);
+class SupplierRegisterDto {
+    companyName;
+    taxCode;
+    legalRepName;
+    legalRepGovId;
+    province;
+    ward;
+    streetAddress;
+    businessType;
+    legalRepGovIdUrl;
+    businessLicenseUrl;
+    accountHolderName;
+    contactPhone;
+    contactEmail;
+    accountHolderRole;
+    authorizationLetterUrl;
+    supplierType;
+    extraDocsUrl;
+}
+exports.SupplierRegisterDto = SupplierRegisterDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "companyName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "taxCode", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "legalRepName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "legalRepGovId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "province", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "ward", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "streetAddress", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.BusinessType),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "businessType", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], SupplierRegisterDto.prototype, "legalRepGovIdUrl", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], SupplierRegisterDto.prototype, "businessLicenseUrl", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "accountHolderName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "contactPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "contactEmail", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.SupplierAccountHolderRole),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "accountHolderRole", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], SupplierRegisterDto.prototype, "authorizationLetterUrl", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.SupplierType),
+    __metadata("design:type", String)
+], SupplierRegisterDto.prototype, "supplierType", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], SupplierRegisterDto.prototype, "extraDocsUrl", void 0);
 //# sourceMappingURL=auth.dto.js.map

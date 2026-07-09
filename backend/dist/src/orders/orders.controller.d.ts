@@ -224,9 +224,9 @@ export declare class OrdersController {
     getOrderDetail(req: any, id: string): Promise<{
         supplier: {
             id: string;
+            contactPhone: string | null;
             companyName: string;
             logo: string | null;
-            companyPhone: string | null;
         };
         buyer: {
             id: string;

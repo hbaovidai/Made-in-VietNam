@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - The `verification_status` column on the `suppliers` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-
-*/
 -- CreateEnum
 CREATE TYPE "SupplierApplicantRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
 
@@ -11,10 +5,22 @@ CREATE TYPE "SupplierApplicantRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'E
 CREATE TYPE "SupplierApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
-CREATE TYPE "SupplierVerificationStatus" AS ENUM ('VERIFIED', 'UNVERIFIED');
+CREATE TYPE "SupplierStatus" AS ENUM ('VERIFIED', 'SUSPENDED', 'APPLICATION_REJECTED', 'APPLICATION_PENDING');
+
+-- CreateEnum
+CREATE TYPE "SupplierAccountHolderRole" AS ENUM ('OWNER', 'MANAGER', 'LEGAL_REP', 'EMPLOYEE');
+
+-- CreateEnum
+CREATE TYPE "SupplierType" AS ENUM ('DISTRIBUTOR', 'MANUFACTURER', 'EXPORTER', 'DIGITAL_GOODS', 'MANU_EXPORT');
+
+-- CreateEnum
+CREATE TYPE "BusinessType" AS ENUM ('PRIVATE', 'LIMITED_LIABILITY', 'JOINT_STOCK');
 
 -- DropIndex
-DROP INDEX "suppliers_is_verified_idx";
+DROP INDEX IF EXISTS "suppliers_is_verified_idx";
+
+-- DropIndex
+DROP INDEX IF EXISTS "suppliers_verification_status_idx";
 
 -- AlterTable
 ALTER TABLE "products" ADD COLUMN     "attributes" JSONB,
@@ -29,10 +35,27 @@ ADD COLUMN     "sku" TEXT,
 ADD COLUMN     "specifications" JSONB;
 
 -- AlterTable
-ALTER TABLE "suppliers" ADD COLUMN     "sales_channels" JSONB,
-DROP COLUMN "verification_status",
-ADD COLUMN     "verification_status" "SupplierVerificationStatus" DEFAULT 'UNVERIFIED',
-ALTER COLUMN "is_verified" DROP NOT NULL;
+ALTER TABLE "suppliers" DROP COLUMN IF EXISTS "city",
+DROP COLUMN IF EXISTS "company_email",
+DROP COLUMN IF EXISTS "company_phone",
+DROP COLUMN IF EXISTS "identity_card_url",
+DROP COLUMN IF EXISTS "is_verified",
+DROP COLUMN IF EXISTS "legal_representative",
+DROP COLUMN IF EXISTS "verification_status",
+ADD COLUMN     "account_holder_name" TEXT,
+ADD COLUMN     "account_holder_role" "SupplierAccountHolderRole" NOT NULL,
+ADD COLUMN     "authorization_letter_url" TEXT[],
+ADD COLUMN     "contact_email" TEXT,
+ADD COLUMN     "contact_phone" TEXT,
+ADD COLUMN     "legal_rep_gov_id" TEXT,
+ADD COLUMN     "legal_rep_gov_id_url" TEXT[],
+ADD COLUMN     "legal_rep_name" TEXT,
+ADD COLUMN     "sales_channels" JSONB,
+ADD COLUMN     "status" "SupplierStatus" NOT NULL DEFAULT 'APPLICATION_PENDING',
+ADD COLUMN     "supplier_type" "SupplierType",
+ADD COLUMN     "ward" TEXT,
+DROP COLUMN IF EXISTS "business_license_url",
+ADD COLUMN     "business_license_url" TEXT[];
 
 -- CreateTable
 CREATE TABLE "faqs" (
@@ -98,7 +121,19 @@ CREATE INDEX "categories_name_en_idx" ON "categories"("name_en");
 CREATE INDEX "products_category_id_idx" ON "products"("category_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "suppliers_id_key" ON "suppliers"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "suppliers_tax_code_key" ON "suppliers"("tax_code");
+
+-- CreateIndex
+CREATE INDEX "suppliers_id_idx" ON "suppliers"("id");
+
+-- CreateIndex
 CREATE INDEX "suppliers_updated_at_idx" ON "suppliers"("updated_at");
 
 -- CreateIndex
-CREATE INDEX "suppliers_verification_status_idx" ON "suppliers"("verification_status");
+CREATE INDEX "suppliers_status_idx" ON "suppliers"("status");
+
+-- CreateIndex
+CREATE INDEX "suppliers_tax_code_idx" ON "suppliers"("tax_code");

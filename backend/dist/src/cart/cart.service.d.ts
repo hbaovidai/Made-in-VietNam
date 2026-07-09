@@ -17,6 +17,7 @@ export declare class CartService {
                 description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
@@ -27,7 +28,6 @@ export declare class CartService {
                 moq: number;
                 moqUnit: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -71,6 +71,7 @@ export declare class CartService {
                 description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
@@ -81,7 +82,6 @@ export declare class CartService {
                 moq: number;
                 moqUnit: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -125,6 +125,7 @@ export declare class CartService {
                 description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
@@ -135,7 +136,6 @@ export declare class CartService {
                 moq: number;
                 moqUnit: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -179,6 +179,7 @@ export declare class CartService {
                 description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
@@ -189,7 +190,6 @@ export declare class CartService {
                 moq: number;
                 moqUnit: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;

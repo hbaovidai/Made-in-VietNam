@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto } from './dto/auth.dto';
+import { UserRegisterDto, LoginDto, UpdateProfileDto, ChangePasswordDto, SupplierRegisterDto } from './dto/auth.dto';
 export declare class AuthService {
     private prisma;
     private jwtService;
@@ -9,36 +9,9 @@ export declare class AuthService {
     private googleClient;
     constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService);
     private generateToken;
-    register(dto: RegisterDto): Promise<{
+    register(dto: UserRegisterDto): Promise<{
         message: string;
         user: {
-            supplier: {
-                id: string;
-                userId: string;
-                companyName: string;
-                slug: string;
-                logo: string | null;
-                banner: string | null;
-                description: string | null;
-                businessType: string | null;
-                yearEstablished: number | null;
-                employee_count: string | null;
-                streetAddress: string | null;
-                city: string | null;
-                province: string | null;
-                website: string | null;
-                taxCode: string | null;
-                companyEmail: string | null;
-                companyPhone: string | null;
-                legal_representative: string | null;
-                businessLicenseUrl: string | null;
-                identity_card_url: string | null;
-                salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-                is_verified: boolean | null;
-                createdAt: Date;
-                updatedAt: Date;
-                verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
-            } | null;
             id: string;
             createdAt: Date;
             email: string;
@@ -48,15 +21,18 @@ export declare class AuthService {
         };
         token: string;
     }>;
+    supplierRegister(dto: SupplierRegisterDto): Promise<{
+        message: any;
+        success: boolean;
+    }>;
     login(dto: LoginDto): Promise<{
         message: string;
         user: {
             supplier: {
                 id: string;
-                companyName: string;
                 slug: string;
-                is_verified: boolean | null;
-                verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+                companyName: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             } | null;
             id: string;
             createdAt: Date;
@@ -80,10 +56,9 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                companyName: string;
                 slug: string;
-                is_verified: boolean | null;
-                verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+                companyName: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             } | null;
             id: string;
             createdAt: Date;
@@ -100,11 +75,10 @@ export declare class AuthService {
     getProfile(userId: string): Promise<{
         supplier: {
             id: string;
-            companyName: string;
             slug: string;
+            companyName: string;
             logo: string | null;
-            is_verified: boolean | null;
-            verification_status: import("@prisma/client").$Enums.SupplierVerificationStatus | null;
+            status: import("@prisma/client").$Enums.SupplierStatus;
         } | null;
         id: string;
         createdAt: Date;

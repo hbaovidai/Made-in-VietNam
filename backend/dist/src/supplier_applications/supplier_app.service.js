@@ -9,16 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SupplierApplicationService = exports.SupplierApplicationStatus = void 0;
+exports.SupplierApplicationService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
-var SupplierApplicationStatus;
-(function (SupplierApplicationStatus) {
-    SupplierApplicationStatus["PENDING"] = "PENDING";
-    SupplierApplicationStatus["REJECTED"] = "REJECTED";
-    SupplierApplicationStatus["APPROVED"] = "APPROVED";
-})(SupplierApplicationStatus || (exports.SupplierApplicationStatus = SupplierApplicationStatus = {}));
 let SupplierApplicationService = class SupplierApplicationService {
     prisma;
     constructor(prisma) {
@@ -29,8 +23,9 @@ let SupplierApplicationService = class SupplierApplicationService {
         const where = {};
         if (query.id)
             where.id = query.id;
+        where.status = { in: [client_1.SupplierStatus.APPLICATION_PENDING, client_1.SupplierStatus.APPLICATION_REJECTED] };
         const [supp_apps, total_apps_count] = await Promise.all([
-            this.prisma.supplier_applications.findMany({
+            this.prisma.supplier.findMany({
                 take: limit,
                 skip: (page - 1) * limit,
                 orderBy: {
@@ -38,7 +33,7 @@ let SupplierApplicationService = class SupplierApplicationService {
                 },
                 where: where,
             }),
-            this.prisma.supplier_applications.count({}),
+            this.prisma.supplier.count({ where }),
         ]);
         return {
             data: supp_apps,
@@ -52,7 +47,7 @@ let SupplierApplicationService = class SupplierApplicationService {
     }
     async deleteApplication(id) {
         try {
-            const deleted_user = await this.prisma.supplier_applications.delete({
+            const deleted_user = await this.prisma.supplier.delete({
                 where: {
                     id: id,
                 },
@@ -75,7 +70,7 @@ let SupplierApplicationService = class SupplierApplicationService {
     }
     async updateApplicationStatus(id, newStatus) {
         try {
-            const updatedApplication = await this.prisma.supplier_applications.update({
+            const updatedApplication = await this.prisma.supplier.update({
                 data: {
                     status: newStatus,
                 },

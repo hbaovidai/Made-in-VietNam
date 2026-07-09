@@ -82,6 +82,7 @@ export declare class BatchesController {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
@@ -92,7 +93,6 @@ export declare class BatchesController {
             moq: number;
             moqUnit: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -119,6 +119,7 @@ export declare class BatchesController {
                 description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
@@ -129,7 +130,6 @@ export declare class BatchesController {
                 moq: number;
                 moqUnit: string;
                 images: string[];
-                status: import("@prisma/client").$Enums.ProductStatus;
                 rating: number;
                 reviewCount: number;
                 viewCount: number;
@@ -149,7 +149,7 @@ export declare class BatchesController {
             };
             supplier: {
                 companyName: string;
-                is_verified: boolean | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
             batch: {
                 batchNumber: string;

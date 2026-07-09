@@ -9,7 +9,7 @@ export declare class UsersController {
             supplier: {
                 id: string;
                 companyName: string;
-                is_verified: boolean | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             } | null;
             id: string;
             createdAt: Date;

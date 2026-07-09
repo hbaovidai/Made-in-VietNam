@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadsController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const multer_1 = require("multer");
 const path_1 = require("path");
 const crypto_1 = require("crypto");
@@ -77,7 +76,6 @@ let UploadsController = class UploadsController {
 exports.UploadsController = UploadsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         storage,
         fileFilter: imageFileFilter,

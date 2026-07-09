@@ -22,6 +22,7 @@ const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const prisma_service_1 = require("../prisma/prisma.service");
 const audit_log_service_1 = require("../audit-log/audit-log.service");
+const client_1 = require("@prisma/client");
 let SuppliersController = class SuppliersController {
     suppliersService;
     prisma;
@@ -32,10 +33,14 @@ let SuppliersController = class SuppliersController {
         this.auditLogService = auditLogService;
     }
     findAll(query) {
+        query.status = client_1.SupplierStatus.VERIFIED;
         return this.suppliersService.findAll(query);
     }
     findBySlug(slug) {
         return this.suppliersService.findBySlug(slug);
+    }
+    findBySlugAdmin(slugOrId) {
+        return this.suppliersService.findBySlugAdmin(slugOrId);
     }
     getStats(id) {
         return this.suppliersService.getStats(id);
@@ -112,6 +117,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findBySlug", null);
+__decorate([
+    (0, common_1.Get)('adminShotGun/:slugOrId'),
+    __param(0, (0, common_1.Param)('slugOrId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "findBySlugAdmin", null);
 __decorate([
     (0, common_1.Get)(':id/stats'),
     __param(0, (0, common_1.Param)('id')),

@@ -12,10 +12,10 @@ export declare class ProductsService {
         data: ({
             supplier: {
                 id: string;
-                companyName: string;
                 slug: string;
+                companyName: string;
                 logo: string | null;
-                is_verified: boolean | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
             category: {
                 id: string;
@@ -28,6 +28,7 @@ export declare class ProductsService {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
@@ -38,7 +39,6 @@ export declare class ProductsService {
             moq: number;
             moqUnit: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;
@@ -66,13 +66,12 @@ export declare class ProductsService {
     findByIdOrSlug(idOrSlug: string): Promise<{
         supplier: {
             id: string;
-            companyName: string;
             slug: string;
+            companyName: string;
+            province: string | null;
             logo: string | null;
             description: string | null;
-            city: string | null;
-            province: string | null;
-            is_verified: boolean | null;
+            status: import("@prisma/client").$Enums.SupplierStatus;
             industries: {
                 industry: string;
             }[];
@@ -91,6 +90,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -101,7 +101,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
@@ -130,6 +129,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -140,7 +140,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
@@ -169,6 +168,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -179,7 +179,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
@@ -208,6 +207,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -218,7 +218,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
@@ -241,8 +240,8 @@ export declare class ProductsService {
     }>;
     findRelated(productId: string, limit?: number): Promise<({
         supplier: {
-            companyName: string;
             slug: string;
+            companyName: string;
         };
     } & {
         id: string;
@@ -250,6 +249,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -260,7 +260,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;
@@ -284,6 +283,7 @@ export declare class ProductsService {
         description: string | null;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ProductStatus;
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
@@ -294,7 +294,6 @@ export declare class ProductsService {
         moq: number;
         moqUnit: string;
         images: string[];
-        status: import("@prisma/client").$Enums.ProductStatus;
         rating: number;
         reviewCount: number;
         viewCount: number;

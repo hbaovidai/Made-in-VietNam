@@ -14,9 +14,9 @@ export declare class CategoriesService {
     findBySlug(slug: string): Promise<{
         products: ({
             supplier: {
-                companyName: string;
                 slug: string;
-                is_verified: boolean | null;
+                companyName: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
         } & {
             id: string;
@@ -24,6 +24,7 @@ export declare class CategoriesService {
             description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
@@ -34,7 +35,6 @@ export declare class CategoriesService {
             moq: number;
             moqUnit: string;
             images: string[];
-            status: import("@prisma/client").$Enums.ProductStatus;
             rating: number;
             reviewCount: number;
             viewCount: number;

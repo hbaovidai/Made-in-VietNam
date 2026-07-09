@@ -9,9 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SupplierQueryDto = exports.UpdateSupplierDto = void 0;
+exports.AdminQueryDto = exports.SupplierQueryDto = exports.UpdateSupplierDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const client_1 = require("@prisma/client");
 class UpdateSupplierDto {
     companyName;
     description;
@@ -20,17 +21,18 @@ class UpdateSupplierDto {
     businessType;
     yearEstablished;
     employeeCount;
-    address;
+    streetAddress;
     city;
     province;
     website;
     taxCode;
     companyEmail;
     companyPhone;
-    legalRepresentative;
+    legalRepName;
+    legalRepPhone;
     businessLicenseUrl;
     identityCardUrl;
-    verificationStatus;
+    status;
     industries;
     markets;
 }
@@ -56,7 +58,7 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateSupplierDto.prototype, "banner", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(client_1.BusinessType),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateSupplierDto.prototype, "businessType", void 0);
@@ -75,7 +77,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "address", void 0);
+], UpdateSupplierDto.prototype, "streetAddress", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
@@ -110,11 +112,16 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "legalRepresentative", void 0);
+], UpdateSupplierDto.prototype, "legalRepName", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
+], UpdateSupplierDto.prototype, "legalRepPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
 ], UpdateSupplierDto.prototype, "businessLicenseUrl", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
@@ -122,10 +129,10 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateSupplierDto.prototype, "identityCardUrl", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(client_1.SupplierStatus),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "verificationStatus", void 0);
+], UpdateSupplierDto.prototype, "status", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
@@ -143,7 +150,8 @@ class SupplierQueryDto {
     industry;
     page = 1;
     limit = 20;
-    verificationStatus;
+    businessType;
+    status;
 }
 exports.SupplierQueryDto = SupplierQueryDto;
 __decorate([
@@ -170,7 +178,34 @@ __decorate([
 ], SupplierQueryDto.prototype, "limit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.BusinessType),
+    __metadata("design:type", String)
+], SupplierQueryDto.prototype, "businessType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.SupplierStatus),
+    __metadata("design:type", String)
+], SupplierQueryDto.prototype, "status", void 0);
+class AdminQueryDto {
+    slugOrId;
+    status;
+    include;
+}
+exports.AdminQueryDto = AdminQueryDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SupplierQueryDto.prototype, "verificationStatus", void 0);
+], AdminQueryDto.prototype, "slugOrId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.SupplierStatus),
+    __metadata("design:type", String)
+], AdminQueryDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => UpdateSupplierDto),
+    __metadata("design:type", UpdateSupplierDto)
+], AdminQueryDto.prototype, "include", void 0);
 //# sourceMappingURL=supplier.dto.js.map

@@ -49,6 +49,9 @@ const config_1 = require("@nestjs/config");
 const bcrypt = __importStar(require("bcrypt"));
 const google_auth_library_1 = require("google-auth-library");
 const prisma_service_1 = require("../prisma/prisma.service");
+const auth_dto_1 = require("./dto/auth.dto");
+const client_1 = require("@prisma/client");
+const uuid_1 = require("uuid");
 let AuthService = class AuthService {
     prisma;
     jwtService;
@@ -71,14 +74,16 @@ let AuthService = class AuthService {
         if (existingUser) {
             throw new common_1.ConflictException('Email đã được sử dụng');
         }
-        const passwordHash = await bcrypt.hash(dto.password, 10);
+        let passwordHash = (dto.password) ? await bcrypt.hash(dto.password, 10) :
+            await bcrypt.hash((0, uuid_1.v4)(), 10);
         const user = await this.prisma.user.create({
             data: {
                 email: dto.email,
                 passwordHash,
                 fullName: dto.fullName,
-                role: dto.role,
+                role: client_1.Role.BUYER,
                 phone: dto.phone,
+                status: dto.status,
             },
             select: {
                 id: true,
@@ -89,29 +94,59 @@ let AuthService = class AuthService {
                 createdAt: true,
             },
         });
-        let supplierProfile = null;
-        if (dto.role === 'SUPPLIER' && dto.companyName) {
-            const slug = dto.companyName
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)/g, '');
-            supplierProfile = await this.prisma.supplier.create({
-                data: {
-                    userId: user.id,
-                    companyName: dto.companyName,
-                    slug: `${slug}-${Date.now()}`,
-                },
-            });
-        }
         const token = this.generateToken(user);
         return {
             message: 'Đăng ký thành công',
             user: {
                 ...user,
-                supplier: supplierProfile,
             },
             token,
         };
+    }
+    async supplierRegister(dto) {
+        console.log(dto);
+        return {
+            success: true,
+            message: 'for testing purposes, this is a success, check the logs',
+        };
+        const userDto = new auth_dto_1.UserRegisterDto();
+        userDto.email = dto.contactEmail;
+        userDto.phone = dto.contactPhone;
+        userDto.fullName = dto.companyName;
+        userDto.role = client_1.Role.SUPPLIER;
+        try {
+            const { user } = await this.register(userDto);
+            const existingCompany = await this.prisma.supplier.findUnique({
+                where: {
+                    taxCode: dto.taxCode,
+                },
+            });
+            if (existingCompany) {
+                return {
+                    message: 'Doanh nghiệp đã tồn tại.',
+                    success: false
+                };
+            }
+            const slug = dto.companyName
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            const supplierProfile = await this.prisma.supplier.create({
+                data: {
+                    userId: user.id,
+                    slug: `${slug}-${Date.now()}`,
+                    ...dto
+                },
+            });
+            return {
+                message: 'Đã tạo hồ sơ nhà cung cấp',
+                success: true,
+            };
+        }
+        catch (error) {
+            console.log(error.message);
+            return { message: error.message, success: false, };
+        }
     }
     async login(dto) {
         const user = await this.prisma.user.findUnique({
@@ -122,8 +157,7 @@ let AuthService = class AuthService {
                         id: true,
                         companyName: true,
                         slug: true,
-                        is_verified: true,
-                        verification_status: true,
+                        status: true
                     },
                 },
             },
@@ -156,8 +190,7 @@ let AuthService = class AuthService {
                         id: true,
                         companyName: true,
                         slug: true,
-                        is_verified: true,
-                        verification_status: true,
+                        status: true
                     },
                 },
             },
@@ -178,8 +211,7 @@ let AuthService = class AuthService {
                             id: true,
                             companyName: true,
                             slug: true,
-                            is_verified: true,
-                            verification_status: true,
+                            status: true,
                         },
                     },
                 },
@@ -210,8 +242,7 @@ let AuthService = class AuthService {
                         id: true,
                         companyName: true,
                         slug: true,
-                        is_verified: true,
-                        verification_status: true,
+                        status: true,
                         logo: true,
                     },
                 },

@@ -13,6 +13,7 @@ exports.RfqService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const notifications_service_1 = require("../notifications/notifications.service");
+const client_1 = require("@prisma/client");
 let RfqService = class RfqService {
     prisma;
     notificationsService;
@@ -40,7 +41,7 @@ let RfqService = class RfqService {
         });
         try {
             const verifiedSuppliers = await this.prisma.supplier.findMany({
-                where: { verification_status: 'VERIFIED' },
+                where: { status: client_1.SupplierStatus.VERIFIED },
                 select: { userId: true },
             });
             if (verifiedSuppliers.length > 0) {
@@ -136,7 +137,7 @@ let RfqService = class RfqService {
                                 id: true,
                                 companyName: true,
                                 logo: true,
-                                is_verified: true,
+                                status: true,
                                 userId: true,
                             },
                         },

@@ -19,7 +19,7 @@ const supplier_app_dto_1 = require("./dto/supplier_app.dto");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
-const supplier_app_service_2 = require("./supplier_app.service");
+const client_1 = require("@prisma/client");
 let SupplierApplicationController = class SupplierApplicationController {
     suppAppService;
     constructor(suppAppService) {
@@ -53,7 +53,7 @@ __decorate([
     (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], SupplierApplicationController.prototype, "deleteApplication", null);
 __decorate([
@@ -61,9 +61,9 @@ __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Patch)('/:id/:newStatus'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Param)('newStatus', new common_1.ParseEnumPipe(supplier_app_service_2.SupplierApplicationStatus))),
+    __param(1, (0, common_1.Param)('newStatus', new common_1.ParseEnumPipe(client_1.SupplierStatus))),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], SupplierApplicationController.prototype, "updateApplicationStatus", null);
 exports.SupplierApplicationController = SupplierApplicationController = __decorate([

@@ -21,6 +21,7 @@ const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const prisma_service_1 = require("../prisma/prisma.service");
+const client_1 = require("@prisma/client");
 let RfqController = class RfqController {
     rfqService;
     prisma;
@@ -34,7 +35,7 @@ let RfqController = class RfqController {
             const supplier = await this.prisma.supplier.findUnique({
                 where: { userId: currentUser.id },
             });
-            isVerified = supplier?.is_verified ?? false;
+            isVerified = supplier?.status === client_1.SupplierStatus.VERIFIED;
         }
         return this.rfqService.getOpenRFQs(isVerified);
     }
@@ -59,7 +60,7 @@ let RfqController = class RfqController {
         });
         if (!supplier)
             throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
-        if (!supplier.is_verified)
+        if (supplier.status !== client_1.SupplierStatus.VERIFIED)
             throw new common_1.ForbiddenException('Chỉ nhà cung cấp đã xác thực mới được gửi báo giá. Vui lòng hoàn tất Xác thực Doanh nghiệp (KYB).');
         return this.rfqService.submitQuote(supplier.id, dto);
     }
