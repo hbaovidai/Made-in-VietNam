@@ -71,11 +71,11 @@ model Supplier {
   salesChannels        Json?                       @map("sales_channels")
   createdAt            DateTime                    @default(now()) @map("created_at")
   updatedAt            DateTime                    @updatedAt @map("updated_at")
-  status               SupplierStatus              @default(UNVERIFIED)
+  status               SupplierStatus              @default(APPLICATION_PENDING)
   supplierType     SupplierType?  @map("supplier_type")
 
   // Relations
-  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
   certifications Certification[]
   industries     SupplierIndustry[]
