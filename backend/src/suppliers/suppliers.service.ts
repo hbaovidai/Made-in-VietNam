@@ -20,7 +20,7 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
-    if (query.categorySlug) where.categories = { some: { categoryId: query.categorySlug } };
+    if (query.categorySlug) where.categories = { some: { categorySlug: query.categorySlug } };
 
     if (query.status) where.status = query.status;
 
@@ -30,6 +30,9 @@ export class SuppliersService {
         orderBy: { updatedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
+        include: {
+          categories: true
+        }
       }),
       this.prisma.supplier.count({ where }),
     ]);
