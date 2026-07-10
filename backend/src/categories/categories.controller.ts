@@ -30,6 +30,12 @@ export class CategoriesController {
     return this.categoriesService.findBySlug(slug);
   }
 
+  // public
+  @Get('name/:slug')
+  findNameBySlug(@Param('slug') slug: string) {
+    return this.categoriesService.findNameBySlug(slug);
+  }
+
   // PROTECTED ADMIN: Tạo danh mục
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')

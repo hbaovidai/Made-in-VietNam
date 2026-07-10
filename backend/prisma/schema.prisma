@@ -668,16 +668,16 @@ enum BusinessType {
 
 // --- mapping tables --- //
 model SupplierCategoryMap {
-  categoryId String @map("category_id")
+  categorySlug String @map("category_slug")
   categoryLevel Int @default(1) @map("category_level")
-  supplierId String @map("supplier_id")
+  supplier_slug String @map("supplier_slug")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // relation
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [slug], onDelete: Cascade, onChange: Cascade)
+  supplier Supplier @relation(fields: [supplierId], references: [slug], onDelete: Cascade, onChange: Cascade)
 
-  @@id([categoryId, supplierId])
+  @@id([categorySlug, supplierId])
   @@map("supplier_category_map")
 }
