@@ -63,7 +63,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
     };
 
     loadCategoryNames();
-  }, []);
+  }, [supplier.categories, fetchCategoryName]);
 
   return (
     <div
