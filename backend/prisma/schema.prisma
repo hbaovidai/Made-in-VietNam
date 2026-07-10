@@ -675,9 +675,9 @@ model SupplierCategoryMap {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // relation
-  category Category @relation(fields: [categorySlug], references: [slug], onDelete: Cascade, onChange: Cascade)
-  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onDelete: Cascade, onChange: Cascade)
+  category Category @relation(fields: [categorySlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([categorySlug, supplierId])
+  @@id([categorySlug, supplierSlug])
   @@map("supplier_category_map")
 }
