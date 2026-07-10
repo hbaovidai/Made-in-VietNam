@@ -19,7 +19,7 @@ interface SuppliercategoryRelation {
 export function SupplierCard({ supplier }: SupplierCardProps) {
   const { t } = useTranslation();
 
-  const [categoriesNames, setCategoriesNames] = useState<string[]>();
+  const [categoriesNames, setCategoriesNames] = useState<string[]>([]);
 
   const navigate = useNavigate();
   const name = supplier.companyName || supplier.name;
