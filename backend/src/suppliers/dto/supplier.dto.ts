@@ -29,6 +29,7 @@ export class UpdateSupplierDto {
 export class SupplierQueryDto {
   @IsOptional() @IsString() search?: string;
   @IsOptional() @IsString() industry?: string;
+  @IsOptional() @IsString() categorySlug?: string;
   @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
   @IsOptional() @IsEnum(BusinessType) businessType?: BusinessType;

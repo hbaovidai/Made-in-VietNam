@@ -20,6 +20,8 @@ export class SuppliersService {
       where.industries = { some: { industry } };
     }
 
+    if (query.categorySlug) where.categories = { some: { categoryId: query.categorySlug } };
+
     if (query.status) where.status = query.status;
 
     const [suppliers, total] = await Promise.all([
