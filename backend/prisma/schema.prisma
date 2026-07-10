@@ -668,9 +668,9 @@ enum BusinessType {
 
 // --- mapping tables --- //
 model SupplierCategoryMap {
-  categoryId String
-  categoryLevel Int @default(1)
-  supplierId String
+  categoryId String @map("category_id")
+  categoryLevel Int @default(1) @map("category_level")
+  supplierId String @map("supplier_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
