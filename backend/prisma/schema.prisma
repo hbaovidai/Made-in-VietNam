@@ -83,7 +83,7 @@ model Supplier {
   batches        Batch[]
   quotes         Quote[]
   orders         Order[]
-
+  categories SupplierCategoryMap[]
 
   @@index([id])
   @@index([companyName])
@@ -136,6 +136,8 @@ model Category {
   parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
   children  Category[] @relation("SubCategories")
   products  Product[]
+
+  suppliers SupplierCategoryMap[]
 
   @@index([id])
   @@index([name])
@@ -663,3 +665,18 @@ enum BusinessType {
   JOINT_STOCK
 }
 
+
+// --- mapping tables --- //
+model SupplierCategoryMap {
+  categoryId String
+  supplierId String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // relation
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, supplierId])
+  @@map("supplier_category_map")
+}
