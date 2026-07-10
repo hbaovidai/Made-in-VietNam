@@ -53,6 +53,17 @@ export class CategoriesService {
     return this.buildTree(categories);
   }
 
+  async findNameBySlug(slug: string) {
+    const category = await this.prisma.category.findUnique({
+      select: {
+        name: true, nameEn: true
+      },
+      where: {slug},
+    })
+    if (!category) throw new NotFoundException('Danh mục không tồn tại');
+    return category;
+  }
+
   async findBySlug(slug: string) {
     const category = await this.prisma.category.findUnique({
       where: { slug },
