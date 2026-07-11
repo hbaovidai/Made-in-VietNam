@@ -84,8 +84,10 @@ model Supplier {
   quotes         Quote[]
   orders         Order[]
   categories SupplierCategoryMap[]
+  channels SupplierChannelMap[]
 
   @@index([id])
+  @@index([slug])
   @@index([companyName])
   @@index([updatedAt])
   @@index([status])
@@ -665,6 +667,15 @@ enum BusinessType {
   JOINT_STOCK
 }
 
+enum ChannelType {
+  INSTAGRAM
+  FACEBOOK
+  SHOPEE
+  LAZADA
+  TIKTOK_SHOP
+  SHOPIFY
+  CUSTOM_WEBSITE
+}
 
 // --- mapping tables --- //
 model SupplierCategoryMap {
@@ -680,4 +691,19 @@ model SupplierCategoryMap {
 
   @@id([categorySlug, supplierSlug])
   @@map("supplier_category_map")
+}
+
+model SupplierChannelMap {
+  supplierSlug String @map("supplier_slug")
+  url String
+  type ChannelType
+
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("update_at")
+
+  // relation
+  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([supplierSlug, type])
+  @@map("supplier_channel_map")
 }

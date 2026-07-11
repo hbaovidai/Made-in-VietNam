@@ -31,8 +31,9 @@ export class SuppliersService {
         skip: (page - 1) * limit,
         take: limit,
         include: {
-          categories: true
-        }
+          categories: true,
+          channels: true,
+        },
       }),
       this.prisma.supplier.count({ where }),
     ]);
