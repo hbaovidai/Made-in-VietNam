@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SupplierStatus } from '../lib/enums';
+import { SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { api } from '../lib/api';
 
 interface SupplierCardProps {
@@ -155,26 +155,18 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                 </>
               ) : (
                 <>
-                  <a
-                    href="https://shopee.vn"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
-                  >
-                    <ExternalLink size={14} className="text-slate-500" />
-                    Shopee
-                  </a>
-                  <a
-                    href={supplier.website || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
-                  >
-                    <Globe size={14} className="text-slate-500" />
-                    Website
-                  </a>
+                  {supplier.channels?.map(channel => {
+                    return (
+                      <a href={channel.url} target='_blank rel'
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
+                      >
+                        <ExternalLink size={14} className="text-slate-500" />
+                        {SaleChannelsMap[channel.type]}
+                      </a>
+                    );
+                  })}
                 </>
               )}
             </div>
