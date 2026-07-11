@@ -699,7 +699,7 @@ model SupplierChannelMap {
   type ChannelType
 
   createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("update_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   // relation
   supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
