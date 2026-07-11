@@ -102,7 +102,12 @@ export function ProfileSubmission() {
         extraDocsUrl: uploadedExtraDocs,
       };
 
-      const res = await api.post('/auth/turbo_secret_registration_form', dto);
+      const res = await api.post(
+        '/auth/turbo_secret_registration_form', dto,
+        {headers: {
+          'Content-Type': 'application/json',
+        }},
+      );
       setLoading(false);
 
       addToast({ type: 'info', title: 'Đã gửi đơn', message: res.data.message });
