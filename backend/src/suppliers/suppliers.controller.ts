@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   ForbiddenException,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
@@ -40,6 +41,28 @@ export class SuppliersController {
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
+  }
+
+  @Get(':slug/address')
+  async findAddressBySlug(
+    @Param('slug') slug: string,
+    @Query('findPrimary', new ParseBoolPipe({optional: true})) findPrimary?: boolean,
+  ) {
+    const shouldFindPrimary = findPrimary ?? true;
+
+    try {
+      const addresses = await this.prisma.supplierAddressMap.findMany({
+        where: { supplierSlug: slug, isPrimary: shouldFindPrimary },
+        select: { address: true, isPrimary: true },
+      })
+
+      return { found: addresses.length > 0, addresses };
+
+    } catch (error) {
+      console.error(`Failed to fetch addreses of supplier ${slug}`, error);
+    } 
+
+    return { found: false, addresses: [] };
   }
 
   // PROTECTED: ADMIN ONLY

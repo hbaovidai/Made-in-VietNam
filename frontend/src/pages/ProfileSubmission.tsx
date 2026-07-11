@@ -26,9 +26,7 @@ export function ProfileSubmission() {
   const [legalRepName, setLegalRepName]  = useState<string>('');
   const [legalRepGovId, setLegalRepGovId] = useState<string>('');
 
-  const [province, setProvince] = useState<string>('');
-  const [ward, setWard] = useState<string>('');
-  const [streetAddress, setStreetAddress] = useState<string>('');
+  const [primaryLocation, setPrimaryLocation] = useState<string>('');
 
   // contact info
   const [accountHolderName, setAccountHolderName] = useState<string>('');
@@ -90,7 +88,7 @@ export function ProfileSubmission() {
 
       const dto = {
         companyName, taxCode, legalRepName, legalRepGovId,
-        province, ward, streetAddress,
+        primaryLocation,
 
         accountHolderName, accountHolderRole,
         contactPhone, contactEmail,
@@ -102,7 +100,12 @@ export function ProfileSubmission() {
         extraDocsUrl: uploadedExtraDocs,
       };
 
-      const res = await api.post('/auth/turbo_secret_registration_form', dto);
+      const res = await api.post(
+        '/auth/turbo_secret_registration_form', dto,
+        {headers: {
+          'Content-Type': 'application/json',
+        }},
+      );
       setLoading(false);
 
       addToast({ type: 'info', title: 'Đã gửi đơn', message: res.data.message });
@@ -187,16 +190,8 @@ export function ProfileSubmission() {
     { id: 'legal-rep-gov-id', Component: FormFieldTextInput,
       props: { label: "CCCD/Hộ chiếu Người đại diện", value: legalRepGovId, setValue: setLegalRepGovId, } },
 
-    // address time......
-    { id: 'address-header', Component: Label,
-      props: { text: 'Địa chỉ trụ sở chính' }
-    },
-    { id: 'address-province', Component: TextInput,
-      props: { placeHolder: "Tỉnh/Thành phố", value: province, setValue: setProvince }},
-    { id: 'address-ward', Component: TextInput,
-      props: { placeHolder: "Phường/Xã", value: ward, setValue: setWard }},
-    { id: 'address-street', Component: TextInput,
-      props: {placeHolder: "Số nhà/Tên đường", value: streetAddress, setValue: setStreetAddress}},
+    { id: 'primary-address', Component: FormFieldTextInput,
+      props: { label: 'Địa chỉ', value: primaryLocation, setValue: setPrimaryLocation } },
 
     { id: 'business-licenses-upload', Component: UploadField,
       props: { 

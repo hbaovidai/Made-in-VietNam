@@ -97,9 +97,7 @@ export class SupplierRegisterDto {
   @IsString() taxCode: string;
   @IsString() legalRepName: string;
   @IsString() legalRepGovId: string;
-  @IsString() province: string;
-  @IsString() ward: string;
-  @IsString() streetAddress: string;
+  @IsString() primaryLocation: string;
   @IsEnum(BusinessType) businessType: BusinessType;
 
   @IsString({each: true}) legalRepGovIdUrl: string[];

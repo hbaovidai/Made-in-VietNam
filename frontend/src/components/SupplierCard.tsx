@@ -26,14 +26,13 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
 
   const isVerified = supplier.status === SupplierStatus.VERIFIED;
 
-  let location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province}` : (supplier.province || 'Việt Nam'));
-  if (supplier.streetAddress) {
-    location = supplier.streetAddress;
-  }
+  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+  let primaryLocation = primaryRecord ? primaryRecord.address : '';
+
   if (name.includes('Lộc Trời') || name.includes('Loc Troi')) {
-    location = '23 Hà Hoàng Hổ, Phường Mỹ Xuyên, TP. Long Xuyên, An Giang';
+    primaryLocation = '23 Hà Hoàng Hổ, Phường Mỹ Xuyên, TP. Long Xuyên, An Giang';
   } else if (name.includes('Mẫu') || name.includes('Nông sản Việt') || name.includes('Nong San Viet')) {
-    location = 'KCN Tân Tạo, Quận Bình Tân, TP. Hồ Chí Minh';
+    primaryLocation = 'KCN Tân Tạo, Quận Bình Tân, TP. Hồ Chí Minh';
   }
 
   const fetchCategoryName = useCallback(async (slug: string) => {
@@ -103,7 +102,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             {/* Location Row */}
             <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 font-medium mb-4">
               <MapPin size={15} className="text-slate-400 shrink-0" />
-              <span>{location}</span>
+              <span>{primaryLocation}</span>
             </div>
 
             {/* Main Products / Tags Row */}

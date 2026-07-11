@@ -24,6 +24,9 @@ export function SupplierProfile() {
 
   const [websiteUrl, setWebsiteUrl] = useState('website.com');
 
+  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+  const primaryLocation = primaryRecord ? primaryRecord.address : '';
+
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -83,10 +86,6 @@ export function SupplierProfile() {
         { name: 'ISO 14001:2015', issuedBy: 'Hệ thống quản lý môi trường', expiryDate: '2026-12-31' },
       ];
 
-  const location = supplier.streetAddress || supplier.address
-    ? `${supplier.streetAddress || supplier.address}${supplier.city ? `, ${supplier.city}` : ''}${supplier.province ? `, ${supplier.province}` : ''}`
-    : (supplier.city ? `${supplier.city}, ${supplier.province || 'Việt Nam'}` : (supplier.province || 'Việt Nam'));
-
   // Price display helper
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
 
@@ -125,7 +124,7 @@ export function SupplierProfile() {
                 </h1>
                 <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1.5">
                   <MapPin size={14} className="text-slate-400 shrink-0" />
-                  <span>{location}</span>
+                  <span>{primaryLocation}</span>
                 </div>
                 {/* Badges — auto-generated from verification status, business type & export markets */}
                 {(() => {
