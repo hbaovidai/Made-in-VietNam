@@ -71,6 +71,7 @@ export class SuppliersService {
           },
           orderBy: { createdAt: 'desc' },
         },
+        categories: true, channels: true,
         _count: { select: { products: true } },
       },
     });
