@@ -33,9 +33,6 @@ export function SupplierProfile() {
         setSupplier(suppRes.data);
         const prodRes = await api.get(`/products?supplierId=${id}`);
         setSupplierProducts(prodRes.data.data || []);
-
-        const primaryRecord = supplier.addresses.find(record => record.isPrimary);
-        setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
       } catch (error) { console.error(error); }
       setLoading(false);
     }
@@ -49,6 +46,9 @@ export function SupplierProfile() {
         setWebsiteUrl(channel.url);
       }
     });
+
+    const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+    setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
   }, [supplier])
 
   const handleContact = () => {
