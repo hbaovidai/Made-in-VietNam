@@ -113,3 +113,21 @@ export enum Incoterm {
   CFR = 'CFR', DDR = 'DDR', DAP = 'DAP',
 };
 
+export enum SaleChannels {
+  INSTAGRAM = 'INSTAGRAM',
+  FACEBOOK = 'FACEBOOK',
+  SHOPEE = 'SHOPEE',
+  LAZADA = 'LAZADA',
+  TIKTOK_SHOP = 'TIKTOK_SHOP',
+  SHOPIFY = 'SHOPIFY',
+  CUSTOM_WEBSITE = 'CUSTOM_WEBSITE',
+};
+
+export const SaleChannelsMap = {
+  [SaleChannels.INSTAGRAM]: 'Instagram',
+  [SaleChannels.FACEBOOK]: 'Facebook',
+  [SaleChannels.SHOPEE]: 'Shopee',
+  [SaleChannels.LAZADA]: 'Lazada',
+  [SaleChannels.SHOPIFY]: 'Shopify',
+  [SaleChannels.CUSTOM_WEBSITE]: 'Website',
+};
