@@ -8,7 +8,7 @@ import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
-import { SupplierStatus } from '../lib/enums';
+import { SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -22,6 +22,8 @@ export function SupplierProfile() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState('');
 
+  const [websiteUrl, setWebsiteUrl] = useState('website.com');
+
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -30,11 +32,20 @@ export function SupplierProfile() {
         setSupplier(suppRes.data);
         const prodRes = await api.get(`/products?supplierId=${id}`);
         setSupplierProducts(prodRes.data.data || []);
-      } catch { }
+      } catch (error) { console.error(error); }
       setLoading(false);
     }
     if (id) loadData();
   }, [id]);
+
+  useEffect(() => {
+    if (supplier === null) return;
+    supplier.channels.map(( channel ) => {
+      if (channel.type === SaleChannels.CUSTOM_WEBSITE) {
+        setWebsiteUrl(channel.url);
+      }
+    });
+  }, [supplier])
 
   const handleContact = () => {
     if (!user) { setAuthModalMessage('Vui lòng đăng nhập để liên hệ nhà cung cấp.'); setIsAuthModalOpen(true); return; }
@@ -270,13 +281,13 @@ export function SupplierProfile() {
               <div className="border-t border-slate-200 mb-4" />
               <div className="space-y-3.5">
                 <a
-                  href={supplier.website || '#'}
+                  href={websiteUrl || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-sm text-slate-600 hover:text-primary transition-colors"
                 >
                   <Globe size={16} className="text-slate-400 shrink-0" />
-                  <span className="truncate">{supplier.website || 'website.com'}</span>
+                  <span className="truncate">{websiteUrl || 'website.com'}</span>
                 </a>
                 <div className="flex items-center gap-3 text-sm text-slate-600">
                   <Mail size={16} className="text-slate-400 shrink-0" />
@@ -291,10 +302,9 @@ export function SupplierProfile() {
 
             {/* Block: KÊNH BÁN HÀNG */}
             {(() => {
-              const channels: { name: string; url?: string }[] = Array.isArray(supplier.salesChannels)
-                ? supplier.salesChannels
-                : [{ name: 'Shopee' }, { name: 'Facebook' }, { name: 'Tiktok' }];
-              if (channels.length === 0) return null;
+              const channels: { supplierSlug: string; url: string; type: SaleChannels }[] = 
+                (supplier.channels.length > 0) ? supplier.channels
+                : [{ type: 'SHOPEE' }, { type: 'FACEBOOK' }, { type: 'TIKTOK_SHOP' }];
               return (
                 <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('kenh_ban_hang')}</h3>
@@ -302,14 +312,14 @@ export function SupplierProfile() {
                   <div className="flex flex-wrap gap-2">
                     {channels.map((channel) => (
                       <a
-                        key={channel.name}
+                        key={SaleChannelsMap[channel.type]}
                         href={channel.url || '#'}
                         target={channel.url ? '_blank' : undefined}
                         rel={channel.url ? 'noopener noreferrer' : undefined}
                         onClick={channel.url ? undefined : (e) => e.preventDefault()}
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 border border-slate-200 bg-slate-50 hover:border-primary/40 hover:text-primary cursor-pointer transition-colors"
                       >
-                        {channel.name}
+                        {SaleChannelsMap[channel.type]}
                         {channel.url && <ExternalLink size={11} />}
                       </a>
                     ))}
