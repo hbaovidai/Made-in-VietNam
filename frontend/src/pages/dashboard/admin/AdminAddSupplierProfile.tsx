@@ -41,76 +41,88 @@ export function AdminAppSupplier() {
         contactPhone, contactEmail,
         businessType, supplierType,
       };
-      
+
       addToast({ type: 'info', title: 'Đang gửi đơn', message: 'Đơn của bạn đang được xử lý' });
-      const res = await api.post('/suppliers/create_fake_supplier', dto);
-      addToast({ type: 'info', title: 'Đã tạo tài khoản', message: res.data.message });
+      const res = await api.post(
+        '/suppliers/create_fake_supplier', dto,
+        { headers: {
+          Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`, 
+          'Content-Type': 'application/json',
+        } },
+      );
+
+      const message = res.data.message;
+      if (res.data.success) {
+        addToast({ type: 'info', title: 'Đã tạo hồ sơ supplier', message: message });
+      } else {
+        addToast({ type: 'error', title: 'Lỗi tạo hồ sơ', message: message });
+      }
 
     } catch (error) {
       console.error("Submission or upload failed:", error);
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể hoàn tất tạo tài khoản' });
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể hoàn tất tạo hồ sơ' });
     }
 
   }, [])
 
-  return (
-    <div className="w-full">
-    <FormContainer
-      formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
-      handleSubmit={handleSubmit} noValidate={false}
-    >
-      <Label text="Thông tin pháp lý" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
+return (
+  <div className="w-full">
+  <FormContainer
+    formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
+    handleSubmit={handleSubmit} noValidate={false}
+  >
+    <Label text="Thông tin pháp lý" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
 
-      <FormFieldTextInput label="Tên doanh nghiệp" value={companyName} setValue={setCompanyName}/>
-      <FormFieldTextInput label="Mã số thuế" value={taxCode} setValue={setTaxCode}/>
-      <FormFieldTextInput label="Người đại diện pháp luật" value={legalRepName} setValue={setLegalRepName} required={false}/>
-      <FormFieldTextInput label="CCCD/Hộ chiếu người đại diện pháp luật" value={legalRepGovId} setValue={setLegalRepGovId} required={false}/>
+    <FormFieldTextInput label="Tên doanh nghiệp" value={companyName} setValue={setCompanyName}/>
+    <FormFieldTextInput label="Mã số thuế" value={taxCode} setValue={setTaxCode}/>
+    <FormFieldTextInput label="Người đại diện pháp luật" value={legalRepName} setValue={setLegalRepName} required={false}/>
+    <FormFieldTextInput label="CCCD/Hộ chiếu người đại diện pháp luật" value={legalRepGovId} setValue={setLegalRepGovId} required={false}/>
 
-      <div>
-        <Label text="Địa chỉ"/>
-        <TextInput placeHolder="tỉnh/thành" value={province} setValue={setProvince}/>
-        <TextInput placeHolder="huyện/phường" value={ward} setValue={setWard}/>
-        <TextInput placeHolder="đường, số nhà" value={streetAddress} setValue={setStreetAddress}/>
-      </div>
-
-      <Select label="Loại hình tổ chức">
-        <OptionButton label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}
-        isSelected={businessType === BusinessType.PRIVATE}/>
-        <OptionButton label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}
-        isSelected={businessType === BusinessType.JOINT_STOCK}/>
-        <OptionButton label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}
-        isSelected={businessType === BusinessType.LIMITED_LIABILITY}/>
-      </Select>
-
-      <Label text="Thông tin liên hệ" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
-
-      <FormFieldTextInput label="Họ và Tên" value={accountHolderName} setValue={setAccountHolderName}/>
-      <FormFieldTextInput label="SĐT" value={contactPhone} setValue={setContactPhone}/>
-      <FormFieldTextInput label="Email" value={contactEmail} setValue={setContactEmail}/>
-
-      <Select label="Vai trò">
-        <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}
-        isSelected={accountHolderRole === SupplierAccountHolderRole.EMPLOYEE}/>
-        <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}
-        isSelected={accountHolderRole === SupplierAccountHolderRole.MANAGER}/>
-        <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}
-        isSelected={accountHolderRole === SupplierAccountHolderRole.LEGAL_REP}/>
-        <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}
-        isSelected={accountHolderRole === SupplierAccountHolderRole.OWNER}/>
-      </Select>
-
-      <Select label="Loại hình hoạt động trên sàn">
-        <OptionButton label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}
-        isSelected={supplierType === SupplierType.DISTRIBUTOR}/>
-        <OptionButton label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}
-        isSelected={supplierType === SupplierType.MANUFACTURER}/>
-        <OptionButton label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}
-        isSelected={supplierType === SupplierType.EXPORTER}/>
-        <OptionButton label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}
-        isSelected={supplierType === SupplierType.DIGITAL_GOODS}/>
-      </Select>
-
-    </FormContainer>
+    <div>
+      <Label text="Địa chỉ"/>
+      <TextInput placeHolder="tỉnh/thành" value={province} setValue={setProvince}/>
+      <TextInput placeHolder="huyện/phường" value={ward} setValue={setWard}/>
+      <TextInput placeHolder="đường, số nhà" value={streetAddress} setValue={setStreetAddress}/>
     </div>
-  );
+
+    <Select label="Loại hình tổ chức">
+      <OptionButton label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}
+      isSelected={businessType === BusinessType.PRIVATE}/>
+      <OptionButton label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}
+      isSelected={businessType === BusinessType.JOINT_STOCK}/>
+      <OptionButton label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}
+      isSelected={businessType === BusinessType.LIMITED_LIABILITY}/>
+    </Select>
+
+    <Label text="Thông tin liên hệ" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
+
+    <FormFieldTextInput label="Họ và Tên" value={accountHolderName} setValue={setAccountHolderName}/>
+    <FormFieldTextInput label="SĐT" value={contactPhone} setValue={setContactPhone}/>
+    <FormFieldTextInput label="Email" value={contactEmail} setValue={setContactEmail}/>
+
+    <Select label="Vai trò">
+      <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}
+      isSelected={accountHolderRole === SupplierAccountHolderRole.EMPLOYEE}/>
+      <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}
+      isSelected={accountHolderRole === SupplierAccountHolderRole.MANAGER}/>
+      <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}
+      isSelected={accountHolderRole === SupplierAccountHolderRole.LEGAL_REP}/>
+      <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}
+      isSelected={accountHolderRole === SupplierAccountHolderRole.OWNER}/>
+    </Select>
+
+    <Select label="Loại hình hoạt động trên sàn">
+      <OptionButton label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}
+      isSelected={supplierType === SupplierType.DISTRIBUTOR}/>
+      <OptionButton label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}
+      isSelected={supplierType === SupplierType.MANUFACTURER}/>
+      <OptionButton label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}
+      isSelected={supplierType === SupplierType.EXPORTER}/>
+      <OptionButton label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}
+      isSelected={supplierType === SupplierType.DIGITAL_GOODS}/>
+    </Select>
+
+  </FormContainer>
+  </div>
+);
 }
