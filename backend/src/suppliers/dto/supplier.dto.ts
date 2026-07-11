@@ -10,9 +10,7 @@ export class UpdateSupplierDto {
   @IsEnum(BusinessType) @IsOptional() businessType?: BusinessType;
   @IsInt() @IsOptional() @Type(() => Number) yearEstablished?: number;
   @IsString() @IsOptional() employeeCount?: string;
-  @IsString() @IsOptional() streetAddress?: string;
-  @IsString() @IsOptional() city?: string;
-  @IsString() @IsOptional() province?: string;
+  @IsString() @IsOptional() primaryLocation?: string;
   @IsString() @IsOptional() website?: string;
   @IsString() @IsOptional() taxCode?: string;
   @IsString() @IsOptional() companyEmail?: string;

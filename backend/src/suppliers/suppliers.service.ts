@@ -33,6 +33,8 @@ export class SuppliersService {
         include: {
           categories: true,
           channels: true,
+          // conjecture: primary addresses are used the most
+          addresses: { where: { isPrimary: true}, select: { updatedAt: false, }, },
         },
       }),
       this.prisma.supplier.count({ where }),
@@ -72,6 +74,7 @@ export class SuppliersService {
           orderBy: { createdAt: 'desc' },
         },
         categories: true, channels: true,
+        addresses: { where: { isPrimary: true }, select: {supplierSlug: false, updatedAt: false} },
         _count: { select: { products: true } },
       },
     });
@@ -85,33 +88,8 @@ export class SuppliersService {
 
     const supplier = await this.prisma.supplier.findUnique({
       where: { ...(isUUID ? { id: slugOrId } : { slug: slugOrId }),},
-
-      // this is cursed
-      select: {
-        ...(isUUID ? { id: true } : { slug: true } ),
-
-        // legal info
-        companyName: true,
-        taxCode: true,
-        legalRepName: true,
-        legalRepGovId: true,
-        province: true,
-        ward: true,
-        streetAddress: true,
-        businessType: true,
-        // url for legal info
-        legalRepGovIdUrl: true,
-        businessLicenseUrl: true,
-
-        // contact info
-        contactPhone: true,
-        contactEmail: true,
-        accountHolderName: true,
-        accountHolderRole: true,
-        authorizationLetterUrl: true,
-
-        supplierType: true,
-        status: true,
+      include: {
+        categories: true, addresses: { where: {isPrimary: true }, select: {supplierSlug: false, updatedAt: false} }, channels: true
       }
     });
 

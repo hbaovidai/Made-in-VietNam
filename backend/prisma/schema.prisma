@@ -53,9 +53,7 @@ model Supplier {
   legalRepName String? @map("legal_rep_name")
   legalRepGovId String? @map("legal_rep_gov_id")
 
-  province String?
-  ward String?
-  streetAddress             String? @map("address")
+  addresses SupplierAddressMap[]
   businessLicenseUrl   String[]                     @map("business_license_url")
   legalRepGovIdUrl String[] @map("legal_rep_gov_id_url")
 
@@ -765,6 +763,18 @@ model SupplierChannelMap {
 
   @@id([supplierSlug, type])
   @@map("supplier_channel_map")
+}
+
+model SupplierAddressMap {
+  supplierSlug String @map("supplier_slug")
+  address String
+  isPrimary Boolean @map("is_primary")
+  updatedAt DateTime @map("updated_at")
+
+  supplier Supplier @relation(fields: [supplierSlug], references:[slug], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([supplierSlug, address])
+  @@map("supplier_address_map")
 }
 
 enum MarketCode {

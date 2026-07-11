@@ -427,9 +427,10 @@ export function ProductDetail() {
             {activeTab === 'company' && supplier && (() => {
               const memberSinceYear = supplier.yearEstablished || (supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024);
               const verifiedYears = new Date().getFullYear() - memberSinceYear;
-              const supplierLocation = supplier.streetAddress || supplier.address
-                ? `${supplier.streetAddress || supplier.address}${supplier.city ? `, ${supplier.city}` : ''}${supplier.province ? `, ${supplier.province}` : ''}`
-                : (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
+
+              const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+              const primaryLocation = primaryRecord ? primaryRecord.address : '';
+
               const channels: { name: string; url?: string; color?: string }[] = Array.isArray(supplier.salesChannels)
                 ? supplier.salesChannels
                 : [{ name: 'Shopee', color: '#ee4d2d' }, { name: 'Facebook', color: '#1877f2' }, { name: 'Website', color: '#475569' }];
@@ -455,8 +456,8 @@ export function ProductDetail() {
                     <div className="divide-y divide-slate-100">
                       {[
                         { label: t('tax_code_label'), value: supplier.taxCode || '—' },
-                        { label: t('office_address'), value: supplierLocation },
-                        { label: t('factory_address'), value: supplier.factoryAddress || supplierLocation },
+                        { label: t('office_address'), value: primaryLocation },
+                        { label: t('factory_address'), value: supplier.factoryAddress || primaryLocation },
                         { label: t('contact_email'), value: supplier.companyEmail || supplier.user?.email || '—', isEmail: true },
                         { label: t('hotline'), value: supplier.companyPhone || '—' },
                       ].map((row, i) => (
