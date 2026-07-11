@@ -8,7 +8,7 @@ import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
-import { SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
+import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -209,7 +209,7 @@ export function SupplierProfile() {
               <div className="divide-y divide-slate-100">
                 {[
                   { label: t('tax_code'), value: supplier.taxCode || '0312345678' },
-                  { label: t('business_type'), value: supplier.businessType === 'manufacturer' ? t('manufacturer') : (supplier.businessType === 'trader' ? t('trader') : (supplier.businessType || t('manufacturer_exporter'))) },
+                  { label: t('business_type'), value: BusinessTypeMap[supplier.businessType] || 'Chưa có thông tin' }, // proper translation later
                   { label: t('year_established'), value: supplier.yearEstablished || memberSince },
                   { label: t('employee_scale'), value: supplier.employee_count || supplier.employeeCount || t('employees_default') },
                 ].map((row, i) => (
@@ -291,11 +291,11 @@ export function SupplierProfile() {
                 </a>
                 <div className="flex items-center gap-3 text-sm text-slate-600">
                   <Mail size={16} className="text-slate-400 shrink-0" />
-                  <span className="truncate">{supplier.companyEmail || supplier.user?.email || 'contact@company.vn'}</span>
+                  <span className="truncate">{supplier.contactEmail || supplier.user?.email || 'contact@company.vn'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-slate-600">
                   <Phone size={16} className="text-slate-400 shrink-0" />
-                  <span>{supplier.companyPhone || '(028) 1234 5678'}</span>
+                  <span>{supplier.contactPhone || supplier.user?.phone || '(028) 1234 5678'}</span>
                 </div>
               </div>
             </div>

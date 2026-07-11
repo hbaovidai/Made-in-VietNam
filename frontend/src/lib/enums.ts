@@ -131,3 +131,9 @@ export const SaleChannelsMap = {
   [SaleChannels.SHOPIFY]: 'Shopify',
   [SaleChannels.CUSTOM_WEBSITE]: 'Website',
 };
+
+export const BusinessTypeMap = {
+  [BusinessType.PRIVATE]: 'Tư Nhân',
+  [BusinessType.JOINT_STOCK]: 'Công ty Cổ phần',
+  [BusinessType.LIMITED_LIABILITY]: 'Công ty TNHH',
+}
