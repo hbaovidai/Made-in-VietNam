@@ -119,10 +119,12 @@ model ManufacturerProfile {
   envCertsUrl String[] @map("environmental_certs_url")
 
   supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@map("manufacturer_profile")
 }
 
 model ExporterProfile {
-  id String @id @default
+  id String @id @default(uuid())
   supplierId String @unique
 
   yearsExp Int @map("years_exp") @default(0)
@@ -133,9 +135,11 @@ model ExporterProfile {
   foreignContractsUrl String[] @map("foreign_contracts_url")
   internationalCertsUrl String[] @map("international_certs_url")
 
-  markets MarketCode[]
+  markets ExporterMarketMap[]
 
-  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("exporter_profile")
 }
 
 model Certification {
@@ -165,9 +169,12 @@ model SupplierIndustry {
 // so we'll have to make do with some duplications
 model ExporterMarketMap {
   exporterId String @map("exporter_id")
-  marketCode MarketCode
+  marketCode MarketCode @map("market_code")
 
-  exporter ExporterProfile @relations(fields:[exporter])
+  exporter ExporterProfile @relation(fields:[exporterId], references:[id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([exporterId, marketCode])
+  @@map("exporter_market_map")
 }
 
 model SupplierMarket {
