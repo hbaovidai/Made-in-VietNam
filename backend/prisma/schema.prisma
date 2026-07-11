@@ -768,8 +768,8 @@ model SupplierChannelMap {
 model SupplierAddressMap {
   supplierSlug String @map("supplier_slug")
   address String
-  isPrimary Boolean @map("is_primary")
-  updatedAt DateTime @map("updated_at")
+  isPrimary Boolean @map("is_primary") @default(false)
+  updatedAt DateTime @map("updated_at") @default(now())
 
   supplier Supplier @relation(fields: [supplierSlug], references:[slug], onUpdate: Cascade, onDelete: Cascade)
 
