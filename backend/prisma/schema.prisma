@@ -85,6 +85,10 @@ model Supplier {
   quotes         Quote[]
   orders         Order[]
 
+  // optional manufacturer or exporter profiles
+  manufacturerProfile ManufacturerProfile?
+  exporterProfile ExporterProfile?
+
 
   @@index([id])
   @@index([companyName])
@@ -92,6 +96,44 @@ model Supplier {
   @@index([status])
   @@index([taxCode])
   @@map("suppliers")
+}
+
+model ManufacturerProfile {
+  id String @default(uuid())
+  supplierId String @unique
+
+  factAddress String @map("fact_address")
+  ownFactory Boolean @default(true) @map("own_factory")
+
+  prodVol String @map("production_volume")
+  prodVolUnit String @map("production_volume_unit")
+  workerCount Int @map("worker_count")
+
+  locationRegUrl String[] @map("location_reg_papers_url")
+  realEstPermPapersUrl String[] @map("real_est_perm_papers_url")
+  industrySpecificPapersUrl String[] @map("industry_specific_paperls_url")
+  factMedUrl String[] @map("factory_media_url")
+  extraCertsUrl String[] @map("extra_certs_url")
+  envCertsUrl String[] @map("environmental_certs_url")
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+}
+
+model ExporterProfile {
+  id String @id @default
+  supplierId String @unique
+
+  yearsExp Int @map("years_exp") @default(0)
+  hasOrgCert Boolean @map("has_org_cert") @default(false)
+  isMainIndust Boolean @map("is_main_indust") @default(true)
+
+  exporterPapersUrl String[] @map("exporter_paper_url")
+  foreignContractsUrl String[] @map("foreign_contracts_url")
+  internationalCertsUrl String[] @map("international_certs_url")
+
+  markets MarketCode[]
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 }
 
 model Certification {
@@ -115,6 +157,15 @@ model SupplierIndustry {
 
   @@unique([supplierId, industry])
   @@map("supplier_industries")
+}
+
+// yes i know the thing below me exists, i don't want to explode prod
+// so we'll have to make do with some duplications
+model ExporterMarketMap {
+  exporterId String @map("exporter_id")
+  marketCode MarketCode
+
+  exporter ExporterProfile @relations(fields:[exporter])
 }
 
 model SupplierMarket {
@@ -664,3 +715,16 @@ enum BusinessType {
   JOINT_STOCK
 }
 
+enum MarketCode {
+  USA
+  JPN
+  CHN // china
+  KOR // south korea
+  AUS
+
+  ASEAN
+  EU
+  AF // africa
+  ME // middle east
+  OTHER
+}

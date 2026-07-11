@@ -103,9 +103,11 @@ export enum BusinessType {
 };
 
 export enum Market {
-  US = 'US', EU = 'EU', JAP = 'JAP', SKOR = 'SKOR',
-  CHINA = 'CHINA', ASEAN = 'ASEAN', AUS = 'AUS', MID_EAST = 'MID_EAST',
-  AFRICA = 'AFRICA', OTHER = 'OTHER',
+  USA = 'USA', EU = 'EU', JPN = 'JPN', KOR = 'KOR',
+  CHN = 'CHN', ASEAN = 'ASEAN', AUS = 'AUS',
+  AF = 'AF', // africa
+  ME = 'ME', // middle east
+  OTHER = 'OTHER',
 };
 
 export enum Incoterm {
