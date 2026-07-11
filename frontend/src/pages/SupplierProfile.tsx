@@ -23,9 +23,7 @@ export function SupplierProfile() {
   const [authModalMessage, setAuthModalMessage] = useState('');
 
   const [websiteUrl, setWebsiteUrl] = useState('website.com');
-
-  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
-  const primaryLocation = primaryRecord ? primaryRecord.address : '';
+  const [primaryLocation, setPrimaryLocation] = useState<string>('');
 
   useEffect(() => {
     async function loadData() {
@@ -35,6 +33,9 @@ export function SupplierProfile() {
         setSupplier(suppRes.data);
         const prodRes = await api.get(`/products?supplierId=${id}`);
         setSupplierProducts(prodRes.data.data || []);
+
+        const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+        setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
       } catch (error) { console.error(error); }
       setLoading(false);
     }
