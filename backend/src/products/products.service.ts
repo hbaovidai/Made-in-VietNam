@@ -115,7 +115,10 @@ export class ProductsService {
               status: true,
               logo: true,
               description: true,
-              addresses: { where: { isPrimary: true }, select: {updatedAt: false} },
+              addresses: {
+                where: { isPrimary: true },
+                select: { isPrimary: true, address: true, }
+              },
               industries: { select: { industry: true } },
               markets: { select: { market: true } },
             },
@@ -137,7 +140,10 @@ export class ProductsService {
               status: true,
               logo: true,
               description: true,
-              addresses: { where: { isPrimary: true }, select: {updatedAt: false} },
+              addresses: {
+                where: { isPrimary: true },
+                select: { isPrimary: true, address: true}
+              },
               industries: { select: { industry: true } },
               markets: { select: { market: true } },
             },
