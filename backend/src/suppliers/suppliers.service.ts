@@ -36,7 +36,7 @@ export class SuppliersService {
           // conjecture: primary addresses are used the most
           addresses: { 
             where: { isPrimary: true },
-            select: { supplierSlug: true, address: true, },
+            select: { supplierSlug: true, address: true, isPrimary: true },
           },
         },
       }),
@@ -79,7 +79,8 @@ export class SuppliersService {
         categories: true, channels: true,
         addresses: { 
           where: { isPrimary: true },
-          select: {isPrimary: true, address: true} },
+          select: {isPrimary: true, address: true}
+        },
         _count: { select: { products: true } },
       },
     });
