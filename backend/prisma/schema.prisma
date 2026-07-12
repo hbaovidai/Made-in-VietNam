@@ -43,7 +43,7 @@ model Supplier {
   contactEmail String? @map("contact_email")
   contactPhone String? @map("contact_phone")
   accountHolderName String? @map("account_holder_name")
-  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+  accountHolderRole SupplierAccountHolderRole? @map("account_holder_role")
   authorizationLetterUrl String[] @map("authorization_letter_url")
 
   // legal info
@@ -71,6 +71,7 @@ model Supplier {
   updatedAt            DateTime                    @updatedAt @map("updated_at")
   status               SupplierStatus              @default(APPLICATION_PENDING)
   supplierType     SupplierType?  @map("supplier_type")
+  isFake Boolean? @map("is_fake") @default(false)
 
   // Relations
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -82,6 +83,7 @@ model Supplier {
   quotes         Quote[]
   orders         Order[]
 
+  documents SupplierDocumentMediaMap[]
   categories SupplierCategoryMap[]
   channels SupplierChannelMap[]
 
@@ -724,14 +726,21 @@ enum BusinessType {
   JOINT_STOCK
 }
 
-enum ChannelType {
+enum SaleChannelType {
   INSTAGRAM
   FACEBOOK
   SHOPEE
   LAZADA
   TIKTOK_SHOP
   SHOPIFY
+  ZALO
   CUSTOM_WEBSITE
+}
+
+enum SupplierMediaType {
+  AUTHORIZATION_LETTER
+  BUSINESS_LICENSE
+  LEGAL_REP_GOV_ID
 }
 
 // --- mapping tables --- //
@@ -753,7 +762,7 @@ model SupplierCategoryMap {
 model SupplierChannelMap {
   supplierSlug String @map("supplier_slug")
   url String
-  type ChannelType
+  type SaleChannelType
 
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
@@ -775,6 +784,19 @@ model SupplierAddressMap {
 
   @@id([supplierSlug, address])
   @@map("supplier_address_map")
+}
+
+model SupplierDocumentMediaMap {
+  supplierId String @map("supplier_id")
+  url String @id
+  type SupplierMediaType
+
+  createdAt DateTime? @map("created_at")
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@index([supplierId, type])
+  @@map("supplier_document_media_map")
 }
 
 enum MarketCode {

@@ -41,12 +41,18 @@ export interface UploadFieldProps {
   uploadText?: string; uploadBoxStyle?: string; required?: boolean;
   labelComponent?: React.ComponentType;
   Icon?: React.ReactNode,
+  name: string; id?: string;
+  multifile?: boolean
 };
 
 export function UploadField( props: UploadFieldProps) {
   const LabelComponent = props.labelComponent ?? (() => (
     <Label text={props.label}/>
   ));
+
+  const validationValue = (props.fileArray && props.fileArray.length > 0 )
+    ? props.fileArray.map(f => f.name).join(', ') 
+    : "";
 
   return (
     <div className="space-y-2 flex flex-col w-full">
@@ -56,13 +62,17 @@ export function UploadField( props: UploadFieldProps) {
         <div></div>
         {props.Icon ?? <UploadIcon/>} <p>{props.uploadText ?? 'Nhấn để tải lên'}</p>
         <input type="file"
-          required={props.required ?? true}
           className='hidden'
-          multiple
+          multiple={props.multifile ? true : false}
           accept=".png,.jpg,.jpeg,.pdf,.webp"
+          name={props.name} id={props.id} 
           onChange={(e) => props.handleUpload(e, props.setFileArray)}
         />
       </label>
+      <input
+        type='text' className="sr-only"
+        required={props.required ?? true} value={validationValue}
+      />
 
       { props.fileArray && (
         <div className='grid grid-cols-3 gap-0'>
@@ -78,21 +88,21 @@ export function UploadField( props: UploadFieldProps) {
   );
 }
 
-
 export interface TextInputProps {
-  value: any; setValue: Function; 
+  value?: any; setValue?: Function; 
   placeHolder?: string;
   required?: boolean;
   style?: string;
+  name: string; id?: string
 }
 
 export function TextInput( props: TextInputProps ) {
   return (
     <input
       required={props.required ?? true}
-      type="text"
+      type="text" name={props.name} id={props.id}
       value={props.value}
-      onChange={(e) => props.setValue(e.target.value) }
+      onChange={(e) => props.setValue?.(e.target.value)}
       placeholder={props.placeHolder ?? '...'}
       className={props.style ?? formBoxStyle}
     />
@@ -102,9 +112,10 @@ export function TextInput( props: TextInputProps ) {
 export interface FormFieldTextInputProps {
   label: string;
   subLabel?: string;
-  value: any; setValue: (arg: any) => void;
+  value?: any; setValue?: (arg: any) => void;
   placeHolder?: string; required?: boolean;
   inputBoxStyle?: string;
+  name: string; id?: string;
 }
 
 export function FormFieldTextInput(props: FormFieldTextInputProps) {
@@ -112,7 +123,7 @@ export function FormFieldTextInput(props: FormFieldTextInputProps) {
     <div className="space-y-2">
       <Label text={props.label}/>
       <TextInput
-        value={props.value}
+        value={props.value} name={props.name} id={props.id}
         setValue={props.setValue}
         placeHolder={props.placeHolder ?? '...'}
         required={props.required ?? true}
@@ -127,6 +138,7 @@ export interface SelectProps {
   value?: any; onButtonClick?: Function;
   required?: boolean; style?: string;
   children: React.ReactNode;
+  name: string; id?: string
 }
 
 export function Select(props: SelectProps) {
@@ -135,7 +147,7 @@ export function Select(props: SelectProps) {
     <div>
       <Label text={props.label}/>
       <input
-        type='text'
+        type='text' name={props.name} id={props.id}
         required={props.required ?? true}
         className="sr-only"
         value={props.value}
@@ -153,6 +165,7 @@ export interface CheckboxFieldProps {
   required?: boolean;
   checkBoxStyle?: string;
   fieldStyle?: string;
+  name: string; id?: string;
 };
 
 export function CheckboxField(props: CheckboxFieldProps) {

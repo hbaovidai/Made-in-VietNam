@@ -122,6 +122,7 @@ export enum SaleChannels {
   LAZADA = 'LAZADA',
   TIKTOK_SHOP = 'TIKTOK_SHOP',
   SHOPIFY = 'SHOPIFY',
+  ZALO = 'ZALO',
   CUSTOM_WEBSITE = 'CUSTOM_WEBSITE',
 };
 
@@ -131,6 +132,7 @@ export const SaleChannelsMap = {
   [SaleChannels.SHOPEE]: 'Shopee',
   [SaleChannels.LAZADA]: 'Lazada',
   [SaleChannels.SHOPIFY]: 'Shopify',
+  [SaleChannels.ZALO]: 'Zalo',
   [SaleChannels.CUSTOM_WEBSITE]: 'Website',
 };
 
@@ -139,3 +141,4 @@ export const BusinessTypeMap = {
   [BusinessType.JOINT_STOCK]: 'Công ty Cổ phần',
   [BusinessType.LIMITED_LIABILITY]: 'Công ty TNHH',
 }
+
