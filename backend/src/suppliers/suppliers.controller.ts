@@ -12,14 +12,14 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
-import { SupplierStatus } from '@prisma/client';
+import { Role, SupplierStatus } from '@prisma/client';
 
 @Controller('suppliers')
 export class SuppliersController {
@@ -188,5 +188,28 @@ export class SuppliersController {
       }
     }
     return this.suppliersService.deleteCertification(certId, supplierId);
+  }
+
+  // Protected: chỉ admin mới được thêm profile
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post('create_fake_supplier')
+  async createFakeSupp(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
+  }
+
+  // upgrade forms
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPPLIER)
+  @Post('upForm/man')
+  async addUpgradeFormMan(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPPLIER)
+  @Post('upForm/exp')
+  async addupgradeFormExp(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
   }
 }

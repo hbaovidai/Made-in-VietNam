@@ -24,6 +24,11 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
+  @Get('cats/l1')
+  getL1Categories() {
+    return this.categoriesService.getL1Cats();
+  }
+
   // PUBLIC
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {

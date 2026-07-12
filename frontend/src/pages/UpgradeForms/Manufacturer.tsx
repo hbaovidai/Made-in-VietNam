@@ -1,27 +1,21 @@
-import { CheckboxField, FormFieldTextInput, UploadField, Label, FormContainer, SelectSingle, OptionButton, TextInput, Select } from "@/src/components/supplier_profile_submit_form/components";
+import { CheckboxField, FormFieldTextInput, UploadField, Label, FormContainer, OptionButton, TextInput, Select } from "@/src/components/supplier_profile_submit_form/components";
 import { AuthLayout } from "@/src/layouts/AuthLayout";
-import { formBoxStyle } from "@/src/lib/constants";
-import { fromConf, CompConf } from "@/src/lib/interfaces";
+import { api } from "@/src/lib/api";
 import { Award, Camera, Leaf, Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
-
-export enum OwnOrRentFact {
-  OWN = 'OWN',
-  RENT = 'RENT',
-};
+import { useCallback, useMemo, useState } from "react";
 
 export function UpgradeFormManufacturer() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [factAddress, setFactAddress] = useState<string>('');
-  const [ownOrRent, setOwnOrRent] = useState<OwnOrRentFact>();
+  const [ownFactory, setOwnFactory] = useState<boolean>(true);
 
   const [prodVol, setProdVol] = useState<string>('');
   const [prodVolUnit, setProdVolUnit] = useState<string>('');
   const [workerCount, setWorkerCount] = useState<number>();
 
   const [locationRegPapers, setLocRegPapers] = useState<File[]>([]);
-  const [someDocAboutTheFactory, setSomedoc] = useState<File[]>([]);
+  const [realEstUsagePermDoc, setPermDoc] = useState<File[]>([]);
   const [industrySpecificPapers, setIndSpecPapers] = useState<File[]>([]);
   const [factMed, setFactMed] = useState<File[]>([]);
   const [extraCerts, setExtraCerts] = useState<File[]>([]);
@@ -38,6 +32,51 @@ export function UpgradeFormManufacturer() {
     appendFiles(newFiles, setFileArray);
   }
 
+  const handleSubmit = useCallback(
+    async (e: React.SubmitEvent) => {
+      e.preventDefault();
+
+      const uploadFiles = async (fileItems: File[]) => {
+        const urls: string[] = [];
+        for (const item of fileItems) {
+          const formData = new FormData();
+          formData.append('file', item);
+
+          const res = await api.post('/uploads', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          urls.push(res.data.url);
+        }
+        return urls;
+      };
+
+      const [
+        locationRegUrl, realEstUsagePermUrl,
+        industrySpecificPapersUrl, factMedUrl,
+        extraCertsUrl, envCertsUrl
+      ] = await Promise.all([
+        uploadFiles(locationRegPapers), uploadFiles(realEstUsagePermDoc),
+        uploadFiles(industrySpecificPapers), uploadFiles(factMed),
+        uploadFiles(extraCerts), uploadFiles(envCerts)
+      ]);
+
+      const dto = {
+        factAddress, ownFactory, prodVol, prodVolUnit, workerCount,
+
+        locationRegUrl, realEstUsagePermUrl,
+        industrySpecificPapersUrl, factMedUrl,
+        extraCertsUrl, envCertsUrl
+      }
+
+      const res = api.post(
+        '', dto,
+        {headers: { 'Content-Type': 'application/json' }}
+      );
+    },
+    [],
+  )
+  
+
   return (
     <AuthLayout>
       { loading ? (
@@ -52,16 +91,16 @@ export function UpgradeFormManufacturer() {
           />
 
           <Select
-            label='Sở hữu hay thuê xưởng?' value={OwnOrRentFact}
+            label='Sở hữu hay thuê xưởng?' value={ownFactory}
           >
-            <OptionButton value={OwnOrRentFact.OWN} label="Sở hữu" 
-              onClick={(val) => setOwnOrRent(OwnOrRentFact[val])}
-              isSelected={ownOrRent == OwnOrRentFact.OWN}
+            <OptionButton value={true} label="Sở hữu" 
+              onClick={(val) => setOwnFactory(val)}
+              isSelected={ownFactory}
               />
 
-            <OptionButton value={OwnOrRentFact.RENT} label="Thuê"
-              onClick={(val) => setOwnOrRent(OwnOrRentFact[val])}
-              isSelected={ownOrRent == OwnOrRentFact.RENT}
+            <OptionButton value={false} label="Thuê"
+              onClick={(val) => setOwnFactory(val)}
+              isSelected={!ownFactory}
               />
           </Select>
 
@@ -88,7 +127,7 @@ export function UpgradeFormManufacturer() {
           />
 
           <UploadField label="Giấy CNQSDĐ hoặc Hợp đồng thuê xưởng"
-          fileArray={someDocAboutTheFactory} setFileArray={setSomedoc}
+          fileArray={realEstUsagePermDoc} setFileArray={setPermDoc}
           handleUpload={handleUpload}
           />
 

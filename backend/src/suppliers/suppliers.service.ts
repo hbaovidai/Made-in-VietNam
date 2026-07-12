@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
-import { Prisma, SupplierStatus } from '@prisma/client';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption } from './dto/supplier.dto';
+import { Prisma, Role, SaleChannelType, SupplierMediaType, SupplierStatus } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SuppliersService {
@@ -135,6 +137,105 @@ export class SuppliersService {
       },
     });
     return supplier;
+  }
+
+  async createFakeProfile(dto: CreateFakeSuppDto) {
+    console.log(dto);
+
+    try {
+      const existingUser = await this.prisma.user.findFirst({
+        where: { email: dto.contactEmail },
+        select: { email: true }
+      });
+      if (existingUser) return { success: false, message: 'Email đã được sử dụng' };
+
+      const existingCompany = await this.prisma.supplier.findFirst({
+        where: { taxCode: dto.taxCode },
+        select: { id: true }
+      });
+      if (existingCompany) return { success: false, message: 'Doanh nghiệp đã tồn tại.' };
+
+      const passwordHash = await bcrypt.hash(uuidv4(), 10);
+      const slug = dto.companyName
+      .toLowerCase()
+      .replace(/[^A-Za-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+      const {
+        website, facebook, shopee, instagram,
+        categoryOptions, primaryLocation,
+        ...supplierData
+      } = dto;
+
+      await this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            email: dto.contactEmail,
+            phone: dto.contactPhone,
+            passwordHash: passwordHash,
+            role: Role.SUPPLIER,
+            fullName: dto.companyName,
+          },
+        });
+
+        const supplierProfile = await tx.supplier.create({
+          data: {
+            userId: user.id,
+            slug: `${slug}-${dto.taxCode}`,
+            ...supplierData,
+            isFake: true
+          },
+        });
+
+        if (website) await tx.supplierChannelMap.create({
+          data: {
+            supplierSlug: supplierProfile.slug, url: website, type: SaleChannelType.CUSTOM_WEBSITE
+          }
+        })
+
+        if (facebook) await tx.supplierChannelMap.create({
+          data: {
+            supplierSlug: supplierProfile.slug, url: facebook, type: SaleChannelType.FACEBOOK
+          }
+        })
+
+        if (shopee) await tx.supplierChannelMap.create({
+          data: {
+            supplierSlug: supplierProfile.slug, url: shopee, type: SaleChannelType.SHOPEE
+          }
+        })
+
+        if (instagram) await tx.supplierChannelMap.create({
+          data: {
+            supplierSlug: supplierProfile.slug, url: instagram, type: SaleChannelType.INSTAGRAM
+          }
+        })
+
+        await tx.supplierCategoryMap.createMany({
+          data: categoryOptions.map((opt: CategoryOption) => {
+            return { supplierSlug: supplierProfile.slug, categorySlug: opt.slug, categoryLevel: 1, }
+          })
+        })
+
+        await tx.supplierAddressMap.create({
+          data: {
+            supplierSlug: supplierProfile.slug, address: primaryLocation, isPrimary: true
+          }
+        })
+      });
+
+      return {
+        message: 'Đã tạo hồ sơ nhà cung cấp',
+        success: true,
+      };
+
+    } catch (error) {
+      console.error('Error creating fake profile:', error);
+      return { 
+        message: error.message || 'Đã xảy ra lỗi hệ thống.', 
+        success: false 
+      };
+    }
   }
 
   async update(supplierId: string, dto: UpdateSupplierDto) {

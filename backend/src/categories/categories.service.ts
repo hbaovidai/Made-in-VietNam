@@ -53,6 +53,15 @@ export class CategoriesService {
     return this.buildTree(categories);
   }
 
+  async getL1Cats() {
+    const cats = await this.prisma.category.findMany({
+      where: { parentId: null},
+      // we migrating to use id's later
+      select: {slug: true, id: true, name: true},
+    })
+    return cats;
+  }
+
   async findNameBySlug(slug: string) {
     const category = await this.prisma.category.findUnique({
       select: {

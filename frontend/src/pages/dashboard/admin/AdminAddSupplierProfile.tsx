@@ -1,54 +1,135 @@
-import { FormContainer, FormFieldTextInput, Label, OptionButton, Select, TextInput } from "@/src/components/supplier_profile_submit_form/components";
+import { FormContainer, FormFieldTextInput, Label, OptionButton, Select, TextInput, UploadField } from "@/src/components/supplier_profile_submit_form/components";
 import { api } from "@/src/lib/api";
 import { FontSizes } from "@/src/lib/constants";
 import { BusinessType, SupplierAccountHolderRole, SupplierType } from "@/src/lib/enums";
-import React, { SubmitEvent, useCallback, useMemo, useState } from "react";
+import React, { SubmitEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
+import { FIVE_MEG } from "@/src/lib/constants";
+import { Loader2 } from "lucide-react";
+
+interface CategoryOption {
+  id: string;
+  slug: string;
+  name: string;
+  included: boolean;
+}
 
 export function AdminAppSupplier() {
   const { addToast } = useToast();
-  // legal info
-  const [companyName, setCompanyName] = useState<string>('');
-  const [taxCode, setTaxCode] = useState<string>('');
-  const [legalRepName, setLegalRepName]  = useState<string>('');
-  const [legalRepGovId, setLegalRepGovId] = useState<string>('');
 
-  const [province, setProvince] = useState<string>('');
-  const [ward, setWard] = useState<string>('');
-  const [streetAddress, setStreetAddress] = useState<string>('');
-
-  // contact info
-  const [accountHolderName, setAccountHolderName] = useState<string>('');
-  const [contactPhone, setContactPhone] = useState<string>('');
-  const [contactEmail, setContactEmail] = useState<string>('');
   const [accountHolderRole, setAccountHolderRole] = useState<SupplierAccountHolderRole>(SupplierAccountHolderRole.EMPLOYEE);
-
-  // extra
   const [businessType, setBusinessType] = useState<BusinessType>(BusinessType.PRIVATE);
   const [supplierType, setSupplierType] = useState<SupplierType>(SupplierType.DISTRIBUTOR);
 
+  const [logoFile, setLogoFile] = useState<File>(null);
+  const [bannerFile, setBannerFile] = useState<File>(null);
+
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCats = async () => {
+      try {
+        const res = await api.get('categories/cats/l1');
+        if (isMounted) setCategoryOptions(res.data as CategoryOption[]);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+    fetchCats(); return () => { isMounted = false; };
+  }, [api]);
+
+  const toggleCategoryInclusion = (slug: string) => {
+    setCategoryOptions((prevOptions) =>
+      prevOptions.map((cat) =>
+        cat.slug === slug 
+          ? { ...cat, included: !cat.included } 
+          : cat
+      )
+    );
+  };
+
+  const handleUploadOneFile = useCallback((
+    e: React.ChangeEvent<HTMLInputElement>, setFile
+  ) => {
+    try {
+      if (!e.target.files) return;
+
+      const file = e.target.files[0];
+      if (file.size > FIVE_MEG) {
+        addToast({
+          'type': 'error', title: 'Kích thước file quá to',
+          message: `Kích thước của ${file.name} vượt quá 5MB`
+        }); return;
+      }
+      setFile(file);
+      console.log('file set');
+
+    } catch (error) {console.error(error)}
+  }, [])
+
+  const handleUploadMultifile = useCallback((
+    e: React.ChangeEvent<HTMLInputElement>, setImageArray,
+  ) => {
+    try {
+      if (!e.target.files) return;
+
+      for (const file of e.target.files) {
+        if (file.size > FIVE_MEG) {
+          addToast({
+            'type': 'error', title: 'Kích thước file quá to',
+            message: `Kích thước của ${file.name} vượt quá 5MB`
+          });
+          continue;
+        }
+        setImageArray((prev) => [...prev, file]);
+      }
+
+    } catch (error) { console.log(error); }
+  }, []);
+
+  const uploadToServer = useCallback( async (file) => {
+    let url = '';
+    const formData = new FormData(); formData.append('file', file);
+
+    const res = await api.post('/uploads', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    url = res.data.url; return url;
+  }, []);
+
+  // this freezes the references, handleSubmit will only see states as they are first initialized
   const handleSubmit = useCallback( async (
-    e: React.SubmitEvent<SubmitEvent>,
+    e: React.SubmitEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
     try {
-      const dto = {
-        companyName, taxCode, legalRepName, legalRepGovId,
-        province, ward, streetAddress,
+      const formData = new FormData(e.currentTarget);
+      let {logo, banner, ...dto} = Object.fromEntries(formData.entries());
 
-        accountHolderName, accountHolderRole,
-        contactPhone, contactEmail,
-        businessType, supplierType,
+      dto = {
+        ...dto,
+        categoryOptions: JSON.parse(dto.categoryOptions as string)
       };
 
+      let logoUrl = "";
+      let bannerUrl = "";
+      [ logoUrl, bannerUrl ] = await Promise.all([
+        uploadToServer(logoFile), uploadToServer(bannerFile)
+      ]);
+
+      dto['logo'] = logoUrl; dto['banner'] = bannerUrl;
+
+      dto = Object.fromEntries(
+        Object.entries(dto).map(([key, value]) => [ key, value === '' ? undefined : value ])
+      )
+
       addToast({ type: 'info', title: 'Đang gửi đơn', message: 'Đơn của bạn đang được xử lý' });
+      console.log(dto);
       const res = await api.post(
         '/suppliers/create_fake_supplier', dto,
-        { headers: {
-          Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`, 
-          'Content-Type': 'application/json',
-        } },
+        { headers: { 'Content-Type': 'application/json', } },
       );
 
       const message = res.data.message;
@@ -63,66 +144,85 @@ export function AdminAppSupplier() {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể hoàn tất tạo hồ sơ' });
     }
 
-  }, [])
+  }, [logoFile, bannerFile])
 
   return (
-    <div className="w-full">
-    <FormContainer
-      formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
-      handleSubmit={handleSubmit}
-    >
-      <Label text="Thông tin pháp lý" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
+      <FormContainer
+        formTitle="Thêm hồ sơ NCC" submitButtonText="Thêm hồ sơ"
+        handleSubmit={handleSubmit} containerStyle="w-full mx-auto items-center max-w-[60%]"
+      >
 
-    <FormFieldTextInput label="Tên doanh nghiệp" value={companyName} setValue={setCompanyName}/>
-    <FormFieldTextInput label="Mã số thuế" value={taxCode} setValue={setTaxCode}/>
-    <FormFieldTextInput label="Người đại diện pháp luật" value={legalRepName} setValue={setLegalRepName}/>
-    <FormFieldTextInput label="CCCD/Hộ chiếu người đại diện pháp luật" value={legalRepGovId} setValue={setLegalRepGovId}/>
+      <FormFieldTextInput label="Tên doanh nghiệp" name="companyName" />
+      <FormFieldTextInput label="Địa chỉ" name="primaryLocation" />
 
-    <div>
-      <Label text="Địa chỉ"/>
-      <TextInput placeHolder="tỉnh/thành" value={province} setValue={setProvince}/>
-      <TextInput placeHolder="huyện/phường" value={ward} setValue={setWard}/>
-      <TextInput placeHolder="đường, số nhà" value={streetAddress} setValue={setStreetAddress}/>
-    </div>
+      <Select label="Loại hình hoạt động trên sàn" name="supplierType" value={supplierType}>
+        <OptionButton key={SupplierType.DISTRIBUTOR} label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.DISTRIBUTOR}/>
+        <OptionButton key={SupplierType.MANUFACTURER} label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.MANUFACTURER}/>
+        <OptionButton key={SupplierType.EXPORTER} label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.EXPORTER}/>
+        <OptionButton key={SupplierType.DIGITAL_GOODS} label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}
+        isSelected={supplierType === SupplierType.DIGITAL_GOODS}/>
+      </Select>
 
-    <Select label="Loại hình tổ chức">
-      <OptionButton label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}
-      isSelected={businessType === BusinessType.PRIVATE}/>
-      <OptionButton label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}
-      isSelected={businessType === BusinessType.JOINT_STOCK}/>
-      <OptionButton label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}
-      isSelected={businessType === BusinessType.LIMITED_LIABILITY}/>
-    </Select>
+      <Select label="Danh mục" name='categoryOptions' required={true}
+        value={
+          categoryOptions.filter(opt => opt.included).length > 0
+            ? JSON.stringify(categoryOptions.filter(opt => opt.included)) : ""
+        }
+      >
+        {categoryOptions && categoryOptions.map((catOpt: CategoryOption) => {
+          return <OptionButton 
+            label={catOpt.name} isSelected={catOpt.included} value={catOpt.slug}
+            onClick={toggleCategoryInclusion} key={catOpt.slug}
+          />
+        })}
+      </Select>
 
-    <Label text="Thông tin liên hệ" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
+      <FormFieldTextInput label="Mã số thuế" name="taxCode"/>
 
-    <FormFieldTextInput label="Họ và Tên" value={accountHolderName} setValue={setAccountHolderName}/>
-    <FormFieldTextInput label="SĐT" value={contactPhone} setValue={setContactPhone}/>
-    <FormFieldTextInput label="Email" value={contactEmail} setValue={setContactEmail}/>
+      <Select label="Loại hình tổ chức" value={businessType} name="businessType">
+        <OptionButton key={BusinessType.PRIVATE} label='Tư nhân' value={BusinessType.PRIVATE} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.PRIVATE}/>
+        <OptionButton key={BusinessType.JOINT_STOCK} label='Cổ phần' value={BusinessType.JOINT_STOCK} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.JOINT_STOCK}/>
+        <OptionButton key={BusinessType.LIMITED_LIABILITY} label='TNHH' value={BusinessType.LIMITED_LIABILITY} onClick={setBusinessType}
+        isSelected={businessType === BusinessType.LIMITED_LIABILITY}/>
+      </Select>
 
-    <Select label="Vai trò">
-      <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}
-      isSelected={accountHolderRole === SupplierAccountHolderRole.EMPLOYEE}/>
-      <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}
-      isSelected={accountHolderRole === SupplierAccountHolderRole.MANAGER}/>
-      <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}
-      isSelected={accountHolderRole === SupplierAccountHolderRole.LEGAL_REP}/>
-      <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}
-      isSelected={accountHolderRole === SupplierAccountHolderRole.OWNER}/>
-    </Select>
+      <Label text="Thông tin liên hệ" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE}/>
 
-    <Select label="Loại hình hoạt động trên sàn">
-      <OptionButton label='Nhà cung cấp' value={SupplierType.DISTRIBUTOR} onClick={setSupplierType}
-      isSelected={supplierType === SupplierType.DISTRIBUTOR}/>
-      <OptionButton label='Nhà sản xuất' value={SupplierType.MANUFACTURER} onClick={setSupplierType}
-      isSelected={supplierType === SupplierType.MANUFACTURER}/>
-      <OptionButton label='Nhà xuất khẩu' value={SupplierType.EXPORTER} onClick={setSupplierType}
-      isSelected={supplierType === SupplierType.EXPORTER}/>
-      <OptionButton label='Sản phẩm số' value={SupplierType.DIGITAL_GOODS} onClick={setSupplierType}
-      isSelected={supplierType === SupplierType.DIGITAL_GOODS}/>
-    </Select>
+      <FormFieldTextInput label="SĐT" name="contactPhone"/>
+      <FormFieldTextInput label="Email" name='contactEmail'/>
 
-  </FormContainer>
-  </div>
+      <Select label="Vai trò" value={accountHolderRole} name="accountHolderRole">
+        <OptionButton label="Nhân viên" value={SupplierAccountHolderRole.EMPLOYEE} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.EMPLOYEE}/>
+        <OptionButton label="Quản lý" value={SupplierAccountHolderRole.MANAGER} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.MANAGER}/>
+        <OptionButton label="Đại diện pháp luật" value={SupplierAccountHolderRole.LEGAL_REP} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.LEGAL_REP}/>
+        <OptionButton label="Chủ sở hữu" value={SupplierAccountHolderRole.OWNER} onClick={setAccountHolderRole}
+        isSelected={accountHolderRole === SupplierAccountHolderRole.OWNER}/>
+      </Select>
+
+      <Label text="Kênh bán" fontSize={FontSizes.FORM_FIELD_SECTION_TITLE} />
+      <FormFieldTextInput label="Website" name="website" required={false}/>
+      <FormFieldTextInput label="Facebook" name="facebook" required={false}/>
+      <FormFieldTextInput label="Shopee" name="shopee" required={false}/>
+      <FormFieldTextInput label="Instagram" name='instagram' required={false}/>
+
+      <UploadField label="Logo" name="logo"
+      fileArray={logoFile ? [logoFile] : []} setFileArray={setLogoFile}
+      handleUpload={handleUploadOneFile}
+      />
+
+      <UploadField label="Banner" name="banner"
+      fileArray={bannerFile ? [bannerFile] : []} setFileArray={setBannerFile}
+      handleUpload={handleUploadOneFile}
+      />
+
+    </FormContainer>
 );
 }
