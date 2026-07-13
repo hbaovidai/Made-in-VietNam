@@ -20,7 +20,7 @@ export function SupplierProfile() {
   const [loading, setLoading] = useState(true);
 
   // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '', industries: [] as string[], markets: [] as string[] });
+  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -66,8 +66,7 @@ export function SupplierProfile() {
           description: s.description || '',
           companyEmail: s.companyEmail || '',
           companyPhone: s.companyPhone || '',
-          legalRepresentative: s.legalRepresentative || '',
-          address: s.address || '',
+          legalRepName: s.legalRepName || '',
           industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
           markets: s.markets ? s.markets.map((m: any) => m.market) : [],
         });
@@ -214,7 +213,16 @@ export function SupplierProfile() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.put(`/suppliers/${supplierId}`, editForm);
+      // Filter out empty string fields to avoid DTO validation errors
+      const payload: Record<string, any> = {};
+      for (const [key, value] of Object.entries(editForm)) {
+        if (Array.isArray(value)) {
+          payload[key] = value; // always send arrays (industries, markets)
+        } else if (value !== '') {
+          payload[key] = value;
+        }
+      }
+      const res = await api.put(`/suppliers/${supplierId}`, payload);
       setSupplier(res.data);
       setIsEditModalOpen(false);
       addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
@@ -547,9 +555,10 @@ export function SupplierProfile() {
             <div className="space-y-2">
               <label className="input-label">{t('biz_type_label')}</label>
               <select className="input" value={editForm.businessType} onChange={(e) => setEditForm({...editForm, businessType: e.target.value})}>
-                <option value="Manufacturer & Trading">{t('biz_type_manufacturer_trading')}</option>
-                <option value="E-Commerce">{t('biz_type_ecommerce')}</option>
-                <option value="Agriculture">{t('biz_type_agriculture')}</option>
+                <option value="">-- Chọn loại hình --</option>
+                <option value="PRIVATE">Tư nhân</option>
+                <option value="LIMITED_LIABILITY">TNHH</option>
+                <option value="JOINT_STOCK">Cổ phần</option>
               </select>
             </div>
 
@@ -562,7 +571,7 @@ export function SupplierProfile() {
 
             <div className="space-y-2">
               <label className="input-label">{t('nguoi_dai_dien')}</label>
-              <input type="text" className="input" value={editForm.legalRepresentative} onChange={(e) => setEditForm({...editForm, legalRepresentative: e.target.value})} />
+              <input type="text" className="input" value={editForm.legalRepName} onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} />
             </div>
             <div className="space-y-2">
               <label className="input-label">Email công ty</label>
@@ -571,10 +580,6 @@ export function SupplierProfile() {
             <div className="space-y-2">
               <label className="input-label">Số điện thoại</label>
               <input type="text" className="input" value={editForm.companyPhone} onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <label className="input-label">Địa chỉ trụ sở</label>
-              <input type="text" className="input" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} />
             </div>
             <div className="space-y-2 col-span-2">
               <label className="input-label">Ngành hàng</label>
