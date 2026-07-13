@@ -134,7 +134,14 @@ export function SupplierProfile() {
             <div className="flex items-start gap-5">
               <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg border border-slate-200 bg-white p-2 flex items-center justify-center overflow-hidden shrink-0">
                 {supplier.logo
-                  ? <img src={supplier.logo} alt="" className="w-full h-full object-contain" />
+                  ? <img
+                      src={supplier.logo}
+                      alt=""
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150';
+                      }}
+                    />
                   : <Building2 size={36} className="text-slate-300" />
                 }
               </div>

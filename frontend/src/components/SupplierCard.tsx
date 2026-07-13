@@ -79,6 +79,9 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             className="max-w-full max-h-full object-contain"
             referrerPolicy="no-referrer"
             loading="lazy"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150';
+            }}
           />
         </div>
 
