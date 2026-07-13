@@ -43,7 +43,7 @@ export function ProductDetail() {
           try { const s = await api.get(`/suppliers/${p.supplierId}`); setSupplier(s.data); } catch {}
         }
         try { const r = await api.get(`/products/${p.id}/related`); setRelatedProducts(r.data || []); } catch {}
-        if (p.categoryId) { try { const c = await api.get(`/products?categoryId=${p.categoryId}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); } catch {} }
+        if (p.category?.slug) { try { const c = await api.get(`/products?category=${p.category.slug}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); } catch {} }
         if (user?.id) { try { await api.post(`/users/${user.id}/history`, { productId: p.id }); } catch {} }
       } catch {
         setProduct(null);
@@ -447,7 +447,7 @@ export function ProductDetail() {
               const memberSinceYear = supplier.yearEstablished || (supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024);
               const verifiedYears = new Date().getFullYear() - memberSinceYear;
 
-              const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+              const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
               const primaryLocation = primaryRecord ? primaryRecord.address : '';
 
               const channels: { name: string; url?: string; color?: string }[] = Array.isArray(supplier.salesChannels)
