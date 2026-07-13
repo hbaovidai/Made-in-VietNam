@@ -20,7 +20,7 @@ export function SupplierProfile() {
   const [loading, setLoading] = useState(true);
 
   // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
+  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -68,6 +68,8 @@ export function SupplierProfile() {
           companyPhone: s.companyPhone || '',
           legalRepresentative: s.legalRepresentative || '',
           address: s.address || '',
+          industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
+          markets: s.markets ? s.markets.map((m: any) => m.market) : [],
         });
         setSupplierProducts(prodRes.data.data || []);
       } catch (err) {
@@ -573,6 +575,60 @@ export function SupplierProfile() {
             <div className="space-y-2 md:col-span-2">
               <label className="input-label">Địa chỉ trụ sở</label>
               <input type="text" className="input" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} />
+            </div>
+            <div className="space-y-2 col-span-2">
+              <label className="input-label">Ngành hàng</label>
+              <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl min-h-[44px]">
+                {['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'].map((ind) => {
+                  const isSelected = editForm.industries.includes(ind);
+                  return (
+                    <button
+                      type="button"
+                      key={ind}
+                      onClick={() => {
+                        const next = isSelected
+                          ? editForm.industries.filter((i) => i !== ind)
+                          : [...editForm.industries, ind];
+                        setEditForm({ ...editForm, industries: next });
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                        isSelected
+                          ? 'bg-primary text-white border-primary shadow-sm'
+                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      {ind}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="space-y-2 col-span-2">
+              <label className="input-label">Thị trường xuất khẩu</label>
+              <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl min-h-[44px]">
+                {['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'].map((mkt) => {
+                  const isSelected = editForm.markets.includes(mkt);
+                  return (
+                    <button
+                      type="button"
+                      key={mkt}
+                      onClick={() => {
+                        const next = isSelected
+                          ? editForm.markets.filter((m) => m !== mkt)
+                          : [...editForm.markets, mkt];
+                        setEditForm({ ...editForm, markets: next });
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                        isSelected
+                          ? 'bg-primary text-white border-primary shadow-sm'
+                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      {mkt}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <div className="space-y-2">
