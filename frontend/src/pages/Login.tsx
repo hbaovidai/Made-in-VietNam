@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
 import { AuthLayout } from '../layouts/AuthLayout';
-import { Factory, Loader2, ShieldCheck } from 'lucide-react';
+import { Factory, Loader2, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 import { useAppearance } from '../contexts/AppearanceContext';
 
@@ -22,6 +22,7 @@ export function Login() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const [searchParams] = useSearchParams();
   const redirect_to = searchParams.get('redirect_to');
@@ -177,14 +178,23 @@ export function Login() {
                     Quên mật khẩu?
                   </button>
                 </div>
-                <input
-                  required
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
-                />
+                <div className="relative">
+                  <input
+                    required
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 pr-10 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-500 transition-all text-xs font-semibold placeholder:text-slate-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between pt-1 pb-1">

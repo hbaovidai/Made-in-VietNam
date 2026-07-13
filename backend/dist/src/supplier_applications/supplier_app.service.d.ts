@@ -7,6 +7,9 @@ export declare class SupplierApplicationService {
     findAll(query: SupplierApplicationDto): Promise<{
         data: {
             id: string;
+            status: import("@prisma/client").$Enums.SupplierStatus;
+            createdAt: Date;
+            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
@@ -31,9 +34,6 @@ export declare class SupplierApplicationService {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: Prisma.JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
         }[];
         meta: {
@@ -47,6 +47,9 @@ export declare class SupplierApplicationService {
         success: boolean;
         deletedUser: {
             id: string;
+            status: import("@prisma/client").$Enums.SupplierStatus;
+            createdAt: Date;
+            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
@@ -71,9 +74,6 @@ export declare class SupplierApplicationService {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: Prisma.JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
         };
         reason?: undefined;
@@ -86,6 +86,9 @@ export declare class SupplierApplicationService {
         success: boolean;
         updatedApplication: {
             id: string;
+            status: import("@prisma/client").$Enums.SupplierStatus;
+            createdAt: Date;
+            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
@@ -110,9 +113,6 @@ export declare class SupplierApplicationService {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: Prisma.JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
         };
         reason?: undefined;

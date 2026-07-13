@@ -7,17 +7,17 @@ export declare class BatchesController {
     private prisma;
     constructor(batchesService: BatchesService, prisma: PrismaService);
     getSupplierBatches(supplierId: string, userId: string): Promise<({
+        product: {
+            name: string;
+            slug: string;
+        };
         _count: {
             qrCodes: number;
         };
-        product: {
-            slug: string;
-            name: string;
-        };
     } & {
         id: string;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.BatchStatus;
+        createdAt: Date;
         supplierId: string;
         expiryDate: Date;
         productId: string;
@@ -29,13 +29,13 @@ export declare class BatchesController {
     getSupplierQRCodes(supplierId: string, userId: string): Promise<({
         batch: {
             product: {
-                slug: string;
                 name: string;
+                slug: string;
             };
         } & {
             id: string;
-            createdAt: Date;
             status: import("@prisma/client").$Enums.BatchStatus;
+            createdAt: Date;
             supplierId: string;
             expiryDate: Date;
             productId: string;
@@ -46,8 +46,8 @@ export declare class BatchesController {
         };
     } & {
         id: string;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.QRStatus;
+        createdAt: Date;
         batchId: string;
         code: string;
         secretHash: string;
@@ -56,8 +56,8 @@ export declare class BatchesController {
     })[]>;
     createBatch(dto: CreateBatchDto, userId: string): Promise<{
         id: string;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.BatchStatus;
+        createdAt: Date;
         supplierId: string;
         expiryDate: Date;
         productId: string;
@@ -78,13 +78,14 @@ export declare class BatchesController {
         warning: string;
         data: {
             id: string;
-            slug: string;
-            description: string | null;
+            status: import("@prisma/client").$Enums.ProductStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
+            slug: string;
+            description: string | null;
             nameEn: string | null;
+            supplierId: string;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -92,6 +93,7 @@ export declare class BatchesController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -107,21 +109,20 @@ export declare class BatchesController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         };
     } | {
         valid: boolean;
         data: {
             product: {
                 id: string;
-                slug: string;
-                description: string | null;
+                status: import("@prisma/client").$Enums.ProductStatus;
                 createdAt: Date;
                 updatedAt: Date;
-                status: import("@prisma/client").$Enums.ProductStatus;
                 name: string;
+                slug: string;
+                description: string | null;
                 nameEn: string | null;
+                supplierId: string;
                 descriptionEn: string | null;
                 minPrice: number;
                 maxPrice: number;
@@ -129,6 +130,7 @@ export declare class BatchesController {
                 unit: string;
                 moq: number;
                 moqUnit: string;
+                categoryId: string;
                 images: string[];
                 rating: number;
                 reviewCount: number;
@@ -144,12 +146,10 @@ export declare class BatchesController {
                 productionCapacity: string | null;
                 sku: string | null;
                 specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                supplierId: string;
-                categoryId: string;
             };
             supplier: {
-                companyName: string;
                 status: import("@prisma/client").$Enums.SupplierStatus;
+                companyName: string;
             };
             batch: {
                 batchNumber: string;

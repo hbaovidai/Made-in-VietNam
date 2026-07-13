@@ -116,7 +116,7 @@ let AuthService = class AuthService {
         userDto.role = client_1.Role.SUPPLIER;
         try {
             const { user } = await this.register(userDto);
-            const existingCompany = await this.prisma.supplier.findUnique({
+            const existingCompany = await this.prisma.supplier.findFirst({
                 where: {
                     taxCode: dto.taxCode,
                 },

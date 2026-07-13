@@ -18,7 +18,8 @@ i18n
       },
     },
     fallbackLng: 'vi',
-    lng: 'vi',
+    supportedLngs: ['vi', 'en'],
+    load: 'languageOnly',
     interpolation: {
       escapeValue: false, // react already safes from xss
     },

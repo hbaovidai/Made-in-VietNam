@@ -387,52 +387,44 @@ export function SupplierProfile() {
       {/* Company Header Card */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="relative group">
-            <div className="w-20 h-20 sm:w-28 sm:h-28 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden relative">
-              {uploading && (
-                <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-                  <Loader2 className="animate-spin text-primary" size={24} />
-                </div>
-              )}
-              {supplier?.logo ? (
-                <img src={supplier.logo} alt="Company Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
-              ) : (
-                <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
-              )}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative group">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden relative">
+                {uploading && (
+                  <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+                    <Loader2 className="animate-spin text-primary" size={24} />
+                  </div>
+                )}
+                {supplier?.logo ? (
+                  <img src={supplier.logo} alt="Company Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                ) : (
+                  <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
+                )}
+              </div>
+              <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors cursor-pointer">
+                <Camera size={16} />
+                <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
+              </label>
             </div>
-            <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors cursor-pointer">
-              <Camera size={16} />
-              <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
-            </label>
+            <button 
+              onClick={() => setIsEditModalOpen(true)}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+            >
+              <Edit2 size={12} /> Chỉnh sửa hồ sơ
+            </button>
           </div>
           <div className="space-y-3 flex-1">
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{supplier?.companyName || 'Công ty của bạn'}</h2>
+            <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{supplier?.companyName || 'Công ty của bạn'}</h2>
+            <div className="flex flex-wrap gap-2">
               {supplier?.status === SupplierStatus.VERIFIED && <SupplierBadge type="verified" />}
             </div>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <Building2 size={14} className="text-primary" />
-                <span>{supplier?.businessType || t('biz_type_manufacturer_trading')}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <MapPin size={14} className="text-primary" />
-                <span>{supplier?.city ? `${supplier.city}, ${supplier.province}` : t('location_hanoi')}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                <Globe size={14} className="text-primary" />
-                <span>{supplier?.website || 'N/A'}</span>
-              </div>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+              <MapPin size={14} className="text-primary" />
+              <span>{supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật địa chỉ'}</span>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
               {supplier?.description || 'Chưa có mô tả.'}
             </p>
-            <button 
-              onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline mt-1"
-            >
-              <Edit2 size={12} /> Chỉnh sửa hồ sơ
-            </button>
           </div>
         </div>
       </div>

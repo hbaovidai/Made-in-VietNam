@@ -6,6 +6,7 @@ import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
 import { SupplierStatus } from '@/src/lib/enums';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 const MAX_QUOTES = 10;
 
@@ -294,15 +295,15 @@ export function SupplierRFQs() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('don_vi_tien')}</label>
-                  <select 
+                  <CustomSelect 
+                    options={[
+                      { value: 'VND', label: 'VND' },
+                      { value: 'USD', label: 'USD' },
+                      { value: 'EUR', label: 'EUR' }
+                    ]}
                     value={quoteForm.currency}
-                    onChange={(e) => setQuoteForm({...quoteForm, currency: e.target.value})}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary rounded-lg"
-                  >
-                    <option value="VND">VND</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                  </select>
+                    onChange={(val) => setQuoteForm({...quoteForm, currency: val})}
+                  />
                 </div>
               </div>
 

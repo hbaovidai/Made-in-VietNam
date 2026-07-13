@@ -3,11 +3,11 @@ export declare class NotificationsController {
     private readonly notificationsService;
     constructor(notificationsService: NotificationsService);
     getMyNotifications(userId: string): Promise<{
-        id: string;
-        userId: string;
-        createdAt: Date;
         message: string;
+        id: string;
+        createdAt: Date;
         link: string | null;
+        userId: string;
         title: string;
         type: string;
         isRead: boolean;

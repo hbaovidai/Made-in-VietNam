@@ -7,6 +7,9 @@ export declare class SupplierApplicationController {
     getAllApplications(query: SupplierApplicationDto): Promise<{
         data: {
             id: string;
+            status: import("@prisma/client").$Enums.SupplierStatus;
+            createdAt: Date;
+            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
@@ -31,9 +34,6 @@ export declare class SupplierApplicationController {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
         }[];
         meta: {

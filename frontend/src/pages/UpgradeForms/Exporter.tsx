@@ -1,4 +1,4 @@
-import { CheckboxField, FormContainer, FormFieldTextInput, OptionButton, Select, UploadField, } from "@/src/components/supplier_profile_submit_form/components";
+import { CheckboxField, CheckboxFieldProps, FormContainer, FormContainerProps, FormFieldTextInput, FormFieldTextInputProps, OptionButton, Select, UploadField, UploadFieldProps } from "@/src/components/supplier_profile_submit_form/components";
 import { AuthLayout } from "@/src/layouts/AuthLayout";
 import { Incoterm, Market } from "@/src/lib/enums";
 import { Award, Loader2 } from "lucide-react";

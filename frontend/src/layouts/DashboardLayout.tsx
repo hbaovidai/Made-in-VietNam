@@ -20,10 +20,10 @@ function SidebarItem({ icon, label, path, active, onClick }: SidebarItemProps) {
       to={path}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all group relative",
+        "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all group relative",
         active
           ? "bg-primary/5 text-primary font-bold"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+          : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
       )}
     >
       {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />}

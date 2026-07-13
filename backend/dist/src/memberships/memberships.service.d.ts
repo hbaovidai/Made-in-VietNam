@@ -25,8 +25,8 @@ export declare class MembershipsService {
         };
     } & {
         id: string;
-        userId: string;
         status: string;
+        userId: string;
         planId: string;
         startDate: Date;
         endDate: Date;
@@ -44,8 +44,8 @@ export declare class MembershipsService {
         };
     } & {
         id: string;
-        userId: string;
         status: string;
+        userId: string;
         planId: string;
         startDate: Date;
         endDate: Date;

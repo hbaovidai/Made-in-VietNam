@@ -41,7 +41,7 @@ export interface UploadFieldProps {
   uploadText?: string; uploadBoxStyle?: string; required?: boolean;
   labelComponent?: React.ComponentType;
   Icon?: React.ReactNode,
-  name: string; id?: string;
+  name?: string; id?: string;
   multifile?: boolean
 };
 
@@ -93,7 +93,7 @@ export interface TextInputProps {
   placeHolder?: string;
   required?: boolean;
   style?: string;
-  name: string; id?: string
+  name?: string; id?: string
 }
 
 export function TextInput( props: TextInputProps ) {
@@ -115,7 +115,7 @@ export interface FormFieldTextInputProps {
   value?: any; setValue?: (arg: any) => void;
   placeHolder?: string; required?: boolean;
   inputBoxStyle?: string;
-  name: string; id?: string;
+  name?: string; id?: string;
 }
 
 export function FormFieldTextInput(props: FormFieldTextInputProps) {
@@ -138,7 +138,7 @@ export interface SelectProps {
   value?: any; onButtonClick?: Function;
   required?: boolean; style?: string;
   children: React.ReactNode;
-  name: string; id?: string
+  name?: string; id?: string
 }
 
 export function Select(props: SelectProps) {
@@ -165,7 +165,7 @@ export interface CheckboxFieldProps {
   required?: boolean;
   checkBoxStyle?: string;
   fieldStyle?: string;
-  name: string; id?: string;
+  name?: string; id?: string;
 };
 
 export function CheckboxField(props: CheckboxFieldProps) {

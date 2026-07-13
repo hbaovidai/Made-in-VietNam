@@ -288,10 +288,12 @@ export function AdminMessages() {
   const relatedRequest = useMemo(() => {
     if (!selectedChat) return null;
     return mockRequestDetails[selectedChat.relatedId] || {
-      type: 'rfq',
+      type: 'rfq' as const,
       title: 'Yêu cầu báo giá liên quan',
       qty: 'Liên hệ',
       statusText: 'Đang xử lý',
+      extraLabel: undefined as string | undefined,
+      extraVal: undefined as string | undefined,
     };
   }, [selectedChat]);
 

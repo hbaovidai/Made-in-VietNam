@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X, Image as ImageIcon, Loader2, Trash2 } from 'lucide-react';
+import { Save, X, Image as ImageIcon, Loader2, Trash2, Bold, Italic, Heading, List, Table, Eye, FileText, Award, Plus, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
 import { api } from '../../../lib/api';
+import { parseMarkdownToHtml } from '../../../utils/markdown';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 interface CategoryOption {
   id: string;
@@ -34,7 +36,80 @@ export function ProductFormPage() {
     categoryId: '',
     images: [''] as string[],
     rfqMinQuantity: '',
+    certifications: [] as { name: string; url: string }[],
   });
+
+  const [editorTab, setEditorTab] = useState<'write' | 'preview'>('write');
+  const [descUploading, setDescUploading] = useState(false);
+
+  const insertAtCursor = (before: string, after: string = '') => {
+    const textarea = document.getElementById('product-desc-textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    const replacement = before + (selected || '') + after;
+
+    const newDescription = text.substring(0, start) + replacement + text.substring(end);
+    setFormData(prev => ({ ...prev, description: newDescription }));
+
+    // Reset cursor position
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + before.length, start + before.length + (selected || '').length);
+    }, 50);
+  };
+
+  const handleDescImageUpload = async (file: File) => {
+    setDescUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.post('/uploads', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const imageUrl = res.data.url;
+      insertAtCursor(`\n![Ảnh mô tả](${imageUrl})\n`, '');
+      addToast({ type: 'success', title: 'Thành công', message: 'Đã chèn ảnh vào mô tả!' });
+    } catch {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải ảnh lên.' });
+    } finally {
+      setDescUploading(false);
+    }
+  };
+
+  const categoryOptions = React.useMemo(() => {
+    const options: { value: string; label: string }[] = [];
+    
+    function traverse(node: CategoryOption, path: string) {
+      const currentPath = path ? `${path} > ${node.name}` : node.name;
+      if (!node.children || node.children.length === 0) {
+        options.push({
+          value: node.id,
+          label: node.name
+        });
+      } else {
+        node.children.forEach(child => {
+          traverse(child, currentPath);
+        });
+      }
+    }
+
+    categories.forEach(cat => {
+      traverse(cat, '');
+    });
+    return options;
+  }, [categories]);
+
+
+  const unitOptions = React.useMemo(() => {
+    return ['cái', 'kg', 'tấn', 'bộ', 'hộp', 'lít', 'mét', 'cuộn', 'đôi', 'chiếc'].map(u => ({
+      value: u,
+      label: u
+    }));
+  }, []);
 
   // Load danh mục từ DB
   useEffect(() => {
@@ -62,6 +137,7 @@ export function ProductFormPage() {
           categoryId: p.categoryId || '',
           images: p.images?.length ? p.images : [''],
           rfqMinQuantity: p.rfqMinQuantity ? String(p.rfqMinQuantity) : '',
+          certifications: p.certifications?.length ? p.certifications : [],
         });
       }).catch(() => {
         addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải thông tin sản phẩm' });
@@ -131,6 +207,7 @@ export function ProductFormPage() {
       categoryId: formData.categoryId,
       images: formData.images.filter(url => url.trim() !== ''),
       rfqMinQuantity: formData.rfqMinQuantity ? Number(formData.rfqMinQuantity) : null,
+      certifications: formData.certifications.filter(c => c.name.trim() || c.url.trim()),
     };
 
     try {
@@ -194,21 +271,12 @@ export function ProductFormPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Danh mục <span className="text-red-500">*</span></label>
-              <select 
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+              <CustomSelect
+                options={categoryOptions}
                 value={formData.categoryId}
-                onChange={e => handleChange('categoryId', e.target.value)}
-              >
-                <option value="">{t('chon_danh_muc')}</option>
-                {categories.map(parent => (
-                  <optgroup key={parent.id} label={parent.name}>
-                    {parent.children?.map(child => (
-                      <option key={child.id} value={child.id}>{child.name}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+                onChange={val => handleChange('categoryId', val)}
+                placeholder={t('chon_danh_muc')}
+              />
             </div>
           </div>
 
@@ -232,16 +300,12 @@ export function ProductFormPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">{t('don_vi_tinh')} <span className="text-red-500">*</span></label>
-              <select 
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+              <CustomSelect
+                options={unitOptions}
                 value={formData.unit}
-                onChange={e => handleChange('unit', e.target.value)}
-              >
-                {['cái', 'kg', 'tấn', 'bộ', 'hộp', 'lít', 'mét', 'cuộn', 'đôi', 'chiếc'].map(u => (
-                  <option key={u} value={u}>{u}</option>
-                ))}
-              </select>
+                onChange={val => handleChange('unit', val)}
+                placeholder="Chọn đơn vị tính"
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">{t('so_luong_dat_toi_thieu_moq')} <span className="text-red-500">*</span></label>
@@ -273,16 +337,120 @@ export function ProductFormPage() {
             </div>
           </div>
 
-          {/* Mô tả */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Mô tả sản phẩm</label>
-            <textarea 
-              rows={5}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium resize-none"
-              placeholder="Nhập mô tả chi tiết về sản phẩm, chất liệu, xuất xứ, hướng dẫn sử dụng..."
-              value={formData.description}
-              onChange={e => handleChange('description', e.target.value)}
-            />
+          {/* Mô tả sản phẩm - Markdown Editor */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <label className="text-sm font-bold text-slate-700">Mô tả sản phẩm</label>
+              
+              <div className="flex bg-slate-100 p-0.5 rounded-lg text-xs">
+                <button
+                  type="button"
+                  onClick={() => setEditorTab('write')}
+                  className={`px-3 py-1.5 rounded-md font-bold transition-all flex items-center gap-1 ${
+                    editorTab === 'write' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <span>Soạn thảo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditorTab('preview')}
+                  className={`px-3 py-1.5 rounded-md font-bold transition-all flex items-center gap-1 ${
+                    editorTab === 'preview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <span>Xem trước</span>
+                </button>
+              </div>
+            </div>
+
+            {editorTab === 'write' ? (
+              <div className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                {/* Toolbar */}
+                <div className="flex flex-wrap gap-1.5 p-2 bg-slate-100 border-b border-slate-200 text-slate-600">
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('**', '**')}
+                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    title="Chữ đậm"
+                  >
+                    <Bold size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('*', '*')}
+                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    title="Chữ nghiêng"
+                  >
+                    <Italic size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('## ', '')}
+                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    title="Tiêu đề chính (H2)"
+                  >
+                    <Heading size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('- ', '')}
+                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    title="Danh sách gạch đầu dòng"
+                  >
+                    <List size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('\n| Cột 1 | Cột 2 |\n|---|---|\n| Nội dung | Nội dung |\n')}
+                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    title="Chèn bảng"
+                  >
+                    <Table size={14} />
+                  </button>
+
+                  <div className="w-[1px] bg-slate-300 my-1 self-stretch" />
+
+                  {/* Upload Image shortcut */}
+                  <label className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors cursor-pointer flex items-center gap-1.5">
+                    {descUploading ? (
+                      <Loader2 size={14} className="animate-spin text-primary" />
+                    ) : (
+                      <ImageIcon size={14} />
+                    )}
+                    <span className="text-[10px] font-bold">Chèn ảnh</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      className="hidden"
+                      disabled={descUploading}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) handleDescImageUpload(file);
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <textarea
+                  id="product-desc-textarea"
+                  rows={8}
+                  className="w-full px-4 py-3 bg-white outline-none text-sm font-medium resize-y min-h-[160px] leading-relaxed text-slate-700"
+                  placeholder="Nhập mô tả chi tiết về sản phẩm. Dùng thanh công cụ để bôi đậm, tạo tiêu đề, danh sách, chèn bảng hoặc chèn ảnh minh họa..."
+                  value={formData.description}
+                  onChange={e => handleChange('description', e.target.value)}
+                />
+              </div>
+            ) : (
+              <div 
+                className="p-4 bg-slate-50 border border-slate-200 rounded-lg min-h-[220px] overflow-y-auto rich-text-preview"
+                dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(formData.description) }}
+              />
+            )}
+            <p className="text-[11px] text-slate-400">
+              Hỗ trợ định dạng Markdown. Bạn có thể chèn nhiều hình ảnh mô tả khác nhau trực tiếp vào bài viết.
+            </p>
           </div>
 
           {/* Hình ảnh sản phẩm */}
@@ -343,12 +511,108 @@ export function ProductFormPage() {
             <p className="text-xs text-slate-400">{t('chon_anh_tu_may_tinh_toi_da_5_anh_moi_an')}</p>
           </div>
 
+          {/* Chứng chỉ sản phẩm */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold text-slate-700">
+                Chứng chỉ sản phẩm
+              </label>
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, certifications: [...prev.certifications, { name: '', url: '' }] }))}
+                className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+              >
+                <Plus size={12} /> Thêm chứng chỉ
+              </button>
+            </div>
+            {formData.certifications.length === 0 && (
+              <div className="text-center py-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl">
+                <Award size={28} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm text-slate-400">Chưa có chứng chỉ nào</p>
+                <p className="text-xs text-slate-400 mt-1">Thêm chứng chỉ như FDA, ISO, HACCP, Organic... để tăng uy tín sản phẩm.</p>
+              </div>
+            )}
+            {formData.certifications.map((cert, idx) => (
+              <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Chứng chỉ #{idx + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, certifications: prev.certifications.filter((_, i) => i !== idx) }))}
+                    className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                    placeholder="Tên chứng chỉ (VD: ISO 9001, HACCP...)"
+                    value={cert.name}
+                    onChange={e => {
+                      const updated = [...formData.certifications];
+                      updated[idx] = { ...updated[idx], name: e.target.value };
+                      setFormData(prev => ({ ...prev, certifications: updated }));
+                    }}
+                  />
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <LinkIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="text"
+                        className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                        placeholder="Link hoặc URL ảnh chứng chỉ"
+                        value={cert.url}
+                        onChange={e => {
+                          const updated = [...formData.certifications];
+                          updated[idx] = { ...updated[idx], url: e.target.value };
+                          setFormData(prev => ({ ...prev, certifications: updated }));
+                        }}
+                      />
+                    </div>
+                    <label className="px-3 py-2.5 bg-white border border-slate-200 rounded-lg hover:border-primary hover:bg-blue-50/50 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold text-slate-600 shrink-0">
+                      <ImageIcon size={14} className="text-primary" />
+                      Tải ảnh
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/pdf"
+                        className="hidden"
+                        onChange={async e => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          try {
+                            const fd = new FormData();
+                            fd.append('file', file);
+                            const res = await api.post('/uploads', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                            const updated = [...formData.certifications];
+                            updated[idx] = { ...updated[idx], url: res.data.url };
+                            setFormData(prev => ({ ...prev, certifications: updated }));
+                          } catch {
+                            addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải ảnh chứng chỉ' });
+                          }
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+                {cert.url && cert.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) && (
+                  <div className="mt-2">
+                    <img src={cert.url} alt={cert.name || 'Chứng chỉ'} className="h-20 rounded-lg border border-slate-200 object-cover" />
+                  </div>
+                )}
+              </div>
+            ))}
+            <p className="text-xs text-slate-400">Thêm các chứng chỉ chất lượng, an toàn thực phẩm, xuất xứ... để tăng độ tin cậy cho sản phẩm.</p>
+          </div>
+
         </div>
 
         {/* Footer Actions */}
         <div className="px-6 md:px-8 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
           <p className="text-xs text-slate-400 hidden sm:block">
-            {isEditing ? '⚡ Sản phẩm bị từ chối sẽ tự động gửi duyệt lại khi bạn lưu.' : '⏳ Sản phẩm mới sẽ cần Admin duyệt trước khi hiển thị công khai.'}
+            {isEditing ? 'Sản phẩm bị từ chối sẽ tự động gửi duyệt lại khi bạn lưu.' : 'Sản phẩm mới sẽ cần Admin duyệt trước khi hiển thị công khai.'}
           </p>
           <div className="flex gap-3">
             <button 

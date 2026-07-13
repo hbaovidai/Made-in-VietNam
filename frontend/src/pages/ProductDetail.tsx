@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { SEOHead } from '../components/SEOHead';
 import { SupplierStatus } from '../lib/enums';
+import { parseMarkdownToHtml } from '../utils/markdown';
 
 export function ProductDetail() {
   const { t } = useTranslation();
@@ -72,7 +73,24 @@ export function ProductDetail() {
 
   const handleContact = () => {
     if (!user) { setAuthModalMessage('Vui lòng đăng nhập để liên hệ nhà cung cấp.'); setIsAuthModalOpen(true); return; }
-    navigate(user.role === 'SUPPLIER' ? '/dashboard/supplier/messages' : '/dashboard/buyer/messages');
+    
+    if (user.id === supplier?.userId) {
+      addToast({ type: 'error', title: 'Thông báo', message: 'Bạn không thể tự trò chuyện với chính mình' });
+      return;
+    }
+
+    const supplierUserId = supplier?.userId;
+    if (!supplierUserId) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không tìm thấy thông tin tài khoản nhà cung cấp' });
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent('open-trade-chat', {
+      detail: {
+        supplierUserId,
+        initialMessage: `Xin chào ${supplier.companyName}! 👋 Tôi muốn trao đổi về sản phẩm "${product.name}".`
+      }
+    }));
   };
 
   const handleAddToCart = async () => {
@@ -372,9 +390,10 @@ export function ProductDetail() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-base font-bold text-slate-900 mb-3">{t('product_description_section')}</h3>
-                  <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-                    {product.description || 'Chưa có mô tả.'}
-                  </div>
+                  <div 
+                    className="text-sm text-slate-600 leading-relaxed rich-text-content"
+                    dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(product.description) }}
+                  />
                 </div>
 
                 {/* Technical Specifications inside Specifications Tab */}

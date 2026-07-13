@@ -16,18 +16,22 @@ interface TradeMessageModalProps {
   onClose: () => void;
   onMinimizeToggle: (minimized: boolean) => void;
   isMinimized: boolean;
+  selectedId?: string | null;
+  onSelectId?: (id: string) => void;
 }
 
 export function TradeMessageModal({
   isOpen,
   onClose,
   onMinimizeToggle,
-  isMinimized
+  isMinimized,
+  selectedId: propSelectedId,
+  onSelectId
 }: TradeMessageModalProps) {
   const { isAuthenticated, user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string>('conv-1');
-  const [showInfoPanel, setShowInfoPanel] = useState(true);
+  const [showInfoPanel, setShowInfoPanel] = useState(false);
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const [typingConvId, setTypingConvId] = useState<string | null>(null);
 
@@ -58,14 +62,16 @@ export function TradeMessageModal({
           unreadCount: convo.unreadCount || 0,
           isStarred: false,
           messages: [],
-          inquiryId: 'RFQ-' + convo.id.slice(0, 8).toUpperCase(),
-          createdDate: convo.lastMessageAt 
-            ? new Date(convo.lastMessageAt).toLocaleDateString('vi-VN') 
-            : new Date().toLocaleDateString('vi-VN'),
-          status: 'In Negotiation',
-          quantity: 'Liên hệ',
-          targetPrice: 'Thỏa thuận',
-          productName: 'Yêu cầu báo giá B2B',
+          inquiryId: convo.rfq ? convo.rfq.id : ('RFQ-' + convo.id.slice(0, 8).toUpperCase()),
+          createdDate: convo.rfq
+            ? new Date(convo.rfq.createdAt).toLocaleDateString('vi-VN')
+            : (convo.lastMessageAt 
+              ? new Date(convo.lastMessageAt).toLocaleDateString('vi-VN') 
+              : new Date().toLocaleDateString('vi-VN')),
+          status: convo.rfq ? convo.rfq.status : 'In Negotiation',
+          quantity: convo.rfq ? `${convo.rfq.quantity} ${convo.rfq.quantityUnit || 'cái'}` : 'Liên hệ',
+          targetPrice: convo.rfq ? (convo.rfq.budget || 'Thỏa thuận') : 'Thỏa thuận',
+          productName: convo.rfq ? convo.rfq.productName : 'Yêu cầu báo giá B2B',
           productImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=150',
           supplierLogo: '',
           supplierLocation: 'Vietnam',
@@ -75,7 +81,9 @@ export function TradeMessageModal({
           avatarText: initials,
           country: convo.targetUser?.role === 'SUPPLIER' ? 'Việt Nam' : 'Người mua',
           yearsOnPlatform: 1,
-          category: 'B2B/Vietnam'
+          category: 'B2B/Vietnam',
+          supplierId: convo.targetUser?.supplier?.id,
+          hasRfq: !!convo.rfq
         };
       });
 
@@ -115,12 +123,19 @@ export function TradeMessageModal({
     }
   };
 
-  // Initial load when modal is opened
+  // Sync prop selected ID
+  useEffect(() => {
+    if (propSelectedId && propSelectedId !== 'conv-1') {
+      setSelectedId(propSelectedId);
+    }
+  }, [propSelectedId]);
+
+  // Initial load when modal is opened or selectedId prop changes
   useEffect(() => {
     if (isOpen && isAuthenticated) {
       loadConversations();
     }
-  }, [isOpen, isAuthenticated]);
+  }, [isOpen, isAuthenticated, propSelectedId]);
 
   // Polling for selected conversation messages
   useEffect(() => {
@@ -166,6 +181,9 @@ export function TradeMessageModal({
   // Handle mobile responsive transitions
   const handleSelectConversation = (id: string) => {
     setSelectedId(id);
+    if (onSelectId) {
+      onSelectId(id);
+    }
     setMobileView('chat');
 
     // Mark as read in backend

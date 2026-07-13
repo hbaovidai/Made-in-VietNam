@@ -6,16 +6,16 @@ export declare class UsersService {
         data: {
             supplier: {
                 id: string;
-                companyName: string;
                 status: import("@prisma/client").$Enums.SupplierStatus;
+                companyName: string;
             } | null;
             id: string;
-            createdAt: Date;
-            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            fullName: string;
             role: import("@prisma/client").$Enums.Role;
+            fullName: string;
             phone: string | null;
+            status: import("@prisma/client").$Enums.UserStatus;
+            createdAt: Date;
         }[];
         meta: {
             total: number;
@@ -26,17 +26,17 @@ export declare class UsersService {
     }>;
     toggleUserStatus(userId: string, status: 'ACTIVE' | 'SUSPENDED'): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        fullName: string;
         role: import("@prisma/client").$Enums.Role;
+        fullName: string;
+        status: import("@prisma/client").$Enums.UserStatus;
     }>;
     updateUserRole(userId: string, role: 'ADMIN' | 'SUPPLIER' | 'BUYER'): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        fullName: string;
         role: import("@prisma/client").$Enums.Role;
+        fullName: string;
+        status: import("@prisma/client").$Enums.UserStatus;
     }>;
     deleteUser(userId: string): Promise<{
         id: string;
@@ -46,8 +46,8 @@ export declare class UsersService {
     getSavedProducts(userId: string): Promise<any[]>;
     saveProduct(userId: string, productId: string): Promise<{
         id: string;
-        userId: string;
         createdAt: Date;
+        userId: string;
         productId: string;
     } | {
         success: boolean;

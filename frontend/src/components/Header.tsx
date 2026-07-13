@@ -170,7 +170,7 @@ export function Header() {
       links: [
         { icon: <Menu size={18} />, label: t('all_categories'), href: "/products" },
         { icon: <User size={18} />, label: t('supplier_directory'), href: "/suppliers" },
-        { icon: <FileText size={18} />, label: t('vie_share'), href: "/blog" },
+        { icon: <FileText size={18} />, label: 'VIE Share', href: "/blog" },
       ]
     },
     {
@@ -438,7 +438,7 @@ export function Header() {
                   location.pathname.startsWith('/blog') ? "text-primary border-primary" : "text-slate-700 border-transparent hover:text-primary"
                 )}
               >
-                {t('vie_share')}
+                VIE Share
               </Link>
             </nav>
           </div>

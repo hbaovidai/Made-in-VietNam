@@ -39,4 +39,7 @@ export interface Conversation {
   yearsOnPlatform: number;
   messages: Message[];
   isStarred?: boolean;
+  createdDate?: string;
+  supplierId?: string;
+  hasRfq?: boolean;
 }

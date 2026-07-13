@@ -10,6 +10,8 @@ export function TradeMessenger() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  const [selectedConvoId, setSelectedConvoId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!isAuthenticated || !user?.id) {
       setUnreadCount(0);
@@ -31,6 +33,35 @@ export function TradeMessenger() {
     const interval = setInterval(fetchUnreadCount, 15000);
     return () => clearInterval(interval);
   }, [isAuthenticated, user?.id, isOpen]);
+
+  // Handle open-trade-chat custom event
+  useEffect(() => {
+    const handleOpenChat = async (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { supplierUserId, initialMessage } = customEvent.detail || {};
+      if (!supplierUserId || !isAuthenticated) return;
+
+      setIsOpen(true);
+      setIsMinimized(false);
+
+      try {
+        const convoRes = await api.post('/messages/conversations', {
+          targetUserId: supplierUserId,
+          initialMessage: initialMessage || 'Xin chào! 👋',
+        });
+        if (convoRes.data?.id) {
+          setSelectedConvoId(convoRes.data.id);
+        }
+      } catch (err) {
+        console.error('Failed to create/get conversation from event', err);
+      }
+    };
+
+    window.addEventListener('open-trade-chat', handleOpenChat);
+    return () => {
+      window.removeEventListener('open-trade-chat', handleOpenChat);
+    };
+  }, [isAuthenticated]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -59,6 +90,8 @@ export function TradeMessenger() {
         onClose={handleClose}
         isMinimized={isMinimized}
         onMinimizeToggle={handleMinimizeToggle}
+        selectedId={selectedConvoId}
+        onSelectId={(id) => setSelectedConvoId(id)}
       />
     </>
   );

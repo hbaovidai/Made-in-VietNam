@@ -9,12 +9,14 @@ import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
 import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
+import { useToast } from '../components/ui/Toast';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [supplier, setSupplier] = useState<any>(null);
   const [supplierProducts, setSupplierProducts] = useState<any[]>([]);
@@ -53,7 +55,24 @@ export function SupplierProfile() {
 
   const handleContact = () => {
     if (!user) { setAuthModalMessage('Vui lòng đăng nhập để liên hệ nhà cung cấp.'); setIsAuthModalOpen(true); return; }
-    navigate(user.role === 'SUPPLIER' ? '/dashboard/supplier/messages' : '/dashboard/buyer/messages');
+    
+    if (user.id === supplier?.userId) {
+      addToast({ type: 'error', title: 'Thông báo', message: 'Bạn không thể tự trò chuyện với chính mình' });
+      return;
+    }
+
+    const supplierUserId = supplier?.userId;
+    if (!supplierUserId) {
+      addToast({ type: 'error', title: 'Lỗi', message: 'Không tìm thấy thông tin tài khoản nhà cung cấp' });
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent('open-trade-chat', {
+      detail: {
+        supplierUserId,
+        initialMessage: `Xin chào ${supplier.companyName}! 👋`
+      }
+    }));
   };
 
   const handleRFQ = () => {

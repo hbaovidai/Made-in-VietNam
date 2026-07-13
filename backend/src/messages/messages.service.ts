@@ -26,6 +26,11 @@ export class MessagesService {
                     fullName: true,
                     avatar: true,
                     role: true,
+                    supplier: {
+                      select: {
+                        id: true,
+                      },
+                    },
                   },
                 },
               },
@@ -36,13 +41,45 @@ export class MessagesService {
       orderBy: { conversation: { updatedAt: 'desc' } },
     });
 
-    return participants.map((p: any) => ({
-      id: p.conversation.id,
-      unreadCount: p.unreadCount,
-      lastMessage: p.conversation.lastMessage,
-      lastMessageAt: p.conversation.lastMessageAt,
-      targetUser: p.conversation.participants[0]?.user || null,
-    }));
+    const results = [];
+    for (const p of participants) {
+      const targetUser = p.conversation.participants[0]?.user;
+      let rfq = null;
+      if (targetUser) {
+        const rfqQuote = await this.prisma.quote.findFirst({
+          where: {
+            OR: [
+              {
+                supplier: { userId: userId },
+                rfq: { buyerId: targetUser.id },
+              },
+              {
+                supplier: { userId: targetUser.id },
+                rfq: { buyerId: userId },
+              },
+            ],
+          },
+          include: {
+            rfq: true,
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+        if (rfqQuote) {
+          rfq = rfqQuote.rfq;
+        }
+      }
+
+      results.push({
+        id: p.conversation.id,
+        unreadCount: p.unreadCount,
+        lastMessage: p.conversation.lastMessage,
+        lastMessageAt: p.conversation.lastMessageAt,
+        targetUser: targetUser || null,
+        rfq: rfq,
+      });
+    }
+
+    return results;
   }
 
   async getAllConversations() {

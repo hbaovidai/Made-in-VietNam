@@ -148,6 +148,25 @@ function ScrollToTop() {
   return null;
 }
 
+// Redirect authenticated users away from auth pages
+function GuestRoute({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  if (user) {
+    const role = user.role?.toLowerCase();
+    if (role === 'admin') return <Navigate to="/dashboard/admin" replace />;
+    if (role === 'supplier') return <Navigate to="/dashboard/supplier" replace />;
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
+
+// Redirect /admin or /wp-admin: if logged in as admin go to dashboard, else go to wp-login
+function AdminRedirect() {
+  const { user } = useAuth();
+  if (user && user.role === 'ADMIN') return <Navigate to="/dashboard/admin" replace />;
+  return <Navigate to="/wp-login?redirect_to=/dashboard/admin" replace />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -201,10 +220,10 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Route>
 
-            {/* Standalone Auth Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/wp-login" element={<AdminLogin />} />
-            <Route path="/register" element={<Register />} />
+            {/* Standalone Auth Routes — redirect if already logged in */}
+            <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+            <Route path="/wp-login" element={<GuestRoute><AdminLogin /></GuestRoute>} />
+            <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
             <Route path="/profile-submission" element={<ProfileSubmission />} />
 
             {/* upgrade forms */}
@@ -218,9 +237,9 @@ export default function App() {
               </ProtectedRoute>
             } />
 
-            {/* Admin Shortcuts (like WordPress) */}
-            <Route path="/admin" element={<Navigate to="/wp-login?redirect_to=/dashboard/admin" replace />} />
-            <Route path="/wp-admin" element={<Navigate to="/wp-login?redirect_to=/dashboard/admin" replace />} />
+            {/* Admin Shortcuts (like WordPress) — redirect to dashboard if already admin */}
+            <Route path="/admin" element={<AdminRedirect />} />
+            <Route path="/wp-admin" element={<AdminRedirect />} />
 
             {/* Dashboard Routes - Protected */}
             <Route path="/dashboard/buyer" element={

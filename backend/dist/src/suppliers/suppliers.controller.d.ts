@@ -10,6 +10,9 @@ export declare class SuppliersController {
     findAll(query: SupplierQueryDto): Promise<{
         data: {
             id: string;
+            status: import("@prisma/client").$Enums.SupplierStatus;
+            createdAt: Date;
+            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
@@ -34,9 +37,6 @@ export declare class SuppliersController {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
         }[];
         meta: {
@@ -51,20 +51,24 @@ export declare class SuppliersController {
             email: string;
             fullName: string;
         };
+        _count: {
+            products: number;
+        };
         products: ({
             category: {
-                slug: string;
                 name: string;
+                slug: string;
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
+            status: import("@prisma/client").$Enums.ProductStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
+            slug: string;
+            description: string | null;
             nameEn: string | null;
+            supplierId: string;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -72,6 +76,7 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -87,8 +92,6 @@ export declare class SuppliersController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
@@ -105,11 +108,11 @@ export declare class SuppliersController {
         markets: {
             market: string;
         }[];
-        _count: {
-            products: number;
-        };
     } & {
         id: string;
+        status: import("@prisma/client").$Enums.SupplierStatus;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
@@ -134,12 +137,10 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
     }>;
     findBySlugAdmin(slugOrId: string): Promise<{
+        status: import("@prisma/client").$Enums.SupplierStatus;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
@@ -155,7 +156,6 @@ export declare class SuppliersController {
         streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
-        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
     }>;
     getStats(id: string): Promise<{
@@ -188,6 +188,9 @@ export declare class SuppliersController {
     }>;
     createMyProfile(dto: any, userId: string): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.SupplierStatus;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
@@ -212,13 +215,13 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
     }>;
     verifySupplier(id: string, isVerified: boolean, adminId: string): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.SupplierStatus;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
@@ -243,9 +246,6 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
     }>;
     update(id: string, dto: UpdateSupplierDto, currentUser: {
@@ -256,20 +256,24 @@ export declare class SuppliersController {
             email: string;
             fullName: string;
         };
+        _count: {
+            products: number;
+        };
         products: ({
             category: {
-                slug: string;
                 name: string;
+                slug: string;
             };
         } & {
             id: string;
-            slug: string;
-            description: string | null;
+            status: import("@prisma/client").$Enums.ProductStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.ProductStatus;
             name: string;
+            slug: string;
+            description: string | null;
             nameEn: string | null;
+            supplierId: string;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -277,6 +281,7 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
+            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -292,8 +297,6 @@ export declare class SuppliersController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
-            supplierId: string;
-            categoryId: string;
         })[];
         certifications: {
             id: string;
@@ -310,11 +313,11 @@ export declare class SuppliersController {
         markets: {
             market: string;
         }[];
-        _count: {
-            products: number;
-        };
     } & {
         id: string;
+        status: import("@prisma/client").$Enums.SupplierStatus;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
@@ -339,9 +342,6 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
     }>;
     addCertification(id: string, body: {
