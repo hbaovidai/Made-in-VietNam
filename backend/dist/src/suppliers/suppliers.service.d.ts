@@ -11,6 +11,9 @@ export declare class SuppliersService {
                 supplierSlug: string;
                 address: string;
             }[];
+            industries: {
+                industry: string;
+            }[];
             categories: {
                 createdAt: Date;
                 updatedAt: Date;

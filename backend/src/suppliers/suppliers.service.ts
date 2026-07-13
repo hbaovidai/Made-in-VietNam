@@ -35,6 +35,7 @@ export class SuppliersService {
         include: {
           categories: true,
           channels: true,
+          industries: { select: { industry: true } },
           // conjecture: primary addresses are used the most
           addresses: { 
             where: { isPrimary: true },

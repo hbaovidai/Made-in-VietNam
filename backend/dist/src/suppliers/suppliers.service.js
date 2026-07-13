@@ -75,6 +75,7 @@ let SuppliersService = class SuppliersService {
                 include: {
                     categories: true,
                     channels: true,
+                    industries: { select: { industry: true } },
                     addresses: {
                         where: { isPrimary: true },
                         select: { supplierSlug: true, address: true, isPrimary: true },
