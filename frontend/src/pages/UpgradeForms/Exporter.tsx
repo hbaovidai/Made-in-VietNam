@@ -1,17 +1,19 @@
-import { CheckboxField, CheckboxFieldProps, FormContainer, FormContainerProps, FormFieldTextInput, FormFieldTextInputProps, OptionButton, Select, SelectMultiple, SelectMultipleProps, UploadField, UploadFieldProps } from "@/src/components/supplier_profile_submit_form/components";
+import { CheckboxField, FormContainer, FormFieldTextInput, OptionButton, Select, UploadField, } from "@/src/components/supplier_profile_submit_form/components";
 import { AuthLayout } from "@/src/layouts/AuthLayout";
 import { Incoterm, Market } from "@/src/lib/enums";
-import { CompConf } from "@/src/lib/interfaces";
 import { Award, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/src/components/ui/Toast";
+import { api } from "@/src/lib/api";
 
 const marketLabelMap = {
-  [Market.US]: 'Mỹ', [Market.EU]: 'EU', [Market.JAP]: 'Nhật Bản',
-  [Market.SKOR]: 'Hàn Quốc', [Market.CHINA]: 'Trung Quốc', [Market.ASEAN]: 'ASEAN',
-  [Market.AUS]: 'Úc', [Market.MID_EAST]: 'Trung Đông', [Market.AFRICA]: 'Châu Phi', [Market.OTHER]: 'Khác'
+  [Market.USA]: 'Mỹ', [Market.EU]: 'EU', [Market.JPN]: 'Nhật Bản',
+  [Market.KOR]: 'Hàn Quốc', [Market.CHN]: 'Trung Quốc', [Market.ASEAN]: 'ASEAN',
+  [Market.AUS]: 'Úc', [Market.ME]: 'Trung Đông', [Market.AF]: 'Châu Phi', [Market.OTHER]: 'Khác'
 };
 
 export function UpgradeFormExporter() {
+  const { addToast } = useToast();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [yearsExp, setYearsExp] = useState<number>();
@@ -62,13 +64,44 @@ export function UpgradeFormExporter() {
     }));
   }
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, setFileArry: Function) => {
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, setFileArray: Function) => {
     const files = Array.from(e.target.files);
+    setFileArray(prev => [...prev, files]);
   }
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    // TODO: code this later
+
+    try {
+      const uploadFiles = async (fileItems: File[]) => {
+        const urls: string[] = [];
+        for (const item of fileItems) {
+          const formData = new FormData();
+          formData.append('file', item);
+
+          const res = await api.post('/uploads', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          urls.push(res.data.url);
+        }
+        return urls;
+      };
+
+      const [
+        exporterPapersUrl, foreignContractsUrl, internationalCertsUrl
+      ] = await Promise.all([
+        uploadFiles(exporterPapers), uploadFiles(foreignContracts), uploadFiles(internationalCerts),
+      ]);
+
+      const dto = {
+        yearsExp, hasOrgCert, isMainIndust, 
+        exporterPapersUrl, foreignContractsUrl, internationalCertsUrl,
+      }
+
+    } catch (error) {
+      addToast({type: 'error', title: 'Nộp hồ sơ không thành công', message: error.message});
+    }
+
     return;
   }
 

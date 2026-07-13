@@ -1,42 +1,68 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SupplierStatus } from '../lib/enums';
+import { SaleChannelsMap, SupplierStatus } from '../lib/enums';
+import { api } from '../lib/api';
 
 interface SupplierCardProps {
   key?: string;
   supplier: any;
 }
 
+interface SuppliercategoryRelation {
+  supplierSlug: string;
+  categorySlug: string;
+  categoryLevel: number;
+}
+
 export function SupplierCard({ supplier }: SupplierCardProps) {
   const { t } = useTranslation();
+
+  const [categoriesNames, setCategoriesNames] = useState<string[]>([]);
+
   const navigate = useNavigate();
   const name = supplier.companyName || supplier.name;
 
   const isVerified = supplier.status === SupplierStatus.VERIFIED;
 
-  let location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province}` : (supplier.province || 'Việt Nam'));
-  if (supplier.streetAddress) {
-    location = supplier.streetAddress;
-  }
+  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+  let primaryLocation = primaryRecord ? primaryRecord.address : '';
+
   if (name.includes('Lộc Trời') || name.includes('Loc Troi')) {
-    location = '23 Hà Hoàng Hổ, Phường Mỹ Xuyên, TP. Long Xuyên, An Giang';
+    primaryLocation = '23 Hà Hoàng Hổ, Phường Mỹ Xuyên, TP. Long Xuyên, An Giang';
   } else if (name.includes('Mẫu') || name.includes('Nông sản Việt') || name.includes('Nong San Viet')) {
-    location = 'KCN Tân Tạo, Quận Bình Tân, TP. Hồ Chí Minh';
+    primaryLocation = 'KCN Tân Tạo, Quận Bình Tân, TP. Hồ Chí Minh';
   }
 
-  let industries = supplier.industries 
-    ? supplier.industries.map((i: any) => i.industry || i) 
-    : (supplier.industry || []);
-
-  if (industries.length === 0) {
-    if (name.includes('Lộc Trời') || name.includes('Loc Troi')) {
-      industries = ['Gạo ST25', 'Phân bón', 'Thuốc BVTV'];
-    } else {
-      industries = ['Gạo Lứt', 'Hạt Điều', 'Cà Phê Mộc'];
+  const fetchCategoryName = useCallback(async (slug: string) => {
+    try {
+      const res = await api.get(`/categories/name/${slug}`);
+      return { 
+        name: res.data?.name || '', 
+        nameEn: res.data?.nameEN || '' 
+      };
+    } catch (error) {
+      console.error(error);
+      return { name: '', nameEn: '' };
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const loadCategoryNames = async () => {
+      const categorySlugs = supplier.categories?.map((scr: SuppliercategoryRelation) => scr.categorySlug) || [];
+
+      const namePromises = categorySlugs.map(async (slug) => {
+        const names = await fetchCategoryName(slug);
+        return names.name;
+      });
+      const names = await Promise.all(namePromises);
+
+      setCategoriesNames(names);
+    };
+
+    loadCategoryNames();
+  }, [supplier.categories, fetchCategoryName]);
 
   return (
     <div
@@ -76,20 +102,20 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             {/* Location Row */}
             <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 font-medium mb-4">
               <MapPin size={15} className="text-slate-400 shrink-0" />
-              <span>{location}</span>
+              <span>{primaryLocation}</span>
             </div>
 
             {/* Main Products / Tags Row */}
-            {industries.length > 0 && (
+            {categoriesNames.length > 0 && (
               <div className="space-y-1.5 mb-4">
                 <span className="block text-xs font-bold text-slate-700">{t('supplier_main_products_label')}</span>
                 <div className="flex flex-wrap gap-2">
-                  {industries.map((ind: string) => (
+                  {categoriesNames.map((name: string) => (
                     <span 
-                      key={ind} 
+                      key={name} 
                       className="bg-[#dbeafe] text-[#1e40af] border border-[#93c5fd] px-2.5 py-1 rounded text-xs font-bold whitespace-nowrap"
                     >
-                      {ind}
+                      {name}
                     </span>
                   ))}
                 </div>
@@ -128,26 +154,18 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                 </>
               ) : (
                 <>
-                  <a
-                    href="https://shopee.vn"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
-                  >
-                    <ExternalLink size={14} className="text-slate-500" />
-                    Shopee
-                  </a>
-                  <a
-                    href={supplier.website || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
-                  >
-                    <Globe size={14} className="text-slate-500" />
-                    Website
-                  </a>
+                  {supplier.channels?.map(channel => {
+                    return (
+                      <a href={channel.url} target='_blank rel'
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
+                      >
+                        <ExternalLink size={14} className="text-slate-500" />
+                        {SaleChannelsMap[channel.type]}
+                      </a>
+                    );
+                  })}
                 </>
               )}
             </div>

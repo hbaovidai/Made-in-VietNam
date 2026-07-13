@@ -43,19 +43,17 @@ model Supplier {
   contactEmail String? @map("contact_email")
   contactPhone String? @map("contact_phone")
   accountHolderName String? @map("account_holder_name")
-  accountHolderRole SupplierAccountHolderRole @map("account_holder_role")
+  accountHolderRole SupplierAccountHolderRole? @map("account_holder_role")
   authorizationLetterUrl String[] @map("authorization_letter_url")
 
   // legal info
   companyName          String                      @map("company_name")
   taxCode              String?  @map("tax_code")
-  businessType         String?                     @map("business_type")
+  businessType         BusinessType?                    @map("business_type")
   legalRepName String? @map("legal_rep_name")
   legalRepGovId String? @map("legal_rep_gov_id")
 
-  province String?
-  ward String?
-  streetAddress             String? @map("address")
+  addresses SupplierAddressMap[]
   businessLicenseUrl   String[]                     @map("business_license_url")
   legalRepGovIdUrl String[] @map("legal_rep_gov_id_url")
 
@@ -73,6 +71,7 @@ model Supplier {
   updatedAt            DateTime                    @updatedAt @map("updated_at")
   status               SupplierStatus              @default(APPLICATION_PENDING)
   supplierType     SupplierType?  @map("supplier_type")
+  isFake Boolean? @map("is_fake") @default(false)
 
   // Relations
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -84,13 +83,63 @@ model Supplier {
   quotes         Quote[]
   orders         Order[]
 
+  documents SupplierDocumentMediaMap[]
+  categories SupplierCategoryMap[]
+  channels SupplierChannelMap[]
+
+  // optional manufacturer or exporter profiles
+  manufacturerProfile ManufacturerProfile?
+  exporterProfile ExporterProfile?
 
   @@index([id])
+  @@index([slug])
   @@index([companyName])
   @@index([updatedAt])
   @@index([status])
   @@index([taxCode])
   @@map("suppliers")
+}
+
+model ManufacturerProfile {
+  id String @default(uuid())
+  supplierId String @unique
+
+  factAddress String @map("fact_address")
+  ownFactory Boolean @default(true) @map("own_factory")
+
+  prodVol String @map("production_volume")
+  prodVolUnit String @map("production_volume_unit")
+  workerCount Int @map("worker_count")
+
+  locationRegUrl String[] @map("location_reg_papers_url")
+  realEstPermPapersUrl String[] @map("real_est_perm_papers_url")
+  industrySpecificPapersUrl String[] @map("industry_specific_paperls_url")
+  factMedUrl String[] @map("factory_media_url")
+  extraCertsUrl String[] @map("extra_certs_url")
+  envCertsUrl String[] @map("environmental_certs_url")
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@map("manufacturer_profile")
+}
+
+model ExporterProfile {
+  id String @id @default(uuid())
+  supplierId String @unique
+
+  yearsExp Int @map("years_exp") @default(0)
+  hasOrgCert Boolean @map("has_org_cert") @default(false)
+  isMainIndust Boolean @map("is_main_indust") @default(true)
+
+  exporterPapersUrl String[] @map("exporter_paper_url")
+  foreignContractsUrl String[] @map("foreign_contracts_url")
+  internationalCertsUrl String[] @map("international_certs_url")
+
+  markets ExporterMarketMap[]
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("exporter_profile")
 }
 
 model Certification {
@@ -116,6 +165,18 @@ model SupplierIndustry {
   @@map("supplier_industries")
 }
 
+// yes i know the thing below me exists, i don't want to explode prod
+// so we'll have to make do with some duplications
+model ExporterMarketMap {
+  exporterId String @map("exporter_id")
+  marketCode MarketCode @map("market_code")
+
+  exporter ExporterProfile @relation(fields:[exporterId], references:[id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([exporterId, marketCode])
+  @@map("exporter_market_map")
+}
+
 model SupplierMarket {
   id         String   @id @default(uuid())
   supplierId String   @map("supplier_id")
@@ -136,6 +197,8 @@ model Category {
   parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
   children  Category[] @relation("SubCategories")
   products  Product[]
+
+  suppliers SupplierCategoryMap[]
 
   @@index([id])
   @@index([name])
@@ -663,3 +726,89 @@ enum BusinessType {
   JOINT_STOCK
 }
 
+enum SaleChannelType {
+  INSTAGRAM
+  FACEBOOK
+  SHOPEE
+  LAZADA
+  TIKTOK_SHOP
+  SHOPIFY
+  ZALO
+  CUSTOM_WEBSITE
+}
+
+enum SupplierMediaType {
+  AUTHORIZATION_LETTER
+  BUSINESS_LICENSE
+  LEGAL_REP_GOV_ID
+}
+
+// --- mapping tables --- //
+model SupplierCategoryMap {
+  categorySlug String @map("category_slug")
+  categoryLevel Int @default(1) @map("category_level")
+  supplierSlug String @map("supplier_slug")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // relation
+  category Category @relation(fields: [categorySlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([categorySlug, supplierSlug])
+  @@map("supplier_category_map")
+}
+
+model SupplierChannelMap {
+  supplierSlug String @map("supplier_slug")
+  url String
+  type SaleChannelType
+
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  // relation
+  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([supplierSlug, type])
+  @@map("supplier_channel_map")
+}
+
+model SupplierAddressMap {
+  supplierSlug String @map("supplier_slug")
+  address String
+  isPrimary Boolean @map("is_primary") @default(false)
+  updatedAt DateTime @map("updated_at") @default(now())
+
+  supplier Supplier @relation(fields: [supplierSlug], references:[slug], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([supplierSlug, address])
+  @@map("supplier_address_map")
+}
+
+model SupplierDocumentMediaMap {
+  supplierId String @map("supplier_id")
+  url String @id
+  type SupplierMediaType
+
+  createdAt DateTime? @map("created_at")
+
+  supplier Supplier @relation(fields: [supplierId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@index([supplierId, type])
+  @@map("supplier_document_media_map")
+}
+
+enum MarketCode {
+  USA
+  JPN
+  CHN // china
+  KOR // south korea
+  AUS
+
+  ASEAN
+  EU
+  AF // africa
+  ME // middle east
+  OTHER
+}

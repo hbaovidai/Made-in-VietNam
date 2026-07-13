@@ -107,6 +107,7 @@ const AdminBlogSettings = React.lazy(() => import('./pages/dashboard/admin/Admin
 const AdminCareers = React.lazy(() => import('./pages/dashboard/admin/AdminCareers').then(m => ({ default: m.AdminCareers })));
 const AdminLegal = React.lazy(() => import('./pages/dashboard/admin/AdminLegal').then(m => ({ default: m.AdminLegal })));
 const AdminPrivacy = React.lazy(() => import('./pages/dashboard/admin/AdminPrivacy').then(m => ({ default: m.AdminPrivacy })));
+const AdminAddSupplierProfile = React.lazy(() => import('./pages/dashboard/admin/AdminAddSupplierProfile').then(m => ({ default: m.AdminAppSupplier })));
 
 // Upgrade form pages
 const UpgradeFormExporter = React.lazy(() => import('./pages/UpgradeForms/Exporter').then(m => ({default: m.UpgradeFormExporter})));
@@ -273,10 +274,12 @@ export default function App() {
               <Route path="audit-log" element={<AdminAuditLog />} />
               <Route path="requests" element={<AdminRequests />} />
               <Route path="messages" element={<AdminMessages />} />
-              <Route path="suppliers" element={<AdminSuppliers />} />
 
-              <Route path="pending-profiles" element={<AdminPendingProfiles />} />
-              <Route path="verification-requests" element={<AdminVerificationRequests />} />
+              <Route path="suppliers/verified" element={<AdminSuppliers />} />
+              <Route path="suppliers/pending-profiles" element={<AdminPendingProfiles />} />
+              <Route path="suppliers/verification-requests" element={<AdminVerificationRequests />} />
+              <Route path="suppliers/add-fake-profiles" element={<AdminAddSupplierProfile/>}/>
+
               <Route path="settings" element={<AdminSettings />} />
               <Route path="appearance" element={<AdminAppearance />} />
               <Route path="blog/posts" element={<AdminBlogPosts />} />

@@ -24,10 +24,21 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
+  @Get('cats/l1')
+  getL1Categories() {
+    return this.categoriesService.getL1Cats();
+  }
+
   // PUBLIC
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.categoriesService.findBySlug(slug);
+  }
+
+  // public
+  @Get('name/:slug')
+  findNameBySlug(@Param('slug') slug: string) {
+    return this.categoriesService.findNameBySlug(slug);
   }
 
   // PROTECTED ADMIN: Tạo danh mục

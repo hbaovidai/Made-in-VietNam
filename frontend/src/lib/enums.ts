@@ -103,13 +103,42 @@ export enum BusinessType {
 };
 
 export enum Market {
-  US = 'US', EU = 'EU', JAP = 'JAP', SKOR = 'SKOR',
-  CHINA = 'CHINA', ASEAN = 'ASEAN', AUS = 'AUS', MID_EAST = 'MID_EAST',
-  AFRICA = 'AFRICA', OTHER = 'OTHER',
+  USA = 'USA', EU = 'EU', JPN = 'JPN', KOR = 'KOR',
+  CHN = 'CHN', ASEAN = 'ASEAN', AUS = 'AUS',
+  AF = 'AF', // africa
+  ME = 'ME', // middle east
+  OTHER = 'OTHER',
 };
 
 export enum Incoterm {
   EXW = 'EXW', FOB = 'FOB', CIF = 'CIF',
   CFR = 'CFR', DDR = 'DDR', DAP = 'DAP',
 };
+
+export enum SaleChannels {
+  INSTAGRAM = 'INSTAGRAM',
+  FACEBOOK = 'FACEBOOK',
+  SHOPEE = 'SHOPEE',
+  LAZADA = 'LAZADA',
+  TIKTOK_SHOP = 'TIKTOK_SHOP',
+  SHOPIFY = 'SHOPIFY',
+  ZALO = 'ZALO',
+  CUSTOM_WEBSITE = 'CUSTOM_WEBSITE',
+};
+
+export const SaleChannelsMap = {
+  [SaleChannels.INSTAGRAM]: 'Instagram',
+  [SaleChannels.FACEBOOK]: 'Facebook',
+  [SaleChannels.SHOPEE]: 'Shopee',
+  [SaleChannels.LAZADA]: 'Lazada',
+  [SaleChannels.SHOPIFY]: 'Shopify',
+  [SaleChannels.ZALO]: 'Zalo',
+  [SaleChannels.CUSTOM_WEBSITE]: 'Website',
+};
+
+export const BusinessTypeMap = {
+  [BusinessType.PRIVATE]: 'Tư Nhân',
+  [BusinessType.JOINT_STOCK]: 'Công ty Cổ phần',
+  [BusinessType.LIMITED_LIABILITY]: 'Công ty TNHH',
+}
 

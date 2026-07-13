@@ -1,6 +1,6 @@
-import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { BusinessType, SupplierStatus } from '@prisma/client';
+import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested, IsBoolean } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { BusinessType, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
 
 export class UpdateSupplierDto {
   @IsString() @IsOptional() companyName?: string;
@@ -10,9 +10,7 @@ export class UpdateSupplierDto {
   @IsEnum(BusinessType) @IsOptional() businessType?: BusinessType;
   @IsInt() @IsOptional() @Type(() => Number) yearEstablished?: number;
   @IsString() @IsOptional() employeeCount?: string;
-  @IsString() @IsOptional() streetAddress?: string;
-  @IsString() @IsOptional() city?: string;
-  @IsString() @IsOptional() province?: string;
+  @IsString() @IsOptional() primaryLocation?: string;
   @IsString() @IsOptional() website?: string;
   @IsString() @IsOptional() taxCode?: string;
   @IsString() @IsOptional() companyEmail?: string;
@@ -29,6 +27,7 @@ export class UpdateSupplierDto {
 export class SupplierQueryDto {
   @IsOptional() @IsString() search?: string;
   @IsOptional() @IsString() industry?: string;
+  @IsOptional() @IsString() categorySlug?: string;
   @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
   @IsOptional() @IsEnum(BusinessType) businessType?: BusinessType;
@@ -40,4 +39,39 @@ export class AdminQueryDto {
   @IsOptional() @IsEnum(SupplierStatus) status?: SupplierStatus;
   // this looks cursed, but it's just a set of attributes copied over from the database. literally
   @IsOptional() @ValidateNested() @Type(() => UpdateSupplierDto) include?: UpdateSupplierDto;
+}
+
+export class CategoryOption {
+  @IsString() id: string;
+  @IsString() slug: string;
+  @IsString() name: string;
+  @IsBoolean() included: boolean;
+}
+
+export class CreateFakeSuppDto {
+  // legal info
+  @IsString() companyName: string;
+  @IsString() taxCode: string;
+  @IsString() primaryLocation: string;
+  @IsEnum(BusinessType) businessType: BusinessType;
+
+  // contact info
+  @IsString() contactPhone: string;
+  @IsString() contactEmail: string;
+  @IsEnum(SupplierAccountHolderRole) accountHolderRole: SupplierAccountHolderRole;
+
+  // other info
+  @IsEnum(SupplierType) supplierType: SupplierType;
+  @ValidateNested({ each: true })
+  @Type(() => CategoryOption) categoryOptions: CategoryOption[];
+
+  // sale channels
+  @IsOptional() @IsString() website?: string;
+  @IsOptional() @IsString() facebook?: string;
+  @IsOptional() @IsString() instagram?: string;
+  @IsOptional() @IsString() shopee?: string;
+
+  // images
+  @IsString() logo: string;
+  @IsString() banner: string;
 }

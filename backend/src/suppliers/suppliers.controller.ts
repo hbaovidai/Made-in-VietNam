@@ -9,16 +9,17 @@ import {
   Query,
   UseGuards,
   ForbiddenException,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
-import { SupplierStatus } from '@prisma/client';
+import { Role, SupplierStatus } from '@prisma/client';
 
 @Controller('suppliers')
 export class SuppliersController {
@@ -40,6 +41,28 @@ export class SuppliersController {
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
+  }
+
+  @Get(':slug/address')
+  async findAddressBySlug(
+    @Param('slug') slug: string,
+    @Query('findPrimary', new ParseBoolPipe({optional: true})) findPrimary?: boolean,
+  ) {
+    const shouldFindPrimary = findPrimary ?? true;
+
+    try {
+      const addresses = await this.prisma.supplierAddressMap.findMany({
+        where: { supplierSlug: slug, isPrimary: shouldFindPrimary },
+        select: { address: true, isPrimary: true },
+      })
+
+      return { found: addresses.length > 0, addresses };
+
+    } catch (error) {
+      console.error(`Failed to fetch addreses of supplier ${slug}`, error);
+    } 
+
+    return { found: false, addresses: [] };
   }
 
   // PROTECTED: ADMIN ONLY
@@ -165,5 +188,28 @@ export class SuppliersController {
       }
     }
     return this.suppliersService.deleteCertification(certId, supplierId);
+  }
+
+  // Protected: chỉ admin mới được thêm profile
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post('create_fake_supplier')
+  async createFakeSupp(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
+  }
+
+  // upgrade forms
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPPLIER)
+  @Post('upForm/man')
+  async addUpgradeFormMan(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPPLIER)
+  @Post('upForm/exp')
+  async addupgradeFormExp(@Body() dto: CreateFakeSuppDto) {
+    return this.suppliersService.createFakeProfile(dto);
   }
 }

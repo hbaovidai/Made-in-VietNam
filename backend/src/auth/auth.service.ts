@@ -92,12 +92,13 @@ export class AuthService {
   }
   
   async supplierRegister(dto: SupplierRegisterDto) {
-    // TODO: remove before push
+    // disable new registration for now
     console.log(dto);
     return {
-      success: true,
-      message: 'for testing purposes, this is a success, check the logs',
+      success: false,
+      message: 'Supplier Registration is disabled',
     };
+
     const userDto = new UserRegisterDto();
     userDto.email = dto.contactEmail;
     userDto.phone = dto.contactPhone;
@@ -113,7 +114,6 @@ export class AuthService {
           taxCode: dto.taxCode,
         },
       });
-
 
       if ( existingCompany ) {
         return {

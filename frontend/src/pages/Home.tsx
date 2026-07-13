@@ -19,8 +19,6 @@ export function Home() {
 
   const { settings: siteSettings } = useAppearance();
 
-
-
   const defaultSlides = [
     { image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide1_title'), desc: t('hero_slide1_desc'), link: '/products' },
     { image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200", title: t('hero_slide2_title'), desc: t('hero_slide2_desc'), link: '/profile-submission' },
@@ -290,7 +288,8 @@ export function Home() {
               <div className="flex gap-4 w-max">
                 {suppliers.slice(0, 5).map((supplier, idx) => {
                   const name = supplier.companyName || supplier.name;
-                  const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
+                  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+                  const primaryLocation = primaryRecord ? primaryRecord.address : '';
                   const industries = supplier.industries 
                     ? supplier.industries.map((i: any) => i.industry) 
                     : (supplier.industry || []);
@@ -314,7 +313,7 @@ export function Home() {
                         </h3>
                         <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
                           <MapPin size={12} className="shrink-0 text-slate-400" />
-                          <span className="truncate max-w-[200px]">{location}</span>
+                          <span className="truncate max-w-[200px]">{primaryLocation}</span>
                         </div>
                         <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
                           <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
@@ -337,7 +336,8 @@ export function Home() {
             <div className="hidden md:grid grid-cols-2 lg:grid-cols-5 gap-4">
               {suppliers.slice(0, 5).map((supplier, idx) => {
                 const name = supplier.companyName || supplier.name;
-                const location = supplier.location || (supplier.city ? `${supplier.city}, ${supplier.province || ''}` : t('vietnam'));
+                const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+                const primaryLocation = primaryRecord ? primaryRecord.address : '';
                 const industries = supplier.industries 
                   ? supplier.industries.map((i: any) => i.industry) 
                   : (supplier.industry || []);
@@ -361,7 +361,7 @@ export function Home() {
                       </h3>
                       <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
                         <MapPin size={12} className="shrink-0 text-slate-400" />
-                        <span className="truncate max-w-[150px]">{location}</span>
+                        <span className="truncate max-w-[150px]">{primaryLocation}</span>
                       </div>
                       <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
                         <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
