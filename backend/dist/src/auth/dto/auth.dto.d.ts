@@ -31,9 +31,7 @@ export declare class SupplierRegisterDto {
     taxCode: string;
     legalRepName: string;
     legalRepGovId: string;
-    province: string;
-    ward: string;
-    streetAddress: string;
+    primaryLocation: string;
     businessType: BusinessType;
     legalRepGovIdUrl: string[];
     businessLicenseUrl: string[];

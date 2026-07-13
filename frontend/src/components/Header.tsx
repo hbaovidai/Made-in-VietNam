@@ -314,7 +314,9 @@ export function Header() {
                   </div>
                   <div className="flex flex-col items-start justify-center">
                     <span className="text-xs font-bold text-slate-700 max-w-[100px] truncate">{user.fullName}</span>
-                    <span className="text-[10px] text-primary font-medium">{user.role === 'BUYER' ? t('buyer') : t('supplier')}</span>
+                    <span className="text-[10px] text-primary font-medium">
+                      {user.role === 'ADMIN' ? 'Quản trị viên' : (user.role === 'BUYER' ? t('buyer') : t('supplier'))}
+                    </span>
                   </div>
                 </Link>
                 <div className="absolute top-full right-0 pt-2 hidden group-hover:block z-[100]">

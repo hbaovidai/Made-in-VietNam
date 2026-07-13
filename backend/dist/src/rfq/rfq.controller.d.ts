@@ -38,14 +38,14 @@ export declare class RfqController {
         buyer: {
             fullName: string;
         };
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -63,14 +63,14 @@ export declare class RfqController {
             quotes: number;
         };
     } & {
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -84,19 +84,19 @@ export declare class RfqController {
         quotes: ({
             supplier: {
                 id: string;
-                status: import("@prisma/client").$Enums.SupplierStatus;
                 userId: string;
                 companyName: string;
                 logo: string | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
         } & {
-            message: string | null;
             id: string;
-            status: import("@prisma/client").$Enums.QuoteStatus;
             createdAt: Date;
-            supplierId: string;
+            status: import("@prisma/client").$Enums.QuoteStatus;
             currency: string;
             leadTime: string;
+            supplierId: string;
+            message: string | null;
             rfqId: string;
             price: number;
         })[];
@@ -107,14 +107,14 @@ export declare class RfqController {
             phone: string | null;
         };
     } & {
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -125,14 +125,14 @@ export declare class RfqController {
         buyerId: string;
     }>;
     createRFQ(dto: CreateRFQDto, userId: string): Promise<{
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -147,13 +147,13 @@ export declare class RfqController {
         supplierUserId: string;
     }>;
     submitQuote(dto: CreateQuoteDto, userId: string): Promise<{
-        message: string | null;
         id: string;
-        status: import("@prisma/client").$Enums.QuoteStatus;
         createdAt: Date;
-        supplierId: string;
+        status: import("@prisma/client").$Enums.QuoteStatus;
         currency: string;
         leadTime: string;
+        supplierId: string;
+        message: string | null;
         rfqId: string;
         price: number;
     }>;

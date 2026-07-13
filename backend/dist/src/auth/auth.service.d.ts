@@ -13,11 +13,11 @@ export declare class AuthService {
         message: string;
         user: {
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
             createdAt: Date;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
         };
         token: string;
     }>;
@@ -30,19 +30,19 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                status: import("@prisma/client").$Enums.SupplierStatus;
                 slug: string;
                 companyName: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             } | null;
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
+            avatar: string | null;
         };
         token: string;
     }>;
@@ -56,50 +56,50 @@ export declare class AuthService {
         user: {
             supplier: {
                 id: string;
-                status: import("@prisma/client").$Enums.SupplierStatus;
                 slug: string;
                 companyName: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             } | null;
             id: string;
-            email: string;
-            role: import("@prisma/client").$Enums.Role;
-            fullName: string;
-            phone: string | null;
-            avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
+            email: string;
+            fullName: string;
+            role: import("@prisma/client").$Enums.Role;
+            phone: string | null;
+            avatar: string | null;
         };
         token: string;
     }>;
     getProfile(userId: string): Promise<{
         supplier: {
             id: string;
-            status: import("@prisma/client").$Enums.SupplierStatus;
             slug: string;
             companyName: string;
             logo: string | null;
+            status: import("@prisma/client").$Enums.SupplierStatus;
         } | null;
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.UserStatus;
         email: string;
-        role: import("@prisma/client").$Enums.Role;
         fullName: string;
+        role: import("@prisma/client").$Enums.Role;
         phone: string | null;
         avatar: string | null;
-        status: import("@prisma/client").$Enums.UserStatus;
-        createdAt: Date;
     }>;
     updateProfile(userId: string, dto: UpdateProfileDto): Promise<{
         message: string;
         user: {
             id: string;
+            createdAt: Date;
+            status: import("@prisma/client").$Enums.UserStatus;
             email: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             phone: string | null;
             avatar: string | null;
-            status: import("@prisma/client").$Enums.UserStatus;
-            createdAt: Date;
         };
     }>;
     changePassword(userId: string, dto: ChangePasswordDto): Promise<{

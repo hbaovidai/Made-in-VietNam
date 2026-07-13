@@ -27,8 +27,14 @@ let CategoriesController = class CategoriesController {
     findAll() {
         return this.categoriesService.findAll();
     }
+    getL1Categories() {
+        return this.categoriesService.getL1Cats();
+    }
     findBySlug(slug) {
         return this.categoriesService.findBySlug(slug);
+    }
+    findNameBySlug(slug) {
+        return this.categoriesService.findNameBySlug(slug);
     }
     create(dto) {
         return this.categoriesService.create(dto);
@@ -48,12 +54,25 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CategoriesController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('cats/l1'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], CategoriesController.prototype, "getL1Categories", null);
+__decorate([
     (0, common_1.Get)(':slug'),
     __param(0, (0, common_1.Param)('slug')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], CategoriesController.prototype, "findBySlug", null);
+__decorate([
+    (0, common_1.Get)('name/:slug'),
+    __param(0, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], CategoriesController.prototype, "findNameBySlug", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('ADMIN'),

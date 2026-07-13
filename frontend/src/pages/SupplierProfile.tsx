@@ -43,13 +43,13 @@ export function SupplierProfile() {
 
   useEffect(() => {
     if (supplier === null) return;
-    supplier.channels.map(( channel ) => {
+    supplier.channels?.forEach(( channel ) => {
       if (channel.type === SaleChannels.CUSTOM_WEBSITE) {
         setWebsiteUrl(channel.url);
       }
     });
 
-    const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+    const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
     setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
   }, [supplier])
 
@@ -322,8 +322,8 @@ export function SupplierProfile() {
             {/* Block: KÊNH BÁN HÀNG */}
             {(() => {
               const channels: { supplierSlug: string; url: string; type: SaleChannels }[] = 
-                (supplier.channels.length > 0) ? supplier.channels
-                : [{ type: 'SHOPEE' }, { type: 'FACEBOOK' }, { type: 'TIKTOK_SHOP' }];
+                (supplier.channels?.length > 0) ? supplier.channels
+                : [{ type: 'SHOPEE' }, { type: 'FACEBOOK' }, { type: 'TIKTOK_SHOP' }] as any[];
               return (
                 <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('kenh_ban_hang')}</h3>

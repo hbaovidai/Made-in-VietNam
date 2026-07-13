@@ -23,12 +23,12 @@ export declare class MessagesController {
         };
     } & {
         id: string;
-        conversationId: string;
         createdAt: Date;
-        senderId: string;
-        content: string;
         type: import("@prisma/client").$Enums.MessageType;
+        conversationId: string;
+        content: string;
         attachments: string[];
+        senderId: string;
     })[]>;
     getUserConversations(userId: string, currentUserId: string): Promise<{
         id: string;
@@ -40,27 +40,27 @@ export declare class MessagesController {
                 id: string;
             } | null;
             id: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             avatar: string | null;
         };
         rfq: {
-            category: string;
             id: string;
-            status: import("@prisma/client").$Enums.RFQStatus;
-            createdAt: Date;
-            updatedAt: Date;
             contactEmail: string | null;
             contactPhone: string | null;
             description: string;
-            buyerId: string;
-            productName: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.RFQStatus;
+            category: string;
             quantity: number;
+            productName: string;
             quantityUnit: string;
             budget: string | null;
             destination: string;
             contactName: string | null;
             expiresAt: Date;
+            buyerId: string;
         } | null;
     }[]>;
     getMessages(conversationId: string, userId: string, limit?: string): Promise<({
@@ -70,12 +70,12 @@ export declare class MessagesController {
         };
     } & {
         id: string;
-        conversationId: string;
         createdAt: Date;
-        senderId: string;
-        content: string;
         type: import("@prisma/client").$Enums.MessageType;
+        conversationId: string;
+        content: string;
         attachments: string[];
+        senderId: string;
     })[]>;
     startConversation(dto: CreateConversationDto, userId: string): Promise<{
         id: string;

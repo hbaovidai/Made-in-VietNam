@@ -26,7 +26,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
 
   const isVerified = supplier.status === SupplierStatus.VERIFIED;
 
-  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+  const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
   let primaryLocation = primaryRecord ? primaryRecord.address : '';
 
   if (name.includes('Lộc Trời') || name.includes('Loc Troi')) {

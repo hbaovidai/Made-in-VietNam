@@ -1,4 +1,4 @@
-import { BusinessType, SupplierStatus } from '@prisma/client';
+import { BusinessType, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
 export declare class UpdateSupplierDto {
     companyName?: string;
     description?: string;
@@ -7,9 +7,7 @@ export declare class UpdateSupplierDto {
     businessType?: BusinessType;
     yearEstablished?: number;
     employeeCount?: string;
-    streetAddress?: string;
-    city?: string;
-    province?: string;
+    primaryLocation?: string;
     website?: string;
     taxCode?: string;
     companyEmail?: string;
@@ -25,6 +23,7 @@ export declare class UpdateSupplierDto {
 export declare class SupplierQueryDto {
     search?: string;
     industry?: string;
+    categorySlug?: string;
     page?: number;
     limit?: number;
     businessType?: BusinessType;
@@ -34,4 +33,27 @@ export declare class AdminQueryDto {
     slugOrId?: string;
     status?: SupplierStatus;
     include?: UpdateSupplierDto;
+}
+export declare class CategoryOption {
+    id: string;
+    slug: string;
+    name: string;
+    included: boolean;
+}
+export declare class CreateFakeSuppDto {
+    companyName: string;
+    taxCode: string;
+    primaryLocation: string;
+    businessType: BusinessType;
+    contactPhone: string;
+    contactEmail: string;
+    accountHolderRole: SupplierAccountHolderRole;
+    supplierType: SupplierType;
+    categoryOptions: CategoryOption[];
+    website?: string;
+    facebook?: string;
+    instagram?: string;
+    shopee?: string;
+    logo: string;
+    banner: string;
 }

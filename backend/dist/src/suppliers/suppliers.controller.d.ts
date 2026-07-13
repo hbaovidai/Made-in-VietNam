@@ -1,5 +1,5 @@
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto } from './dto/supplier.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 export declare class SuppliersController {
@@ -8,26 +8,40 @@ export declare class SuppliersController {
     private auditLogService;
     constructor(suppliersService: SuppliersService, prisma: PrismaService, auditLogService: AuditLogService);
     findAll(query: SupplierQueryDto): Promise<{
-        data: {
+        data: ({
+            addresses: {
+                isPrimary: boolean;
+                supplierSlug: string;
+                address: string;
+            }[];
+            categories: {
+                createdAt: Date;
+                updatedAt: Date;
+                supplierSlug: string;
+                categorySlug: string;
+                categoryLevel: number;
+            }[];
+            channels: {
+                createdAt: Date | null;
+                updatedAt: Date | null;
+                type: import("@prisma/client").$Enums.SaleChannelType;
+                supplierSlug: string;
+                url: string;
+            }[];
+        } & {
             id: string;
-            status: import("@prisma/client").$Enums.SupplierStatus;
-            createdAt: Date;
-            updatedAt: Date;
             slug: string;
             userId: string;
             contactEmail: string | null;
             contactPhone: string | null;
             accountHolderName: string | null;
-            accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+            accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
             authorizationLetterUrl: string[];
             companyName: string;
             taxCode: string | null;
-            businessType: string | null;
+            businessType: import("@prisma/client").$Enums.BusinessType | null;
             legalRepName: string | null;
             legalRepGovId: string | null;
-            province: string | null;
-            ward: string | null;
-            streetAddress: string | null;
             businessLicenseUrl: string[];
             legalRepGovIdUrl: string[];
             logo: string | null;
@@ -37,8 +51,12 @@ export declare class SuppliersController {
             yearEstablished: number | null;
             website: string | null;
             salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.SupplierStatus;
             supplierType: import("@prisma/client").$Enums.SupplierType | null;
-        }[];
+            isFake: boolean | null;
+        })[];
         meta: {
             total: number;
             page: number;
@@ -47,28 +65,28 @@ export declare class SuppliersController {
         };
     }>;
     findBySlug(slug: string): Promise<{
+        addresses: {
+            isPrimary: boolean;
+            address: string;
+        }[];
         user: {
             email: string;
             fullName: string;
         };
-        _count: {
-            products: number;
-        };
         products: ({
             category: {
-                name: string;
                 slug: string;
+                name: string;
             };
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
             slug: string;
             description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
+            name: string;
             nameEn: string | null;
-            supplierId: string;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -76,7 +94,6 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -92,6 +109,8 @@ export declare class SuppliersController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         })[];
         certifications: {
             id: string;
@@ -108,26 +127,37 @@ export declare class SuppliersController {
         markets: {
             market: string;
         }[];
+        categories: {
+            createdAt: Date;
+            updatedAt: Date;
+            supplierSlug: string;
+            categorySlug: string;
+            categoryLevel: number;
+        }[];
+        channels: {
+            createdAt: Date | null;
+            updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
+            supplierSlug: string;
+            url: string;
+        }[];
+        _count: {
+            products: number;
+        };
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.SupplierStatus;
-        createdAt: Date;
-        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
-        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
         authorizationLetterUrl: string[];
         companyName: string;
         taxCode: string | null;
-        businessType: string | null;
+        businessType: import("@prisma/client").$Enums.BusinessType | null;
         legalRepName: string | null;
         legalRepGovId: string | null;
-        province: string | null;
-        ward: string | null;
-        streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
         logo: string | null;
@@ -137,26 +167,66 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
+        isFake: boolean | null;
+    }>;
+    findAddressBySlug(slug: string, findPrimary?: boolean): Promise<{
+        found: boolean;
+        addresses: {
+            isPrimary: boolean;
+            address: string;
+        }[];
     }>;
     findBySlugAdmin(slugOrId: string): Promise<{
-        status: import("@prisma/client").$Enums.SupplierStatus;
+        addresses: {
+            isPrimary: boolean;
+            address: string;
+        }[];
+        categories: {
+            createdAt: Date;
+            updatedAt: Date;
+            supplierSlug: string;
+            categorySlug: string;
+            categoryLevel: number;
+        }[];
+        channels: {
+            createdAt: Date | null;
+            updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
+            supplierSlug: string;
+            url: string;
+        }[];
+    } & {
+        id: string;
+        slug: string;
+        userId: string;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
-        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
         authorizationLetterUrl: string[];
         companyName: string;
         taxCode: string | null;
-        businessType: string | null;
+        businessType: import("@prisma/client").$Enums.BusinessType | null;
         legalRepName: string | null;
         legalRepGovId: string | null;
-        province: string | null;
-        ward: string | null;
-        streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
+        logo: string | null;
+        banner: string | null;
+        description: string | null;
+        employee_count: string | null;
+        yearEstablished: number | null;
+        website: string | null;
+        salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
+        isFake: boolean | null;
     }>;
     getStats(id: string): Promise<{
         products: number;
@@ -188,24 +258,18 @@ export declare class SuppliersController {
     }>;
     createMyProfile(dto: any, userId: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SupplierStatus;
-        createdAt: Date;
-        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
-        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
         authorizationLetterUrl: string[];
         companyName: string;
         taxCode: string | null;
-        businessType: string | null;
+        businessType: import("@prisma/client").$Enums.BusinessType | null;
         legalRepName: string | null;
         legalRepGovId: string | null;
-        province: string | null;
-        ward: string | null;
-        streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
         logo: string | null;
@@ -215,28 +279,26 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
+        isFake: boolean | null;
     }>;
     verifySupplier(id: string, isVerified: boolean, adminId: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.SupplierStatus;
-        createdAt: Date;
-        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
-        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
         authorizationLetterUrl: string[];
         companyName: string;
         taxCode: string | null;
-        businessType: string | null;
+        businessType: import("@prisma/client").$Enums.BusinessType | null;
         legalRepName: string | null;
         legalRepGovId: string | null;
-        province: string | null;
-        ward: string | null;
-        streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
         logo: string | null;
@@ -246,34 +308,38 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
+        isFake: boolean | null;
     }>;
     update(id: string, dto: UpdateSupplierDto, currentUser: {
         id: string;
         role: string;
     }): Promise<{
+        addresses: {
+            isPrimary: boolean;
+            address: string;
+        }[];
         user: {
             email: string;
             fullName: string;
         };
-        _count: {
-            products: number;
-        };
         products: ({
             category: {
-                name: string;
                 slug: string;
+                name: string;
             };
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.ProductStatus;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
             slug: string;
             description: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.ProductStatus;
+            name: string;
             nameEn: string | null;
-            supplierId: string;
             descriptionEn: string | null;
             minPrice: number;
             maxPrice: number;
@@ -281,7 +347,6 @@ export declare class SuppliersController {
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -297,6 +362,8 @@ export declare class SuppliersController {
             productionCapacity: string | null;
             sku: string | null;
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         })[];
         certifications: {
             id: string;
@@ -313,26 +380,37 @@ export declare class SuppliersController {
         markets: {
             market: string;
         }[];
+        categories: {
+            createdAt: Date;
+            updatedAt: Date;
+            supplierSlug: string;
+            categorySlug: string;
+            categoryLevel: number;
+        }[];
+        channels: {
+            createdAt: Date | null;
+            updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
+            supplierSlug: string;
+            url: string;
+        }[];
+        _count: {
+            products: number;
+        };
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.SupplierStatus;
-        createdAt: Date;
-        updatedAt: Date;
         slug: string;
         userId: string;
         contactEmail: string | null;
         contactPhone: string | null;
         accountHolderName: string | null;
-        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole;
+        accountHolderRole: import("@prisma/client").$Enums.SupplierAccountHolderRole | null;
         authorizationLetterUrl: string[];
         companyName: string;
         taxCode: string | null;
-        businessType: string | null;
+        businessType: import("@prisma/client").$Enums.BusinessType | null;
         legalRepName: string | null;
         legalRepGovId: string | null;
-        province: string | null;
-        ward: string | null;
-        streetAddress: string | null;
         businessLicenseUrl: string[];
         legalRepGovIdUrl: string[];
         logo: string | null;
@@ -342,7 +420,11 @@ export declare class SuppliersController {
         yearEstablished: number | null;
         website: string | null;
         salesChannels: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.SupplierStatus;
         supplierType: import("@prisma/client").$Enums.SupplierType | null;
+        isFake: boolean | null;
     }>;
     addCertification(id: string, body: {
         name: string;
@@ -365,5 +447,17 @@ export declare class SuppliersController {
         role: string;
     }): Promise<{
         message: string;
+    }>;
+    createFakeSupp(dto: CreateFakeSuppDto): Promise<{
+        message: any;
+        success: boolean;
+    }>;
+    addUpgradeFormMan(dto: CreateFakeSuppDto): Promise<{
+        message: any;
+        success: boolean;
+    }>;
+    addupgradeFormExp(dto: CreateFakeSuppDto): Promise<{
+        message: any;
+        success: boolean;
     }>;
 }

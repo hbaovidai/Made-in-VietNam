@@ -106,8 +106,8 @@ let AuthService = class AuthService {
     async supplierRegister(dto) {
         console.log(dto);
         return {
-            success: true,
-            message: 'for testing purposes, this is a success, check the logs',
+            success: false,
+            message: 'Supplier Registration is disabled',
         };
         const userDto = new auth_dto_1.UserRegisterDto();
         userDto.email = dto.contactEmail;

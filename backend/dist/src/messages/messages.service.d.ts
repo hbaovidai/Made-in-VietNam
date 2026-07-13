@@ -13,27 +13,27 @@ export declare class MessagesService {
                 id: string;
             } | null;
             id: string;
-            role: import("@prisma/client").$Enums.Role;
             fullName: string;
+            role: import("@prisma/client").$Enums.Role;
             avatar: string | null;
         };
         rfq: {
-            category: string;
             id: string;
-            status: import("@prisma/client").$Enums.RFQStatus;
-            createdAt: Date;
-            updatedAt: Date;
             contactEmail: string | null;
             contactPhone: string | null;
             description: string;
-            buyerId: string;
-            productName: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import("@prisma/client").$Enums.RFQStatus;
+            category: string;
             quantity: number;
+            productName: string;
             quantityUnit: string;
             budget: string | null;
             destination: string;
             contactName: string | null;
             expiresAt: Date;
+            buyerId: string;
         } | null;
     }[]>;
     getAllConversations(): Promise<{
@@ -56,12 +56,12 @@ export declare class MessagesService {
         };
     } & {
         id: string;
-        conversationId: string;
         createdAt: Date;
-        senderId: string;
-        content: string;
         type: import("@prisma/client").$Enums.MessageType;
+        conversationId: string;
+        content: string;
         attachments: string[];
+        senderId: string;
     })[]>;
     startConversation(userId: string, dto: CreateConversationDto): Promise<{
         id: string;

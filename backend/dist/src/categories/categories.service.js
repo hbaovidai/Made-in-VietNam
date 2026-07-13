@@ -51,6 +51,24 @@ let CategoriesService = class CategoriesService {
         });
         return this.buildTree(categories);
     }
+    async getL1Cats() {
+        const cats = await this.prisma.category.findMany({
+            where: { parentId: null },
+            select: { slug: true, id: true, name: true },
+        });
+        return cats;
+    }
+    async findNameBySlug(slug) {
+        const category = await this.prisma.category.findUnique({
+            select: {
+                name: true, nameEn: true
+            },
+            where: { slug },
+        });
+        if (!category)
+            throw new common_1.NotFoundException('Danh mục không tồn tại');
+        return category;
+    }
     async findBySlug(slug) {
         const category = await this.prisma.category.findUnique({
             where: { slug },

@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -13,6 +46,8 @@ exports.SuppliersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const uuid_1 = require("uuid");
+const bcrypt = __importStar(require("bcrypt"));
 let SuppliersService = class SuppliersService {
     prisma;
     constructor(prisma) {
@@ -27,6 +62,8 @@ let SuppliersService = class SuppliersService {
         if (industry) {
             where.industries = { some: { industry } };
         }
+        if (query.categorySlug)
+            where.categories = { some: { categorySlug: query.categorySlug } };
         if (query.status)
             where.status = query.status;
         const [suppliers, total] = await Promise.all([
@@ -35,6 +72,14 @@ let SuppliersService = class SuppliersService {
                 orderBy: { updatedAt: 'desc' },
                 skip: (page - 1) * limit,
                 take: limit,
+                include: {
+                    categories: true,
+                    channels: true,
+                    addresses: {
+                        where: { isPrimary: true },
+                        select: { supplierSlug: true, address: true, isPrimary: true },
+                    },
+                },
             }),
             this.prisma.supplier.count({ where }),
         ]);
@@ -63,6 +108,11 @@ let SuppliersService = class SuppliersService {
                     },
                     orderBy: { createdAt: 'desc' },
                 },
+                categories: true, channels: true,
+                addresses: {
+                    where: { isPrimary: true },
+                    select: { isPrimary: true, address: true }
+                },
                 _count: { select: { products: true } },
             },
         });
@@ -74,25 +124,13 @@ let SuppliersService = class SuppliersService {
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
         const supplier = await this.prisma.supplier.findUnique({
             where: { ...(isUUID ? { id: slugOrId } : { slug: slugOrId }), },
-            select: {
-                ...(isUUID ? { id: true } : { slug: true }),
-                companyName: true,
-                taxCode: true,
-                legalRepName: true,
-                legalRepGovId: true,
-                province: true,
-                ward: true,
-                streetAddress: true,
-                businessType: true,
-                legalRepGovIdUrl: true,
-                businessLicenseUrl: true,
-                contactPhone: true,
-                contactEmail: true,
-                accountHolderName: true,
-                accountHolderRole: true,
-                authorizationLetterUrl: true,
-                supplierType: true,
-                status: true,
+            include: {
+                categories: true,
+                addresses: {
+                    where: { isPrimary: true },
+                    select: { address: true, isPrimary: true }
+                },
+                channels: true
             }
         });
         if (!supplier)
@@ -124,6 +162,93 @@ let SuppliersService = class SuppliersService {
             },
         });
         return supplier;
+    }
+    async createFakeProfile(dto) {
+        console.log(dto);
+        try {
+            const existingUser = await this.prisma.user.findFirst({
+                where: { email: dto.contactEmail },
+                select: { email: true }
+            });
+            if (existingUser)
+                return { success: false, message: 'Email đã được sử dụng' };
+            const existingCompany = await this.prisma.supplier.findFirst({
+                where: { taxCode: dto.taxCode },
+                select: { id: true }
+            });
+            if (existingCompany)
+                return { success: false, message: 'Doanh nghiệp đã tồn tại.' };
+            const passwordHash = await bcrypt.hash((0, uuid_1.v4)(), 10);
+            const slug = dto.companyName
+                .toLowerCase()
+                .replace(/[^A-Za-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            const { website, facebook, shopee, instagram, categoryOptions, primaryLocation, ...supplierData } = dto;
+            await this.prisma.$transaction(async (tx) => {
+                const user = await tx.user.create({
+                    data: {
+                        email: dto.contactEmail,
+                        phone: dto.contactPhone,
+                        passwordHash: passwordHash,
+                        role: client_1.Role.SUPPLIER,
+                        fullName: dto.companyName,
+                    },
+                });
+                const supplierProfile = await tx.supplier.create({
+                    data: {
+                        userId: user.id,
+                        slug: `${slug}-${dto.taxCode}`,
+                        ...supplierData,
+                        isFake: true
+                    },
+                });
+                if (website)
+                    await tx.supplierChannelMap.create({
+                        data: {
+                            supplierSlug: supplierProfile.slug, url: website, type: client_1.SaleChannelType.CUSTOM_WEBSITE
+                        }
+                    });
+                if (facebook)
+                    await tx.supplierChannelMap.create({
+                        data: {
+                            supplierSlug: supplierProfile.slug, url: facebook, type: client_1.SaleChannelType.FACEBOOK
+                        }
+                    });
+                if (shopee)
+                    await tx.supplierChannelMap.create({
+                        data: {
+                            supplierSlug: supplierProfile.slug, url: shopee, type: client_1.SaleChannelType.SHOPEE
+                        }
+                    });
+                if (instagram)
+                    await tx.supplierChannelMap.create({
+                        data: {
+                            supplierSlug: supplierProfile.slug, url: instagram, type: client_1.SaleChannelType.INSTAGRAM
+                        }
+                    });
+                await tx.supplierCategoryMap.createMany({
+                    data: categoryOptions.map((opt) => {
+                        return { supplierSlug: supplierProfile.slug, categorySlug: opt.slug, categoryLevel: 1, };
+                    })
+                });
+                await tx.supplierAddressMap.create({
+                    data: {
+                        supplierSlug: supplierProfile.slug, address: primaryLocation, isPrimary: true
+                    }
+                });
+            });
+            return {
+                message: 'Đã tạo hồ sơ nhà cung cấp',
+                success: true,
+            };
+        }
+        catch (error) {
+            console.error('Error creating fake profile:', error);
+            return {
+                message: error.message || 'Đã xảy ra lỗi hệ thống.',
+                success: false
+            };
+        }
     }
     async update(supplierId, dto) {
         const supplier = await this.prisma.supplier.findUnique({

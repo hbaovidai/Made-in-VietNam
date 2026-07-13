@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminQueryDto = exports.SupplierQueryDto = exports.UpdateSupplierDto = void 0;
+exports.CreateFakeSuppDto = exports.CategoryOption = exports.AdminQueryDto = exports.SupplierQueryDto = exports.UpdateSupplierDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const client_1 = require("@prisma/client");
@@ -21,9 +21,7 @@ class UpdateSupplierDto {
     businessType;
     yearEstablished;
     employeeCount;
-    streetAddress;
-    city;
-    province;
+    primaryLocation;
     website;
     taxCode;
     companyEmail;
@@ -77,17 +75,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "streetAddress", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "city", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "province", void 0);
+], UpdateSupplierDto.prototype, "primaryLocation", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
@@ -148,6 +136,7 @@ __decorate([
 class SupplierQueryDto {
     search;
     industry;
+    categorySlug;
     page = 1;
     limit = 20;
     businessType;
@@ -164,6 +153,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierQueryDto.prototype, "industry", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SupplierQueryDto.prototype, "categorySlug", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
@@ -208,4 +202,110 @@ __decorate([
     (0, class_transformer_1.Type)(() => UpdateSupplierDto),
     __metadata("design:type", UpdateSupplierDto)
 ], AdminQueryDto.prototype, "include", void 0);
+class CategoryOption {
+    id;
+    slug;
+    name;
+    included;
+}
+exports.CategoryOption = CategoryOption;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CategoryOption.prototype, "id", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CategoryOption.prototype, "slug", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CategoryOption.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CategoryOption.prototype, "included", void 0);
+class CreateFakeSuppDto {
+    companyName;
+    taxCode;
+    primaryLocation;
+    businessType;
+    contactPhone;
+    contactEmail;
+    accountHolderRole;
+    supplierType;
+    categoryOptions;
+    website;
+    facebook;
+    instagram;
+    shopee;
+    logo;
+    banner;
+}
+exports.CreateFakeSuppDto = CreateFakeSuppDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "companyName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "taxCode", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "primaryLocation", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.BusinessType),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "businessType", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "contactPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "contactEmail", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.SupplierAccountHolderRole),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "accountHolderRole", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.SupplierType),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "supplierType", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => CategoryOption),
+    __metadata("design:type", Array)
+], CreateFakeSuppDto.prototype, "categoryOptions", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "website", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "facebook", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "instagram", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "shopee", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "logo", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateFakeSuppDto.prototype, "banner", void 0);
 //# sourceMappingURL=supplier.dto.js.map

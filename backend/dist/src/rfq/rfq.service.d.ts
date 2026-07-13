@@ -7,14 +7,14 @@ export declare class RfqService {
     private readonly MAX_QUOTES_PER_RFQ;
     constructor(prisma: PrismaService, notificationsService: NotificationsService);
     createRFQ(buyerId: string, dto: CreateRFQDto): Promise<{
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -29,14 +29,14 @@ export declare class RfqService {
             quotes: number;
         };
     } & {
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -47,13 +47,13 @@ export declare class RfqService {
         buyerId: string;
     })[]>;
     submitQuote(supplierId: string, dto: CreateQuoteDto): Promise<{
-        message: string | null;
         id: string;
-        status: import("@prisma/client").$Enums.QuoteStatus;
         createdAt: Date;
-        supplierId: string;
+        status: import("@prisma/client").$Enums.QuoteStatus;
         currency: string;
         leadTime: string;
+        supplierId: string;
+        message: string | null;
         rfqId: string;
         price: number;
     }>;
@@ -61,19 +61,19 @@ export declare class RfqService {
         quotes: ({
             supplier: {
                 id: string;
-                status: import("@prisma/client").$Enums.SupplierStatus;
                 userId: string;
                 companyName: string;
                 logo: string | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
         } & {
-            message: string | null;
             id: string;
-            status: import("@prisma/client").$Enums.QuoteStatus;
             createdAt: Date;
-            supplierId: string;
+            status: import("@prisma/client").$Enums.QuoteStatus;
             currency: string;
             leadTime: string;
+            supplierId: string;
+            message: string | null;
             rfqId: string;
             price: number;
         })[];
@@ -84,14 +84,14 @@ export declare class RfqService {
             phone: string | null;
         };
     } & {
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;
@@ -135,14 +135,14 @@ export declare class RfqService {
         buyer: {
             fullName: string;
         };
-        category: string;
         id: string;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        createdAt: Date;
-        updatedAt: Date;
         contactEmail: string | null;
         contactPhone: string | null;
         description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
         productName: string;
         quantityUnit: string;

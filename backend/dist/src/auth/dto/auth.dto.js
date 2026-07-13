@@ -131,9 +131,7 @@ class SupplierRegisterDto {
     taxCode;
     legalRepName;
     legalRepGovId;
-    province;
-    ward;
-    streetAddress;
+    primaryLocation;
     businessType;
     legalRepGovIdUrl;
     businessLicenseUrl;
@@ -165,15 +163,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], SupplierRegisterDto.prototype, "province", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], SupplierRegisterDto.prototype, "ward", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], SupplierRegisterDto.prototype, "streetAddress", void 0);
+], SupplierRegisterDto.prototype, "primaryLocation", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(client_1.BusinessType),
     __metadata("design:type", String)

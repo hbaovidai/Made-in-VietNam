@@ -30,9 +30,9 @@ export declare class OrdersService {
             }[];
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.OrderStatus;
             supplierId: string;
             buyerId: string;
             orderNumber: string;
@@ -71,9 +71,9 @@ export declare class OrdersService {
         })[];
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;
@@ -112,9 +112,9 @@ export declare class OrdersService {
         })[];
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;
@@ -159,9 +159,9 @@ export declare class OrdersService {
         })[];
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;
@@ -193,9 +193,9 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;
@@ -211,9 +211,9 @@ export declare class OrdersService {
     }>;
     cancelOrder(userId: string, orderId: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;
@@ -262,9 +262,9 @@ export declare class OrdersService {
             })[];
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.OrderStatus;
             supplierId: string;
             buyerId: string;
             orderNumber: string;
@@ -307,9 +307,9 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
         supplierId: string;
         buyerId: string;
         orderNumber: string;

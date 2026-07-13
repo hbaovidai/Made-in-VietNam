@@ -39,6 +39,20 @@ let SuppliersController = class SuppliersController {
     findBySlug(slug) {
         return this.suppliersService.findBySlug(slug);
     }
+    async findAddressBySlug(slug, findPrimary) {
+        const shouldFindPrimary = findPrimary ?? true;
+        try {
+            const addresses = await this.prisma.supplierAddressMap.findMany({
+                where: { supplierSlug: slug, isPrimary: shouldFindPrimary },
+                select: { address: true, isPrimary: true },
+            });
+            return { found: addresses.length > 0, addresses };
+        }
+        catch (error) {
+            console.error(`Failed to fetch addreses of supplier ${slug}`, error);
+        }
+        return { found: false, addresses: [] };
+    }
     findBySlugAdmin(slugOrId) {
         return this.suppliersService.findBySlugAdmin(slugOrId);
     }
@@ -101,6 +115,15 @@ let SuppliersController = class SuppliersController {
         }
         return this.suppliersService.deleteCertification(certId, supplierId);
     }
+    async createFakeSupp(dto) {
+        return this.suppliersService.createFakeProfile(dto);
+    }
+    async addUpgradeFormMan(dto) {
+        return this.suppliersService.createFakeProfile(dto);
+    }
+    async addupgradeFormExp(dto) {
+        return this.suppliersService.createFakeProfile(dto);
+    }
 };
 exports.SuppliersController = SuppliersController;
 __decorate([
@@ -117,6 +140,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], SuppliersController.prototype, "findBySlug", null);
+__decorate([
+    (0, common_1.Get)(':slug/address'),
+    __param(0, (0, common_1.Param)('slug')),
+    __param(1, (0, common_1.Query)('findPrimary', new common_1.ParseBoolPipe({ optional: true }))),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Boolean]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "findAddressBySlug", null);
 __decorate([
     (0, common_1.Get)('adminShotGun/:slugOrId'),
     __param(0, (0, common_1.Param)('slugOrId')),
@@ -195,6 +226,33 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], SuppliersController.prototype, "deleteCertification", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.Post)('create_fake_supplier'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [supplier_dto_1.CreateFakeSuppDto]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "createFakeSupp", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPPLIER),
+    (0, common_1.Post)('upForm/man'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [supplier_dto_1.CreateFakeSuppDto]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "addUpgradeFormMan", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPPLIER),
+    (0, common_1.Post)('upForm/exp'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [supplier_dto_1.CreateFakeSuppDto]),
+    __metadata("design:returntype", Promise)
+], SuppliersController.prototype, "addupgradeFormExp", null);
 exports.SuppliersController = SuppliersController = __decorate([
     (0, common_1.Controller)('suppliers'),
     __metadata("design:paramtypes", [suppliers_service_1.SuppliersService,

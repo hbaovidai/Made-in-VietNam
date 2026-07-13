@@ -288,7 +288,7 @@ export function Home() {
               <div className="flex gap-4 w-max">
                 {suppliers.slice(0, 5).map((supplier, idx) => {
                   const name = supplier.companyName || supplier.name;
-                  const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+                  const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
                   const primaryLocation = primaryRecord ? primaryRecord.address : '';
                   const industries = supplier.industries 
                     ? supplier.industries.map((i: any) => i.industry) 
@@ -336,7 +336,7 @@ export function Home() {
             <div className="hidden md:grid grid-cols-2 lg:grid-cols-5 gap-4">
               {suppliers.slice(0, 5).map((supplier, idx) => {
                 const name = supplier.companyName || supplier.name;
-                const primaryRecord = supplier.addresses.find(record => record.isPrimary);
+                const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
                 const primaryLocation = primaryRecord ? primaryRecord.address : '';
                 const industries = supplier.industries 
                   ? supplier.industries.map((i: any) => i.industry) 

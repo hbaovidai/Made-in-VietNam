@@ -8,38 +8,38 @@ export declare class ContactService {
         subject: string;
         message: string;
     }): Promise<{
-        message: string;
         id: string;
+        createdAt: Date;
+        message: string;
         email: string;
         fullName: string;
-        createdAt: Date;
         isRead: boolean;
         subject: string;
     }>;
     findAll(): Promise<{
-        message: string;
         id: string;
+        createdAt: Date;
+        message: string;
         email: string;
         fullName: string;
-        createdAt: Date;
         isRead: boolean;
         subject: string;
     }[]>;
     markAsRead(id: string, isRead: boolean): Promise<{
-        message: string;
         id: string;
+        createdAt: Date;
+        message: string;
         email: string;
         fullName: string;
-        createdAt: Date;
         isRead: boolean;
         subject: string;
     }>;
     delete(id: string): Promise<{
-        message: string;
         id: string;
+        createdAt: Date;
+        message: string;
         email: string;
         fullName: string;
-        createdAt: Date;
         isRead: boolean;
         subject: string;
     }>;
