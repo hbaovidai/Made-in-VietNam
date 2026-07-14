@@ -297,9 +297,9 @@ export function Home() {
                   return (
                     <div key={supplier.id} className="w-[280px] shrink-0 bg-canvas border border-hairline p-6 flex flex-col justify-between h-full">
                       <div className="flex flex-col items-center text-center">
-                        <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                        <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0 p-1">
                           {supplier.logo ? (
-                            <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
+                            <img src={supplier.logo} alt="" className="max-w-full max-h-full object-contain" />
                           ) : (
                             idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
                             idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
@@ -345,9 +345,9 @@ export function Home() {
                 return (
                   <div key={supplier.id} className="bg-canvas border border-hairline p-6 flex flex-col justify-between h-full hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200">
                     <div className="flex flex-col items-center text-center">
-                      <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                      <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0 p-1">
                         {supplier.logo ? (
-                          <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
+                          <img src={supplier.logo} alt="" className="max-w-full max-h-full object-contain" />
                         ) : (
                           idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
                           idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :

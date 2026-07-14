@@ -406,14 +406,14 @@ export function SupplierProfile() {
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="flex flex-col items-center gap-3">
             <div className="relative group">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-surface-1 border border-hairline flex items-center justify-center text-ink-subtle font-light text-2xl overflow-hidden relative" style={{ borderRadius: 0 }}>
+              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-surface-1 border border-hairline flex items-center justify-center text-ink-subtle font-light text-2xl overflow-hidden relative p-2" style={{ borderRadius: 0 }}>
                 {uploading && (
                   <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <Loader2 className="animate-spin text-primary" size={24} />
                   </div>
                 )}
                 {supplier?.logo ? (
-                  <img src={supplier.logo} alt="Company Logo" className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                  <img src={supplier.logo} alt="Company Logo" className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
                 ) : (
                   <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
                 )}
