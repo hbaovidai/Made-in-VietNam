@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X, Image as ImageIcon, Loader2, Trash2, Bold, Italic, Heading, List, Table, Eye, FileText, Award, Plus, Link as LinkIcon } from 'lucide-react';
+import { Save, X, Image as ImageIcon, Loader2, Trash2, Bold, Italic, Heading, List, Table, Eye, FileText, Award, Plus, Link as LinkIcon, Phone, DollarSign } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
 import { api } from '../../../lib/api';
 import { parseMarkdownToHtml } from '../../../utils/markdown';
@@ -41,6 +41,14 @@ export function ProductFormPage() {
 
   const [editorTab, setEditorTab] = useState<'write' | 'preview'>('write');
   const [descUploading, setDescUploading] = useState(false);
+
+  // Pricing mode: 'standard' | 'contact' | 'tiered'
+  const [pricingMode, setPricingMode] = useState<'standard' | 'contact' | 'tiered'>('standard');
+  const [tieredPrices, setTieredPrices] = useState<{ minQty: string; maxQty: string; price: string }[]>([
+    { minQty: '1', maxQty: '99', price: '' },
+    { minQty: '100', maxQty: '499', price: '' },
+    { minQty: '500', maxQty: '', price: '' },
+  ]);
 
   const insertAtCursor = (before: string, after: string = '') => {
     const textarea = document.getElementById('product-desc-textarea') as HTMLTextAreaElement;
@@ -281,21 +289,187 @@ export function ProductFormPage() {
             </div>
           </div>
 
-          {/* Giá bán */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('gia_ban_vnd')} <span className="text-red-500">*</span></label>
-              <input 
-                type="number" 
-                required
-                min="1"
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+          {/* Chế độ giá */}
+          <div className="space-y-4">
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Chế độ giá <span className="text-red-500">*</span></label>
+            
+            {/* Radio options */}
+            <div className="flex flex-wrap gap-3">
+              {/* Standard price */}
+              <button
+                type="button"
+                onClick={() => setPricingMode('standard')}
+                className={`flex items-center gap-2.5 px-4 py-3 border text-sm font-normal transition-all ${
+                  pricingMode === 'standard'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-hairline bg-surface-1 text-ink-muted hover:border-ink-subtle hover:text-ink'
+                }`}
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                placeholder="Ví dụ: 100000"
-                value={formData.minPrice}
-                onChange={e => handleChange('minPrice', e.target.value)}
-              />
+              >
+                <div className={`w-4 h-4 border-2 flex items-center justify-center shrink-0 ${
+                  pricingMode === 'standard' ? 'border-primary' : 'border-ink-subtle'
+                }`} style={{ borderRadius: '50%' }}>
+                  {pricingMode === 'standard' && <div className="w-2 h-2 bg-primary" style={{ borderRadius: '50%' }} />}
+                </div>
+
+                Giá cố định
+              </button>
+
+              {/* Contact for price */}
+              <button
+                type="button"
+                onClick={() => setPricingMode('contact')}
+                className={`flex items-center gap-2.5 px-4 py-3 border text-sm font-normal transition-all ${
+                  pricingMode === 'contact'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-hairline bg-surface-1 text-ink-muted hover:border-ink-subtle hover:text-ink'
+                }`}
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+              >
+                <div className={`w-4 h-4 border-2 flex items-center justify-center shrink-0 ${
+                  pricingMode === 'contact' ? 'border-primary' : 'border-ink-subtle'
+                }`} style={{ borderRadius: '50%' }}>
+                  {pricingMode === 'contact' && <div className="w-2 h-2 bg-primary" style={{ borderRadius: '50%' }} />}
+                </div>
+
+                Liên hệ để biết giá
+              </button>
+
+              {/* Tiered pricing */}
+              <button
+                type="button"
+                onClick={() => setPricingMode('tiered')}
+                className={`flex items-center gap-2.5 px-4 py-3 border text-sm font-normal transition-all ${
+                  pricingMode === 'tiered'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-hairline bg-surface-1 text-ink-muted hover:border-ink-subtle hover:text-ink'
+                }`}
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+              >
+                <div className={`w-4 h-4 border-2 flex items-center justify-center shrink-0 ${
+                  pricingMode === 'tiered' ? 'border-primary' : 'border-ink-subtle'
+                }`} style={{ borderRadius: '50%' }}>
+                  {pricingMode === 'tiered' && <div className="w-2 h-2 bg-primary" style={{ borderRadius: '50%' }} />}
+                </div>
+
+                Giá theo số lượng
+              </button>
             </div>
+
+            {/* Standard: single price input */}
+            {pricingMode === 'standard' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('gia_ban_vnd')} <span className="text-red-500">*</span></label>
+                  <input 
+                    type="number" 
+                    required
+                    min="1"
+                    className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                    placeholder="Ví dụ: 100000"
+                    value={formData.minPrice}
+                    onChange={e => handleChange('minPrice', e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Contact: info message */}
+            {pricingMode === 'contact' && (
+              <div className="bg-surface-1 border border-hairline p-4 flex items-start gap-3" style={{ borderRadius: 0 }}>
+                <Phone size={18} className="text-primary shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>Sản phẩm sẽ hiển thị "Liên hệ để biết giá"</p>
+                  <p className="text-xs text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>Người mua sẽ cần gửi yêu cầu báo giá (RFQ) hoặc liên hệ trực tiếp để được báo giá.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Tiered: price table */}
+            {pricingMode === 'tiered' && (
+              <div className="space-y-3 pt-2">
+                {/* Table header */}
+                <div className="grid grid-cols-[1fr_1fr_1fr_40px] gap-3 px-1">
+                  <span className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Từ (số lượng)</span>
+                  <span className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Đến (số lượng)</span>
+                  <span className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Đơn giá (VNĐ)</span>
+                  <span></span>
+                </div>
+
+                {/* Table rows */}
+                {tieredPrices.map((tier, idx) => (
+                  <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_40px] gap-3 items-center">
+                    <input
+                      type="number"
+                      min="1"
+                      className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                      placeholder="1"
+                      value={tier.minQty}
+                      onChange={e => {
+                        const updated = [...tieredPrices];
+                        updated[idx] = { ...updated[idx], minQty: e.target.value };
+                        setTieredPrices(updated);
+                      }}
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                      placeholder={idx === tieredPrices.length - 1 ? '∞' : '99'}
+                      value={tier.maxQty}
+                      onChange={e => {
+                        const updated = [...tieredPrices];
+                        updated[idx] = { ...updated[idx], maxQty: e.target.value };
+                        setTieredPrices(updated);
+                      }}
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                      placeholder="Đơn giá"
+                      value={tier.price}
+                      onChange={e => {
+                        const updated = [...tieredPrices];
+                        updated[idx] = { ...updated[idx], price: e.target.value };
+                        setTieredPrices(updated);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (tieredPrices.length > 1) {
+                          setTieredPrices(prev => prev.filter((_, i) => i !== idx));
+                        }
+                      }}
+                      disabled={tieredPrices.length <= 1}
+                      className="p-2 text-ink-subtle hover:text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Add row button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const last = tieredPrices[tieredPrices.length - 1];
+                    const nextMin = last?.maxQty ? String(Number(last.maxQty) + 1) : '';
+                    setTieredPrices(prev => [...prev, { minQty: nextMin, maxQty: '', price: '' }]);
+                  }}
+                  className="text-xs font-normal text-primary hover:bg-primary/5 px-3 py-2 transition-all flex items-center gap-1.5 border border-dashed border-primary/30 w-full justify-center"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                >
+                  <Plus size={13} /> Thêm mức giá
+                </button>
+                <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>Nhập giá theo từng khoảng số lượng. Để trống cột "Đến" ở hàng cuối nếu không giới hạn.</p>
+              </div>
+            )}
           </div>
 
           {/* Đơn vị & MOQ */}
