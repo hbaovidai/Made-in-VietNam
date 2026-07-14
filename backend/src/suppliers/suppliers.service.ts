@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption } from './dto/supplier.dto';
-import { Prisma, Role, SaleChannelType, SupplierMediaType, SupplierStatus } from '@prisma/client';
+import { Prisma, Role, SaleChannelType, SupplierStatus } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 
@@ -184,7 +184,8 @@ export class SuppliersService {
             userId: user.id,
             slug: `${slug}-${dto.taxCode}`,
             ...supplierData,
-            isFake: true
+            isFake: true,
+            status: SupplierStatus.VERIFIED,
           },
         });
 
