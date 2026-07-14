@@ -221,7 +221,7 @@ export function ProductListing() {
 
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-16">
+    <div className="bg-canvas min-h-screen pb-16">
       <SEOHead
         title={categoryFilter ? t('seo_products_title_category', { category: categoryFilter }) : t('seo_products_title_all')}
         description={categoryFilter ? t('seo_products_desc', { category: categoryFilter }) : t('seo_products_desc_all')}
@@ -233,19 +233,19 @@ export function ProductListing() {
         {/* ═══ Sidebar — Collapsed icon bar, expands on hover ═══ */}
         <aside
           className={cn(
-            "hidden lg:flex flex-col bg-white border-r border-slate-200 shrink-0 sticky top-0 h-screen z-30 transition-all duration-300 ease-in-out overflow-hidden",
-            sidebarHover ? "w-[260px] shadow-xl" : "w-[72px]"
+            "hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 sticky top-0 h-screen z-30 transition-all duration-200 ease-in-out overflow-hidden",
+            sidebarHover ? "w-[260px]" : "w-[72px]"
           )}
           onMouseEnter={() => setSidebarHover(true)}
           onMouseLeave={() => setSidebarHover(false)}
         >
           {/* Menu icon at top */}
-          <div className="flex items-center h-14 px-5 border-b border-slate-100 shrink-0">
-            <Menu size={22} className="text-slate-500 shrink-0" />
+          <div className="flex items-center h-12 px-5 border-b border-hairline shrink-0">
+            <Menu size={20} className="text-ink-muted shrink-0" />
             <span className={cn(
-              "ml-4 text-sm font-bold text-slate-700 whitespace-nowrap transition-opacity duration-200",
+              "ml-4 text-sm font-normal text-ink whitespace-nowrap transition-opacity duration-200",
               sidebarHover ? "opacity-100" : "opacity-0"
-            )}>
+            )} style={{ letterSpacing: '0.16px' }}>
               Danh mục
             </span>
           </div>
@@ -256,18 +256,18 @@ export function ProductListing() {
             <button
               onClick={() => { setSearchParams({}); }}
               className={cn(
-                "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-200 relative group/item",
+                "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-150 relative group/item",
                 !categoryFilter
-                  ? "text-primary bg-primary/5"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                  ? "text-primary bg-surface-1"
+                  : "text-ink-muted hover:bg-surface-1 hover:text-ink"
               )}
             >
-              {!categoryFilter && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
+              {!categoryFilter && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
               <Search size={20} className="shrink-0" />
               <span className={cn(
-                "text-sm font-semibold whitespace-nowrap transition-opacity duration-200",
+                "text-sm font-normal whitespace-nowrap transition-opacity duration-200",
                 sidebarHover ? "opacity-100" : "opacity-0"
-              )}>
+              )} style={{ letterSpacing: '0.16px' }}>
                 Tất cả sản phẩm
               </span>
             </button>
@@ -277,18 +277,18 @@ export function ProductListing() {
                 key={cat.slug}
                 onClick={() => handleCategoryClick(cat.slug)}
                 className={cn(
-                  "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-200 relative group/item",
+                  "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-150 relative group/item",
                   activeL1?.slug === cat.slug
-                    ? "text-primary bg-primary/5"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                    ? "text-primary bg-surface-1"
+                    : "text-ink-muted hover:bg-surface-1 hover:text-ink"
                 )}
               >
-                {activeL1?.slug === cat.slug && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
+                {activeL1?.slug === cat.slug && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
                 <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={20} />}</span>
                 <span className={cn(
-                  "text-sm font-semibold whitespace-nowrap transition-opacity duration-200 truncate",
+                  "text-sm font-normal whitespace-nowrap transition-opacity duration-200 truncate",
                   sidebarHover ? "opacity-100" : "opacity-0"
-                )}>
+                )} style={{ letterSpacing: '0.16px' }}>
                   {cat.name}
                 </span>
               </button>
@@ -302,10 +302,10 @@ export function ProductListing() {
         <main className="flex-1 min-w-0">
           {/* Breadcrumb */}
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-            <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <nav className="flex items-center gap-2 text-xs text-ink-muted font-normal" style={{ letterSpacing: '0.16px' }}>
               <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
-              <ChevronRight size={12} className="text-slate-300" />
-              <span className={cn(categoryFilter ? "hover:text-primary cursor-pointer" : "text-primary font-bold")}>
+              <ChevronRight size={12} className="text-hairline" />
+              <span className={cn(categoryFilter ? "hover:text-primary cursor-pointer" : "text-primary font-semibold")}>
                 {activeL1 ? activeL1.name : t('products_breadcrumb')}
               </span>
             </nav>
@@ -314,7 +314,7 @@ export function ProductListing() {
           {/* ═══ Horizontal Drill-down Filters ═══ */}
           {activeL1 && l2Categories.length > 0 && (
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mb-4">
-              <div className="bg-white border border-slate-300 rounded-lg overflow-hidden">
+              <div className="bg-canvas border border-hairline overflow-hidden">
                 {/* Level 2 */}
                 <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5 px-3 py-2 overflow-x-auto">
                   {l2Categories.map((cat: any, i: number) => (
@@ -323,10 +323,10 @@ export function ProductListing() {
                       <button
                         onClick={() => handleL2Click(cat.slug)}
                         className={cn(
-                          "text-xs px-2.5 py-0.5 rounded-md transition-all duration-200 whitespace-nowrap",
+                          "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
                           selectedL2 === cat.slug
-                            ? "text-[#1a3a6b] font-bold bg-blue-50 border border-blue-200"
-                            : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                            ? "text-primary font-semibold border-b-2 border-primary"
+                            : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
                         )}
                       >
                         {cat.name}
@@ -337,17 +337,17 @@ export function ProductListing() {
 
                 {/* Level 3 */}
                 {selectedL2 && l3Categories.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5 px-3 py-2 overflow-x-auto border-t border-dashed border-slate-200">
+                  <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5 px-3 py-2 overflow-x-auto border-t border-hairline">
                     {l3Categories.map((cat: any, i: number) => (
                       <React.Fragment key={cat.slug}>
                         {i > 0 && <span className="text-slate-200 mx-1 select-none">|</span>}
                         <button
                           onClick={() => handleL3Click(cat.slug)}
                           className={cn(
-                            "text-xs px-2.5 py-0.5 rounded-md transition-all duration-200 whitespace-nowrap",
+                            "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
                             selectedL3 === cat.slug
-                              ? "text-[#1a3a6b] font-bold bg-blue-50 border border-blue-200"
-                              : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                              ? "text-primary font-semibold border-b-2 border-primary"
+                              : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
                           )}
                         >
                           {cat.name}
@@ -359,17 +359,17 @@ export function ProductListing() {
 
                 {/* Level 4 */}
                 {selectedL3 && l4Categories.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5 px-3 py-2 overflow-x-auto border-t border-dashed border-slate-200">
+                  <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1.5 px-3 py-2 overflow-x-auto border-t border-hairline">
                     {l4Categories.map((cat: any, i: number) => (
                       <React.Fragment key={cat.slug}>
                         {i > 0 && <span className="text-slate-200 mx-1 select-none">|</span>}
                         <button
                           onClick={() => handleL4Click(cat.slug)}
                           className={cn(
-                            "text-xs px-2.5 py-0.5 rounded-md transition-all duration-200 whitespace-nowrap",
+                            "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
                             selectedL4 === cat.slug
-                              ? "text-[#1a3a6b] font-bold bg-blue-50 border border-blue-200"
-                              : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                              ? "text-primary font-semibold border-b-2 border-primary"
+                              : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
                           )}
                         >
                           {cat.name}
@@ -385,22 +385,22 @@ export function ProductListing() {
           {/* ═══ Sort Bar ═══ */}
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mb-5">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
                 {/* Mobile filter button */}
                 <button
                   onClick={() => setIsSidebarOpen(true)}
-                  className="lg:hidden mr-3 p-2 text-slate-600 bg-white border border-slate-200 rounded-lg shadow-sm inline-flex items-center gap-1.5 text-xs font-bold"
+                  className="lg:hidden mr-3 p-2 text-ink-muted bg-canvas border border-hairline inline-flex items-center gap-1.5 text-xs font-normal"
                 >
                   <Menu size={16} /> Danh mục
                 </button>
                 {totalProducts > 0 && (
-                  <span><strong className="text-slate-800">{totalProducts}</strong> {t('listing_products_unit')}</span>
+                  <span><strong className="text-ink">{totalProducts}</strong> {t('listing_products_unit')}</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-medium hidden sm:inline">{t('listing_sort_by')}</span>
+                <span className="text-xs text-ink-subtle font-normal hidden sm:inline" style={{ letterSpacing: '0.16px' }}>{t('listing_sort_by')}</span>
                 <select
-                  className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 outline-none cursor-pointer appearance-none pr-8"
+                  className="bg-surface-1 border border-hairline px-4 py-[11px] text-sm font-normal text-ink outline-none cursor-pointer appearance-none pr-8" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : 'popular'}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -450,10 +450,10 @@ export function ProductListing() {
                     >
                     <Link
                       to={`/products/${product.id}`}
-                      className="group bg-white border border-slate-300 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col cursor-pointer h-full"
+                      className="group bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200 flex flex-col cursor-pointer h-full"
                     >
                       {/* Image */}
-                      <div className="relative aspect-square overflow-hidden bg-slate-100">
+                      <div className="relative aspect-square overflow-hidden bg-surface-1">
                         <img
                           src={imageUrl}
                           alt={product.name}
@@ -462,20 +462,20 @@ export function ProductListing() {
                           loading="lazy"
                         />
                         {/* Verified Badge */}
-                        <div className="absolute top-2 left-2 bg-amber-500 text-white px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-sm">
-                          <ShieldCheck size={10} /> VERIFIED
+                        <div className="absolute top-2 left-2 bg-primary text-white px-2 py-0.5 text-[9px] font-normal flex items-center gap-1" style={{ letterSpacing: '0.32px' }}>
+                          <ShieldCheck size={10} /> Verified
                         </div>
                       </div>
 
                       {/* Content */}
                       <div className="p-3 flex flex-col flex-1">
-                        <h3 className="text-xs font-bold text-[#1a2b4a] line-clamp-2 leading-snug mb-2 min-h-[2.4em]">
+                        <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug mb-2 min-h-[2.4em]" style={{ letterSpacing: '0.16px' }}>
                           {localized(product, 'name')}
                         </h3>
 
                         {/* MOQ chip */}
                         <div className="mb-3">
-                          <span className="inline-block bg-slate-100 text-slate-800 text-[10px] font-bold px-2 py-1 rounded">
+                          <span className="inline-block bg-surface-1 text-ink text-[10px] font-normal px-2 py-1" style={{ letterSpacing: '0.32px' }}>
                             MOQ: {moqDisplay}
                           </span>
                         </div>
@@ -483,14 +483,14 @@ export function ProductListing() {
                         {/* Contact button */}
                         <button
                           onClick={(e) => { e.preventDefault(); navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`); }}
-                          className="w-full py-1.5 border border-primary text-primary text-[11px] font-bold rounded-lg hover:bg-primary hover:text-white transition-colors duration-200 mb-2"
+                          className="w-full py-2 border border-primary text-primary text-[11px] font-normal hover:bg-primary hover:text-white transition-colors duration-150 mb-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                         >
                           {t('listing_contact_btn')}
                         </button>
 
                         {/* Supplier */}
-                        <div className="mt-auto pt-2 border-t border-slate-200">
-                          <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wide truncate block">
+                        <div className="mt-auto pt-2 border-t border-hairline">
+                          <span className="text-[10px] font-normal text-ink-muted truncate block" style={{ letterSpacing: '0.32px' }}>
                             {product.supplier?.companyName || 'Nhà cung cấp'}
                           </span>
                         </div>
@@ -502,14 +502,14 @@ export function ProductListing() {
               </div>
             ) : (
               <div className="text-center py-24">
-                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search size={28} className="text-slate-300" />
+                <div className="w-16 h-16 bg-surface-1 flex items-center justify-center mx-auto mb-4">
+                  <Search size={28} className="text-ink-subtle" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">{t('no_products_found')}</h3>
-                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-4">{t('no_products_desc')}</p>
+                <h3 className="text-lg font-light text-ink mb-1">{t('no_products_found')}</h3>
+                <p className="text-ink-muted text-sm max-w-xs mx-auto mb-4" style={{ letterSpacing: '0.16px' }}>{t('no_products_desc')}</p>
                 <button
                   onClick={clearFilters}
-                  className="text-primary font-bold text-sm hover:underline"
+                  className="text-primary font-normal text-sm hover:underline" style={{ letterSpacing: '0.16px' }}
                 >
                   {t('clear_all_filters')}
                 </button>
@@ -519,13 +519,13 @@ export function ProductListing() {
             {/* ═══ Load More ═══ */}
             {currentPage < totalPages && (
               <div className="flex flex-col items-center gap-3 mt-10">
-                <p className="text-xs text-slate-400 font-medium">
+                <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.32px' }}>
                   Đang hiển thị {products.length} / {totalProducts} sản phẩm
                 </p>
                 <button
                   onClick={handleLoadMore}
                   disabled={loadingMore}
-                  className="px-8 py-2.5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-8 py-3 bg-primary text-white text-sm font-normal hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center gap-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   {loadingMore ? (
                     <><Loader2 size={16} className="animate-spin" /> {t('loading_text')}</>
@@ -542,10 +542,10 @@ export function ProductListing() {
       {/* ═══ Mobile Sidebar Overlay ═══ */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
-          <aside className="absolute top-0 left-0 w-[280px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-900">Danh mục</h2>
+          <div className="absolute inset-0 bg-black/50" onClick={() => setIsSidebarOpen(false)} />
+          <aside className="absolute top-0 left-0 w-[280px] max-w-[85vw] h-full bg-canvas border-r border-hairline flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-hairline">
+              <h2 className="text-lg font-light text-ink">Danh mục</h2>
               <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400 hover:text-slate-600">
                 ✕
               </button>
@@ -554,8 +554,8 @@ export function ProductListing() {
               <button
                 onClick={() => { setSearchParams({}); setIsSidebarOpen(false); }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors",
-                  !categoryFilter ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
+                  "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors",
+                  !categoryFilter ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
                 )}
               >
                 <Search size={18} className="shrink-0" />
@@ -566,8 +566,8 @@ export function ProductListing() {
                   key={cat.slug}
                   onClick={() => { handleCategoryClick(cat.slug); setIsSidebarOpen(false); }}
                   className={cn(
-                    "w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors",
-                    activeL1?.slug === cat.slug ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
+                    "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors",
+                    activeL1?.slug === cat.slug ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
                   )}
                 >
                   <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={18} />}</span>

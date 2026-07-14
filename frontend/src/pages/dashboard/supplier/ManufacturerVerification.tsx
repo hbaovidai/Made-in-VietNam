@@ -303,7 +303,7 @@ export function ManufacturerVerification() {
     return (
       <div className="flex flex-col items-center justify-center py-20 min-h-[50vh]">
         <Loader2 className="animate-spin text-primary" size={40} />
-        <p className="text-slate-500 text-sm mt-3 font-medium">{t('dang_tai_du_lieu_doanh_nghiep')}</p>
+        <p className="text-ink-muted text-sm mt-3 font-normal" style={{ letterSpacing: '0.16px' }}>{t('dang_tai_du_lieu_doanh_nghiep')}</p>
       </div>
     );
   }
@@ -311,16 +311,17 @@ export function ManufacturerVerification() {
   if (!supplierId || !supplier) {
     return (
       <div className="max-w-2xl mx-auto py-16 px-4 text-center">
-        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-100">
+        <div className="w-16 h-16 bg-surface-1 text-red-500 flex items-center justify-center mx-auto mb-6 border border-hairline" style={{ borderRadius: 0 }}>
           <AlertCircle size={32} />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">{t('chua_tim_thay_ho_so_nha_cung_cap')}</h2>
-        <p className="text-slate-500 text-sm max-w-md mx-auto mb-6">
+        <h2 className="text-xl font-normal text-ink uppercase mb-2" style={{ letterSpacing: '0.32px' }}>{t('chua_tim_thay_ho_so_nha_cung_cap')}</h2>
+        <p className="text-ink-muted text-sm max-w-md mx-auto mb-6" style={{ letterSpacing: '0.16px' }}>
           Bạn chưa khởi tạo hồ sơ doanh nghiệp. Vui lòng hoàn tất đăng ký thông tin nhà cung cấp trước khi yêu cầu xác minh Nhà sản xuất.
         </p>
         <button
           onClick={() => navigate('/dashboard/supplier/profile')}
-          className="btn-primary"
+          className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2"
+          style={{ borderRadius: 0, letterSpacing: '0.16px' }}
         >
           Tạo Hồ sơ Doanh nghiệp
         </button>
@@ -332,31 +333,31 @@ export function ManufacturerVerification() {
   const isStep1Done = !!supplier;
   const isStep2Done = !!form.productionForm && !!form.province && !!form.district && !!form.ward && !!form.streetAddress && !!form.factoryScale && !!form.workerCount && !!form.monthlyCapacity && form.mainCategories.length > 0 && !!form.mainProducts;
   const isStep3Done = !!form.driveLink && factoryImages.length > 0;
-
   return (
     <div className="max-w-4xl mx-auto pb-24">
       {/* Back button & Title */}
       <div className="mb-6">
         <button
           onClick={() => navigate('/dashboard/supplier/profile')}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-dark transition-colors mb-3 uppercase tracking-wider"
+          className="inline-flex items-center gap-1.5 text-xs font-normal text-primary hover:text-primary-hover transition-colors mb-3 uppercase tracking-wider"
+          style={{ letterSpacing: '0.32px' }}
         >
           <ArrowLeft size={14} /> Back to Company Profile
         </button>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-xl font-normal text-ink uppercase flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
           <Shield className="text-primary fill-primary/10" size={24} /> Apply for Verified Manufacturer
         </h1>
-        <p className="text-sm text-slate-500 mt-1">{t('cung_cap_nang_luc_san_xuat_cua_doanh_ngh')}</p>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('cung_cap_nang_luc_san_xuat_cua_doanh_ngh')}</p>
       </div>
 
 
       {/* Pending status warning */}
       {hasPendingRequest && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8 flex items-start gap-3">
+        <div className="bg-surface-1 border border-hairline p-5 mb-8 flex items-start gap-3" style={{ borderRadius: 0 }}>
           <AlertCircle className="text-amber-500 shrink-0 mt-0.5" size={20} />
           <div>
-            <h4 className="text-sm font-bold text-amber-800">{t('yeu_cau_dang_cho_phe_duyet')}</h4>
-            <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+            <h4 className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('yeu_cau_dang_cho_phe_duyet')}</h4>
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed" style={{ letterSpacing: '0.16px' }}>
               Yêu cầu Verified Manufacturer của bạn đang chờ admin duyệt. Vui lòng chờ kết quả từ bộ phận kiểm duyệt.
             </p>
           </div>
@@ -366,87 +367,93 @@ export function ManufacturerVerification() {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* CARD 1: Company Info */}
-        <div className={`bg-white rounded-2xl border border-slate-200 p-6 shadow-sm ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`}>
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 mb-5">
+        <div className={`bg-canvas border border-hairline p-6 ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`} style={{ borderRadius: 0 }}>
+          <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2 mb-5" style={{ letterSpacing: '0.32px' }}>
             <Building2 size={16} className="text-primary" /> Thông tin doanh nghiệp hiện tại
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('ten_doanh_nghiep_1')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('ten_doanh_nghiep_1')}</label>
               <input
                 type="text"
                 placeholder="Tên doanh nghiệp"
                 value={form.companyName}
                 onChange={e => setForm(prev => ({ ...prev, companyName: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Mã số thuế</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Mã số thuế</label>
               <input
                 type="text"
                 placeholder="Mã số thuế"
                 value={form.taxCode}
                 onChange={e => setForm(prev => ({ ...prev, taxCode: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('loai_hinh_to_chuc')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('loai_hinh_to_chuc')}</label>
               <input
                 type="text"
                 placeholder="Ví dụ: Công ty TNHH, Cổ phần..."
                 value={form.businessType}
                 onChange={e => setForm(prev => ({ ...prev, businessType: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Trạng thái hiện tại</span>
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-block mt-0.5">
+            <div className="p-3 bg-surface-1 border border-hairline" style={{ borderRadius: 0 }}>
+              <span className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-0.5" style={{ letterSpacing: '0.32px' }}>Trạng thái hiện tại</span>
+              <span className="text-xs font-normal text-emerald-700 bg-surface-2 px-2 py-0.5 border border-hairline inline-block mt-0.5" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
                 {supplier.isVerified ? 'Verified Supplier' : 'Unverified Supplier'}
               </span>
             </div>
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Địa chỉ trụ sở</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Địa chỉ trụ sở</label>
               <input
                 type="text"
                 placeholder="Địa chỉ trụ sở chính"
                 value={form.companyAddress}
                 onChange={e => setForm(prev => ({ ...prev, companyAddress: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
           </div>
         </div>
 
         {/* CARD 2: Manufacturing Capability */}
-        <div className={`bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5 ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`}>
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+        <div className={`bg-canvas border border-hairline p-6 space-y-5 ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`} style={{ borderRadius: 0 }}>
+          <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
             <Shield size={16} className="text-primary" /> Thông tin năng lực sản xuất
           </h3>
 
           {/* Production Form */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('hinh_thuc_san_xuat')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('hinh_thuc_san_xuat')}</label>
             <input
               type="text"
               placeholder="Ví dụ: Sở hữu nhà xưởng, Thuê nhà xưởng, Hợp tác sản xuất..."
               value={form.productionForm}
               onChange={e => setForm(prev => ({ ...prev, productionForm: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
             {errors.productionForm && <p className="text-xs text-red-500 mt-1">{errors.productionForm}</p>}
           </div>
 
           {/* Factory Address */}
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('dia_chi_nha_xuong')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('dia_chi_nha_xuong')}</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <select
                 value={form.province}
                 onChange={e => setForm(prev => ({ ...prev, province: e.target.value }))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <option value="">{t('chon_tinhthanh_pho')}</option>
                 {VIETNAM_PROVINCES.map(p => (
@@ -459,7 +466,8 @@ export function ManufacturerVerification() {
                 placeholder="Quận/Huyện"
                 value={form.district}
                 onChange={e => setForm(prev => ({ ...prev, district: e.target.value }))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
 
               <input
@@ -467,7 +475,8 @@ export function ManufacturerVerification() {
                 placeholder="Phường/Xã"
                 value={form.ward}
                 onChange={e => setForm(prev => ({ ...prev, ward: e.target.value }))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-2 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
             <input
@@ -475,7 +484,8 @@ export function ManufacturerVerification() {
               placeholder="Số nhà, tên đường"
               value={form.streetAddress}
               onChange={e => setForm(prev => ({ ...prev, streetAddress: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mt-2"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary mt-2"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
             {(errors.province || errors.district || errors.ward || errors.streetAddress) && (
               <p className="text-xs text-red-500 mt-1">{t('vui_long_hoan_thanh_day_du_thong_tin_dia')}</p>
@@ -485,11 +495,12 @@ export function ManufacturerVerification() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Scale */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('quy_mo_nha_xuong')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('quy_mo_nha_xuong')}</label>
               <select
                 value={form.factoryScale}
                 onChange={e => setForm(prev => ({ ...prev, factoryScale: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <option value="">{t('chon_quy_mo')}</option>
                 {FACTORY_SCALES.map(s => (
@@ -501,11 +512,12 @@ export function ManufacturerVerification() {
 
             {/* Workers count */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('so_luong_nhan_su_san_xuat')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('so_luong_nhan_su_san_xuat')}</label>
               <select
                 value={form.workerCount}
                 onChange={e => setForm(prev => ({ ...prev, workerCount: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <option value="">{t('chon_so_luong')}</option>
                 {WORKER_COUNTS.map(w => (
@@ -518,23 +530,24 @@ export function ManufacturerVerification() {
 
           {/* Monthly Capacity */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('nang_luc_san_xuat_moi_thang')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nang_luc_san_xuat_moi_thang')}</label>
             <input
               type="text"
               placeholder="Ví dụ: 100.000 sản phẩm / tháng"
               value={form.monthlyCapacity}
               onChange={e => setForm(prev => ({ ...prev, monthlyCapacity: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
             {errors.monthlyCapacity && <p className="text-xs text-red-500 mt-1">{errors.monthlyCapacity}</p>}
           </div>
 
           {/* Main Industries Multi-select */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('nganh_san_xuat_chinh')}</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl max-h-48 overflow-y-auto">
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nganh_san_xuat_chinh')}</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-surface-1 border border-hairline max-h-48 overflow-y-auto" style={{ borderRadius: 0 }}>
               {INDUSTRIES_LIST.map(ind => (
-                <label key={ind} className="flex items-center gap-2 cursor-pointer text-xs text-slate-700 py-1 hover:text-slate-900">
+                <label key={ind} className="flex items-center gap-2 cursor-pointer text-xs text-ink py-1 hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>
                   <input
                     type="checkbox"
                     checked={form.mainCategories.includes(ind)}
@@ -550,44 +563,46 @@ export function ManufacturerVerification() {
 
           {/* Main Products */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('san_pham_chinh_dang_san_xuat')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('san_pham_chinh_dang_san_xuat')}</label>
             <textarea
               placeholder="Liệt kê các dòng sản phẩm chính của nhà xưởng..."
               rows={3}
               value={form.mainProducts}
               onChange={e => setForm(prev => ({ ...prev, mainProducts: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
             {errors.mainProducts && <p className="text-xs text-red-500 mt-1">{errors.mainProducts}</p>}
           </div>
         </div>
 
         {/* CARD 3: Supporting Documents */}
-        <div className={`bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5 ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`}>
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+        <div className={`bg-canvas border border-hairline p-6 space-y-5 ${hasPendingRequest ? 'opacity-70 pointer-events-none' : ''}`} style={{ borderRadius: 0 }}>
+          <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
             <FileText size={16} className="text-primary" /> Tài liệu chứng minh sản xuất
           </h3>
 
           {/* Google Drive Link */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('link_google_drive_chua_ho_so_san_xuat')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('link_google_drive_chua_ho_so_san_xuat')}</label>
             <input
               type="text"
               placeholder="https://drive.google.com/..."
               value={form.driveLink}
               onChange={e => setForm(prev => ({ ...prev, driveLink: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
             {errors.driveLink && <p className="text-xs text-red-500 mt-1">{errors.driveLink}</p>}
           </div>
 
           {/* Multiple factory images */}
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('anh_nha_xuong_may_moc_day_chuyen_toi_thi')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('anh_nha_xuong_may_moc_day_chuyen_toi_thi')}</label>
             <div className="flex items-center gap-3">
-              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-primary transition-all">
-                <Upload size={20} className="text-slate-400" />
-                <span className="text-[10px] text-slate-400 mt-1 font-bold">Tải ảnh lên</span>
+              <label className="flex flex-col items-center justify-center w-24 h-24 border border-dashed border-hairline cursor-pointer hover:bg-surface-1 hover:border-primary transition-all" style={{ borderRadius: 0 }}>
+                <Upload size={20} className="text-ink-subtle" />
+                <span className="text-[10px] text-ink-subtle mt-1 font-normal" style={{ letterSpacing: '0.16px' }}>Tải ảnh lên</span>
                 <input
                   type="file"
                   multiple
@@ -599,11 +614,11 @@ export function ManufacturerVerification() {
 
               <div className="flex flex-wrap gap-2">
                 {factoryImages.map((file, idx) => (
-                  <div key={idx} className="relative w-24 h-24 rounded-xl border border-slate-200 overflow-hidden bg-slate-100 flex items-center justify-center p-1">
+                  <div key={idx} className="relative w-24 h-24 border border-hairline overflow-hidden bg-surface-1 flex items-center justify-center p-1" style={{ borderRadius: 0 }}>
                     {file.type.includes('pdf') ? (
                       <div className="text-center">
                         <FileText size={24} className="mx-auto text-primary" />
-                        <span className="text-[8px] text-slate-500 block truncate max-w-full px-1">{file.name}</span>
+                        <span className="text-[8px] text-ink-muted block truncate max-w-full px-1">{file.name}</span>
                       </div>
                     ) : (
                       <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
@@ -611,7 +626,8 @@ export function ManufacturerVerification() {
                     <button
                       type="button"
                       onClick={() => removeFactoryImage(idx)}
-                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow"
+                      className="absolute -top-1 -right-1 bg-red-600 text-white p-1 hover:bg-red-700"
+                      style={{ borderRadius: 0 }}
                     >
                       <X size={10} />
                     </button>
@@ -620,19 +636,20 @@ export function ManufacturerVerification() {
               </div>
             </div>
             {errors.files && <p className="text-xs text-red-500">{errors.files}</p>}
-            <p className="text-[10px] text-slate-400">{t('dinh_dang_ho_tro_png_jpg_pdf_toi_da_10mb')}</p>
+            <p className="text-[10px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('dinh_dang_ho_tro_png_jpg_pdf_toi_da_10mb')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Safety Certificate */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('giay_chung_nhan_nha_xuong_an_toan_moi_tr')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('giay_chung_nhan_nha_xuong_an_toan_moi_tr')}</label>
               <div className="relative">
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/jpg, application/pdf"
                   onChange={e => handleFileChange(e, 'safety')}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-slate-200 rounded-xl"
+                  className="w-full text-xs text-ink-muted file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-normal file:bg-surface-2 file:text-ink hover:file:bg-surface-3 file:cursor-pointer cursor-pointer border border-hairline"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 />
               </div>
               {safetyCert && <p className="text-xs text-emerald-600 mt-1">✓ Đã chọn: {safetyCert.name}</p>}
@@ -640,13 +657,14 @@ export function ManufacturerVerification() {
 
             {/* ISO Certificate */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('chung_chi_san_xuat_iso_haccp_gmp_fda_coc')}</label>
+              <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('chung_chi_san_xuat_iso_haccp_gmp_fda_coc')}</label>
               <div className="relative">
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/jpg, application/pdf"
                   onChange={e => handleFileChange(e, 'production')}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-slate-200 rounded-xl"
+                  className="w-full text-xs text-ink-muted file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-normal file:bg-surface-2 file:text-ink hover:file:bg-surface-3 file:cursor-pointer cursor-pointer border border-hairline"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 />
               </div>
               {productionCert && <p className="text-xs text-emerald-600 mt-1">✓ Đã chọn: {productionCert.name}</p>}
@@ -655,23 +673,25 @@ export function ManufacturerVerification() {
 
           {/* Admin notes */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">{t('ghi_chu_cho_admin_khong_bat_buoc')}</label>
+            <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('ghi_chu_cho_admin_khong_bat_buoc')}</label>
             <textarea
               placeholder="Thêm tin nhắn hoặc thông tin gửi tới Admin duyệt hồ sơ..."
               rows={3}
               value={form.adminNotes}
               onChange={e => setForm(prev => ({ ...prev, adminNotes: e.target.value }))}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             />
           </div>
         </div>
 
         {/* Buttons / Actions */}
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-hairline">
           <button
             type="button"
             onClick={() => navigate('/dashboard/supplier/profile')}
-            className="btn-ghost"
+            className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
+            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             disabled={submitting}
           >
             Back to Company Profile
@@ -679,7 +699,8 @@ export function ManufacturerVerification() {
           
           <button
             type="submit"
-            className="btn-primary flex items-center gap-2 shadow-lg"
+            className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2 flex items-center gap-2"
+            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             disabled={submitting || hasPendingRequest}
           >
             {submitting && <Loader2 size={16} className="animate-spin" />}

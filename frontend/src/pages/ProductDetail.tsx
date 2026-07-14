@@ -98,12 +98,12 @@ export function ProductDetail() {
     try { await api.post('/cart/items', { productId: product.id, quantity: 1 }); addToast({ type: 'success', title: 'Thành công', message: 'Đã thêm vào Giỏ yêu cầu' }); } catch { addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm' }); }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-primary" size={48} /></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-canvas"><Loader2 className="animate-spin text-primary" size={48} /></div>;
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-canvas">
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">Không tìm thấy sản phẩm</h2>
-        <Link to="/products" className="text-primary font-bold underline">{t('product_back_to_list')}</Link>
+        <h2 className="text-2xl font-normal text-ink">{t('không tìm thấy sản phẩm')}</h2>
+        <Link to="/products" className="text-primary font-normal hover:underline">{t('product_back_to_list')}</Link>
       </div>
     </div>
   );
@@ -113,26 +113,26 @@ export function ProductDetail() {
   const memberSince = supplier?.createdAt ? new Date(supplier.createdAt).getFullYear() : '2024';
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-16">
+    <div className="bg-canvas min-h-screen pb-16">
       <SEOHead title={product.name} description={product.description?.substring(0, 160) || product.name} canonical={`/products/${product.id}`} />
 
       {/* Main Container */}
-      <div className="max-w-[1400px] mx-auto px-4 py-4">
+      <div className="max-w-[1600px] mx-auto px-4 py-4">
         {/* Breadcrumb - Small, light gray-blue, chevron separators */}
-        <nav className="flex items-center flex-wrap gap-1.5 text-[11px] text-slate-500 mb-4">
-          <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
-          <ChevronRight size={10} className="text-slate-400" />
-          <Link to="/products" className="hover:text-primary transition-colors">{t('supplier_products_tab')}</Link>
+        <nav className="flex items-center flex-wrap gap-1.5 text-[11px] text-ink-subtle mb-4">
+          <Link to="/" className="hover:text-primary transition-colors font-normal" style={{ letterSpacing: '0.16px' }}>Trang chủ</Link>
+          <ChevronRight size={10} className="text-hairline" />
+          <Link to="/products" className="hover:text-primary transition-colors font-normal" style={{ letterSpacing: '0.16px' }}>{t('supplier_products_tab')}</Link>
           {product.category && (
             <>
-              <ChevronRight size={10} className="text-slate-400" />
-              <Link to={`/products?category=${product.category.slug}`} className="hover:text-primary transition-colors">
+              <ChevronRight size={10} className="text-hairline" />
+              <Link to={`/products?category=${product.category.slug}`} className="hover:text-primary transition-colors font-normal" style={{ letterSpacing: '0.16px' }}>
                 {product.category.name}
               </Link>
             </>
           )}
-          <ChevronRight size={10} className="text-slate-400" />
-          <span className="text-slate-800 font-semibold truncate max-w-[250px]">{product.name}</span>
+          <ChevronRight size={10} className="text-hairline" />
+          <span className="text-ink font-normal truncate max-w-[250px]" style={{ letterSpacing: '0.16px' }}>{product.name}</span>
         </nav>
 
         {/* Two-Column Grid: Left (50% lg:col-span-6), Right (50% lg:col-span-6) */}
@@ -142,15 +142,16 @@ export function ProductDetail() {
           <div className="lg:col-span-6 space-y-6">
             
             {/* Gallery Card */}
-            <div className="bg-white border border-slate-300 rounded-xl p-5">
-              <div className="aspect-square bg-slate-50 rounded-lg overflow-hidden mb-4 relative group flex items-center justify-center">
+            <div className="bg-canvas border border-hairline p-5" style={{ borderRadius: 0 }}>
+              <div className="aspect-square bg-surface-1 overflow-hidden mb-4 relative group flex items-center justify-center" style={{ borderRadius: 0 }}>
                 <img src={images[activeImage]} alt={product.name} className="max-h-full max-w-full object-contain" />
                 <button
                   onClick={handleToggleFavorite}
                   className={cn(
-                    "absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg",
-                    isFavorite ? "bg-red-500 text-white" : "bg-white/95 text-slate-400 hover:text-red-500"
+                    "absolute top-3 right-3 w-10 h-10 flex items-center justify-center transition-colors border border-hairline",
+                    isFavorite ? "bg-red-500 text-white" : "bg-surface-1 text-ink-subtle hover:text-red-500"
                   )}
+                  style={{ borderRadius: 0 }}
                 >
                   <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
                 </button>
@@ -167,22 +168,23 @@ export function ProductDetail() {
                         key={idx}
                         onClick={() => !isLast && setActiveImage(idx)}
                         className={cn(
-                          "aspect-square rounded-lg border-2 overflow-hidden relative flex items-center justify-center bg-slate-50 transition-all",
-                          isActive ? "border-primary ring-1 ring-primary/20" : "border-slate-200 hover:border-slate-300"
+                          "aspect-square border overflow-hidden relative flex items-center justify-center bg-surface-1 transition-colors",
+                          isActive ? "border-2 border-primary" : "border-hairline hover:border-ink-muted"
                         )}
+                        style={{ borderRadius: 0 }}
                       >
                         {isLast ? (
-                          <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center">
-                            <span className="text-lg font-bold text-primary">+{images.length - 4}</span>
-                            <span className="text-[10px] font-medium text-slate-500">Ảnh</span>
+                          <div className="absolute inset-0 bg-surface-2 flex flex-col items-center justify-center">
+                            <span className="text-lg font-normal text-primary">+{images.length - 4}</span>
+                            <span className="text-[10px] font-normal text-ink-subtle">Ảnh</span>
                           </div>
                         ) : (
                           <>
                             <img src={img} alt="" className="w-full h-full object-cover" />
                             {idx === 1 && (
                               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                                <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center">
-                                  <Play size={14} className="text-slate-700 fill-slate-700 ml-0.5" />
+                                <div className="w-8 h-8 bg-surface-1/90 flex items-center justify-center" style={{ borderRadius: 0 }}>
+                                  <Play size={14} className="text-ink fill-ink ml-0.5" />
                                 </div>
                               </div>
                             )}
@@ -203,29 +205,29 @@ export function ProductDetail() {
             {/* Product Info — no card, sits on background */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-bold tracking-wider uppercase bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded flex items-center gap-1">
+                <span className="text-[10px] font-normal tracking-wider uppercase bg-surface-2 border border-hairline text-amber-700 px-2 py-0.5 flex items-center gap-1" style={{ borderRadius: 0, letterSpacing: '0.32px' }}>
                   <ShieldCheck size={12} /> {t('status_verified')}
                 </span>
               </div>
 
-              <h1 className="text-xl lg:text-2xl font-bold text-slate-900 leading-tight mb-2">
+              <h1 className="text-xl lg:text-2xl font-light text-ink leading-tight mb-2" style={{ letterSpacing: '0.16px' }}>
                 {product.name}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
-                {product.sku && <span>{t('product_sku_label')} <span className="font-semibold text-slate-700">{product.sku}</span></span>}
-                <span>|</span>
-                <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-subtle">
+                {product.sku && <span style={{ letterSpacing: '0.16px' }}>{t('product_sku_label')} <span className="font-normal text-ink">{product.sku}</span></span>}
+                <span className="text-hairline">|</span>
+                <div className="flex items-center gap-1" style={{ letterSpacing: '0.16px' }}>
                   <Star size={13} className="text-amber-400 fill-amber-400" />
-                  <span className="font-bold text-slate-700">4.9/5</span>
-                  <span className="text-slate-400">{t('product_orders_count')}</span>
+                  <span className="font-normal text-ink">4.9/5</span>
+                  <span className="text-ink-subtle">{t('product_orders_count')}</span>
                 </div>
               </div>
             </div>
 
             {/* Price Tiers Card */}
-            <div className="bg-white border border-slate-300 rounded-xl p-6">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+            <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+              <h3 className="text-xs font-normal text-ink-subtle uppercase mb-3" style={{ letterSpacing: '0.32px' }}>
                 {t('product_moq_pricing')}
               </h3>
 
@@ -236,19 +238,20 @@ export function ProductDetail() {
                     type="button"
                     onClick={() => setRfqQuantity(50)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
+                      "p-3 border text-center transition-colors cursor-pointer",
                       rfqQuantity < 100
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
-                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
+                        ? "border-2 border-primary bg-surface-1"
+                        : "border-hairline bg-canvas hover:border-ink-muted"
                     )}
+                    style={{ borderRadius: 0 }}
                   >
-                    <div className="text-[10px] font-medium text-slate-500 mb-1">
+                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
                       1 - 99 {product.unit || 'cái'}
                     </div>
-                    <div className="text-sm lg:text-base font-bold text-primary">
+                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
                       {(product.maxPrice || product.minPrice)?.toLocaleString()}
                     </div>
-                    <div className="text-[9px] text-slate-400">
+                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
                       {product.currency || 'VND'}
                     </div>
                   </button>
@@ -258,19 +261,20 @@ export function ProductDetail() {
                     type="button"
                     onClick={() => setRfqQuantity(500)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
+                      "p-3 border text-center transition-colors cursor-pointer",
                       rfqQuantity >= 100 && rfqQuantity < 1000
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
-                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
+                        ? "border-2 border-primary bg-surface-1"
+                        : "border-hairline bg-canvas hover:border-ink-muted"
                     )}
+                    style={{ borderRadius: 0 }}
                   >
-                    <div className="text-[10px] font-medium text-slate-500 mb-1">
+                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
                       100 - 999 {product.unit || 'cái'}
                     </div>
-                    <div className="text-sm lg:text-base font-bold text-primary">
+                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
                       {Math.round((product.minPrice + (product.maxPrice || product.minPrice)) / 2)?.toLocaleString()}
                     </div>
-                    <div className="text-[9px] text-slate-400">
+                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
                       {product.currency || 'VND'}
                     </div>
                   </button>
@@ -280,26 +284,27 @@ export function ProductDetail() {
                     type="button"
                     onClick={() => setRfqQuantity(1000)}
                     className={cn(
-                      "p-3 rounded-lg border text-center transition-all cursor-pointer hover:scale-[1.03] active:scale-[0.98]",
+                      "p-3 border text-center transition-colors cursor-pointer",
                       rfqQuantity >= 1000
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/10 shadow-sm"
-                        : "border-slate-200/70 bg-slate-50/50 hover:border-slate-300"
+                        ? "border-2 border-primary bg-surface-1"
+                        : "border-hairline bg-canvas hover:border-ink-muted"
                     )}
+                    style={{ borderRadius: 0 }}
                   >
-                    <div className="text-[10px] font-medium text-slate-500 mb-1">
+                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
                       ≥ 1,000 {product.unit || 'cái'}
                     </div>
-                    <div className="text-sm lg:text-base font-bold text-primary">
+                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
                       {product.minPrice?.toLocaleString()}
                     </div>
-                    <div className="text-[9px] text-slate-400">
+                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
                       {product.currency || 'VND'}
                     </div>
                   </button>
                 </div>
               ) : (
-                <div className="bg-slate-50 border border-slate-200 border-dashed rounded-lg p-6 text-center">
-                  <p className="text-xs text-slate-500 font-medium">
+                <div className="bg-surface-1 border border-hairline border-dashed p-6 text-center" style={{ borderRadius: 0 }}>
+                  <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>
                     Chưa có bảng giá theo số lượng
                   </p>
                 </div>
@@ -307,13 +312,13 @@ export function ProductDetail() {
             </div>
 
             {/* RFQ Form Card */}
-            <div className="bg-white border border-slate-300 rounded-xl p-6">
-              <h3 className="text-base font-bold text-slate-900 mb-4">
+            <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+              <h3 className="text-base font-normal text-ink mb-4" style={{ letterSpacing: '0.16px' }}>
                 {t('create_rfq')}
               </h3>
               <form onSubmit={handleLocalRFQSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-normal text-ink mb-1.5" style={{ letterSpacing: '0.16px' }}>
                     {t('expected_quantity')}
                   </label>
                   <input
@@ -321,12 +326,12 @@ export function ProductDetail() {
                     min="1"
                     value={rfqQuantity}
                     onChange={(e) => setRfqQuantity(Number(e.target.value) || 1)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="w-full bg-surface-1 border border-hairline px-3 py-2 text-sm outline-none focus:border-b-2 focus:border-b-primary" style={{ borderRadius: 0 }}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-normal text-ink mb-1.5" style={{ letterSpacing: '0.16px' }}>
                     {t('requirements')}
                   </label>
                   <textarea
@@ -334,21 +339,23 @@ export function ProductDetail() {
                     value={rfqMessage}
                     onChange={(e) => setRfqMessage(e.target.value)}
                     placeholder={t('rfq_placeholder')}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-400"
+                    className="w-full bg-surface-1 border border-hairline px-3 py-2 text-sm outline-none focus:border-b-2 focus:border-b-primary placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                   <button
                     type="submit"
-                    className="bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition-colors text-sm flex items-center justify-center gap-2 shadow-sm"
+                    className="bg-primary text-white font-normal py-3 px-4 hover:bg-primary-hover transition-colors text-sm flex items-center justify-center gap-2"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   >
                     <Send size={15} /> {t('send_rfq')}
                   </button>
                   <button
                     type="button"
                     onClick={handleContact}
-                    className="border border-primary text-primary font-bold py-3 px-4 rounded-lg hover:bg-primary/5 transition-colors text-sm flex items-center justify-center gap-2"
+                    className="border border-primary text-primary font-normal py-3 px-4 hover:bg-surface-1 transition-colors text-sm flex items-center justify-center gap-2"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   >
                     <MessageSquare size={15} /> {t('chat_with_supplier')}
                   </button>
@@ -361,9 +368,9 @@ export function ProductDetail() {
         </div>
 
         {/* Tabbed Info Section */}
-        <div className="mt-8 bg-white border border-slate-300 rounded-xl overflow-hidden">
+        <div className="mt-8 bg-canvas border border-hairline" style={{ borderRadius: 0 }}>
           {/* Tab Headers */}
-          <div className="flex border-b border-slate-100 overflow-x-auto bg-slate-50/50">
+          <div className="flex border-b border-hairline overflow-x-auto bg-surface-1">
             {[
               { id: 'overview', name: t('tab_description') },
               { id: 'certs', name: t('tab_certifications') },
@@ -373,11 +380,12 @@ export function ProductDetail() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "px-6 py-3.5 text-sm font-bold whitespace-nowrap transition-colors border-b-2 -mb-px",
+                  "px-6 py-3.5 text-sm font-normal whitespace-nowrap transition-colors border-b-2 -mb-px",
                   activeTab === tab.id
-                    ? "text-primary border-primary bg-primary/[0.03]"
-                    : "text-slate-500 border-transparent hover:text-slate-700"
+                    ? "text-primary border-primary bg-canvas"
+                    : "text-ink-subtle border-transparent hover:text-ink hover:bg-surface-2"
                 )}
+                style={{ letterSpacing: '0.16px' }}
               >
                 {tab.name}
               </button>
@@ -389,16 +397,16 @@ export function ProductDetail() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-3">{t('product_description_section')}</h3>
+                  <h3 className="text-base font-normal text-ink mb-3" style={{ letterSpacing: '0.16px' }}>{t('product_description_section')}</h3>
                   <div 
-                    className="text-sm text-slate-600 leading-relaxed rich-text-content"
+                    className="text-sm text-ink-muted leading-relaxed rich-text-content"
                     dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(product.description) }}
                   />
                 </div>
 
                 {/* Technical Specifications inside Specifications Tab */}
-                <div className="border-t border-slate-100 pt-6">
-                  <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-4">
+                <div className="border-t border-hairline pt-6">
+                  <h3 className="text-base font-normal text-ink uppercase mb-4" style={{ letterSpacing: '0.32px' }}>
                     {t('product_specifications_section')}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -408,9 +416,9 @@ export function ProductDetail() {
                       [t('spec_moq'), `${product.moq || 1}`],
                       [t('spec_brand'), product.brand || '—'],
                     ]).map(([key, val]: any, i: number) => (
-                      <div key={i} className="flex justify-between items-center py-2 px-3 border-b border-slate-100 text-sm">
-                        <span className="font-medium text-slate-500">{key}</span>
-                        <span className="font-semibold text-slate-800">{val}</span>
+                      <div key={i} className="flex justify-between items-center py-2 px-3 border-b border-hairline text-sm hover:bg-surface-1">
+                        <span className="font-normal text-ink-subtle">{key}</span>
+                        <span className="font-normal text-ink">{val}</span>
                       </div>
                     ))}
                   </div>
@@ -420,23 +428,23 @@ export function ProductDetail() {
 
             {activeTab === 'certs' && (
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-slate-900 mb-2">{t('product_business_certs')}</h3>
+                <h3 className="text-base font-normal text-ink mb-2" style={{ letterSpacing: '0.16px' }}>{t('product_business_certs')}</h3>
                 {supplier?.certifications?.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {supplier.certifications.map((cert: any, i: number) => (
-                      <div key={i} className="flex items-center gap-3 border border-emerald-100 bg-emerald-50/40 rounded-lg p-3">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <div key={i} className="flex items-center gap-3 border border-hairline bg-surface-1 p-3" style={{ borderRadius: 0 }}>
+                        <div className="w-8 h-8 bg-surface-2 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: 0 }}>
                           <ShieldCheck size={16} className="text-emerald-600" />
                         </div>
                         <div>
-                          <div className="text-sm font-bold text-slate-900">{cert.name}</div>
-                          {cert.issuedBy && <div className="text-[10px] text-slate-500">{cert.issuedBy}</div>}
+                          <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{cert.name}</div>
+                          {cert.issuedBy && <div className="text-[10px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{cert.issuedBy}</div>}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="py-8 text-center text-slate-400 text-sm">
+                  <div className="py-8 text-center text-ink-subtle text-sm" style={{ letterSpacing: '0.16px' }}>
                     {t('supplier_no_certs')}
                   </div>
                 )}
@@ -462,17 +470,17 @@ export function ProductDetail() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* ── Left Column: Company Details ── */}
                   <div>
-                    <h3 className="text-lg font-extrabold text-[#1a2e4a] mb-2 leading-snug">
+                    <h3 className="text-lg font-normal text-ink mb-2 leading-snug" style={{ letterSpacing: '0.16px' }}>
                       {supplier.companyName}
                     </h3>
                     {supplier.status === SupplierStatus.VERIFIED && (
-                      <div className="flex items-center gap-1.5 text-sm text-emerald-600 font-bold mb-5">
+                      <div className="flex items-center gap-1.5 text-sm text-emerald-600 font-normal mb-5" style={{ letterSpacing: '0.16px' }}>
                         <ShieldCheck size={16} className="shrink-0" />
                         <span>{t('verified_supplier_years')} ({verifiedYears} {t('years_count')})</span>
                       </div>
                     )}
 
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-hairline">
                       {[
                         { label: t('tax_code_label'), value: supplier.taxCode || '—' },
                         { label: t('office_address'), value: primaryLocation },
@@ -481,11 +489,11 @@ export function ProductDetail() {
                         { label: t('hotline'), value: supplier.companyPhone || '—' },
                       ].map((row, i) => (
                         <div key={i} className="flex flex-col sm:flex-row py-3.5 gap-1 sm:gap-0">
-                          <span className="text-sm text-slate-400 font-medium sm:w-[140px] shrink-0">{row.label}</span>
+                          <span className="text-sm text-ink-subtle font-normal sm:w-[140px] shrink-0" style={{ letterSpacing: '0.16px' }}>{row.label}</span>
                           {row.isEmail ? (
-                            <a href={`mailto:${row.value}`} className="text-sm text-primary font-bold hover:underline break-all">{row.value}</a>
+                            <a href={`mailto:${row.value}`} className="text-sm text-primary font-normal hover:underline break-all" style={{ letterSpacing: '0.16px' }}>{row.value}</a>
                           ) : (
-                            <span className="text-sm text-slate-900 font-bold">{row.value}</span>
+                            <span className="text-sm text-ink font-normal" style={{ letterSpacing: '0.16px' }}>{row.value}</span>
                           )}
                         </div>
                       ))}
@@ -496,7 +504,7 @@ export function ProductDetail() {
                   <div className="space-y-6">
                     {/* Sales & Communication Channels */}
                     <div>
-                      <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-3">
+                      <h4 className="text-xs font-normal text-ink-subtle uppercase mb-3" style={{ letterSpacing: '0.32px' }}>
                         {t('sales_channels_title')}
                       </h4>
                       <div className="flex flex-wrap gap-2.5">
@@ -508,8 +516,8 @@ export function ProductDetail() {
                               href={ch.url || supplier.website || '#'}
                               target={ch.url || supplier.website ? '_blank' : undefined}
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-white text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
-                              style={{ backgroundColor: bg }}
+                              className="inline-flex items-center gap-2 px-4 py-2 text-white text-xs font-normal transition-opacity hover:opacity-90"
+                              style={{ backgroundColor: bg, borderRadius: 0, letterSpacing: '0.16px' }}
                             >
                               <ExternalLink size={13} />
                               {ch.name}
@@ -520,11 +528,11 @@ export function ProductDetail() {
                     </div>
 
                     {/* Short Introduction */}
-                    <div className="bg-slate-50 border-l-4 border-primary rounded-r-lg p-5">
-                      <h4 className="text-sm font-extrabold text-slate-800 italic mb-2">
+                    <div className="bg-surface-1 border-l-2 border-primary p-5" style={{ borderRadius: 0 }}>
+                      <h4 className="text-sm font-normal text-ink italic mb-2" style={{ letterSpacing: '0.16px' }}>
                         {t('short_intro')}
                       </h4>
-                      <p className="text-sm text-slate-600 leading-relaxed">
+                      <p className="text-sm text-ink-muted leading-relaxed" style={{ letterSpacing: '0.16px' }}>
                         {supplier.description || t('no_description')}
                       </p>
                     </div>
@@ -536,8 +544,8 @@ export function ProductDetail() {
         </div>
 
         {/* Related Products Section */}
-        <div className="mt-8 bg-white border border-slate-300 rounded-xl p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4">{t('product_similar_items')}</h2>
+        <div className="mt-8 bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+          <h2 className="text-base font-normal text-ink mb-4" style={{ letterSpacing: '0.16px' }}>{t('product_similar_items')}</h2>
           {relatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.slice(0, 5).map((rp: any) => {
@@ -557,10 +565,11 @@ export function ProductDetail() {
                   <Link
                     key={rp.id}
                     to={`/products/${rp.slug || rp.id}`}
-                    className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-300 flex flex-col h-full"
+                    className="group bg-canvas border border-hairline overflow-hidden hover:border-primary transition-colors duration-300 flex flex-col h-full"
+                    style={{ borderRadius: 0 }}
                   >
                     {/* Image — 60% height */}
-                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-surface-1">
                       <img
                         src={rpImage}
                         alt={rp.name}
@@ -571,27 +580,27 @@ export function ProductDetail() {
                     {/* Info */}
                     <div className="p-3.5 flex flex-col flex-1">
                       {/* Product Name — bold, 2 lines max */}
-                      <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-snug mb-2">
+                      <h3 className="text-sm font-normal text-ink line-clamp-2 leading-snug mb-2" style={{ letterSpacing: '0.16px' }}>
                         {rp.name}
                       </h3>
 
                       {/* Price — prominent, dark blue */}
-                      <p className="text-base font-extrabold text-[#0f2a4a] mb-1">
+                      <p className="text-base font-normal text-primary mb-1" style={{ letterSpacing: '0.16px' }}>
                         {rpPrice}
                       </p>
 
                       {/* MOQ */}
                       {rpMoq && (
-                        <p className="text-xs text-slate-500 mb-auto">
-                          MOQ: <span className="font-semibold text-slate-600">{rpMoq}</span>
+                        <p className="text-xs text-ink-muted mb-auto" style={{ letterSpacing: '0.16px' }}>
+                          MOQ: <span className="font-normal text-ink">{rpMoq}</span>
                         </p>
                       )}
 
                       {/* Supplier — with separator */}
                       {rpSupplier && (
-                        <div className="mt-3 pt-2.5 border-t border-slate-100">
-                          <p className="text-[11px] text-slate-400 truncate">
-                            Nhà cung cấp: <span className="font-medium text-slate-500">{rpSupplier}</span>
+                        <div className="mt-3 pt-2.5 border-t border-hairline">
+                          <p className="text-[11px] text-ink-subtle truncate" style={{ letterSpacing: '0.16px' }}>
+                            Nhà cung cấp: <span className="font-normal text-ink-muted">{rpSupplier}</span>
                           </p>
                         </div>
                       )}
@@ -601,7 +610,7 @@ export function ProductDetail() {
               })}
             </div>
           ) : (
-            <div className="py-8 text-center text-slate-400 text-sm">
+            <div className="py-8 text-center text-ink-subtle text-sm" style={{ letterSpacing: '0.16px' }}>
               Chưa có sản phẩm tương tự
             </div>
           )}

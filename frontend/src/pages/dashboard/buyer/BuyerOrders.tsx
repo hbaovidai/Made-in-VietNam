@@ -40,13 +40,13 @@ export function BuyerOrders() {
 
   const getStatusColor = (status: string) => {
     switch(status) {
-      case 'PENDING': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'CONFIRMED': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'PROCESSING': return 'bg-purple-100 text-purple-700 border-purple-200';
-      case 'SHIPPING': return 'bg-indigo-100 text-indigo-700 border-indigo-200';
-      case 'DELIVERED': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'CANCELLED': return 'bg-red-100 text-red-700 border-red-200';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200';
+      case 'PENDING': return 'bg-surface-1 text-amber-700 border-hairline';
+      case 'CONFIRMED': return 'bg-surface-1 text-blue-700 border-hairline';
+      case 'PROCESSING': return 'bg-surface-1 text-purple-700 border-hairline';
+      case 'SHIPPING': return 'bg-surface-1 text-indigo-700 border-hairline';
+      case 'DELIVERED': return 'bg-surface-1 text-emerald-700 border-hairline';
+      case 'CANCELLED': return 'bg-surface-1 text-red-700 border-hairline';
+      default: return 'bg-surface-2 text-ink-muted border-hairline';
     }
   };
 
@@ -62,94 +62,96 @@ export function BuyerOrders() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-slate-500">{t('dang_tai_du_lieu')}</div>;
+  if (loading) return <div className="p-8 text-center text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('dang_tai_du_lieu')}</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <ShoppingBag className="text-emerald-600" />
+          <h1 className="text-xl font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
+            <ShoppingBag className="text-primary" />
             ĐƠN MUA CỦA TÔI
           </h1>
-          <p className="text-sm text-slate-500 mt-1">{t('quan_ly_va_theo_doi_cac_don_hang_ban_da_')}</p>
+          <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('quan_ly_va_theo_doi_cac_don_hang_ban_da_')}</p>
         </div>
         
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle" size={18} />
           <input 
             type="text" 
             placeholder="Tìm mã đơn hàng..." 
-            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-sm"
+            className="w-full pl-10 pr-4 py-2 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary placeholder:text-ink-subtle"
+            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
           />
         </div>
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-12 text-center">
-          <Package size={48} className="mx-auto text-slate-200 mb-4" />
-          <h3 className="text-lg font-bold text-slate-700 mb-2">{t('chua_co_don_hang_nao')}</h3>
-          <p className="text-slate-500">{t('ban_chua_thuc_hien_bat_ky_don_mua_hang_n')}</p>
+        <div className="bg-canvas border border-hairline p-12 text-center" style={{ borderRadius: 0 }}>
+          <Package size={48} className="mx-auto text-ink-subtle mb-4" />
+          <h3 className="text-lg font-normal text-ink mb-2" style={{ letterSpacing: '0.16px' }}>{t('chua_co_don_hang_nao')}</h3>
+          <p className="text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('ban_chua_thuc_hien_bat_ky_don_mua_hang_n')}</p>
         </div>
       ) : (
         <div className="space-y-4">
           {orders.map(order => (
-            <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div key={order.id} className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
               {/* Header */}
-              <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex flex-wrap gap-4 justify-between items-center">
+              <div className="bg-surface-1 px-6 py-4 border-b border-hairline flex flex-wrap gap-4 justify-between items-center">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">Mã đơn hàng</div>
-                    <div className="font-bold text-slate-900">#{order.id.split('-')[0].toUpperCase()}</div>
+                    <div className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>Mã đơn hàng</div>
+                    <div className="font-normal text-ink">#{order.id.split('-')[0].toUpperCase()}</div>
                   </div>
-                  <div className="hidden sm:block w-px h-8 bg-slate-200"></div>
+                  <div className="hidden sm:block w-px h-8 bg-hairline"></div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">{t('ngay_dat')}</div>
-                    <div className="font-bold text-slate-900">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
+                    <div className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>{t('ngay_dat')}</div>
+                    <div className="font-normal text-ink">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
                   </div>
                 </div>
                 
-                <div className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(order.status)}`}>
+                <div className={`px-3 py-1 text-xs font-normal border ${getStatusColor(order.status)}`} style={{ borderRadius: 0, letterSpacing: '0.32px' }}>
                   {getStatusText(order.status)}
                 </div>
               </div>
 
               {/* Items */}
-              <div className="px-6 py-4 space-y-4">
+              <div className="px-6 py-4 space-y-4 bg-canvas">
                 {order.items.map((item: any) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="w-20 h-20 bg-slate-100 rounded-lg overflow-hidden shrink-0">
+                    <div className="w-20 h-20 bg-surface-1 border border-hairline overflow-hidden shrink-0" style={{ borderRadius: 0 }}>
                       <img src={item.product.images[0] || 'https://via.placeholder.com/100'} alt={item.product.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <div className="text-sm font-bold text-slate-900 truncate">{item.product.name}</div>
-                      <div className="text-xs text-slate-500 mt-1">Cung cấp bởi: {item.product.supplier?.companyName}</div>
-                      <div className="text-xs text-slate-500 mt-1">SL: x{item.quantity} {item.product.unit || 'cái'}</div>
+                      <div className="text-sm font-normal text-ink truncate" style={{ letterSpacing: '0.16px' }}>{item.product.name}</div>
+                      <div className="text-xs text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>Cung cấp bởi: {item.product.supplier?.companyName}</div>
+                      <div className="text-xs text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>SL: x{item.quantity} {item.product.unit || 'cái'}</div>
                     </div>
                     <div className="text-right flex flex-col justify-center">
-                      <div className="font-black text-emerald-600">{((item.price || item.product?.minPrice || 0) * (parseInt(item.quantity) || 1)).toLocaleString()} đ</div>
+                      <div className="font-light text-primary">{((item.price || item.product?.minPrice || 0) * (parseInt(item.quantity) || 1)).toLocaleString()} đ</div>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-4 items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <MapPin size={16} className="text-slate-400" />
-                  <span className="truncate max-w-[200px] sm:max-w-md">{order.shippingAddress}</span>
+              <div className="px-6 py-4 border-t border-hairline bg-surface-1 flex flex-wrap gap-4 items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-ink-muted">
+                  <MapPin size={16} className="text-ink-subtle" />
+                  <span className="truncate max-w-[200px] sm:max-w-md" style={{ letterSpacing: '0.16px' }}>{order.shippingAddress}</span>
                 </div>
                 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="text-xs text-slate-500 font-medium">Tổng tiền</div>
-                    <div className="text-lg font-black text-emerald-600">{order.totalAmount.toLocaleString()} đ</div>
+                    <div className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>Tổng tiền</div>
+                    <div className="text-lg font-light text-primary">{order.totalAmount.toLocaleString()} đ</div>
                   </div>
                   
                   {order.status === 'PENDING' && (
                     <button 
                       onClick={() => cancelOrder(order.id)}
-                      className="px-4 py-2 border-2 border-red-200 text-red-600 font-bold rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors text-sm flex items-center gap-2"
+                      className="px-4 py-2 border border-red-600 text-red-600 font-normal hover:bg-red-50 transition-colors text-sm flex items-center gap-2"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     >
                       <XCircle size={16} /> Hủy đơn
                     </button>

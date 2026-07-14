@@ -48,10 +48,10 @@ export function SupplierAnalytics() {
   const overview = data?.overview || { totalViews: 0, totalProducts: 0, activeProducts: 0, avgViewsPerProduct: 0 };
 
   const kpis = [
-    { label: 'Tổng lượt xem', value: overview.totalViews, icon: <Eye size={18} className="text-amber-500" />, bg: 'bg-amber-50' },
-    { label: 'Tổng sản phẩm', value: overview.totalProducts, icon: <Package size={18} className="text-blue-500" />, bg: 'bg-blue-50' },
-    { label: 'Đang hoạt động', value: overview.activeProducts, icon: <TrendingUp size={18} className="text-emerald-500" />, bg: 'bg-emerald-50' },
-    { label: 'TB lượt xem/SP', value: overview.avgViewsPerProduct, icon: <BarChart3 size={18} className="text-purple-500" />, bg: 'bg-purple-50' },
+    { label: 'Tổng lượt xem', value: overview.totalViews, icon: <Eye size={18} className="text-primary" />, bg: 'bg-surface-1' },
+    { label: 'Tổng sản phẩm', value: overview.totalProducts, icon: <Package size={18} className="text-primary" />, bg: 'bg-surface-1' },
+    { label: 'Đang hoạt động', value: overview.activeProducts, icon: <TrendingUp size={18} className="text-primary" />, bg: 'bg-surface-1' },
+    { label: 'TB lượt xem/SP', value: overview.avgViewsPerProduct, icon: <BarChart3 size={18} className="text-primary" />, bg: 'bg-surface-1' },
   ];
 
   const chartData = period === 'daily'
@@ -69,9 +69,9 @@ export function SupplierAnalytics() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
       return (
-        <div className="bg-slate-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl">
-          <p className="font-bold">{label}</p>
-          <p className="text-amber-300">{payload[0].value} lượt xem</p>
+        <div className="bg-inverse-canvas text-inverse-ink text-xs px-3 py-2 border border-hairline-strong" style={{ borderRadius: 0 }}>
+          <p className="font-normal" style={{ letterSpacing: '0.16px' }}>{label}</p>
+          <p className="text-primary mt-1" style={{ letterSpacing: '0.16px' }}>{payload[0].value} lượt xem</p>
         </div>
       );
     }
@@ -81,47 +81,49 @@ export function SupplierAnalytics() {
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
         Phân tích hiệu suất kinh doanh của {user?.supplier?.companyName || 'công ty bạn'}
       </p>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg hover:shadow-slate-100 transition-all group">
+          <div key={i} className="bg-canvas border border-hairline p-5 transition-all group" style={{ borderRadius: 0 }}>
             <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg}`}>
+              <div className={`w-10 h-10 border border-hairline flex items-center justify-center ${kpi.bg}`} style={{ borderRadius: 0 }}>
                 {kpi.icon}
               </div>
-              <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
+              <ArrowUpRight size={14} className="text-hairline group-hover:text-primary transition-colors" />
             </div>
-            <div className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value.toLocaleString('vi-VN')}</div>
-            <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{kpi.label}</div>
+            <div className="text-2xl font-light text-ink" style={{ letterSpacing: 0 }}>{kpi.value.toLocaleString('vi-VN')}</div>
+            <div className="text-[10px] font-normal text-ink-subtle mt-1 uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{kpi.label}</div>
           </div>
         ))}
       </div>
 
       {/* Main Chart */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Eye size={16} className="text-amber-500" />
-            <h2 className="text-sm font-bold text-slate-900">{t('luot_xem_ho_so_san_pham')}</h2>
+            <Eye size={16} className="text-primary" />
+            <h2 className="text-sm font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('luot_xem_ho_so_san_pham')}</h2>
           </div>
-          <div className="flex bg-slate-100 rounded-lg p-0.5">
+          <div className="flex bg-surface-1 border border-hairline p-0.5" style={{ borderRadius: 0 }}>
             <button
               onClick={() => setPeriod('daily')}
-              className={`text-[11px] font-bold px-3 py-1.5 rounded-md transition-all ${
-                period === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              className={`text-[11px] font-normal px-3 py-1.5 transition-all ${
+                period === 'daily' ? 'bg-canvas text-ink border border-hairline' : 'text-ink-muted hover:text-ink hover:bg-surface-2'
               }`}
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             >
               30 ngày
             </button>
             <button
               onClick={() => setPeriod('monthly')}
-              className={`text-[11px] font-bold px-3 py-1.5 rounded-md transition-all ${
-                period === 'monthly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              className={`text-[11px] font-normal px-3 py-1.5 transition-all ${
+                period === 'monthly' ? 'bg-canvas text-ink border border-hairline' : 'text-ink-muted hover:text-ink hover:bg-surface-2'
               }`}
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             >
               12 tháng
             </button>
@@ -133,42 +135,42 @@ export function SupplierAnalytics() {
             <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
               <defs>
                 <linearGradient id="viewsGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#0f62fe" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#0f62fe" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#8c8c8c' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#8c8c8c' }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="views" stroke="#f59e0b" strokeWidth={2.5} fill="url(#viewsGradient)" />
+              <Area type="monotone" dataKey="views" stroke="#0f62fe" strokeWidth={2} fill="url(#viewsGradient)" />
             </AreaChart>
           </ResponsiveContainer>
         ) : (
           <div className="h-[280px] flex items-center justify-center">
             <div className="text-center">
-              <BarChart3 size={40} className="text-slate-200 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-400">Chưa có dữ liệu lượt xem</p>
-              <p className="text-xs text-slate-400 mt-1">{t('bieu_do_se_cap_nhat_khi_san_pham_co_luot')}</p>
+              <BarChart3 size={40} className="text-ink-subtle mx-auto mb-3" />
+              <p className="text-sm font-normal text-ink-muted" style={{ letterSpacing: '0.16px' }}>Chưa có dữ liệu lượt xem</p>
+              <p className="text-xs text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>{t('bieu_do_se_cap_nhat_khi_san_pham_co_luot')}</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Product Performance */}
-      <div className="bg-white rounded-2xl border border-slate-200">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-canvas border border-hairline" style={{ borderRadius: 0 }}>
+        <div className="px-6 py-4 border-b border-hairline bg-surface-1 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package size={16} className="text-blue-500" />
-            <h2 className="text-sm font-bold text-slate-900">{t('hieu_suat_san_pham')}</h2>
+            <Package size={16} className="text-primary" />
+            <h2 className="text-sm font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('hieu_suat_san_pham')}</h2>
           </div>
-          <span className="text-xs text-slate-400">Top 10</span>
+          <span className="text-xs text-ink-subtle">Top 10</span>
         </div>
 
         {topProducts.length === 0 ? (
           <div className="p-12 text-center">
-            <Package size={32} className="text-slate-200 mx-auto mb-2" />
-            <p className="text-sm text-slate-400">Chưa có sản phẩm nào</p>
+            <Package size={32} className="text-ink-subtle mx-auto mb-2" />
+            <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>Chưa có sản phẩm nào</p>
           </div>
         ) : (
           <div>
@@ -176,20 +178,20 @@ export function SupplierAnalytics() {
               const maxViews = topProducts[0]?.views || 1;
               const pct = (product.views / maxViews) * 100;
               return (
-                <div key={product.id} className={`px-6 py-4 flex items-center gap-4 ${i < topProducts.length - 1 ? 'border-b border-slate-50' : ''}`}>
-                  <span className="text-xs font-black text-slate-300 w-6 text-center">{i + 1}</span>
+                <div key={product.id} className={`px-6 py-4 flex items-center gap-4 ${i < topProducts.length - 1 ? 'border-b border-hairline' : ''}`}>
+                  <span className="text-xs font-normal text-ink-subtle w-6 text-center">{i + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-slate-800 truncate">{product.name}</div>
-                    <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="text-sm font-normal text-ink truncate" style={{ letterSpacing: '0.16px' }}>{product.name}</div>
+                    <div className="mt-2 h-2 bg-surface-1 border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
                       <div
-                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.max(pct, 2)}%` }}
+                        className="h-full bg-primary transition-all duration-500"
+                        style={{ width: `${Math.max(pct, 2)}%`, borderRadius: 0 }}
                       />
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-sm font-bold text-slate-900">{product.views.toLocaleString('vi-VN')}</div>
-                    <div className="text-[10px] text-slate-400">lượt xem</div>
+                    <div className="text-sm font-normal text-ink">{product.views.toLocaleString('vi-VN')}</div>
+                    <div className="text-[10px] text-ink-subtle">lượt xem</div>
                   </div>
                 </div>
               );

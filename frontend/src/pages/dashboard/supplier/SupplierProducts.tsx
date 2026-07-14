@@ -86,12 +86,14 @@ export function SupplierProducts() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">{t('my_products_title')}</h1>
-          <p className="text-sm text-slate-500 mt-1">{productList.length} sản phẩm</p>
+          <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+            {t('my_products_title')}: <span className="text-ink font-semibold">{productList.length} sản phẩm</span>
+          </p>
         </div>
         <button 
           onClick={handleCreate} 
-          className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0"
+          className="inline-flex items-center gap-2 bg-primary text-white text-sm font-semibold px-4 py-2.5 hover:bg-primary-hover transition-colors shrink-0"
+          style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
         >
           <Plus size={16} /> {t('add_new_product')}
         </button>
@@ -100,21 +102,23 @@ export function SupplierProducts() {
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle" />
           <input 
             type="text" 
             placeholder={t('search_product')} 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all" 
+            className="w-full pl-9 pr-4 py-2.5 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary placeholder:text-ink-subtle"
+            style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={14} className="text-slate-400 shrink-0" />
+          <Filter size={14} className="text-ink-subtle shrink-0" />
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="bg-white border border-slate-200 rounded-xl text-sm px-3 py-2.5 outline-none focus:border-primary font-medium text-slate-700"
+            className="bg-surface-1 border border-hairline text-sm px-3 py-2.5 outline-none focus:border-b-2 focus:border-b-primary font-normal text-ink"
+            style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
           >
             <option value="">{t('supplier_status_all')}</option>
             <option value="ACTIVE">{t('supplier_status_active')}</option>
@@ -128,44 +132,52 @@ export function SupplierProducts() {
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="animate-spin text-primary" size={28} /></div>
       ) : filteredProducts.length === 0 ? (
-        <EmptyState 
-          icon={<Box size={48} className="text-slate-300" />}
-          title={productList.length === 0 ? t('no_products') : t('supplier_no_results')}
-          description={productList.length === 0 ? t('no_products_desc') : t('supplier_no_results_desc')}
-          action={productList.length === 0 ? <button className="btn-primary mt-4" onClick={handleCreate}>{t('create_first_product')}</button> : undefined}
-        />
+        <div className="p-12 text-center bg-card-bg shadow-subtle rounded-lg">
+          <Box size={48} className="text-ink-subtle mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-ink mb-2" style={{ letterSpacing: '0.16px' }}>
+            {productList.length === 0 ? t('no_products') : t('supplier_no_results')}
+          </h3>
+          <p className="text-sm text-ink-muted mb-4" style={{ letterSpacing: '0.16px' }}>
+            {productList.length === 0 ? t('no_products_desc') : t('supplier_no_results_desc')}
+          </p>
+          {productList.length === 0 && (
+            <button className="bg-primary text-white text-xs font-semibold px-4 py-2.5 hover:bg-primary-hover transition-colors" onClick={handleCreate} style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+              {t('create_first_product')}
+            </button>
+          )}
+        </div>
       ) : (
         <>
         {/* Mobile: Card List */}
         <div className="md:hidden space-y-3">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl border border-slate-200 p-4 flex gap-3 items-start">
-              <div className="w-14 h-14 bg-slate-100 rounded-lg overflow-hidden shrink-0">
+            <div key={product.id} className="bg-card-bg shadow-subtle p-4 flex gap-3 items-start rounded-lg">
+              <div className="w-14 h-14 bg-surface-1 border border-hairline overflow-hidden shrink-0" style={{ borderRadius: '4px' }}>
                 <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm text-slate-900 truncate">{product.name}</div>
+                <div className="font-semibold text-sm text-ink truncate" style={{ letterSpacing: '0.16px' }}>{product.name}</div>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <span className="font-bold text-xs text-primary">{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
+                  <span className="font-bold text-xs text-primary" style={{ letterSpacing: '0.16px' }}>{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
                   {product.status === 'PENDING' && <Badge variant="warning">{t('supplier_status_pending')}</Badge>}
                   {product.status === 'ACTIVE' && <Badge variant="success">{t('supplier_status_active')}</Badge>}
                   {product.status === 'REJECTED' && <Badge variant="danger">{t('supplier_status_rejected')}</Badge>}
                 </div>
                 <div className="flex items-center gap-1 mt-2">
-                  <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handleEdit(product)}><Edit2 size={13} /></button>
-                  <button className="p-1.5 text-slate-400 hover:text-red-500 transition-colors" onClick={() => handleDeleteClick(product)}><Trash2 size={13} /></button>
-                  <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handlePreview(product)}><Eye size={13} /></button>
+                  <button className="p-1.5 text-ink-subtle hover:text-primary transition-colors rounded hover:bg-surface-1" onClick={() => handleEdit(product)}><Edit2 size={13} /></button>
+                  <button className="p-1.5 text-ink-subtle hover:text-red-500 transition-colors rounded hover:bg-surface-1" onClick={() => handleDeleteClick(product)}><Trash2 size={13} /></button>
+                  <button className="p-1.5 text-ink-subtle hover:text-primary transition-colors rounded hover:bg-surface-1" onClick={() => handlePreview(product)}><Eye size={13} /></button>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Desktop: Flat Table */}
-        <div className="hidden md:block overflow-x-auto">
+        {/* Desktop: Table Card */}
+        <div className="hidden md:block bg-card-bg shadow-subtle rounded-lg p-6 overflow-x-auto">
           <table className="w-full text-left min-w-[700px]">
             <thead>
-              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider font-bold text-slate-400">
+              <tr className="border-b border-hairline text-[10px] uppercase tracking-wider font-semibold text-ink-subtle" style={{ letterSpacing: '0.32px' }}>
                 <th className="pb-3 pl-1">{t('product_table_name')}</th>
                 <th className="pb-3">{t('product_table_category')}</th>
                 <th className="pb-3">{t('product_table_price')}</th>
@@ -175,22 +187,22 @@ export function SupplierProducts() {
             </thead>
             <tbody className="text-sm">
               {filteredProducts.map((product) => (
-                <tr key={product.id} className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors group">
+                <tr key={product.id} className="border-b border-hairline hover:bg-surface-1 transition-colors group">
                   <td className="py-4 pl-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden shrink-0">
+                      <div className="w-10 h-10 bg-surface-1 border border-hairline overflow-hidden shrink-0" style={{ borderRadius: '4px' }}>
                         <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-slate-900 truncate group-hover:text-primary transition-colors">{product.name}</div>
+                        <div className="font-semibold text-ink truncate group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{product.name}</div>
                       </div>
                     </div>
                   </td>
                   <td className="py-4">
-                    <span className="text-xs font-medium text-slate-500">{product.category?.name || ''}</span>
+                    <span className="text-xs font-normal text-ink-muted" style={{ letterSpacing: '0.16px' }}>{product.category?.name || ''}</span>
                   </td>
                   <td className="py-4">
-                    <span className="font-semibold text-slate-900">{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
+                    <span className="font-bold text-ink" style={{ letterSpacing: '0.16px' }}>{product.minPrice?.toLocaleString('vi-VN')} ₫</span>
                   </td>
                   <td className="py-4">
                     {product.status === 'PENDING' && <Badge variant="warning">{t('supplier_status_pending')}</Badge>}
@@ -199,13 +211,13 @@ export function SupplierProducts() {
                   </td>
                   <td className="py-4 pr-1 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handleEdit(product)} title={t('supplier_action_edit')}>
+                      <button className="p-1.5 text-ink-subtle hover:text-primary transition-colors rounded hover:bg-surface-1" onClick={() => handleEdit(product)} title={t('supplier_action_edit')}>
                         <Edit2 size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-red-500 transition-colors" onClick={() => handleDeleteClick(product)} title={t('supplier_action_delete')}>
+                      <button className="p-1.5 text-ink-subtle hover:text-red-500 transition-colors rounded hover:bg-surface-1" onClick={() => handleDeleteClick(product)} title={t('supplier_action_delete')}>
                         <Trash2 size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-primary transition-colors" onClick={() => handlePreview(product)} title={t('supplier_action_preview')}>
+                      <button className="p-1.5 text-ink-subtle hover:text-primary transition-colors rounded hover:bg-surface-1" onClick={() => handlePreview(product)} title={t('supplier_action_preview')}>
                         <Eye size={14} />
                       </button>
                     </div>

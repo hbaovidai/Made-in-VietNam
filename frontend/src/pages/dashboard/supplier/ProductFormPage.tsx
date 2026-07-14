@@ -239,38 +239,39 @@ export function ProductFormPage() {
     <div className="p-6 md:p-8 max-w-[1000px] mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">
+          <h1 className="text-2xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>
             {isEditing ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-ink-muted text-sm mt-1" style={{ letterSpacing: '0.16px' }}>
             {isEditing
               ? 'Cập nhật thông tin. Nếu sản phẩm bị từ chối, việc sửa sẽ gửi duyệt lại tự động.'
               : 'Sản phẩm mới sẽ ở trạng thái "Chờ Duyệt" cho đến khi Admin phê duyệt.'}
           </p>
         </div>
-        <button onClick={() => navigate('/dashboard/supplier/products')} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+        <button onClick={() => navigate('/dashboard/supplier/products')} className="p-2 text-ink-subtle hover:text-ink hover:bg-surface-2 transition-colors" style={{ borderRadius: 0 }}>
           <X size={24} />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <form onSubmit={handleSubmit} className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
         <div className="p-6 md:p-8 space-y-8">
           
           {/* Tên & Danh mục */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Tên sản phẩm <span className="text-red-500">*</span></label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>Tên sản phẩm <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 placeholder="Ví dụ: Hạt cà phê Arabica thượng hạng..."
                 value={formData.name}
                 onChange={e => handleChange('name', e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Danh mục <span className="text-red-500">*</span></label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>Danh mục <span className="text-red-500">*</span></label>
               <CustomSelect
                 options={categoryOptions}
                 value={formData.categoryId}
@@ -283,12 +284,13 @@ export function ProductFormPage() {
           {/* Giá bán */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">{t('gia_ban_vnd')} <span className="text-red-500">*</span></label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('gia_ban_vnd')} <span className="text-red-500">*</span></label>
               <input 
                 type="number" 
                 required
                 min="1"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 placeholder="Ví dụ: 100000"
                 value={formData.minPrice}
                 onChange={e => handleChange('minPrice', e.target.value)}
@@ -299,7 +301,7 @@ export function ProductFormPage() {
           {/* Đơn vị & MOQ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">{t('don_vi_tinh')} <span className="text-red-500">*</span></label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('don_vi_tinh')} <span className="text-red-500">*</span></label>
               <CustomSelect
                 options={unitOptions}
                 value={formData.unit}
@@ -308,12 +310,13 @@ export function ProductFormPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">{t('so_luong_dat_toi_thieu_moq')} <span className="text-red-500">*</span></label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('so_luong_dat_toi_thieu_moq')} <span className="text-red-500">*</span></label>
               <input 
                 type="number" 
                 required
                 min="1"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 placeholder="Ví dụ: 1"
                 value={formData.moq}
                 onChange={e => handleChange('moq', e.target.value)}
@@ -324,40 +327,43 @@ export function ProductFormPage() {
           {/* Ngưỡng báo giá */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">{t('nguong_bao_gia_don_hang_lon')}</label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('nguong_bao_gia_don_hang_lon')}</label>
               <input 
                 type="number" 
                 min="1"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm font-medium"
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 placeholder="Ví dụ: 100 (để trống nếu không cần)"
                 value={formData.rfqMinQuantity}
                 onChange={e => handleChange('rfqMinQuantity', e.target.value)}
               />
-              <p className="text-xs text-slate-400">{t('khi_nguoi_mua_dat_so_luong_nguong_nay_he')}</p>
+              <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('khi_nguoi_mua_dat_so_luong_nguong_nay_he')}</p>
             </div>
           </div>
 
           {/* Mô tả sản phẩm - Markdown Editor */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <label className="text-sm font-bold text-slate-700">Mô tả sản phẩm</label>
+            <div className="flex items-center justify-between border-b border-hairline pb-2">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Mô tả sản phẩm</label>
               
-              <div className="flex bg-slate-100 p-0.5 rounded-lg text-xs">
+              <div className="flex bg-surface-2 p-0.5 text-xs" style={{ borderRadius: 0 }}>
                 <button
                   type="button"
                   onClick={() => setEditorTab('write')}
-                  className={`px-3 py-1.5 rounded-md font-bold transition-all flex items-center gap-1 ${
-                    editorTab === 'write' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  className={`px-3 py-1.5 font-normal transition-all flex items-center gap-1 ${
+                    editorTab === 'write' ? 'bg-canvas text-ink border border-hairline font-normal shadow-none' : 'text-ink-muted hover:text-ink'
                   }`}
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   <span>Soạn thảo</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditorTab('preview')}
-                  className={`px-3 py-1.5 rounded-md font-bold transition-all flex items-center gap-1 ${
-                    editorTab === 'preview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  className={`px-3 py-1.5 font-normal transition-all flex items-center gap-1 ${
+                    editorTab === 'preview' ? 'bg-canvas text-ink border border-hairline font-normal shadow-none' : 'text-ink-muted hover:text-ink'
                   }`}
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   <span>Xem trước</span>
                 </button>
@@ -365,13 +371,14 @@ export function ProductFormPage() {
             </div>
 
             {editorTab === 'write' ? (
-              <div className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+              <div className="border border-hairline overflow-hidden bg-surface-1 focus-within:border-primary transition-all" style={{ borderRadius: 0 }}>
                 {/* Toolbar */}
-                <div className="flex flex-wrap gap-1.5 p-2 bg-slate-100 border-b border-slate-200 text-slate-600">
+                <div className="flex flex-wrap gap-1.5 p-2 bg-surface-2 border-b border-hairline text-ink-muted">
                   <button
                     type="button"
                     onClick={() => insertAtCursor('**', '**')}
-                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    className="p-1.5 hover:bg-surface-3 text-ink transition-colors"
+                    style={{ borderRadius: 0 }}
                     title="Chữ đậm"
                   >
                     <Bold size={14} />
@@ -379,7 +386,8 @@ export function ProductFormPage() {
                   <button
                     type="button"
                     onClick={() => insertAtCursor('*', '*')}
-                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    className="p-1.5 hover:bg-surface-3 text-ink transition-colors"
+                    style={{ borderRadius: 0 }}
                     title="Chữ nghiêng"
                   >
                     <Italic size={14} />
@@ -387,7 +395,8 @@ export function ProductFormPage() {
                   <button
                     type="button"
                     onClick={() => insertAtCursor('## ', '')}
-                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    className="p-1.5 hover:bg-surface-3 text-ink transition-colors"
+                    style={{ borderRadius: 0 }}
                     title="Tiêu đề chính (H2)"
                   >
                     <Heading size={14} />
@@ -395,7 +404,8 @@ export function ProductFormPage() {
                   <button
                     type="button"
                     onClick={() => insertAtCursor('- ', '')}
-                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    className="p-1.5 hover:bg-surface-3 text-ink transition-colors"
+                    style={{ borderRadius: 0 }}
                     title="Danh sách gạch đầu dòng"
                   >
                     <List size={14} />
@@ -403,22 +413,23 @@ export function ProductFormPage() {
                   <button
                     type="button"
                     onClick={() => insertAtCursor('\n| Cột 1 | Cột 2 |\n|---|---|\n| Nội dung | Nội dung |\n')}
-                    className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                    className="p-1.5 hover:bg-surface-3 text-ink transition-colors"
+                    style={{ borderRadius: 0 }}
                     title="Chèn bảng"
                   >
                     <Table size={14} />
                   </button>
 
-                  <div className="w-[1px] bg-slate-300 my-1 self-stretch" />
+                  <div className="w-[1px] bg-hairline my-1 self-stretch" />
 
                   {/* Upload Image shortcut */}
-                  <label className="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors cursor-pointer flex items-center gap-1.5">
+                  <label className="p-1.5 hover:bg-surface-3 text-ink transition-colors cursor-pointer flex items-center gap-1.5" style={{ borderRadius: 0 }}>
                     {descUploading ? (
                       <Loader2 size={14} className="animate-spin text-primary" />
                     ) : (
                       <ImageIcon size={14} />
                     )}
-                    <span className="text-[10px] font-bold">Chèn ảnh</span>
+                    <span className="text-[10px] font-normal uppercase" style={{ letterSpacing: '0.16px' }}>Chèn ảnh</span>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/gif"
@@ -436,7 +447,8 @@ export function ProductFormPage() {
                 <textarea
                   id="product-desc-textarea"
                   rows={8}
-                  className="w-full px-4 py-3 bg-white outline-none text-sm font-medium resize-y min-h-[160px] leading-relaxed text-slate-700"
+                  className="w-full px-4 py-3 bg-surface-1 outline-none text-sm font-normal resize-y min-h-[160px] leading-relaxed text-ink"
+                  style={{ letterSpacing: '0.16px' }}
                   placeholder="Nhập mô tả chi tiết về sản phẩm. Dùng thanh công cụ để bôi đậm, tạo tiêu đề, danh sách, chèn bảng hoặc chèn ảnh minh họa..."
                   value={formData.description}
                   onChange={e => handleChange('description', e.target.value)}
@@ -444,42 +456,43 @@ export function ProductFormPage() {
               </div>
             ) : (
               <div 
-                className="p-4 bg-slate-50 border border-slate-200 rounded-lg min-h-[220px] overflow-y-auto rich-text-preview"
+                className="p-4 bg-surface-1 border border-hairline min-h-[220px] overflow-y-auto rich-text-preview"
+                style={{ borderRadius: 0 }}
                 dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(formData.description) }}
               />
             )}
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
               Hỗ trợ định dạng Markdown. Bạn có thể chèn nhiều hình ảnh mô tả khác nhau trực tiếp vào bài viết.
             </p>
           </div>
 
           {/* Hình ảnh sản phẩm */}
           <div className="space-y-4">
-            <label className="text-sm font-bold text-slate-700">{t('hinh_anh_san_pham')}</label>
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('hinh_anh_san_pham')}</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
               {formData.images.map((url, idx) => (
                 url.trim() ? (
-                  <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border-2 border-slate-200 bg-white">
+                  <div key={idx} className="relative group aspect-square overflow-hidden border border-hairline bg-surface-1" style={{ borderRadius: 0 }}>
                     <img src={url} alt={`Ảnh ${idx + 1}`} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button type="button" onClick={() => removeImageField(idx)} className="p-2 bg-white/90 rounded-full text-red-500 hover:bg-white transition-colors">
+                      <button type="button" onClick={() => removeImageField(idx)} className="p-2 bg-surface-2 text-red-500 hover:bg-surface-3 transition-colors" style={{ borderRadius: 0 }}>
                         <Trash2 size={16} />
                       </button>
                     </div>
                     {idx === 0 && (
-                      <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{t('anh_chinh')}</span>
+                      <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-normal px-2 py-0.5 uppercase" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>{t('anh_chinh')}</span>
                     )}
                   </div>
                 ) : (
-                  <label key={idx} className="aspect-square rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-primary hover:bg-blue-50/50 transition-all cursor-pointer flex flex-col items-center justify-center gap-2">
+                  <label key={idx} className="aspect-square border border-dashed border-hairline bg-surface-1 hover:border-primary hover:bg-surface-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2" style={{ borderRadius: 0 }}>
                     {uploading === idx ? (
                       <Loader2 size={24} className="animate-spin text-primary" />
                     ) : (
                       <>
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-surface-2 border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
                           <ImageIcon size={20} className="text-primary" />
                         </div>
-                        <span className="text-xs font-bold text-slate-500">Tải ảnh lên</span>
+                        <span className="text-xs font-normal text-ink uppercase" style={{ letterSpacing: '0.16px' }}>Tải ảnh lên</span>
                       </>
                     )}
                     <input
@@ -499,47 +512,49 @@ export function ProductFormPage() {
                 <button
                   type="button"
                   onClick={addImageField}
-                  className="aspect-square rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-primary hover:bg-blue-50/50 transition-all cursor-pointer flex flex-col items-center justify-center gap-2"
+                  className="aspect-square border border-dashed border-hairline bg-surface-1 hover:border-primary hover:bg-surface-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2"
+                  style={{ borderRadius: 0 }}
                 >
-                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
-                    <span className="text-xl font-bold text-slate-400">+</span>
+                  <div className="w-10 h-10 bg-surface-2 border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
+                    <span className="text-xl font-normal text-ink-subtle">+</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400">{t('them_anh')}</span>
+                  <span className="text-xs font-normal text-ink-subtle uppercase" style={{ letterSpacing: '0.16px' }}>{t('them_anh')}</span>
                 </button>
               )}
             </div>
-            <p className="text-xs text-slate-400">{t('chon_anh_tu_may_tinh_toi_da_5_anh_moi_an')}</p>
+            <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('chon_anh_tu_may_tinh_toi_da_5_anh_moi_an')}</p>
           </div>
 
           {/* Chứng chỉ sản phẩm */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-bold text-slate-700">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>
                 Chứng chỉ sản phẩm
               </label>
               <button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, certifications: [...prev.certifications, { name: '', url: '' }] }))}
-                className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                className="text-xs font-normal text-primary hover:bg-primary-hover/10 px-2 py-1 transition-all flex items-center gap-1"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <Plus size={12} /> Thêm chứng chỉ
               </button>
             </div>
             {formData.certifications.length === 0 && (
-              <div className="text-center py-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl">
-                <Award size={28} className="mx-auto text-slate-300 mb-2" />
-                <p className="text-sm text-slate-400">Chưa có chứng chỉ nào</p>
-                <p className="text-xs text-slate-400 mt-1">Thêm chứng chỉ như FDA, ISO, HACCP, Organic... để tăng uy tín sản phẩm.</p>
+              <div className="text-center py-8 bg-surface-1 border border-dashed border-hairline" style={{ borderRadius: 0 }}>
+                <Award size={28} className="mx-auto text-ink-subtle mb-2" />
+                <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>Chưa có chứng chỉ nào</p>
+                <p className="text-xs text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>Thêm chứng chỉ như FDA, ISO, HACCP, Organic... để tăng uy tín sản phẩm.</p>
               </div>
             )}
             {formData.certifications.map((cert, idx) => (
-              <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+              <div key={idx} className="p-4 bg-surface-1 border border-hairline space-y-3" style={{ borderRadius: 0 }}>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Chứng chỉ #{idx + 1}</span>
+                  <span className="text-xs font-normal text-ink-muted uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Chứng chỉ #{idx + 1}</span>
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, certifications: prev.certifications.filter((_, i) => i !== idx) }))}
-                    className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+                    className="p-1 text-ink-subtle hover:text-red-500 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -547,7 +562,8 @@ export function ProductFormPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <input
                     type="text"
-                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                    className="w-full px-4 py-2.5 bg-canvas border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     placeholder="Tên chứng chỉ (VD: ISO 9001, HACCP...)"
                     value={cert.name}
                     onChange={e => {
@@ -558,10 +574,11 @@ export function ProductFormPage() {
                   />
                   <div className="flex gap-2">
                     <div className="relative flex-1">
-                      <LinkIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <LinkIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle" />
                       <input
                         type="text"
-                        className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                        className="w-full pl-9 pr-4 py-2.5 bg-canvas border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal"
+                        style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                         placeholder="Link hoặc URL ảnh chứng chỉ"
                         value={cert.url}
                         onChange={e => {
@@ -571,7 +588,7 @@ export function ProductFormPage() {
                         }}
                       />
                     </div>
-                    <label className="px-3 py-2.5 bg-white border border-slate-200 rounded-lg hover:border-primary hover:bg-blue-50/50 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold text-slate-600 shrink-0">
+                    <label className="px-3 py-2.5 bg-canvas border border-hairline hover:bg-surface-2 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-normal text-ink shrink-0" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
                       <ImageIcon size={14} className="text-primary" />
                       Tải ảnh
                       <input
@@ -599,33 +616,35 @@ export function ProductFormPage() {
                 </div>
                 {cert.url && cert.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) && (
                   <div className="mt-2">
-                    <img src={cert.url} alt={cert.name || 'Chứng chỉ'} className="h-20 rounded-lg border border-slate-200 object-cover" />
+                    <img src={cert.url} alt={cert.name || 'Chứng chỉ'} className="h-20 border border-hairline object-cover" style={{ borderRadius: 0 }} />
                   </div>
                 )}
               </div>
             ))}
-            <p className="text-xs text-slate-400">Thêm các chứng chỉ chất lượng, an toàn thực phẩm, xuất xứ... để tăng độ tin cậy cho sản phẩm.</p>
+            <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>Thêm các chứng chỉ chất lượng, an toàn thực phẩm, xuất xứ... để tăng độ tin cậy cho sản phẩm.</p>
           </div>
 
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 md:px-8 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs text-slate-400 hidden sm:block">
+        <div className="px-6 md:px-8 py-5 bg-surface-2 border-t border-hairline flex items-center justify-between" style={{ borderRadius: 0 }}>
+          <p className="text-xs text-ink-subtle hidden sm:block" style={{ letterSpacing: '0.16px' }}>
             {isEditing ? 'Sản phẩm bị từ chối sẽ tự động gửi duyệt lại khi bạn lưu.' : 'Sản phẩm mới sẽ cần Admin duyệt trước khi hiển thị công khai.'}
           </p>
           <div className="flex gap-3">
             <button 
               type="button" 
               onClick={() => navigate('/dashboard/supplier/products')}
-              className="px-6 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+              className="px-6 py-2.5 text-sm font-normal text-ink-muted hover:bg-surface-3 transition-colors"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             >
               Hủy bỏ
             </button>
             <button 
               type="submit"
               disabled={submitting}
-              className="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary-dark shadow-lg shadow-primary/30 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-2.5 bg-primary text-white text-sm font-normal hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             >
               {submitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               {isEditing ? 'Lưu thay đổi' : 'Đăng sản phẩm'}

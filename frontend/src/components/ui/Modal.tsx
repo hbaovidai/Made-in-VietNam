@@ -59,29 +59,31 @@ export function Modal({
     <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-modal-backdrop"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-modal-backdrop"
         onClick={onClose}
       />
 
       {/* Content */}
       <div
         className={cn(
-          'relative bg-white rounded-2xl shadow-2xl w-full animate-modal-content',
+          'relative bg-canvas border border-hairline w-full animate-modal-content',
           'max-h-[90vh] flex flex-col',
           SIZE_MAP[size]
         )}
+        style={{ borderRadius: 0 }}
       >
         {/* Header */}
         {(title || !hideCloseButton) && (
-          <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-slate-100">
+          <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-hairline">
             <div className="flex-1 min-w-0">
-              {title && <h3 className="text-lg font-bold text-slate-900">{title}</h3>}
-              {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
+              {title && <h3 className="text-lg font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{title}</h3>}
+              {description && <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{description}</p>}
             </div>
             {!hideCloseButton && (
               <button
                 onClick={onClose}
-                className="shrink-0 p-2 -mr-2 -mt-1 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 active:scale-90 transition-all"
+                className="shrink-0 p-2 -mr-2 -mt-1 text-ink-subtle hover:text-ink hover:bg-surface-2 active:scale-95 transition-all"
+                style={{ borderRadius: 0 }}
               >
                 <X size={18} />
               </button>
@@ -96,7 +98,7 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50/50 rounded-b-2xl">
+          <div className="px-6 py-4 border-t border-hairline flex items-center justify-end gap-3 bg-surface-1" style={{ borderRadius: 0 }}>
             {footer}
           </div>
         )}
@@ -139,19 +141,20 @@ export function ConfirmDialog({
       size="sm"
       footer={
         <>
-          <button onClick={onClose} className="btn-ghost">
+          <button onClick={onClose} className="btn-ghost" style={{ borderRadius: 0 }}>
             {cancelText}
           </button>
           <button
             onClick={() => { onConfirm(); onClose(); }}
             className={confirmClass}
+            style={{ borderRadius: 0 }}
           >
             {confirmText}
           </button>
         </>
       }
     >
-      <p className="text-sm text-slate-600 leading-relaxed">{message}</p>
+      <p className="text-sm text-ink-muted leading-relaxed" style={{ letterSpacing: '0.16px' }}>{message}</p>
     </Modal>
   );
 }

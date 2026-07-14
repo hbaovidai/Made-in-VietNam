@@ -36,11 +36,14 @@ export class SuppliersService {
           categories: true,
           channels: true,
           industries: { select: { industry: true } },
+          markets: { select: { market: true } },
           // conjecture: primary addresses are used the most
           addresses: { 
             where: { isPrimary: true },
             select: { supplierSlug: true, address: true, isPrimary: true },
           },
+          manufacturerProfile: { select: { id: true } },
+          exporterProfile: { select: { id: true } },
         },
       }),
       this.prisma.supplier.count({ where }),

@@ -56,53 +56,53 @@ export function BuyerSaved() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('saved_products_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('saved_products_subtitle')}</p>
+        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('saved_products_title')}</h1>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('saved_products_subtitle')}</p>
       </div>
-      <div className="divide-y divide-slate-100">
+      <div className="space-y-4">
         {loading ? (
            <div className="flex justify-center items-center py-20">
              <Loader2 size={32} className="animate-spin text-primary" />
            </div>
         ) : savedProducts.map((product) => (
-          <div key={product.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer">
+          <div key={product.id} className="p-6 bg-canvas border border-hairline flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface-1 transition-colors group cursor-pointer" style={{ borderRadius: 0 }}>
             <div className="flex items-start gap-4">
-              <div className="w-20 h-20 bg-slate-100 rounded-xl overflow-hidden shrink-0 border border-slate-100">
-                <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+              <div className="w-20 h-20 bg-surface-1 overflow-hidden shrink-0 border border-hairline" style={{ borderRadius: 0 }}>
+                <img src={product.images?.[0] || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" style={{ borderRadius: 0 }} />
               </div>
               <div className="space-y-1">
-                <Link to={`/products/${product.id}`} className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors block">{product.name}</Link>
-                <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <Link to={`/products/${product.id}`} className="text-sm font-normal text-ink group-hover:text-primary transition-colors block" style={{ letterSpacing: '0.16px' }}>{product.name}</Link>
+                <div className="flex items-center gap-4 text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>
                   <span>{product.minPrice} - {product.maxPrice} {product.currency || 'VND'}</span>
                   {product.moq && <span>{t('min_order')}: {product.moq} {product.moqUnit}</span>}
                 </div>
                 {/* Mock rating for now, would be from product real rating */}
                 <div className="flex items-center gap-1 mt-2">
-                  <Star size={12} className="text-yellow-500 fill-current" />
-                  <span className="text-[10px] font-bold text-slate-700">{product.rating || 0} ({product.reviewCount || 0} reviews)</span>
+                  <Star size={12} className="text-amber-500 fill-current" />
+                  <span className="text-[10px] font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{product.rating || 0} ({product.reviewCount || 0} reviews)</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button onClick={() => handleUnsave(product.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Bỏ lưu">
+              <button onClick={() => handleUnsave(product.id)} className="p-2 text-ink-subtle hover:text-red-500 transition-colors" title="Bỏ lưu">
                 <Trash2 size={18} />
               </button>
-              <Link to={`/products/${product.id}`} className="bg-primary text-white px-6 py-2 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 flex items-center gap-2">
+              <Link to={`/products/${product.id}`} className="bg-primary text-white px-6 py-2 font-normal hover:bg-primary-hover transition-colors uppercase tracking-widest text-[10px] flex items-center gap-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
                 <ShoppingCart size={14} /> {t('view_product')}
               </Link>
-              <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
+              <ChevronRight size={16} className="text-hairline group-hover:text-primary" />
             </div>
           </div>
         ))}
       </div>
       {!loading && savedProducts.length === 0 && (
-        <div className="p-20 text-center space-y-4">
-          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
-            <Heart size={40} className="text-slate-200" />
+        <div className="p-20 text-center space-y-4 border border-hairline bg-canvas" style={{ borderRadius: 0 }}>
+          <div className="w-20 h-20 bg-surface-1 border border-hairline flex items-center justify-center mx-auto" style={{ borderRadius: 0 }}>
+            <Heart size={40} className="text-ink-subtle" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('no_saved_title')}</h3>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto">{t('no_saved_desc')}</p>
-          <Link to="/products" className="inline-block bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs">
+          <h3 className="text-lg font-normal text-ink uppercase tracking-tight" style={{ letterSpacing: '0.32px' }}>{t('no_saved_title')}</h3>
+          <p className="text-ink-muted text-sm max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>{t('no_saved_desc')}</p>
+          <Link to="/products" className="inline-block bg-primary text-white px-8 py-3 font-normal hover:bg-primary-hover transition-colors uppercase tracking-widest text-xs" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
             {t('browse_products')}
           </Link>
         </div>

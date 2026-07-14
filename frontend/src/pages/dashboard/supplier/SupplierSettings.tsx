@@ -138,18 +138,18 @@ export function SupplierSettings() {
   };
 
   const settingsSections = [
-    { icon: <Building2 size={20} className="text-blue-500" />, title: t('setting_company_info'), desc: t('setting_company_info_desc') },
-    { icon: <Mail size={20} className="text-orange-500" />, title: t('setting_email_notif'), desc: t('setting_email_notif_desc') },
-    { icon: <CreditCard size={20} className="text-green-500" />, title: t('setting_payment'), desc: t('setting_payment_desc') },
-    { icon: <Globe size={20} className="text-purple-500" />, title: t('setting_lang_region'), desc: t('setting_lang_region_desc') },
+    { icon: <Building2 size={20} className="text-primary" />, title: t('setting_company_info'), desc: t('setting_company_info_desc') },
+    { icon: <Mail size={20} className="text-primary" />, title: t('setting_email_notif'), desc: t('setting_email_notif_desc') },
+    { icon: <CreditCard size={20} className="text-primary" />, title: t('setting_payment'), desc: t('setting_payment_desc') },
+    { icon: <Globe size={20} className="text-primary" />, title: t('setting_lang_region'), desc: t('setting_lang_region_desc') },
   ];
 
   const notifOptions = [
-    { key: 'orderUpdates', icon: <Bell size={16} className="text-blue-500" />, label: 'Cập nhật đơn hàng', desc: 'Nhận thông báo khi có đơn hàng mới hoặc thay đổi' },
-    { key: 'rfqAlerts', icon: <BellRing size={16} className="text-amber-500" />, label: 'Yêu cầu báo giá (RFQ)', desc: 'Nhận thông báo khi có yêu cầu báo giá mới' },
-    { key: 'messageAlerts', icon: <Mail size={16} className="text-emerald-500" />, label: 'Tin nhắn mới', desc: 'Nhận thông báo khi có tin nhắn từ người mua' },
-    { key: 'promotions', icon: <BellOff size={16} className="text-slate-400" />, label: 'Khuyến mãi & tin tức', desc: 'Nhận email về chương trình khuyến mãi và tin tức nền tảng' },
-    { key: 'weeklyReport', icon: <Mail size={16} className="text-purple-500" />, label: 'Báo cáo hàng tuần', desc: 'Nhận email tổng kết hoạt động mỗi tuần' },
+    { key: 'orderUpdates', icon: <Bell size={16} className="text-primary" />, label: 'Cập nhật đơn hàng', desc: 'Nhận thông báo khi có đơn hàng mới hoặc thay đổi' },
+    { key: 'rfqAlerts', icon: <BellRing size={16} className="text-primary" />, label: 'Yêu cầu báo giá (RFQ)', desc: 'Nhận thông báo khi có yêu cầu báo giá mới' },
+    { key: 'messageAlerts', icon: <Mail size={16} className="text-primary" />, label: 'Tin nhắn mới', desc: 'Nhận thông báo khi có tin nhắn từ người mua' },
+    { key: 'promotions', icon: <BellOff size={16} className="text-primary" />, label: 'Khuyến mãi & tin tức', desc: 'Nhận email về chương trình khuyến mãi và tin tức nền tảng' },
+    { key: 'weeklyReport', icon: <Mail size={16} className="text-primary" />, label: 'Báo cáo hàng tuần', desc: 'Nhận email tổng kết hoạt động mỗi tuần' },
   ];
 
   const languages = [
@@ -160,87 +160,88 @@ export function SupplierSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('account_settings_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('account_settings_subtitle')}</p>
+        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('account_settings_title')}</h1>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('account_settings_subtitle')}</p>
       </div>
-      <div className="p-8 space-y-12">
+      <div className="space-y-12">
         {/* Profile Form */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+            <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
               <User size={20} className="text-primary" /> {t('contact_person_details')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('first_name')}</label>
-                <input type="text" value={profileForm.firstName} onChange={(e) => setProfileForm({...profileForm, firstName: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('first_name')}</label>
+                <input type="text" value={profileForm.firstName} onChange={(e) => setProfileForm({...profileForm, firstName: e.target.value})} className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('last_name')}</label>
-                <input type="text" value={profileForm.lastName} onChange={(e) => setProfileForm({...profileForm, lastName: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+                <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('last_name')}</label>
+                <input type="text" value={profileForm.lastName} onChange={(e) => setProfileForm({...profileForm, lastName: e.target.value})} className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('email_address')}</label>
-              <input type="email" value={profileForm.email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 text-sm outline-none text-slate-500 cursor-not-allowed" />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('email_address')}</label>
+              <input type="email" value={profileForm.email} disabled className="w-full px-4 py-3 bg-surface-2 border border-hairline text-sm outline-none text-ink-subtle cursor-not-allowed" style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('phone_number')}</label>
-              <input type="tel" value={profileForm.phone} onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('phone_number')}</label>
+              <input type="tel" value={profileForm.phone} onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})} className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
             </div>
-            <button type="button" onClick={handleSaveProfile} disabled={saving} className="bg-slate-900 text-white px-6 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs disabled:opacity-60">
+            <button type="button" onClick={handleSaveProfile} disabled={saving} className="bg-primary text-white px-6 py-3 font-normal hover:bg-primary-hover transition-colors uppercase tracking-widest text-xs disabled:opacity-60" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
               {saving ? 'Đang lưu...' : t('save_changes')}
             </button>
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight flex items-center gap-2">
+            <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
               <Lock size={20} className="text-primary" /> {t('change_password')}
             </h3>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('current_password')}</label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('current_password')}</label>
               <div className="relative">
-                <input type={showCurrentPw ? 'text' : 'password'} value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full px-4 py-3 pr-10 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder={t('current_password_placeholder')} />
-                <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <input type={showCurrentPw ? 'text' : 'password'} value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full px-4 py-3 pr-10 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" placeholder={t('current_password_placeholder')} style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
+                <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink transition-colors">
                   {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('new_password')}</label>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('new_password')}</label>
               <div className="relative">
-                <input type={showNewPw ? 'text' : 'password'} value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full px-4 py-3 pr-10 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary" placeholder={t('new_password_placeholder')} />
-                <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <input type={showNewPw ? 'text' : 'password'} value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full px-4 py-3 pr-10 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" placeholder={t('new_password_placeholder')} style={{ borderRadius: 0, letterSpacing: '0.16px' }} />
+                <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink transition-colors">
                   {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
-            <button type="button" onClick={handleChangePassword} className="bg-slate-900 text-white px-6 py-3 font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
+            <button type="button" onClick={handleChangePassword} className="bg-primary text-white px-6 py-3 font-normal hover:bg-primary-hover transition-colors uppercase tracking-widest text-xs" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
               {t('update_password_btn')}
             </button>
           </div>
         </div>
 
         {/* Other Settings List */}
-        <div className="pt-12 border-t border-slate-100 space-y-4">
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight mb-6">{t('other_settings')}</h3>
+        <div className="pt-12 border-t border-hairline space-y-4">
+          <h3 className="text-sm font-normal text-ink uppercase tracking-wider mb-6" style={{ letterSpacing: '0.32px' }}>{t('other_settings')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {settingsSections.map((section, idx) => (
               <div
                 key={idx}
                 onClick={() => handleSettingClick(idx)}
-                className="p-6 border border-slate-100 hover:border-primary transition-all flex items-center justify-between group cursor-pointer rounded-xl"
+                className="bg-canvas p-6 border border-hairline hover:bg-surface-1 transition-all flex items-center justify-between group cursor-pointer"
+                style={{ borderRadius: 0 }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 bg-surface-1 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: 0 }}>
                     {section.icon}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">{section.title}</div>
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{section.desc}</div>
+                    <div className="text-sm font-normal text-ink group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{section.title}</div>
+                    <div className="text-[10px] text-ink-subtle font-normal uppercase tracking-widest mt-1" style={{ letterSpacing: '0.32px' }}>{section.desc}</div>
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
+                <ChevronRight size={16} className="text-hairline group-hover:text-primary" />
               </div>
             ))}
           </div>
@@ -253,35 +254,37 @@ export function SupplierSettings() {
           {notifOptions.map((opt) => (
             <div
               key={opt.key}
-              className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between p-4 hover:bg-surface-1 border-b border-hairline last:border-0 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-surface-2 border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
                   {opt.icon}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-slate-800">{opt.label}</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">{opt.desc}</div>
+                  <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{opt.label}</div>
+                  <div className="text-[11px] text-ink-subtle mt-0.5" style={{ letterSpacing: '0.16px' }}>{opt.desc}</div>
                 </div>
               </div>
               <button
                 onClick={() => setNotifSettings({ ...notifSettings, [opt.key]: !notifSettings[opt.key as keyof typeof notifSettings] })}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full border-2 border-transparent transition-colors focus:outline-none shrink-0 ${
-                  notifSettings[opt.key as keyof typeof notifSettings] ? 'bg-emerald-500' : 'bg-slate-300'
+                className={`relative inline-flex h-6 w-11 items-center border border-hairline transition-colors focus:outline-none shrink-0 ${
+                  notifSettings[opt.key as keyof typeof notifSettings] ? 'bg-primary' : 'bg-surface-2'
                 }`}
+                style={{ borderRadius: 0 }}
               >
                 <span
-                  className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                  className={`inline-block h-4 w-4 bg-canvas transition-transform ${
                     notifSettings[opt.key as keyof typeof notifSettings] ? 'translate-x-5' : 'translate-x-0.5'
                   }`}
+                  style={{ borderRadius: 0 }}
                 />
               </button>
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
-          <button onClick={() => setIsNotifModalOpen(false)} className="btn-ghost">Hủy</button>
-          <button onClick={handleSaveNotifSettings} className="btn-primary flex items-center gap-2">
+        <div className="flex justify-end gap-3 pt-6 border-t border-hairline mt-4">
+          <button onClick={() => setIsNotifModalOpen(false)} className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>Hủy</button>
+          <button onClick={handleSaveNotifSettings} className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2 flex items-center gap-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
             <Check size={14} /> Lưu cài đặt
           </button>
         </div>
@@ -290,27 +293,28 @@ export function SupplierSettings() {
       {/* Language & Region Modal */}
       <Modal isOpen={isLangModalOpen} onClose={() => setIsLangModalOpen(false)} title="Ngôn ngữ & Khu vực">
         <div className="space-y-3">
-          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chọn ngôn ngữ hiển thị</label>
+          <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Chọn ngôn ngữ hiển thị</label>
           <div className="space-y-2">
             {languages.map((lang) => (
               <div
                 key={lang.code}
                 onClick={() => setSelectedLang(lang.code)}
-                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                className={`flex items-center justify-between p-4 border cursor-pointer transition-all hover:bg-surface-1 ${
                   selectedLang === lang.code
-                    ? 'border-primary bg-primary/5'
-                    : 'border-slate-100 hover:border-slate-200'
+                    ? 'border-primary bg-surface-1'
+                    : 'border-hairline'
                 }`}
+                style={{ borderRadius: 0 }}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{lang.flag}</span>
                   <div>
-                    <div className="text-sm font-bold text-slate-800">{lang.label}</div>
-                    <div className="text-[11px] text-slate-400">{lang.code === 'vi' ? 'Vietnamese' : 'English (US)'}</div>
+                    <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{lang.label}</div>
+                    <div className="text-[11px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{lang.code === 'vi' ? 'Vietnamese' : 'English (US)'}</div>
                   </div>
                 </div>
                 {selectedLang === lang.code && (
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-primary flex items-center justify-center" style={{ borderRadius: 0 }}>
                     <Check size={14} className="text-white" />
                   </div>
                 )}
@@ -318,9 +322,9 @@ export function SupplierSettings() {
             ))}
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
-          <button onClick={() => setIsLangModalOpen(false)} className="btn-ghost">Hủy</button>
-          <button onClick={handleSaveLang} className="btn-primary flex items-center gap-2">
+        <div className="flex justify-end gap-3 pt-6 border-t border-hairline mt-6">
+          <button onClick={() => setIsLangModalOpen(false)} className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>Hủy</button>
+          <button onClick={handleSaveLang} className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2 flex items-center gap-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
             <Languages size={14} /> Áp dụng
           </button>
         </div>

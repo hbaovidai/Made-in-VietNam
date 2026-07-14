@@ -40,18 +40,18 @@ export function BuyerOverview() {
   };
 
   const kpis = [
-    { label: t('buyer_kpi_rfqs'), value: rfqCount, icon: <FileText size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/buyer/rfqs' },
-    { label: t('buyer_kpi_messages'), value: messages.length, icon: <MessageSquare size={18} className="text-orange-500" />, bg: 'bg-orange-50', link: '/dashboard/buyer/messages' },
-    { label: t('buyer_kpi_inquiry_basket'), value: 0, icon: <ShoppingCart size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/buyer/saved' },
-    { label: t('buyer_kpi_saved'), value: 0, icon: <Package size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/buyer/saved' },
+    { label: t('buyer_kpi_rfqs'), value: rfqCount, icon: <FileText size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/buyer/rfqs' },
+    { label: t('buyer_kpi_messages'), value: messages.length, icon: <MessageSquare size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/buyer/messages' },
+    { label: t('buyer_kpi_inquiry_basket'), value: 0, icon: <ShoppingCart size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/buyer/saved' },
+    { label: t('buyer_kpi_saved'), value: 0, icon: <Package size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/buyer/saved' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome + Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">{t('buyer_hello', { name: user?.fullName || '' })}</p>
-        <Link to="/rfq" className="text-xs font-bold text-white bg-primary px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm shrink-0 inline-flex items-center gap-2">
+        <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('buyer_hello', { name: user?.fullName || '' })}</p>
+        <Link to="/rfq" className="text-xs font-normal text-white bg-primary px-4 py-2.5 hover:bg-primary-hover transition-colors shrink-0 inline-flex items-center gap-2" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
           <FileText size={14} /> {t('buyer_post_rfq_btn')}
         </Link>
       </div>
@@ -59,15 +59,15 @@ export function BuyerOverview() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, i) => (
-          <Link key={i} to={kpi.link} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg hover:shadow-slate-100 transition-all group">
+          <Link key={i} to={kpi.link} className="bg-card-bg shadow-subtle p-5 transition-all group rounded-lg">
             <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg}`}>
+              <div className={`w-10 h-10 border border-hairline flex items-center justify-center ${kpi.bg}`} style={{ borderRadius: '4px' }}>
                 {kpi.icon}
               </div>
-              <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
+              <ArrowUpRight size={14} className="text-hairline group-hover:text-primary transition-colors" />
             </div>
-            <div className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</div>
-            <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{kpi.label}</div>
+            <div className="text-2xl font-bold text-primary" style={{ letterSpacing: 0 }}>{kpi.value}</div>
+            <div className="text-[10px] font-normal text-ink-subtle mt-1 uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{kpi.label}</div>
           </Link>
         ))}
       </div>
@@ -75,45 +75,45 @@ export function BuyerOverview() {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent RFQs */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
+        <div className="lg:col-span-2 bg-card-bg shadow-subtle rounded-lg">
           {loading ? (
             <div className="p-12 text-center">
-              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin w-6 h-6 border border-primary border-t-transparent mx-auto" style={{ borderRadius: '50%' }} />
             </div>
           ) : rfqs.length === 0 ? (
             <div className="p-12 text-center">
-              <Inbox size={32} className="text-slate-200 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-400">{t('buyer_no_activity')}</p>
-              <p className="text-xs text-slate-400 mt-1">{t('buyer_no_activity_desc')}</p>
-              <Link to="/products" className="text-xs font-bold text-primary mt-3 inline-block hover:underline">{t('buyer_explore_products')}</Link>
+              <Inbox size={32} className="text-ink-subtle mx-auto mb-2" />
+              <p className="text-sm font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('buyer_no_activity')}</p>
+              <p className="text-xs text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('buyer_no_activity_desc')}</p>
+              <Link to="/products" className="text-xs font-normal text-primary mt-3 inline-block hover:text-primary-hover" style={{ letterSpacing: '0.16px' }}>{t('buyer_explore_products')}</Link>
             </div>
           ) : (
             <div>
               {rfqs.map((rfq: any, i: number) => (
                 <div 
                   key={rfq.id} 
-                  className={`px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors ${i < rfqs.length - 1 ? 'border-b border-slate-50' : ''}`}
+                  className={`px-6 py-4 flex items-center justify-between hover:bg-surface-1 transition-colors ${i < rfqs.length - 1 ? 'border-b border-hairline' : ''}`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                      <FileText size={16} className="text-blue-500" />
+                    <div className="w-9 h-9 bg-surface-1 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
+                      <FileText size={16} className="text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold text-slate-800 truncate">{rfq.productName || t('buyer_rfq_label')}</div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-slate-400">{t('buyer_qty_label')} {rfq.quantity} {rfq.quantityUnit}</span>
+                      <div className="text-sm font-normal text-ink truncate" style={{ letterSpacing: '0.16px' }}>{rfq.productName || t('buyer_rfq_label')}</div>
+                      <div className="flex items-center gap-2 mt-0.5" style={{ letterSpacing: '0.16px' }}>
+                        <span className="text-xs text-ink-subtle">{t('buyer_qty_label')} {rfq.quantity} {rfq.quantityUnit}</span>
                         {rfq._count?.quotes > 0 && (
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{t('buyer_quotes_count', { count: rfq._count.quotes })}</span>
+                          <span className="text-[10px] font-semibold text-emerald-600 bg-surface-1 border border-hairline px-1.5 py-0.5" style={{ borderRadius: '4px' }}>{t('buyer_quotes_count', { count: rfq._count.quotes })}</span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="text-right shrink-0 ml-3">
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${
-                      rfq.status === 'OPEN' ? 'bg-blue-50 text-blue-600' : 
-                      rfq.status === 'CLOSED' ? 'bg-slate-100 text-slate-500' : 
-                      'bg-emerald-50 text-emerald-600'
-                    }`}>
+                    <span className={`text-[10px] font-semibold px-2 py-1 border border-hairline ${
+                      rfq.status === 'OPEN' ? 'bg-surface-1 text-primary' : 
+                      rfq.status === 'CLOSED' ? 'bg-surface-1 text-ink-muted' : 
+                      'bg-surface-1 text-emerald-600'
+                    }`} style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
                       {rfq.status === 'OPEN' ? t('buyer_status_open') : rfq.status === 'CLOSED' ? t('buyer_status_closed') : rfq.status}
                     </span>
                   </div>
@@ -126,15 +126,15 @@ export function BuyerOverview() {
         {/* Sidebar */}
         <div className="space-y-5">
           {/* Recent Messages */}
-          <div className="bg-white rounded-2xl border border-slate-200">
-            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">{t('buyer_messages')}</h2>
-              <Link to="/dashboard/buyer/messages" className="text-xs font-bold text-primary hover:underline">{t('buyer_all')}</Link>
+          <div className="bg-card-bg shadow-subtle rounded-lg">
+            <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('buyer_messages')}</h2>
+              <Link to="/dashboard/buyer/messages" className="text-xs font-normal text-primary hover:text-primary-hover" style={{ letterSpacing: '0.16px' }}>{t('buyer_all')}</Link>
             </div>
             {messages.length === 0 ? (
               <div className="p-8 text-center">
-                <MessageSquare size={24} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">{t('buyer_no_messages')}</p>
+                <MessageSquare size={24} className="text-ink-subtle mx-auto mb-2" />
+                <p className="text-xs text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('buyer_no_messages')}</p>
               </div>
             ) : (
               <div>
@@ -142,14 +142,14 @@ export function BuyerOverview() {
                   <Link 
                     key={msg.id} 
                     to="/dashboard/buyer/messages"
-                    className={`px-5 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors ${i < Math.min(messages.length, 3) - 1 ? 'border-b border-slate-50' : ''}`}
+                    className={`px-5 py-3 flex items-center gap-3 hover:bg-surface-1 transition-colors ${i < Math.min(messages.length, 3) - 1 ? 'border-b border-hairline' : ''}`}
                   >
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 shrink-0">
+                    <div className="w-8 h-8 bg-surface-2 border border-hairline flex items-center justify-center text-[10px] font-normal text-ink shrink-0" style={{ borderRadius: '4px' }}>
                       {(msg.otherUser?.fullName || '?')[0].toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-slate-800 truncate">{msg.otherUser?.fullName || t('buyer_supplier_label')}</div>
-                      <div className="text-[10px] text-slate-400 truncate">{msg.lastMessage || t('buyer_new_message')}</div>
+                      <div className="text-xs font-normal text-ink truncate" style={{ letterSpacing: '0.16px' }}>{msg.otherUser?.fullName || t('buyer_supplier_label')}</div>
+                      <div className="text-[10px] text-ink-muted truncate" style={{ letterSpacing: '0.16px' }}>{msg.lastMessage || t('buyer_new_message')}</div>
                     </div>
                   </Link>
                 ))}
@@ -158,10 +158,9 @@ export function BuyerOverview() {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
+          <div className="bg-card-bg shadow-subtle p-6 relative overflow-hidden rounded-lg">
             <div className="relative z-10">
-              <h3 className="text-sm font-bold text-white mb-4">{t('buyer_sourcing_tools')}</h3>
+              <h3 className="text-sm font-semibold text-ink uppercase mb-4" style={{ letterSpacing: '0.32px' }}>{t('buyer_sourcing_tools')}</h3>
               <div className="space-y-3">
                 {[
                   { label: t('buyer_post_rfq_link'), to: '/rfq' },
@@ -169,8 +168,8 @@ export function BuyerOverview() {
                   { label: t('buyer_help_center'), to: '/help' },
                 ].map((link, i) => (
                   <Link key={i} to={link.to} className="flex items-center justify-between group">
-                    <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{link.label}</span>
-                    <ArrowUpRight size={12} className="text-slate-500 group-hover:text-primary transition-colors" />
+                    <span className="text-xs font-normal text-ink-muted group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{link.label}</span>
+                    <ArrowUpRight size={12} className="text-hairline group-hover:text-primary transition-colors" />
                   </Link>
                 ))}
               </div>
@@ -178,20 +177,20 @@ export function BuyerOverview() {
           </div>
 
           {/* Trade Assurance */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="bg-card-bg shadow-subtle p-6 rounded-lg">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+              <div className="w-10 h-10 bg-surface-1 border border-hairline flex items-center justify-center" style={{ borderRadius: '4px' }}>
                 <Shield size={18} className="text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">{t('buyer_trade_assurance')}</h3>
-                <p className="text-[10px] text-slate-400">{t('buyer_trade_desc')}</p>
+                <h3 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('buyer_trade_assurance')}</h3>
+                <p className="text-[10px] text-ink-subtle mt-0.5" style={{ letterSpacing: '0.16px' }}>{t('buyer_trade_desc')}</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed mb-4">
+            <p className="text-xs text-ink-muted leading-relaxed mb-4" style={{ letterSpacing: '0.16px' }}>
               {t('buyer_trade_body')}
             </p>
-            <Link to="/services/trade-assurance" className="text-xs font-bold text-primary hover:underline">
+            <Link to="/services/trade-assurance" className="text-xs font-normal text-primary hover:text-primary-hover" style={{ letterSpacing: '0.16px' }}>
               {t('buyer_learn_more')}
             </Link>
           </div>

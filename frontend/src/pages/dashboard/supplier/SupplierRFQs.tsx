@@ -103,25 +103,26 @@ export function SupplierRFQs() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('rfqs_received_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{rfqs.length} yêu cầu báo giá</p>
+        <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+          {t('rfqs_received_title')}: <span className="text-ink font-semibold">{rfqs.length} yêu cầu báo giá</span>
+        </p>
       </div>
 
       {/* Content */}
 
       {/* Banner for unverified suppliers */}
       {!isVerified && !loading && rfqs.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-card-bg shadow-subtle p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-surface-1 text-amber-600 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
               <Lock size={20} />
             </div>
             <div>
-              <p className="text-sm font-bold text-amber-800">{t('tai_khoan_chua_xac_thuc')}</p>
-              <p className="text-xs text-amber-600 mt-0.5">{t('ban_chi_thay_tieu_de_rfq_de_xem_chi_tiet')} <strong>{t('xac_thuc_doanh_nghiep_kyb')}</strong>.</p>
+              <p className="text-sm font-semibold text-ink" style={{ letterSpacing: '0.16px' }}>{t('tai_khoan_chua_xac_thuc')}</p>
+              <p className="text-xs text-ink-muted mt-0.5" style={{ letterSpacing: '0.16px' }}>{t('ban_chi_thay_tieu_de_rfq_de_xem_chi_tiet')} <strong>{t('xac_thuc_doanh_nghiep_kyb')}</strong>.</p>
             </div>
           </div>
-          <Link to="/dashboard/supplier/profile" className="shrink-0 px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors inline-flex items-center gap-1.5">
+          <Link to="/dashboard/supplier/profile" className="shrink-0 px-4 py-2 bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors inline-flex items-center gap-1.5" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
             <ShieldCheck size={14} /> Xác thực ngay
           </Link>
         </div>
@@ -137,40 +138,40 @@ export function SupplierRFQs() {
           const progressPct = Math.min((quoteCount / MAX_QUOTES) * 100, 100);
           const isRestricted = rfq._restricted === true;
           return (
-          <div key={rfq.id} className={`p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer ${isRestricted ? 'opacity-80' : ''}`}>
+          <div key={rfq.id} className={`bg-card-bg shadow-subtle p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface-bg transition-all group cursor-pointer rounded-lg ${isRestricted ? 'opacity-80' : ''}`}>
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 bg-surface-1 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
                 {isRestricted ? (
-                  <Lock size={24} className="text-slate-300" />
+                  <Lock size={24} className="text-ink-subtle" />
                 ) : (
-                  <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+                  <FileText size={24} className="text-ink-subtle group-hover:text-primary transition-colors" />
                 )}
               </div>
               <div className="space-y-1">
-                <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{rfq.productName}</div>
+                <div className="text-sm font-semibold text-ink group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{rfq.productName}</div>
                 <div className="flex items-center gap-3 text-sm">
-                  <span className="text-slate-600 font-medium">{rfq.buyer?.fullName || 'Khách hàng Ẩn danh'}</span>
-                  <span className="text-slate-300">•</span>
-                  <span className="font-bold text-[#A2875E]">SL: {rfq.quantity} {rfq.quantityUnit}</span>
+                  <span className="text-ink-muted font-normal">{rfq.buyer?.fullName || 'Khách hàng Ẩn danh'}</span>
+                  <span className="text-hairline">•</span>
+                  <span className="font-bold text-primary" style={{ letterSpacing: '0.16px' }}>SL: {rfq.quantity} {rfq.quantityUnit}</span>
                 </div>
                 {isRestricted && (
                   <div className="flex items-center gap-1.5 mt-1">
-                    <Lock size={10} className="text-slate-300" />
-                    <span className="text-[10px] font-bold text-slate-400 italic">{t('mo_ta_chi_tiet_ngan_sach_dia_diem_bi_an')}</span>
+                    <Lock size={10} className="text-ink-subtle" />
+                    <span className="text-[10px] font-normal text-ink-subtle italic">{t('mo_ta_chi_tiet_ngan_sach_dia_diem_bi_an')}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
+                <div className="flex items-center gap-4 text-[10px] font-normal text-ink-subtle uppercase tracking-widest mt-2" style={{ letterSpacing: '0.32px' }}>
                   <span>Hạn chót: {new Date(rfq.expiresAt).toLocaleDateString()}</span>
                 </div>
                 {/* Quote Progress Bar */}
                 <div className="flex items-center gap-3 mt-2">
-                  <div className="w-28 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-28 h-2 bg-surface-1 overflow-hidden rounded-full">
                     <div 
-                      className={`h-full rounded-full transition-all ${isFull ? 'bg-red-400' : progressPct > 60 ? 'bg-amber-400' : 'bg-primary'}`}
+                      className={`h-full transition-all rounded-full ${isFull ? 'bg-red-500' : progressPct > 60 ? 'bg-amber-500' : 'bg-primary'}`}
                       style={{ width: `${progressPct}%` }}
                     />
                   </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFull ? 'text-red-500' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] font-normal uppercase tracking-widest ${isFull ? 'text-red-500' : 'text-ink-subtle'}`} style={{ letterSpacing: '0.32px' }}>
                     {quoteCount}/{MAX_QUOTES} báo giá
                   </span>
                 </div>
@@ -179,19 +180,19 @@ export function SupplierRFQs() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 {rfq.status === 'OPEN' && !isFull ? (
-                  <span className="flex items-center gap-1.5 bg-blue-50 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
+                  <span className="flex items-center gap-1.5 bg-surface-1 text-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <Clock size={12} /> Đang mở
                   </span>
                 ) : rfq.status === 'OPEN' && isFull ? (
-                  <span className="flex items-center gap-1.5 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-red-100">
+                  <span className="flex items-center gap-1.5 bg-surface-1 text-red-600 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <AlertCircle size={12} /> Đầy
                   </span>
                 ) : rfq.status === 'CLOSED' ? (
-                  <span className="flex items-center gap-1.5 bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200">
+                  <span className="flex items-center gap-1.5 bg-surface-2 text-ink-muted px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <CheckCircle2 size={12} /> Đã đóng
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200">
+                  <span className="flex items-center gap-1.5 bg-surface-2 text-ink-muted px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <AlertCircle size={12} /> {t('status_closed')}
                   </span>
                 )}
@@ -199,28 +200,32 @@ export function SupplierRFQs() {
               {isRestricted ? (
                 <Link 
                   to="/dashboard/supplier/profile"
-                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg transition-all flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                  className="px-6 py-2.5 font-semibold uppercase tracking-widest text-[10px] sm:text-xs transition-all flex items-center justify-center gap-2 bg-surface-2 text-amber-700 border border-hairline hover:bg-surface-3"
+                  style={{ borderRadius: '4px', letterSpacing: '0.32px' }}
                 >
                   <Lock size={14} /> Xác thực để báo giá
                 </Link>
               ) : rfq.status === 'OPEN' && !isFull ? (
                 <button 
                   onClick={() => openQuoteModal(rfq)}
-                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg transition-all flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20"
+                  className="px-6 py-2.5 font-semibold uppercase tracking-widest text-[10px] sm:text-xs transition-all flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-hover"
+                  style={{ borderRadius: '4px', letterSpacing: '0.32px' }}
                 >
                   <Send size={14} /> Gửi báo giá
                 </button>
               ) : rfq.status === 'OPEN' && isFull ? (
                 <button 
                   disabled
-                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg flex items-center justify-center gap-2 bg-slate-100 text-slate-400 cursor-not-allowed"
+                  className="px-6 py-2.5 font-semibold uppercase tracking-widest text-[10px] sm:text-xs flex items-center justify-center gap-2 bg-surface-2 text-ink-subtle border border-hairline cursor-not-allowed"
+                  style={{ borderRadius: '4px', letterSpacing: '0.32px' }}
                 >
                   Đã đủ báo giá
                 </button>
               ) : (
                 <button 
                   onClick={() => handleViewQuote(rfq)}
-                  className="px-6 py-2.5 font-bold uppercase tracking-widest text-[10px] sm:text-xs rounded-lg transition-all flex items-center justify-center gap-2 bg-white text-slate-900 border border-slate-200 hover:bg-slate-50"
+                  className="px-6 py-2.5 font-semibold uppercase tracking-widest text-[10px] sm:text-xs transition-all flex items-center justify-center gap-2 bg-canvas text-ink border border-hairline hover:bg-surface-1"
+                  style={{ borderRadius: '4px', letterSpacing: '0.32px' }}
                 >
                   Xem báo giá đã gửi
                 </button>
@@ -231,13 +236,13 @@ export function SupplierRFQs() {
         })}
       </div>
       {!loading && rfqs.length === 0 && (
-        <div className="p-20 text-center space-y-4">
-          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
-            <FileText size={40} className="text-slate-200" />
+        <div className="p-20 text-center space-y-4 bg-card-bg shadow-subtle rounded-lg">
+          <div className="w-20 h-20 bg-surface-1 border border-hairline flex items-center justify-center mx-auto" style={{ borderRadius: '4px' }}>
+            <FileText size={40} className="text-ink-subtle" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('no_rfqs_title')}</h3>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto">{t('no_rfqs_desc')}</p>
-          <Link to="/dashboard/supplier/profile" className="inline-block bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs">
+          <h3 className="text-lg font-bold text-ink uppercase tracking-tight" style={{ letterSpacing: '0.16px' }}>{t('no_rfqs_title')}</h3>
+          <p className="text-ink-muted text-sm max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>{t('no_rfqs_desc')}</p>
+          <Link to="/dashboard/supplier/profile" className="inline-block bg-primary text-white px-8 py-3 font-semibold hover:bg-primary-hover transition-colors uppercase tracking-widest text-xs" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
             {t('improve_profile')}
           </Link>
         </div>
@@ -245,44 +250,44 @@ export function SupplierRFQs() {
 
       {/* Quote Submission Modal */}
       {isQuoteModalOpen && selectedRfq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs">
+          <div className="bg-card-bg w-full max-w-lg shadow-lg overflow-hidden rounded-lg">
+            <div className="p-6 border-b border-hairline bg-surface-1 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Gửi báo giá</h3>
-                <p className="text-sm text-slate-500 mt-1">{selectedRfq.productName}</p>
+                <h3 className="text-lg font-bold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>Gửi báo giá</h3>
+                <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{selectedRfq.productName}</p>
               </div>
-              <button onClick={() => setIsQuoteModalOpen(false)} className="text-slate-400 hover:text-slate-900 transition-colors">
+              <button onClick={() => setIsQuoteModalOpen(false)} className="text-ink-subtle hover:text-ink transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <form onSubmit={handleSubmitQuote} className="p-6 space-y-5">
               {/* RFQ Info Summary */}
-              <div className="bg-slate-50 p-4 rounded-xl space-y-2 text-sm">
+              <div className="bg-surface-1 p-4 border border-hairline space-y-2 text-sm" style={{ borderRadius: '4px' }}>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Người mua</span>
-                  <span className="font-bold text-slate-900">{selectedRfq.buyer?.fullName || 'Ẩn danh'}</span>
+                  <span className="text-ink-muted">Người mua</span>
+                  <span className="font-semibold text-ink">{selectedRfq.buyer?.fullName || 'Ẩn danh'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Số lượng</span>
-                  <span className="font-bold text-slate-900">{selectedRfq.quantity} {selectedRfq.quantityUnit}</span>
+                  <span className="text-ink-muted">Số lượng</span>
+                  <span className="font-semibold text-ink">{selectedRfq.quantity} {selectedRfq.quantityUnit}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">{t('diem_den')}</span>
-                  <span className="font-bold text-slate-900">{selectedRfq.destination}</span>
+                  <span className="text-ink-muted">{t('diem_den')}</span>
+                  <span className="font-semibold text-ink">{selectedRfq.destination}</span>
                 </div>
                 {selectedRfq.budget && (
                   <div className="flex justify-between">
-                    <span className="text-slate-500">{t('ngan_sach')}</span>
-                    <span className="font-bold text-[#A2875E]">{selectedRfq.budget}</span>
+                    <span className="text-ink-muted">{t('ngan_sach')}</span>
+                    <span className="font-bold text-primary" style={{ letterSpacing: '0.16px' }}>{selectedRfq.budget}</span>
                   </div>
                 )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('gia_don_vi')}</label>
+                  <label className="text-[10px] font-semibold text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('gia_don_vi')}</label>
                   <input 
                     type="number" 
                     step="0.01"
@@ -290,11 +295,12 @@ export function SupplierRFQs() {
                     value={quoteForm.price} 
                     onChange={(e) => setQuoteForm({...quoteForm, price: e.target.value})}
                     placeholder="0.00"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary rounded-lg" 
+                    className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                    style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('don_vi_tien')}</label>
+                <div className="space-y-2 col-span-1">
+                  <label className="text-[10px] font-semibold text-ink-subtle uppercase tracking-widest block mb-1" style={{ letterSpacing: '0.32px' }}>{t('don_vi_tien')}</label>
                   <CustomSelect 
                     options={[
                       { value: 'VND', label: 'VND' },
@@ -308,25 +314,27 @@ export function SupplierRFQs() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('thoi_gian_giao_hang')}</label>
+                <label className="text-[10px] font-semibold text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('thoi_gian_giao_hang')}</label>
                 <input 
                   type="text" 
                   required
                   value={quoteForm.leadTime}
                   onChange={(e) => setQuoteForm({...quoteForm, leadTime: e.target.value})}
                   placeholder="VD: 15-20 ngày"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary rounded-lg" 
+                  className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                  style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('ghi_chu_cho_nguoi_mua')}</label>
+                <label className="text-[10px] font-semibold text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('ghi_chu_cho_nguoi_mua')}</label>
                 <textarea 
                   rows={3}
                   value={quoteForm.message}
                   onChange={(e) => setQuoteForm({...quoteForm, message: e.target.value})}
                   placeholder="Thêm ghi chú về sản phẩm, điều kiện giao hàng, thanh toán..."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-sm outline-none focus:border-primary rounded-lg resize-none" 
+                  className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary resize-none" 
+                  style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                 />
               </div>
 
@@ -334,14 +342,16 @@ export function SupplierRFQs() {
                 <button 
                   type="button"
                   onClick={() => setIsQuoteModalOpen(false)}
-                  className="flex-1 bg-slate-100 text-slate-900 py-3 font-bold transition-all uppercase tracking-widest text-xs hover:bg-slate-200 rounded-lg"
+                  className="flex-1 bg-surface-2 text-ink py-3 font-semibold transition-all uppercase tracking-widest text-xs hover:bg-surface-3"
+                  style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                 >
                   Hủy
                 </button>
                 <button 
                   type="submit"
                   disabled={submittingQuote}
-                  className="flex-1 bg-primary text-white py-3 font-bold transition-all uppercase tracking-widest text-xs hover:bg-primary-dark rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 bg-primary text-white py-3 font-semibold transition-all uppercase tracking-widest text-xs hover:bg-primary-hover disabled:opacity-50 flex items-center justify-center gap-2"
+                  style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                 >
                   {submittingQuote && <Loader2 size={14} className="animate-spin" />}
                   <Send size={14} /> Gửi báo giá

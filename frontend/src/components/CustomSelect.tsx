@@ -35,22 +35,26 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-4 py-3.5 bg-white border rounded-lg outline-none text-left text-sm text-slate-800 transition-all select-none ${
-          isOpen ? 'border-[#003366] ring-1 ring-[#003366]' : 'border-slate-200'
+        className={`w-full flex items-center justify-between px-4 py-3 bg-surface-1 border outline-none text-left text-sm text-ink transition-all select-none ${
+          isOpen ? 'border-primary' : 'border-hairline'
         }`}
+        style={{ borderRadius: 0 }}
       >
-        <span className={selectedOption ? 'text-slate-800' : 'text-slate-400'}>
+        <span className={selectedOption ? 'text-ink' : 'text-ink-subtle'}>
           {selectedOption ? selectedOption.label : placeholder || 'Select option'}
         </span>
         {isOpen ? (
-          <ChevronUp size={16} className="text-slate-500 shrink-0 ml-2" />
+          <ChevronUp size={16} className="text-ink-muted shrink-0 ml-2" />
         ) : (
-          <ChevronDown size={16} className="text-slate-550 shrink-0 ml-2" />
+          <ChevronDown size={16} className="text-ink-muted shrink-0 ml-2" />
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto py-1">
+        <div 
+          className="absolute left-0 right-0 mt-1 bg-canvas border border-hairline z-50 max-h-60 overflow-y-auto py-1"
+          style={{ borderRadius: 0 }}
+        >
           {options.map((option) => {
             const isSelected = option.value === value;
             return (
@@ -62,8 +66,8 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
                 }}
                 className={`px-4 py-2.5 text-sm cursor-pointer select-none transition-colors ${
                   isSelected 
-                    ? 'bg-slate-105 text-[#003366] font-medium' 
-                    : 'text-slate-700 hover:bg-slate-50'
+                    ? 'bg-surface-2 text-ink font-normal' 
+                    : 'text-ink-muted hover:bg-surface-1'
                 }`}
               >
                 {option.label}

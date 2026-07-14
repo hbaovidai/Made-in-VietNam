@@ -120,20 +120,20 @@ export function RFQ() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200/80 p-12 text-center space-y-6 shadow-sm">
-          <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+      <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-canvas border border-hairline p-12 text-center space-y-6" style={{ borderRadius: 0 }}>
+          <div className="w-16 h-16 bg-surface-1 text-emerald-600 border border-hairline flex items-center justify-center mx-auto" style={{ borderRadius: 0 }}>
             <CheckCircle2 size={36} />
           </div>
-          <h2 className="text-2xl font-medium tracking-wide text-slate-900">{t('rfq_submitted')}</h2>
-          <p className="text-slate-500 text-sm leading-relaxed">
+          <h2 className="text-2xl font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_submitted')}</h2>
+          <p className="text-ink-subtle text-sm leading-relaxed" style={{ letterSpacing: '0.16px' }}>
             {t('rfq_submitted_desc')}
           </p>
           <div className="pt-6 flex flex-col gap-3">
-            <Link to="/dashboard/buyer" className="w-full bg-[#003366] hover:bg-[#002244] text-white py-3.5 rounded-lg text-sm font-medium transition-colors">
+            <Link to="/dashboard/buyer" className="w-full bg-primary hover:bg-primary-hover text-white py-3.5 text-sm font-normal transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
               {t('go_to_dashboard')}
             </Link>
-            <Link to="/" className="w-full text-slate-500 text-sm font-medium py-3 hover:text-[#003366] transition-colors">
+            <Link to="/" className="w-full text-ink-subtle text-sm font-normal py-3 hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>
               {t('back_to_home')}
             </Link>
           </div>
@@ -143,16 +143,16 @@ export function RFQ() {
   }
 
   return (
-    <div className="bg-[#F9FAFB] min-h-screen pb-24">
+    <div className="bg-canvas min-h-screen pb-24">
       <BreadcrumbBar items={[{ label: t('rfq_title') }]} />
 
       {/* Header */}
       <div className="pt-16 pb-8">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center text-center">
-          <h1 className="text-3xl md:text-4xl font-medium tracking-wide text-slate-900">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-8 flex flex-col items-center text-center">
+          <h1 className="text-3xl md:text-4xl font-light text-ink uppercase" style={{ letterSpacing: '0.16px' }}>
             {t('rfq_title')}
           </h1>
-          <p className="text-slate-500 text-sm md:text-base max-w-xl mt-3 font-normal leading-relaxed">
+          <p className="text-ink-subtle text-sm md:text-base max-w-xl mt-3 font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
             {t('rfq_desc')}
           </p>
         </div>
@@ -160,17 +160,17 @@ export function RFQ() {
 
       <div className="max-w-[800px] mx-auto px-6 pb-24 space-y-12">
         <div>
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <form onSubmit={handleSubmit} className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
             <div className="p-8 md:p-12 space-y-12">
               
               {/* SECTION 1: Product Info */}
               <section className="space-y-6">
-                <div className="border-l-[3px] border-[#003366] pl-3">
-                  <h2 className="text-base font-semibold tracking-wide text-slate-900">{t('rfq_section_product_info')}</h2>
+                <div className="border-l-2 border-primary pl-3">
+                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_product_info')}</h2>
                 </div>
                 
                 {errorMsg && (
-                  <div className="p-4 bg-red-50/60 text-red-600 rounded-lg text-sm border border-red-100/80 flex items-center justify-center">
+                  <div className="p-4 bg-surface-1 text-red-600 text-sm border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
                     <AlertCircle size={16} className="mr-2 shrink-0" /> {errorMsg}
                   </div>
                 )}
@@ -178,7 +178,7 @@ export function RFQ() {
                 <div className="space-y-6">
                   {/* Product Name (Full width) */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_product_name')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_product_name')}</label>
                     <input 
                       type="text"
                       required
@@ -187,7 +187,7 @@ export function RFQ() {
                       value={formData.productName}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_product_name')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                     <datalist id="product-suggestions">
                        {products
@@ -200,7 +200,7 @@ export function RFQ() {
                   
                   {/* Category Selection */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_category')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_category')}</label>
                     <CustomSelect
                       options={categoryOptions}
                       value={formData.category}
@@ -212,7 +212,7 @@ export function RFQ() {
                   {/* Quantity & Unit (Grid 2 columns) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('quantity_label')}</label>
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('quantity_label')}</label>
                       <input
                         required
                         name="quantity"
@@ -221,11 +221,11 @@ export function RFQ() {
                         type="number"
                         min="1"
                         placeholder={t('rfq_placeholder_quantity')}
-                        className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_quantity_unit')}</label>
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_quantity_unit')}</label>
                       <CustomSelect
                         options={unitOptions}
                         value={formData.quantityUnit}
@@ -239,11 +239,11 @@ export function RFQ() {
 
               {/* SECTION 2: Tech Requirements */}
               <section className="space-y-6">
-                <div className="border-l-[3px] border-[#003366] pl-3">
-                  <h2 className="text-base font-semibold tracking-wide text-slate-900">{t('rfq_section_tech_requirements')}</h2>
+                <div className="border-l-2 border-primary pl-3">
+                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_tech_requirements')}</h2>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_description')}</label>
+                  <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_description')}</label>
                   <textarea
                     required
                     name="description"
@@ -251,30 +251,30 @@ export function RFQ() {
                     onChange={handleChange}
                     rows={6}
                     placeholder={t('rfq_placeholder_description')}
-                    className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm resize-none leading-relaxed placeholder:text-slate-450"
+                    className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink resize-none leading-relaxed placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                   />
                 </div>
               </section>
 
               {/* SECTION 3: Commercial Requirements */}
               <section className="space-y-6">
-                <div className="border-l-[3px] border-[#003366] pl-3">
-                  <h2 className="text-base font-semibold tracking-wide text-slate-900">{t('rfq_section_commercial')}</h2>
+                <div className="border-l-2 border-primary pl-3">
+                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_commercial')}</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_budget')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_budget')}</label>
                     <input
                       type="text"
                       name="budget"
                       value={formData.budget}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_budget')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_destination')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_destination')}</label>
                     <input
                       required
                       type="text"
@@ -282,7 +282,7 @@ export function RFQ() {
                       value={formData.destination}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_destination')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
                 </div>
@@ -290,34 +290,34 @@ export function RFQ() {
 
               {/* SECTION 4: Contact Details */}
               <section className="space-y-6">
-                <div className="border-l-[3px] border-[#003366] pl-3">
-                  <h2 className="text-base font-semibold tracking-wide text-slate-900">{t('rfq_section_contact')}</h2>
+                <div className="border-l-2 border-primary pl-3">
+                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_contact')}</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_contact_name')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_contact_name')}</label>
                     <input
                       type="text"
                       name="contactName"
                       value={formData.contactName}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_contact_name')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_phone')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_phone')}</label>
                     <input
                       type="text"
                       name="contactPhone"
                       value={formData.contactPhone}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_phone')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
                   <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('rfq_label_email')}</label>
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_email')}</label>
                     <input
                       required
                       type="email"
@@ -325,7 +325,7 @@ export function RFQ() {
                       value={formData.contactEmail}
                       onChange={handleChange}
                       placeholder={t('rfq_placeholder_email')}
-                      className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-lg focus:border-[#003366] focus:ring-1 focus:ring-[#003366] outline-none transition-all text-sm placeholder:text-slate-450"
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
                 </div>
@@ -336,7 +336,8 @@ export function RFQ() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#003366] hover:bg-[#002244] text-white py-4 rounded-lg font-medium text-base transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary-hover text-white py-4 font-normal text-base transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   {loading ? <Loader2 size={18} className="animate-spin" /> : (
                     <>
@@ -345,7 +346,7 @@ export function RFQ() {
                     </>
                   )}
                 </button>
-                <p className="text-center text-slate-400 text-xs leading-relaxed">
+                <p className="text-center text-ink-subtle text-xs leading-relaxed" style={{ letterSpacing: '0.16px' }}>
                   {t('rfq_terms')}
                 </p>
               </div>
@@ -357,29 +358,29 @@ export function RFQ() {
         {/* Bottom Tips & Info Hub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Card 1: Tips for RFQ */}
-          <div className="bg-[#F9FAFB] rounded-2xl border border-slate-200/60 p-8">
-            <h3 className="text-base font-semibold tracking-wide text-slate-900 mb-8 border-l-[3px] border-[#003366] pl-3">
+          <div className="bg-surface-1 border border-hairline p-8" style={{ borderRadius: 0 }}>
+            <h3 className="text-base font-normal text-ink mb-8 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
               {t('tips_for_rfq')}
             </h3>
             <div className="space-y-6">
               {[
                 {
-                  icon: <Zap size={18} className="text-[#003366] mt-0.5 shrink-0" />,
+                  icon: <Zap size={18} className="text-primary mt-0.5 shrink-0" />,
                   title: t('be_specific'),
                   desc: t('be_specific_desc')
                 },
                 {
-                  icon: <ShieldCheck size={18} className="text-[#003366] mt-0.5 shrink-0" />,
+                  icon: <ShieldCheck size={18} className="text-primary mt-0.5 shrink-0" />,
                   title: t('mention_standards'),
                   desc: t('mention_standards_desc')
                 },
                 {
-                  icon: <Clock size={18} className="text-[#003366] mt-0.5 shrink-0" />,
+                  icon: <Clock size={18} className="text-primary mt-0.5 shrink-0" />,
                   title: t('set_deadline'),
                   desc: t('set_deadline_desc')
                 },
                 {
-                  icon: <MessageSquare size={18} className="text-[#003366] mt-0.5 shrink-0" />,
+                  icon: <MessageSquare size={18} className="text-primary mt-0.5 shrink-0" />,
                   title: t('communication'),
                   desc: t('communication_desc')
                 }
@@ -387,8 +388,8 @@ export function RFQ() {
                 <div key={idx} className="flex gap-3">
                   {tip.icon}
                   <div>
-                    <h4 className="font-semibold text-slate-900 text-sm">{tip.title}</h4>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{tip.desc}</p>
+                    <h4 className="font-normal text-ink text-sm" style={{ letterSpacing: '0.16px' }}>{tip.title}</h4>
+                    <p className="text-xs text-ink-muted mt-1 leading-relaxed" style={{ letterSpacing: '0.16px' }}>{tip.desc}</p>
                   </div>
                 </div>
               ))}
@@ -396,15 +397,15 @@ export function RFQ() {
           </div>
 
           {/* Card 2: How it works */}
-          <div className="bg-[#F9FAFB] rounded-2xl border border-slate-200/60 p-8">
-            <h3 className="text-base font-semibold tracking-wide text-slate-900 mb-8 border-l-[3px] border-[#003366] pl-3">
+          <div className="bg-surface-1 border border-hairline p-8" style={{ borderRadius: 0 }}>
+            <h3 className="text-base font-normal text-ink mb-8 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
               {t('how_it_works')}
             </h3>
             
             {/* Timeline Wrapper */}
             <div className="relative pl-8 space-y-8">
               {/* Thin timeline connection line */}
-              <div className="absolute left-[11px] top-2.5 bottom-2.5 w-[1px] bg-slate-200" />
+              <div className="absolute left-[11px] top-2.5 bottom-2.5 w-[1px] bg-hairline" />
               
               {[
                 t('rfq_step_1'),
@@ -418,10 +419,10 @@ export function RFQ() {
                 return (
                   <div key={idx} className="relative flex items-start">
                     {/* Circle step number indicator */}
-                    <div className="absolute left-[-29px] w-6 h-6 rounded-full border border-slate-300 bg-white flex items-center justify-center text-[10px] text-slate-500 font-light z-10">
+                    <div className="absolute left-[-29px] w-6 h-6 border border-hairline bg-surface-2 flex items-center justify-center text-[10px] text-ink font-normal z-10" style={{ borderRadius: 0 }}>
                       {idx + 1}
                     </div>
-                    <div className="text-xs md:text-sm text-slate-650 font-normal leading-relaxed">
+                    <div className="text-xs md:text-sm text-ink font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
                       {cleanStepText}
                     </div>
                   </div>

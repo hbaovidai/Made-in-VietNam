@@ -29,7 +29,7 @@ export function Header() {
 
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    
+
     const query = searchQuery.trim();
     if (searchType === 'suppliers') {
       if (query) {
@@ -52,10 +52,10 @@ export function Header() {
     if (isAuthenticated && user?.id) {
       api.get(`/notifications/unread-count`)
         .then(res => setUnreadCount(res.data?.count || 0))
-        .catch(() => {});
+        .catch(() => { });
       api.get(`/cart`)
         .then(res => setCartCount(res.data?.items?.length || 0))
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [isAuthenticated, user?.id, location.pathname]);
 
@@ -64,7 +64,7 @@ export function Header() {
     try {
       const res = await api.get(`/notifications`);
       setNotifications(res.data || []);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const toggleNotifDropdown = async () => {
@@ -80,7 +80,7 @@ export function Header() {
       await api.patch(`/notifications/read-all`);
       setUnreadCount(0);
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const markOneReadAndNavigate = async (notif: any) => {
@@ -89,7 +89,7 @@ export function Header() {
         await api.patch(`/notifications/${notif.id}/read`);
         setUnreadCount(prev => Math.max(0, prev - 1));
         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isRead: true } : n));
-      } catch (e) {}
+      } catch (e) { }
     }
     if (notif.link) {
       navigate(notif.link);
@@ -211,15 +211,15 @@ export function Header() {
             {siteSettings.site_logo ? (
               <img src={siteSettings.site_logo} alt="Logo" style={{ maxHeight: 40, maxWidth: 160 }} />
             ) : (
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <span className="text-lg sm:text-2xl font-black text-primary tracking-tighter">VIE</span>
-                <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">product</span>
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <span className="text-lg sm:text-2xl font-black text-primary tracking-tighter">VIE</span>
+                  <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">product</span>
+                </div>
+                <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                  {siteSettings.site_slogan || siteSettings.site_slogan_vi || t('b2b_global_trade')}
+                </span>
               </div>
-              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                {siteSettings.site_slogan || siteSettings.site_slogan_vi || t('b2b_global_trade')}
-              </span>
-            </div>
             )}
           </Link>
 
@@ -446,11 +446,11 @@ export function Header() {
           </div>
           <div className="flex items-center h-full gap-6">
             <div className="flex items-center h-full gap-5 text-xs font-medium text-slate-500">
-                {user?.role == 'SUPPLIER' && (
-                  <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
-                    <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
-                  </NavDropdown>
-                )}
+              {user?.role == 'SUPPLIER' && (
+                <NavDropdown label={t('supplier')} to="/suppliers" className="h-full" panelClassName="left-auto right-0" arrowClassName="left-auto right-6">
+                  <MegaMenu sections={supplierMenuSections} columns={2} className="w-[480px]" />
+                </NavDropdown>
+              )}
             </div>
           </div>
         </div>

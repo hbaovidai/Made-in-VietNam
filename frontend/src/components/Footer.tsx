@@ -41,7 +41,7 @@ export function Footer() {
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-1">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-black/10">
-                 <img src="/logoVIE.png" alt="Logo" className="h-8 w-auto object-contain" />
+                <img src="/logoVIE.png" alt="Logo" className="h-8 w-auto object-contain" />
               </div>
               <div className="flex flex-row items-baseline ml-2">
                 <span className="text-2xl font-bold text-white leading-none tracking-tight">VIE</span>

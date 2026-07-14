@@ -82,22 +82,22 @@ export function SupplierOverview() {
   const productsMax = Math.max(...productsData, 1);
 
   const kpis = [
-    { label: t('sup_active_products'), value: statsData.products, icon: <Package size={18} className="text-blue-500" />, bg: 'bg-blue-50', link: '/dashboard/supplier/products' },
-    { label: t('sup_profile_views'), value: statsData.totalViews, icon: <Eye size={18} className="text-amber-500" />, bg: 'bg-amber-50', link: '/dashboard/supplier/profile' },
-    { label: t('sup_inquiries_received'), value: recentInquiries.length, icon: <Users size={18} className="text-emerald-500" />, bg: 'bg-emerald-50', link: '/dashboard/supplier/inquiries' },
-    { label: t('sup_profile_completion'), value: `${profileCompletion}%`, icon: <Award size={18} className="text-purple-500" />, bg: 'bg-purple-50', link: '/dashboard/supplier/profile' },
+    { label: t('sup_active_products'), value: statsData.products, icon: <Package size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/supplier/products' },
+    { label: t('sup_profile_views'), value: statsData.totalViews, icon: <Eye size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/supplier/profile' },
+    { label: t('sup_inquiries_received'), value: recentInquiries.length, icon: <Users size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/supplier/inquiries' },
+    { label: t('sup_profile_completion'), value: `${profileCompletion}%`, icon: <Award size={18} className="text-primary" />, bg: 'bg-surface-1', link: '/dashboard/supplier/profile' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome + Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">{t('sup_hello', { name: user?.supplier?.companyName || user?.fullName || '' })}</p>
+        <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('sup_hello', { name: user?.supplier?.companyName || user?.fullName || '' })}</p>
         <div className="flex gap-2">
-          <Link to="/dashboard/supplier/products" className="text-xs font-bold text-slate-600 bg-white border border-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+          <Link to="/dashboard/supplier/products" className="text-xs font-normal text-ink bg-surface-1 border border-hairline px-4 py-2.5 hover:bg-surface-2 transition-colors" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
             {t('sup_manage_products')}
           </Link>
-          <Link to="/dashboard/supplier/profile" className="text-xs font-bold text-white bg-primary px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
+          <Link to="/dashboard/supplier/profile" className="text-xs font-normal text-white bg-primary px-4 py-2.5 hover:bg-primary-hover transition-colors" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
             {t('sup_edit_profile')}
           </Link>
         </div>
@@ -106,15 +106,15 @@ export function SupplierOverview() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, i) => (
-          <Link key={i} to={kpi.link} className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg hover:shadow-slate-100 transition-all group">
+          <Link key={i} to={kpi.link} className="bg-card-bg shadow-subtle p-5 transition-all group rounded-lg">
             <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg}`}>
+              <div className={`w-10 h-10 border border-hairline flex items-center justify-center ${kpi.bg}`} style={{ borderRadius: '4px' }}>
                 {kpi.icon}
               </div>
-              <ArrowUpRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
+              <ArrowUpRight size={14} className="text-hairline group-hover:text-primary transition-colors" />
             </div>
-            <div className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</div>
-            <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{kpi.label}</div>
+            <div className="text-2xl font-bold text-primary" style={{ letterSpacing: 0 }}>{kpi.value}</div>
+            <div className="text-[10px] font-normal text-ink-subtle mt-1 uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{kpi.label}</div>
           </Link>
         ))}
       </div>
@@ -122,80 +122,80 @@ export function SupplierOverview() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Profile Views Chart */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <div className="bg-card-bg shadow-subtle p-6 rounded-lg">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Eye size={16} className="text-amber-500" />
-              <h2 className="text-sm font-bold text-slate-900">{t('sup_profile_views_chart')}</h2>
+              <Eye size={16} className="text-primary" />
+              <h2 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('sup_profile_views_chart')}</h2>
             </div>
-            <span className="text-xs font-medium text-slate-400">{t('sup_months_12')}</span>
+            <span className="text-xs font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('sup_months_12')}</span>
           </div>
           {statsData.totalViews > 0 ? (
             <>
               <div className="h-44 flex items-end gap-2">
                 {viewsData.map((value, i) => (
                   <div key={i} className="flex-1 relative group cursor-pointer">
-                    <div className="w-full bg-slate-100 rounded-t-md" style={{ height: '176px' }}>
+                    <div className="w-full bg-surface-1 border border-hairline" style={{ height: '176px', borderRadius: '4px' }}>
                       <div 
-                        className="absolute bottom-0 left-0 right-0 bg-amber-400/60 group-hover:bg-amber-500 rounded-t-md transition-all" 
-                        style={{ height: `${(value / viewsMax) * 100}%` }} 
+                        className="absolute bottom-0 left-0 right-0 bg-primary/70 group-hover:bg-primary transition-all" 
+                        style={{ height: `${(value / viewsMax) * 100}%`, borderRadius: '4px' }} 
                       />
                     </div>
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-surface-2 text-ink text-[9px] px-1.5 py-0.5 border border-hairline opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ borderRadius: '4px' }}>
                       {value}
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="mt-3 flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+              <div className="mt-3 flex justify-between text-[9px] font-normal text-ink-subtle uppercase" style={{ letterSpacing: '0.32px' }}>
                 {months.map(m => <span key={m}>{m}</span>)}
               </div>
             </>
           ) : (
             <div className="h-44 flex items-center justify-center">
               <div className="text-center">
-                <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">{t('sup_no_view_data')}</p>
+                <BarChart3 size={32} className="text-ink-subtle mx-auto mb-2" />
+                <p className="text-xs text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('sup_no_view_data')}</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Products Listed Chart */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <div className="bg-card-bg shadow-subtle p-6 rounded-lg">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <ShoppingBag size={16} className="text-blue-500" />
-              <h2 className="text-sm font-bold text-slate-900">{t('sup_products_posted')}</h2>
+              <ShoppingBag size={16} className="text-primary" />
+              <h2 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('sup_products_posted')}</h2>
             </div>
-            <span className="text-xs font-medium text-slate-400">{t('sup_months_12')}</span>
+            <span className="text-xs font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('sup_months_12')}</span>
           </div>
           {statsData.products > 0 ? (
             <>
               <div className="h-44 flex items-end gap-2">
                 {productsData.map((value, i) => (
                   <div key={i} className="flex-1 relative group cursor-pointer">
-                    <div className="w-full bg-slate-100 rounded-t-md" style={{ height: '176px' }}>
+                    <div className="w-full bg-surface-1 border border-hairline" style={{ height: '176px', borderRadius: '4px' }}>
                       <div 
-                        className="absolute bottom-0 left-0 right-0 bg-blue-400/60 group-hover:bg-blue-500 rounded-t-md transition-all" 
-                        style={{ height: `${(value / productsMax) * 100}%` }} 
+                        className="absolute bottom-0 left-0 right-0 bg-primary/70 group-hover:bg-primary transition-all" 
+                        style={{ height: `${(value / productsMax) * 100}%`, borderRadius: '4px' }} 
                       />
                     </div>
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-surface-2 text-ink text-[9px] px-1.5 py-0.5 border border-hairline opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ borderRadius: '4px' }}>
                       {value}
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="mt-3 flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+              <div className="mt-3 flex justify-between text-[9px] font-normal text-ink-subtle uppercase" style={{ letterSpacing: '0.32px' }}>
                 {months.map(m => <span key={m}>{m}</span>)}
               </div>
             </>
           ) : (
             <div className="h-44 flex items-center justify-center">
               <div className="text-center">
-                <BarChart3 size={32} className="text-slate-200 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">{t('sup_no_products_yet')}</p>
+                <BarChart3 size={32} className="text-ink-subtle mx-auto mb-2" />
+                <p className="text-xs text-ink-muted" style={{ letterSpacing: '0.16px' }}>{t('sup_no_products_yet')}</p>
               </div>
             </div>
           )}
@@ -205,20 +205,20 @@ export function SupplierOverview() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent Inquiries */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">{t('sup_recent_inquiries')}</h2>
-            <Link to="/dashboard/supplier/inquiries" className="text-xs font-bold text-primary hover:underline">{t('sup_view_all')}</Link>
+        <div className="lg:col-span-2 bg-card-bg shadow-subtle rounded-lg">
+          <div className="px-6 py-4 border-b border-hairline flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('sup_recent_inquiries')}</h2>
+            <Link to="/dashboard/supplier/inquiries" className="text-xs font-normal text-primary hover:text-primary-hover" style={{ letterSpacing: '0.16px' }}>{t('sup_view_all')}</Link>
           </div>
           {loading ? (
             <div className="p-12 text-center">
-              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin w-6 h-6 border border-primary border-t-transparent mx-auto" style={{ borderRadius: '50%' }} />
             </div>
           ) : recentInquiries.length === 0 ? (
             <div className="p-12 text-center">
-              <Inbox size={32} className="text-slate-200 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-400">{t('chua_co_yeu_cau_nao')}</p>
-              <p className="text-xs text-slate-400 mt-1">{t('khi_nguoi_mua_lien_he_yeu_cau_se_hien_th')}</p>
+              <Inbox size={32} className="text-ink-subtle mx-auto mb-2" />
+              <p className="text-sm font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('chua_co_yeu_cau_nao')}</p>
+              <p className="text-xs text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('khi_nguoi_mua_lien_he_yeu_cau_se_hien_th')}</p>
             </div>
           ) : (
             <div>
@@ -226,22 +226,22 @@ export function SupplierOverview() {
                 <Link 
                   key={inq.id} 
                   to="/dashboard/supplier/inquiries"
-                  className={`px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors group ${i < recentInquiries.length - 1 ? 'border-b border-slate-50' : ''}`}
+                  className={`px-6 py-4 flex items-center justify-between hover:bg-surface-1 transition-colors group ${i < recentInquiries.length - 1 ? 'border-b border-hairline' : ''}`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
+                    <div className="w-9 h-9 bg-surface-2 border border-hairline flex items-center justify-center text-xs font-normal text-ink shrink-0 animate-fade-in" style={{ borderRadius: '4px' }}>
                       {(inq.otherUser?.fullName || '?')[0].toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold text-slate-800 group-hover:text-primary transition-colors truncate">
+                      <div className="text-sm font-normal text-ink group-hover:text-primary transition-colors truncate" style={{ letterSpacing: '0.16px' }}>
                         {inq.otherUser?.fullName || 'Người mua'}
                       </div>
-                      <div className="text-xs text-slate-400 truncate mt-0.5">
+                      <div className="text-xs text-ink-muted truncate mt-0.5" style={{ letterSpacing: '0.16px' }}>
                         {inq.lastMessage || 'Tin nhắn mới'}
                       </div>
                     </div>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-medium shrink-0 ml-3">
+                  <span className="text-[10px] text-ink-subtle font-normal shrink-0 ml-3" style={{ letterSpacing: '0.16px' }}>
                     {inq.updatedAt ? formatTime(inq.updatedAt) : ''}
                   </span>
                 </Link>
@@ -252,29 +252,29 @@ export function SupplierOverview() {
 
         {/* Profile Completion */}
         <div className="space-y-5">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="bg-card-bg shadow-subtle p-6 rounded-lg">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                <Award size={18} className="text-purple-500" />
+              <div className="w-10 h-10 bg-surface-1 border border-hairline flex items-center justify-center" style={{ borderRadius: '4px' }}>
+                <Award size={18} className="text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">{t('sup_company_profile')}</h3>
-                <p className="text-xs text-slate-400">{t('sup_complete_to_trust')}</p>
+                <h3 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('sup_company_profile')}</h3>
+                <p className="text-xs text-ink-subtle mt-0.5" style={{ letterSpacing: '0.16px' }}>{t('sup_complete_to_trust')}</p>
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-500">{t('sup_progress')}</span>
-                <span className={profileCompletion >= 80 ? 'text-emerald-600' : 'text-amber-600'}>{profileCompletion}%</span>
+              <div className="flex justify-between text-xs font-normal" style={{ letterSpacing: '0.16px' }}>
+                <span className="text-ink-muted">{t('sup_progress')}</span>
+                <span className={profileCompletion >= 80 ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'}>{profileCompletion}%</span>
               </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-surface-2 border border-hairline overflow-hidden rounded-full">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${profileCompletion >= 80 ? 'bg-emerald-500' : profileCompletion >= 50 ? 'bg-amber-500' : 'bg-primary'}`} 
+                  className={`h-full transition-all duration-500 rounded-full ${profileCompletion >= 80 ? 'bg-emerald-500' : profileCompletion >= 50 ? 'bg-amber-500' : 'bg-primary'}`} 
                   style={{ width: `${profileCompletion}%` }} 
                 />
               </div>
               {profileCompletion < 80 && (
-                <Link to="/dashboard/supplier/profile" className="text-[10px] text-primary font-bold hover:underline inline-block mt-1">
+                <Link to="/dashboard/supplier/profile" className="text-[10px] text-primary font-normal hover:text-primary-hover inline-block mt-1" style={{ letterSpacing: '0.16px' }}>
                   {t('sup_complete_profile')}
                 </Link>
               )}
@@ -282,18 +282,17 @@ export function SupplierOverview() {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
+          <div className="bg-card-bg shadow-subtle p-6 relative overflow-hidden rounded-lg">
             <div className="relative z-10">
-              <h3 className="text-sm font-bold text-white mb-4">Phát triển kinh doanh</h3>
+              <h3 className="text-sm font-semibold text-ink uppercase mb-4" style={{ letterSpacing: '0.32px' }}>Phát triển kinh doanh</h3>
               <div className="space-y-3">
                 {[
                   { label: t('membership_benefits'), to: '/services/membership' },
                   { label: t('seller_guide_link'), to: '/help/seller-guide' },
                 ].map((link, i) => (
                   <Link key={i} to={link.to} className="flex items-center justify-between group">
-                    <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{link.label}</span>
-                    <ArrowUpRight size={12} className="text-slate-500 group-hover:text-primary transition-colors" />
+                    <span className="text-xs font-normal text-ink-muted group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{link.label}</span>
+                    <ArrowUpRight size={12} className="text-hairline group-hover:text-primary transition-colors" />
                   </Link>
                 ))}
               </div>

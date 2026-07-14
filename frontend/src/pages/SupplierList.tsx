@@ -101,7 +101,7 @@ export function SupplierList() {
   }, [selectedIndustry, searchTerm]);
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-canvas min-h-screen">
       <SEOHead
         title={t('seo_suppliers_title')}
         description={t('seo_suppliers_desc')}
@@ -111,11 +111,11 @@ export function SupplierList() {
 
       <div className="flex min-h-[calc(100vh-112px)] relative">
         {/* ═══ Sidebar — Sticky, always visible ═══ */}
-        <aside className="hidden lg:flex flex-col bg-white border-r border-slate-200 shrink-0 self-start sticky top-[112px] h-[calc(100vh-112px)] z-30 w-[260px] overflow-y-auto">
+        <aside className="hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 self-start sticky top-[112px] h-[calc(100vh-112px)] z-30 w-[260px] overflow-y-auto">
           {/* Header */}
-          <div className="flex items-center h-14 px-5 border-b border-slate-100 shrink-0">
-            <Menu size={22} className="text-slate-500 shrink-0" />
-            <span className="ml-4 text-sm font-bold text-slate-700 whitespace-nowrap">
+          <div className="flex items-center h-12 px-5 border-b border-hairline shrink-0">
+            <Menu size={20} className="text-ink-muted shrink-0" />
+            <span className="ml-4 text-sm font-normal text-ink whitespace-nowrap" style={{ letterSpacing: '0.16px' }}>
               {t('nganh_hang')}
             </span>
           </div>
@@ -126,15 +126,15 @@ export function SupplierList() {
             <button
               onClick={() => setSelectedIndustry(null)}
               className={cn(
-                "w-full flex items-center gap-3 px-5 py-2 text-left transition-all duration-200 relative group/item",
+                "w-full flex items-center gap-3 px-5 py-2.5 text-left transition-all duration-150 relative group/item",
                 !selectedIndustry
-                  ? "text-primary bg-primary/5"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                  ? "text-primary bg-surface-1"
+                  : "text-ink-muted hover:bg-surface-1 hover:text-ink"
               )}
             >
-              {!selectedIndustry && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
+              {!selectedIndustry && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
               <Search size={18} className="shrink-0" />
-              <span className="text-[13px] font-semibold whitespace-nowrap">
+              <span className="text-[13px] font-normal whitespace-nowrap" style={{ letterSpacing: '0.16px' }}>
                 Tất cả ngành hàng
               </span>
             </button>
@@ -144,15 +144,15 @@ export function SupplierList() {
                 key={cat.slug || cat.id}
                 onClick={() => setSelectedIndustry(cat.name)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-5 py-2 text-left transition-all duration-200 relative group/item",
+                  "w-full flex items-center gap-3 px-5 py-2.5 text-left transition-all duration-150 relative group/item",
                   selectedIndustry === cat.name
-                    ? "text-primary bg-primary/5"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                    ? "text-primary bg-surface-1"
+                    : "text-ink-muted hover:bg-surface-1 hover:text-ink"
                 )}
               >
-                {selectedIndustry === cat.name && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 bg-primary rounded-r-full" />}
+                {selectedIndustry === cat.name && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
                 <span className="shrink-0">{getCategoryIcon(cat.slug)}</span>
-                <span className="text-[13px] font-semibold whitespace-nowrap truncate">
+                <span className="text-[13px] font-normal whitespace-nowrap truncate" style={{ letterSpacing: '0.16px' }}>
                   {cat.name}
                 </span>
               </button>
@@ -160,10 +160,10 @@ export function SupplierList() {
           </nav>
 
           {/* RFQ Button — pinned near bottom */}
-          <div className="mt-auto px-4 py-5 border-t border-slate-100">
+          <div className="mt-auto px-4 py-5 border-t border-hairline">
             <Link
               to="/rfq"
-              className="flex items-center justify-center gap-2 w-full bg-[#1a2e4a] text-white text-sm font-bold py-3 rounded-lg hover:bg-[#243b5c] transition-colors shadow-sm"
+              className="flex items-center justify-center gap-2 w-full bg-primary text-white text-sm font-normal py-3 hover:bg-primary-hover transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
             >
               <Send size={16} />
               {t('send_rfq')}
@@ -175,7 +175,7 @@ export function SupplierList() {
         <div className="lg:hidden fixed bottom-6 right-6 z-40">
           <button
             onClick={() => setIsMobileSidebarOpen(true)}
-            className="flex items-center justify-center w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary/95 transition-colors"
+            className="flex items-center justify-center w-12 h-12 bg-primary text-white hover:bg-primary-hover transition-colors" style={{ borderRadius: 0 }}
           >
             <Filter size={20} />
           </button>
@@ -185,20 +185,20 @@ export function SupplierList() {
         {isMobileSidebarOpen && (
           <div
             onClick={() => setIsMobileSidebarOpen(false)}
-            className="lg:hidden fixed inset-0 bg-slate-900/40 z-40 backdrop-blur-sm"
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
           />
         )}
 
         {/* Mobile Drawer */}
         <aside
           className={cn(
-            "lg:hidden fixed top-0 left-0 bottom-0 w-72 bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out",
+            "lg:hidden fixed top-0 left-0 bottom-0 w-72 bg-canvas border-r border-hairline z-50 flex flex-col transition-transform duration-200 ease-in-out",
             isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <div className="flex items-center justify-between h-14 px-5 border-b border-slate-100 shrink-0">
-            <span className="font-bold text-slate-900">{t('nganh_hang')}</span>
-            <button onClick={() => setIsMobileSidebarOpen(false)} className="text-xs font-bold text-slate-400 uppercase">
+          <div className="flex items-center justify-between h-12 px-5 border-b border-hairline shrink-0">
+            <span className="font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('nganh_hang')}</span>
+            <button onClick={() => setIsMobileSidebarOpen(false)} className="text-xs font-normal text-ink-subtle" style={{ letterSpacing: '0.32px' }}>
               {t('close_action')}
             </button>
           </div>
@@ -206,8 +206,8 @@ export function SupplierList() {
             <button
               onClick={() => { setSelectedIndustry(null); setIsMobileSidebarOpen(false); }}
               className={cn(
-                "w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors text-left",
-                !selectedIndustry ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
+                "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors text-left",
+                !selectedIndustry ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
               )}
             >
               <Search size={18} className="shrink-0" />
@@ -218,8 +218,8 @@ export function SupplierList() {
                 key={cat.slug || cat.id}
                 onClick={() => { setSelectedIndustry(cat.name); setIsMobileSidebarOpen(false); }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold transition-colors text-left",
-                  selectedIndustry === cat.name ? "text-primary bg-primary/5" : "text-slate-600 hover:bg-slate-50"
+                  "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors text-left",
+                  selectedIndustry === cat.name ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
                 )}
               >
                 <span className="shrink-0">{getCategoryIcon(cat.slug, 18)}</span>
@@ -232,24 +232,24 @@ export function SupplierList() {
         {/* ═══ Main Content Area ═══ */}
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="px-6 lg:px-10 pt-4 pb-2">
-              <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-2">
+              <nav className="flex items-center gap-2 text-xs text-ink-muted font-normal mb-2" style={{ letterSpacing: '0.16px' }}>
                 <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
-                <ChevronRight size={12} className="text-slate-300" />
-                <span className="text-primary font-bold">{t('suppliers')}</span>
+                <ChevronRight size={12} className="text-hairline" />
+                <span className="text-primary font-semibold">{t('suppliers')}</span>
               </nav>
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                <h1 className="text-xl md:text-2xl font-light text-ink" style={{ letterSpacing: 0 }}>
                   {selectedIndustry || t('suppliers')}
                 </h1>
                 <div className="relative w-full md:w-96 group">
-                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors z-10" />
+                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle group-focus-within:text-primary transition-colors z-10" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={t('search_suppliers_placeholder')}
-                    className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                    className="w-full pl-11 pr-4 py-[11px] bg-surface-1 border border-hairline text-sm text-ink placeholder-ink-subtle outline-none focus:border-b-2 focus:border-b-primary transition-all" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   />
                 </div>
               </div>
@@ -276,26 +276,26 @@ export function SupplierList() {
                 ))}
               </div>
              ) : (
-              <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-slate-200 flex-1 flex flex-col justify-center">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Search size={32} className="text-slate-300" />
+              <div className="text-center py-24 bg-canvas border border-hairline flex-1 flex flex-col justify-center">
+                <div className="w-20 h-20 bg-surface-1 flex items-center justify-center mx-auto mb-6">
+                  <Search size={32} className="text-ink-subtle" />
                 </div>
-                <h3 className="text-xl font-black text-slate-900 mb-2">{t('no_suppliers_found')}</h3>
-                <p className="text-slate-500 font-medium max-w-xs mx-auto">{t('no_suppliers_desc')}</p>
+                <h3 className="text-xl font-light text-ink mb-2">{t('no_suppliers_found')}</h3>
+                <p className="text-ink-muted font-normal max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>{t('no_suppliers_desc')}</p>
               </div>
             )}
 
             {/* Pagination */}
             {!loading && totalPages > 1 && (
-              <div className="flex items-center justify-between pt-6 pb-2 border-t border-slate-200 mt-4">
-                <p className="text-xs text-slate-500 font-medium">
+              <div className="flex items-center justify-between pt-6 pb-2 border-t border-hairline mt-4">
+                <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.32px' }}>
                   Hiển thị {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, totalSuppliers)} trong {totalSuppliers} nhà cung cấp
                 </p>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     disabled={currentPage === 1}
-                    className="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 text-ink-muted hover:text-primary hover:bg-surface-1 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -308,16 +308,16 @@ export function SupplierList() {
                     }, [])
                     .map((item, idx) =>
                       item === 'dots' ? (
-                        <span key={`dots-${idx}`} className="px-2 text-slate-400 text-sm">…</span>
+                        <span key={`dots-${idx}`} className="px-2 text-ink-subtle text-sm">…</span>
                       ) : (
                         <button
                           key={item}
                           onClick={() => { setCurrentPage(item as number); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                          className={`min-w-[32px] h-8 text-xs font-bold transition-colors ${
+                          className={`min-w-[32px] h-8 text-xs font-normal transition-colors ${
                             currentPage === item
                               ? 'bg-primary text-white'
-                              : 'text-slate-600 hover:bg-slate-100 hover:text-primary'
-                          }`}
+                              : 'text-ink-muted hover:bg-surface-1 hover:text-primary'
+                          }`} style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                         >
                           {item}
                         </button>
@@ -326,7 +326,7 @@ export function SupplierList() {
                   <button
                     onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     disabled={currentPage === totalPages}
-                    className="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 text-ink-muted hover:text-primary hover:bg-surface-1 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronRight size={16} />
                   </button>

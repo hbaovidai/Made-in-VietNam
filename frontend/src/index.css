@@ -1,39 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+/* ============================================================
+   Design Tokens — Premium VIEPRODUCT Design System
+   Mapped to brand palette (navy #003366 + gold)
+   Reference: DESIGN-ibm.md
+   ============================================================ */
 @theme {
+  /* Brand */
   --color-primary: #003366;
   --color-primary-light: #004080;
+  --color-primary-hover: #004080;
   --color-primary-dark: #002244;
   --color-viet-gold: #FFCD00;
   --color-viet-gold-dark: #D4AF37;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Ink (text) */
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-ink-subtle: #94a3b8;
+
+  /* Surface */
+  --color-canvas: #ffffff;
+  --color-surface-bg: #f8fafc;
+  --color-card-bg: #ffffff;
+  --color-surface-1: #f1f5f9;
+  --color-surface-2: #e2e8f0;
+  --color-hairline: #e2e8f0;
+
+  /* Inverse */
+  --color-inverse-canvas: #0f172a;
+  --color-inverse-surface: #1e293b;
+  --color-inverse-ink: #ffffff;
+  --color-inverse-ink-muted: #cbd5e1;
+
+  /* Semantic */
+  --color-success: #24a148;
+  --color-warning: #f1c21b;
+  --color-error: #da1e28;
+
+  /* Typography */
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* ============================================================
-   Base Styles
+   Base Styles — Foundation
    ============================================================ */
 @layer base {
   body {
-    @apply bg-white text-slate-900 antialiased;
+    @apply bg-surface-bg text-ink antialiased;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.50;
+    letter-spacing: 0.16px;
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Better focus visible */
+  /* Redefine font-normal utility and element selectors to enforce a slightly bolder global text */
+  .font-normal {
+    font-weight: 500 !important;
+  }
+
+  /* Force all headings to be bold by default */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700 !important;
+    letter-spacing: 0;
+  }
+
+  /* Input defaults */
+  input, select, textarea, button {
+    font-family: var(--font-sans) !important;
+  }
+
+  /* Focus indicator */
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-primary;
   }
 
-  /* Selection color */
   ::selection {
-    background: #2271b1;
+    background: #003366;
     color: #fff;
   }
 
-  /* Hide number input spinners (we use custom +/- buttons) */
+  /* Hide number input spinners */
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -45,138 +101,178 @@
 }
 
 /* ============================================================
-   Component Styles — Button Hierarchy
+   Component Styles — Design System Inspired
    ============================================================ */
 @layer components {
-  /* Primary Button — Main CTA */
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+
+  /* Primary Button — Brand fill, bo góc 4px (sm) */
   .btn-primary {
-    @apply bg-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/25
-           active:scale-[0.97] active:shadow-none
+    @apply bg-primary text-white px-4 py-3 text-sm font-semibold
+           hover:bg-primary-hover
+           active:bg-primary-dark active:scale-[0.98]
            focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
-           transition-all duration-200 ease-out
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100;
+           transition-all duration-150 ease-out
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
-  /* Secondary Button — Outlined */
+  /* Secondary Button — Charcoal solid, bo góc 4px */
   .btn-secondary {
-    @apply bg-white text-primary border-2 border-primary px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-blue-50 hover:shadow-md hover:shadow-primary/10
-           active:scale-[0.97] active:bg-blue-100
+    @apply bg-ink text-white px-4 py-3 text-sm font-semibold
+           hover:bg-ink-muted
+           active:scale-[0.98]
            focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
-           transition-all duration-200 ease-out
+           transition-all duration-150 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
-  /* Danger Button — Destructive action */
+  /* Tertiary Button — White + brand border, bo góc 4px */
+  .btn-tertiary {
+    @apply bg-canvas text-primary border border-primary px-4 py-3 text-sm font-semibold
+           hover:bg-surface-1
+           active:scale-[0.98]
+           focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
+           transition-all duration-150 ease-out
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
+  }
+
+  /* Danger Button — Error red, bo góc 4px */
   .btn-danger {
-    @apply bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/25
-           active:scale-[0.97] active:shadow-none
-           focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2
-           transition-all duration-200 ease-out
+    @apply bg-error text-white px-4 py-3 text-sm font-semibold
+           hover:opacity-90
+           active:scale-[0.98]
+           focus-visible:ring-2 focus-visible:ring-error/50 focus-visible:ring-offset-2
+           transition-all duration-150 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
-  /* Ghost Button — Subtle, no background */
+  /* Ghost Button — Plain text, bo góc 4px */
   .btn-ghost {
-    @apply bg-transparent text-slate-600 px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-slate-100 hover:text-slate-900
-           active:scale-[0.97] active:bg-slate-200
-           focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2
-           transition-all duration-200 ease-out
+    @apply bg-transparent text-primary px-4 py-3 text-sm font-normal
+           hover:bg-surface-1
+           active:scale-[0.98]
+           focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2
+           transition-all duration-150 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
-  /* Gold Button — Premium CTA */
+  /* Gold Button — Premium CTA, bo góc 4px */
   .btn-gold {
-    @apply bg-viet-gold text-primary-dark px-6 py-2.5 rounded-lg font-bold text-sm
-           hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/25
-           active:scale-[0.97] active:shadow-none
-           focus-visible:ring-2 focus-visible:ring-yellow-400/50 focus-visible:ring-offset-2
-           transition-all duration-200 ease-out
+    @apply bg-viet-gold text-primary-dark px-4 py-3 text-sm font-semibold
+           hover:brightness-105
+           active:scale-[0.98]
+           focus-visible:ring-2 focus-visible:ring-viet-gold/50 focus-visible:ring-offset-2
+           transition-all duration-150 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
-  /* Icon Button — Square, minimal */
+  /* Icon Button */
   .btn-icon {
-    @apply p-2 rounded-lg text-slate-400
-           hover:bg-slate-100 hover:text-slate-700
-           active:scale-[0.90] active:bg-slate-200
+    @apply p-2 text-ink-muted
+           hover:bg-surface-1 hover:text-ink
+           active:scale-[0.90]
            transition-all duration-150 ease-out;
+    border-radius: 4px;
   }
 
   .btn-icon-danger {
-    @apply p-2 rounded-lg text-slate-400
-           hover:bg-red-50 hover:text-red-600
-           active:scale-[0.90] active:bg-red-100
+    @apply p-2 text-ink-muted
+           hover:bg-red-50 hover:text-error
+           active:scale-[0.90]
            transition-all duration-150 ease-out;
+    border-radius: 4px;
   }
 
-  /* ============================================================
-     Card Component
-     ============================================================ */
+  /* ── Cards ───────────────────────────────────────────────── */
+
+  /* Card — Bo góc 8px (md), Đổ bóng nhẹ (shadows.subtle), không viền */
   .card {
-    @apply bg-white border border-slate-200 rounded-xl
-           transition-all duration-300 ease-out;
+    @apply bg-card-bg shadow-subtle
+           transition-all duration-200 ease-out;
+    border: none;
+    border-radius: 8px;
   }
 
+  /* Card with hover */
   .card-hover {
-    @apply bg-white border border-slate-200 rounded-xl
-           transition-all duration-300 ease-out
-           hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-0.5
-           hover:border-slate-300;
+    @apply bg-card-bg shadow-subtle
+           transition-all duration-200 ease-out
+           hover:bg-surface-bg;
+    border: none;
+    border-radius: 8px;
   }
 
+  /* Interactive card — clickable */
   .card-interactive {
-    @apply bg-white border border-slate-200 rounded-xl
-           transition-all duration-300 ease-out
-           hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-0.5
-           hover:border-slate-300
-           cursor-pointer
-           active:scale-[0.99] active:shadow-md;
+    @apply bg-card-bg shadow-subtle
+           transition-all duration-200 ease-out
+           hover:bg-surface-bg
+           cursor-pointer active:scale-[0.995];
+    border: none;
+    border-radius: 8px;
   }
 
-  /* ============================================================
-     Form Input
-     ============================================================ */
+  /* ── Form Inputs ─────────────────────────────────────────── */
+
+  /* Input — Bo góc 4px (sm) */
   .input {
-    @apply w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg
-           text-sm text-slate-900 placeholder:text-slate-400
-           hover:border-slate-300
-           focus:border-primary focus:ring-2 focus:ring-primary/10 focus:bg-white
-           outline-none transition-all duration-200;
+    @apply w-full px-4 py-[11px] bg-surface-1 border border-hairline
+           text-sm text-ink placeholder:text-ink-subtle
+           hover:border-ink-muted
+           focus:border-b-2 focus:border-b-primary focus:bg-surface-1
+           outline-none transition-all duration-150;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
   .input-error {
-    @apply w-full px-4 py-2.5 bg-red-50/50 border border-red-300 rounded-lg
-           text-sm text-slate-900 placeholder:text-slate-400
-           focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:bg-white
-           outline-none transition-all duration-200;
+    @apply w-full px-4 py-[11px] bg-surface-1 border border-hairline
+           border-b-2 border-b-error
+           text-sm text-ink placeholder:text-ink-subtle
+           focus:border-b-2 focus:border-b-error
+           outline-none transition-all duration-150;
+    border-radius: 4px;
+    letter-spacing: 0.16px;
   }
 
   .input-label {
-    @apply text-sm font-bold text-slate-700 mb-1.5 block;
+    @apply text-sm font-semibold text-ink mb-1.5 block;
+    letter-spacing: 0.16px;
   }
 
   .input-helper {
-    @apply text-xs text-slate-400 mt-1;
+    @apply text-xs text-ink-subtle mt-1;
+    letter-spacing: 0.32px;
   }
 
   .input-error-text {
-    @apply text-xs text-red-500 mt-1 font-medium;
+    @apply text-xs text-error mt-1 font-normal;
+    letter-spacing: 0.32px;
   }
 
-  /* ============================================================
-     Table Styles
-     ============================================================ */
+  /* ── Tables ──────────────────────────────────────────────── */
+
   .table-header {
-    @apply px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest
-           bg-slate-50 border-b border-slate-100;
+    @apply px-6 py-4 text-xs font-semibold text-ink-muted uppercase tracking-wider
+           bg-surface-1 border-b border-hairline;
   }
 
   .table-row {
-    @apply hover:bg-slate-50/80 transition-colors duration-150 border-b border-slate-50 last:border-b-0;
+    @apply hover:bg-surface-1 transition-colors duration-150
+           border-b border-hairline last:border-b-0;
   }
 
   .table-row-selected {
@@ -185,6 +281,7 @@
 
   .table-cell {
     @apply px-6 py-4 text-sm;
+    letter-spacing: 0.16px;
   }
 }
 
@@ -221,7 +318,7 @@
 @keyframes modal-content-in {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.98) translateY(8px);
   }
   to {
     opacity: 1;
@@ -262,4 +359,3 @@
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
 }
-

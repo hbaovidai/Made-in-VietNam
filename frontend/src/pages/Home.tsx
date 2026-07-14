@@ -107,7 +107,7 @@ export function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-canvas">
         <Loader2 className="animate-spin text-primary" size={48} />
       </div>
     );
@@ -125,7 +125,7 @@ export function Home() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="bg-canvas min-h-screen pb-20">
       <SEOHead
         title={t('seo_home_title')}
         description={t('seo_home_desc')}
@@ -148,7 +148,7 @@ export function Home() {
       {/* ═══ Hero Banner ═══ */}
       {heroSlides.length > 0 && (
         <section>
-          <div className="relative group overflow-hidden bg-slate-200 h-[240px] sm:h-[360px] lg:h-[480px]">
+          <div className="relative group overflow-hidden bg-surface-2 h-[240px] sm:h-[360px] lg:h-[480px]">
             {heroSlides.map((slide, idx) => (
               <div
                 key={idx}
@@ -170,14 +170,14 @@ export function Home() {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="max-w-2xl space-y-3 sm:space-y-5"
                   >
-                    <h2 className="text-xl sm:text-3xl lg:text-5xl font-extrabold leading-tight drop-shadow-md">{slide.title}</h2>
-                    <p className="text-slate-200 text-xs sm:text-sm leading-relaxed drop-shadow-sm max-w-xl">{slide.desc}</p>
+                    <h2 className="text-xl sm:text-3xl lg:text-5xl font-light leading-tight" style={{ letterSpacing: '-0.4px' }}>{slide.title}</h2>
+                    <p className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-xl" style={{ letterSpacing: '0.16px' }}>{slide.desc}</p>
                     
                     <div className="flex flex-wrap gap-3 pt-2">
-                      <Link to={slide.link} className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-lg flex items-center gap-1.5">
+                      <Link to={slide.link} className="bg-white text-ink px-6 py-3 text-xs sm:text-sm font-normal hover:bg-surface-1 transition-all flex items-center gap-1.5" style={{ letterSpacing: '0.16px' }}>
                         {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
                       </Link>
-                      <Link to="/about" className="border border-white/40 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:bg-white/10 transition-all">
+                      <Link to="/about" className="border border-white/40 text-white px-6 py-3 text-xs sm:text-sm font-normal hover:bg-white/10 transition-all" style={{ letterSpacing: '0.16px' }}>
                         {idx === 1 ? t('learn_process') : t('learn_more')}
                       </Link>
                     </div>
@@ -191,14 +191,14 @@ export function Home() {
               <>
                 <button 
                   onClick={prevSlide}
-                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
                   aria-label="Previous slide"
                 >
                   <ChevronLeft size={22} />
                 </button>
                 <button 
                   onClick={nextSlide}
-                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
+                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
                   aria-label="Next slide"
                 >
                   <ChevronRight size={22} />
@@ -213,8 +213,8 @@ export function Home() {
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`transition-all duration-300 rounded-full outline-none ${
-                      idx === currentSlide ? 'w-7 h-2.5 bg-white' : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+                    className={`transition-all duration-300 outline-none ${
+                      idx === currentSlide ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
                     }`}
                   />
                 ))}
@@ -226,17 +226,17 @@ export function Home() {
 
 
       {/* ═══ Featured Categories ═══ */}
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
+      <section className="max-w-[1584px] mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">{t('home_featured_categories')}</h2>
-          <Link to="/products" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-light text-ink" style={{ letterSpacing: 0 }}>{t('home_featured_categories')}</h2>
+          <Link to="/products" className="text-sm text-primary hover:underline flex items-center gap-1 font-normal" style={{ letterSpacing: '0.16px' }}>
             {t('view_more')} <ChevronRight size={14} />
           </Link>
         </div>
 
         {categories.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 rounded-xl p-12 text-center">
-            <p className="text-sm text-slate-400">{t('home_no_categories')}</p>
+          <div className="bg-canvas border border-hairline p-12 text-center">
+            <p className="text-sm text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('home_no_categories')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -247,9 +247,9 @@ export function Home() {
                 <Link
                   key={cat.id}
                   to={`/products?category=${cat.slug}`}
-                  className="bg-white border border-slate-200/80 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col"
+                  className="bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200 group flex flex-col"
                 >
-                  <div className="w-full aspect-[4/3] overflow-hidden bg-slate-50 border-b border-slate-100">
+                  <div className="w-full aspect-[4/3] overflow-hidden bg-surface-1 border-b border-hairline">
                     <img
                       src={imgSrc}
                       alt={cat.name}
@@ -259,7 +259,7 @@ export function Home() {
                     />
                   </div>
                   <div className="p-4 text-center flex-1 flex items-center justify-center">
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="text-xs sm:text-sm font-normal text-ink group-hover:text-primary transition-colors line-clamp-2" style={{ letterSpacing: '0.16px' }}>
                       {cat.name}
                     </h3>
                   </div>
@@ -269,16 +269,16 @@ export function Home() {
           </div>
         )}
       </section>      {/* ═══ Verified Suppliers Section ═══ */}
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
+      <section className="max-w-[1584px] mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900">{t('home_featured_suppliers')}</h2>
-          <Link to="/suppliers" className="text-xs sm:text-sm text-slate-500 hover:text-primary flex items-center gap-1 font-semibold">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-light text-ink" style={{ letterSpacing: 0 }}>{t('home_featured_suppliers')}</h2>
+          <Link to="/suppliers" className="text-sm text-primary hover:underline flex items-center gap-1 font-normal" style={{ letterSpacing: '0.16px' }}>
             {t('view_more')} <ChevronRight size={14} />
           </Link>
         </div>
 
         {suppliers.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 rounded-xl py-12 text-center text-slate-400 text-sm">
+          <div className="bg-canvas border border-hairline py-12 text-center text-ink-subtle text-sm">
             {t('no_suppliers_yet')}
           </div>
         ) : (
@@ -295,34 +295,34 @@ export function Home() {
                     : (supplier.industry || []);
                   
                   return (
-                    <div key={supplier.id} className="w-[280px] shrink-0 bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
+                    <div key={supplier.id} className="w-[280px] shrink-0 bg-canvas border border-hairline p-6 flex flex-col justify-between h-full">
                       <div className="flex flex-col items-center text-center">
-                        <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                        <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0">
                           {supplier.logo ? (
                             <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            idx % 5 === 0 ? <Factory size={24} className="text-slate-400" /> :
-                            idx % 5 === 1 ? <Wrench size={24} className="text-slate-400" /> :
-                            idx % 5 === 2 ? <Beaker size={24} className="text-slate-400" /> :
-                            idx % 5 === 3 ? <Shirt size={24} className="text-slate-400" /> :
-                            <Zap size={24} className="text-slate-400" />
+                            idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
+                            idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
+                            idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
+                            idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
+                            <Zap size={24} className="text-ink-subtle" />
                           )}
                         </div>
-                        <h3 className="font-extrabold text-slate-800 text-xs mb-1 uppercase line-clamp-2 h-10 flex items-center justify-center px-1">
+                        <h3 className="font-semibold text-ink text-xs mb-1 line-clamp-2 h-10 flex items-center justify-center px-1" style={{ letterSpacing: '0.16px' }}>
                           {name}
                         </h3>
-                        <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
-                          <MapPin size={12} className="shrink-0 text-slate-400" />
+                        <div className="flex items-center gap-1 text-ink-subtle text-[11px] mb-3 justify-center" style={{ letterSpacing: '0.32px' }}>
+                          <MapPin size={12} className="shrink-0 text-ink-subtle" />
                           <span className="truncate max-w-[200px]">{primaryLocation}</span>
                         </div>
-                        <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
-                          <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
+                        <div className="text-xs text-ink-muted mb-4 line-clamp-2 min-h-[32px] px-1" style={{ letterSpacing: '0.16px' }}>
+                          <span className="font-semibold text-ink">{t('home_industry_label')} </span>
                           {industries.join(', ') || t('updating')}
                         </div>
                       </div>
                       <Link
                         to={`/suppliers/${supplier.id}`}
-                        className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
+                        className="w-full border border-hairline text-primary text-xs font-normal py-2.5 hover:bg-surface-1 hover:border-ink-subtle transition-all text-center block" style={{ letterSpacing: '0.16px' }}
                       >
                         {t('view_profile')}
                       </Link>
@@ -343,34 +343,34 @@ export function Home() {
                   : (supplier.industry || []);
                 
                 return (
-                  <div key={supplier.id} className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <div key={supplier.id} className="bg-canvas border border-hairline p-6 flex flex-col justify-between h-full hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200">
                     <div className="flex flex-col items-center text-center">
-                      <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden shrink-0">
+                      <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0">
                         {supplier.logo ? (
                           <img src={supplier.logo} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          idx % 5 === 0 ? <Factory size={24} className="text-slate-400" /> :
-                          idx % 5 === 1 ? <Wrench size={24} className="text-slate-400" /> :
-                          idx % 5 === 2 ? <Beaker size={24} className="text-slate-400" /> :
-                          idx % 5 === 3 ? <Shirt size={24} className="text-slate-400" /> :
-                          <Zap size={24} className="text-slate-400" />
+                          idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
+                          idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
+                          idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
+                          idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
+                          <Zap size={24} className="text-ink-subtle" />
                         )}
                       </div>
-                      <h3 className="font-extrabold text-slate-800 text-xs mb-1 uppercase line-clamp-2 h-10 flex items-center justify-center px-1">
+                      <h3 className="font-semibold text-ink text-xs mb-1 line-clamp-2 h-10 flex items-center justify-center px-1" style={{ letterSpacing: '0.16px' }}>
                         {name}
                       </h3>
-                      <div className="flex items-center gap-1 text-slate-400 text-[11px] mb-3 justify-center">
-                        <MapPin size={12} className="shrink-0 text-slate-400" />
+                      <div className="flex items-center gap-1 text-ink-subtle text-[11px] mb-3 justify-center" style={{ letterSpacing: '0.32px' }}>
+                        <MapPin size={12} className="shrink-0 text-ink-subtle" />
                         <span className="truncate max-w-[150px]">{primaryLocation}</span>
                       </div>
-                      <div className="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px] px-1">
-                        <span className="font-bold text-slate-700">{t('home_industry_label')} </span>
+                      <div className="text-xs text-ink-muted mb-4 line-clamp-2 min-h-[32px] px-1" style={{ letterSpacing: '0.16px' }}>
+                        <span className="font-semibold text-ink">{t('home_industry_label')} </span>
                         {industries.join(', ') || t('updating')}
                       </div>
                     </div>
                     <Link
                       to={`/suppliers/${supplier.id}`}
-                      className="w-full border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-center block"
+                      className="w-full border border-hairline text-primary text-xs font-normal py-2.5 hover:bg-surface-1 hover:border-ink-subtle transition-all text-center block" style={{ letterSpacing: '0.16px' }}
                     >
                       {t('view_profile')}
                     </Link>
@@ -384,31 +384,27 @@ export function Home() {
 
 
       {/* ═══ Register Digital Profile Section ═══ */}
-      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 mt-8 sm:mt-12">
+      <section className="max-w-[1584px] mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12">
         <div 
-          className="relative bg-[#0f3460] text-white p-8 sm:p-12 rounded-2xl flex flex-col items-center justify-center overflow-hidden border border-slate-200/5 shadow-inner"
-          style={{
-            backgroundImage: `radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.03) 8%, transparent 8%, transparent 92%), radial-gradient(circle at 90% 80%, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.03) 8%, transparent 8%, transparent 92%)`,
-            backgroundSize: '24px 24px'
-          }}
+          className="relative bg-primary text-white p-12 sm:p-16 flex flex-col items-center justify-center overflow-hidden"
         >
-          <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/10 shadow-inner">
+          <div className="w-12 h-12 bg-white/10 flex items-center justify-center text-white mb-6 border border-white/10">
             <ShieldCheck size={26} />
           </div>
           
-          <h2 className="text-xl sm:text-3xl font-extrabold text-white text-center mb-3 tracking-tight max-w-2xl leading-tight">
+          <h2 className="text-xl sm:text-3xl font-light text-white text-center mb-3 max-w-2xl leading-tight" style={{ letterSpacing: '-0.4px' }}>
             {t('home_digital_profile_title')}
           </h2>
           
-          <p className="text-slate-200/90 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed">
-            {t('home_digital_profile_desc')} <span className="font-bold text-white">Verified Supplier</span> {t('at_vieproduct', 'tại VIEproduct')}.
+          <p className="text-white/80 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed" style={{ letterSpacing: '0.16px' }}>
+            {t('home_digital_profile_desc')} <span className="font-semibold text-white">Verified Supplier</span> {t('at_vieproduct', 'tại VIEproduct')}.
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center items-center">
-            <Link to="/profile-submission" className="bg-white text-[#0f3460] px-6 py-3 rounded-full text-sm font-bold hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
+            <Link to="/profile-submission" className="bg-white text-primary px-6 py-3 text-sm font-normal hover:bg-surface-1 transition-all flex items-center gap-2" style={{ letterSpacing: '0.16px' }}>
               {t('register_now')} <ArrowRight size={16} />
             </Link>
-            <Link to="/about" className="border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-white/5 transition-all">
+            <Link to="/about" className="border border-white/30 hover:border-white/60 text-white px-6 py-3 text-sm font-normal hover:bg-white/5 transition-all" style={{ letterSpacing: '0.16px' }}>
               {t('learn_process')}
             </Link>
           </div>

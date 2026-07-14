@@ -80,12 +80,12 @@ export function SupplierProfile() {
     navigate(`/rfq?supplierName=${encodeURIComponent(supplier.companyName)}`);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-primary" size={48} /></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-canvas"><Loader2 className="animate-spin text-primary" size={48} /></div>;
   if (!supplier) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-canvas">
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">{t('khong_tim_thay_doanh_nghiep')}</h2>
-        <Link to="/suppliers" className="text-primary font-bold underline">{t('back_to_list', 'Quay lại danh sách')}</Link>
+        <h2 className="text-2xl font-normal text-ink">{t('khong_tim_thay_doanh_nghiep')}</h2>
+        <Link to="/suppliers" className="text-primary font-normal hover:text-primary-hover">{t('back_to_list', 'Quay lại danh sách')}</Link>
       </div>
     </div>
   );
@@ -110,29 +110,29 @@ export function SupplierProfile() {
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
 
   return (
-    <div className="bg-white min-h-screen pb-16">
+    <div className="bg-canvas min-h-screen pb-16">
       <SEOHead title={supplier.companyName} description={supplier.description?.substring(0, 160)} canonical={`/suppliers/${supplier.slug || supplier.id}`} />
 
       {/* ═══ BREADCRUMB ═══ */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1280px] mx-auto px-6 py-3">
-          <nav className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+      <div className="bg-canvas border-b border-hairline">
+        <div className="max-w-[1600px] mx-auto px-6 py-3">
+          <nav className="flex items-center gap-2 text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>
             <Link to="/" className="hover:text-primary transition-colors">{t('home')}</Link>
-            <ChevronRight size={12} className="text-slate-300" />
+            <ChevronRight size={12} className="text-hairline" />
             <Link to="/suppliers" className="hover:text-primary transition-colors">{t('danh_sach_nha_cung_cap')}</Link>
-            <ChevronRight size={12} className="text-slate-300" />
-            <span className="text-slate-800 font-bold truncate max-w-[200px]">{supplier.companyName}</span>
+            <ChevronRight size={12} className="text-hairline" />
+            <span className="text-ink truncate max-w-[200px] font-normal">{supplier.companyName}</span>
           </nav>
         </div>
       </div>
 
       {/* ═══ 1. HEADER BLOCK ═══ */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1280px] mx-auto px-6 py-8">
+      <div className="bg-canvas border-b border-hairline">
+        <div className="max-w-[1600px] mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             {/* Left: Logo + Company Info */}
             <div className="flex items-start gap-5">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg border border-slate-200 bg-white p-2 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-20 h-20 md:w-24 md:h-24 border border-hairline bg-surface-1 p-2 flex items-center justify-center overflow-hidden shrink-0" style={{ borderRadius: 0 }}>
                 {supplier.logo
                   ? <img
                       src={supplier.logo}
@@ -142,23 +142,23 @@ export function SupplierProfile() {
                         (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150';
                       }}
                     />
-                  : <Building2 size={36} className="text-slate-300" />
+                  : <Building2 size={36} className="text-ink-subtle" />
                 }
               </div>
               <div>
-                <h1 className="text-xl md:text-2xl font-extrabold text-[#1a2e4a] uppercase tracking-tight">
+                <h1 className="text-xl md:text-2xl font-light text-ink uppercase" style={{ letterSpacing: '0.16px' }}>
                   {supplier.companyName}
                 </h1>
-                <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1.5">
-                  <MapPin size={14} className="text-slate-400 shrink-0" />
+                <div className="flex items-center gap-1.5 text-sm text-ink-muted mt-1.5" style={{ letterSpacing: '0.16px' }}>
+                  <MapPin size={14} className="text-ink-subtle shrink-0" />
                   <span>{primaryLocation}</span>
                 </div>
                 {/* Badges — auto-generated from verification status, business type & export markets */}
                 {(() => {
                   const badgeStyles = [
-                    { bg: 'bg-[#d1f5e0]', text: 'text-[#0d6b3e]', border: 'border-[#8edcb3]' },
-                    { bg: 'bg-[#dbeafe]', text: 'text-[#1e40af]', border: 'border-[#93c5fd]' },
-                    { bg: 'bg-[#fef3c7]', text: 'text-[#92400e]', border: 'border-[#fcd34d]' },
+                    { bg: 'bg-surface-1', text: 'text-emerald-600', border: 'border-hairline' },
+                    { bg: 'bg-surface-1', text: 'text-primary', border: 'border-hairline' },
+                    { bg: 'bg-surface-1', text: 'text-amber-700', border: 'border-hairline' },
                   ];
                   const badges: { label: string }[] = [];
                   // Badge 1: Verified Supplier (always if verified)
@@ -179,7 +179,7 @@ export function SupplierProfile() {
                       {badges.slice(0, 3).map((badge, idx) => {
                         const style = badgeStyles[idx % badgeStyles.length];
                         return (
-                          <div key={idx} className={`inline-flex items-center gap-1.5 ${style.bg} ${style.text} px-3 py-1 rounded-full text-xs font-bold border ${style.border}`}>
+                          <div key={idx} className={`inline-flex items-center gap-1.5 ${style.bg} ${style.text} px-3 py-1 text-xs font-normal border ${style.border}`} style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
                             <CheckCircle2 size={13} />
                             {badge.label}
                           </div>
@@ -195,14 +195,16 @@ export function SupplierProfile() {
             <div className="flex flex-col gap-2 w-full md:w-auto md:min-w-[180px] shrink-0">
               <button
                 onClick={handleRFQ}
-                className="flex items-center justify-center gap-2 bg-[#1a2e4a] text-white font-bold text-xs px-4 py-2 hover:bg-[#243c5e] transition-colors"
+                className="flex items-center justify-center gap-2 bg-primary text-white font-normal text-xs px-4 py-2 hover:bg-primary-hover transition-colors"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <FileText size={14} />
                 {t('send_rfq')}
               </button>
               <button
                 onClick={handleContact}
-                className="flex items-center justify-center gap-2 bg-white text-[#1a2e4a] font-bold text-xs px-4 py-2 border-2 border-[#1a2e4a] hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-center gap-2 bg-surface-1 text-ink font-normal text-xs px-4 py-2 border border-hairline hover:bg-surface-2 transition-colors"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <MessageSquare size={14} />
                 {t('send_message')}
@@ -212,7 +214,7 @@ export function SupplierProfile() {
 
           {/* Description */}
           {supplier.description && (
-            <p className="mt-6 text-sm text-slate-600 leading-relaxed max-w-[850px]">
+            <p className="mt-6 text-sm text-ink-muted leading-relaxed max-w-[850px]" style={{ letterSpacing: '0.16px' }}>
               {supplier.description}
             </p>
           )}
@@ -220,47 +222,48 @@ export function SupplierProfile() {
       </div>
 
       {/* ═══ 2. TWO-COLUMN LAYOUT (70/30) ═══ */}
-      <div className="max-w-[1280px] mx-auto px-6 mt-8">
+      <div className="max-w-[1600px] mx-auto px-6 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
 
           {/* ═══ A. MAIN COLUMN (70%) ═══ */}
           <div className="lg:col-span-7 space-y-8">
 
             {/* Block: THÔNG TIN DOANH NGHIỆP */}
-            <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-4">
+            <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+              <h2 className="text-sm font-normal text-ink uppercase mb-4" style={{ letterSpacing: '0.32px' }}>
                 {t('thong_tin_doanh_nghiep')}
               </h2>
-              <div className="border-t border-slate-200 mb-4" />
-              <div className="divide-y divide-slate-100">
+              <div className="border-t border-hairline mb-4" />
+              <div className="divide-y divide-hairline">
                 {[
                   { label: t('tax_code'), value: supplier.taxCode || '0312345678' },
-                  { label: t('business_type'), value: BusinessTypeMap[supplier.businessType] || 'Chưa có thông tin' }, // proper translation later
+                  { label: t('business_type'), value: BusinessTypeMap[supplier.businessType] || 'Chưa có thông tin' }, 
                   { label: t('year_established'), value: supplier.yearEstablished || memberSince },
                   { label: t('employee_scale'), value: supplier.employee_count || supplier.employeeCount || t('employees_default') },
                 ].map((row, i) => (
-                  <div key={i} className="flex items-center justify-between py-3.5">
-                    <span className="text-sm text-slate-500 font-medium">{row.label}</span>
-                    <span className="text-sm text-slate-900 font-bold">{row.value}</span>
+                  <div key={i} className="flex items-center justify-between py-3.5" style={{ letterSpacing: '0.16px' }}>
+                    <span className="text-sm text-ink-subtle font-normal">{row.label}</span>
+                    <span className="text-sm text-ink font-normal">{row.value}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Block: SẢN PHẨM TIÊU BIỂU */}
-            <div className="bg-white rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider">
+                <h2 className="text-sm font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>
                   {t('featured_products')}
                 </h2>
                 <Link
                   to={`/products?supplierId=${supplier.id}`}
-                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                  className="text-xs font-normal text-primary hover:text-primary-hover flex items-center gap-1"
+                  style={{ letterSpacing: '0.16px' }}
                 >
                   {t('view_all_products')} <ChevronRight size={14} />
                 </Link>
               </div>
-              <div className="border-t border-slate-200 mb-5" />
+              <div className="border-t border-hairline mb-5" />
 
               {supplierProducts.length > 0 ? (
                 <div className="flex gap-4 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
@@ -276,16 +279,17 @@ export function SupplierProfile() {
                       <Link
                         key={product.id}
                         to={`/products/${product.id}`}
-                        className="group bg-white border border-slate-300 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col shrink-0 w-[200px]"
+                        className="group bg-canvas border border-hairline overflow-hidden flex flex-col shrink-0 w-[200px]"
+                        style={{ borderRadius: 0 }}
                       >
-                        <div className="aspect-square overflow-hidden bg-slate-100">
-                          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="aspect-square bg-surface-2 border-b border-hairline">
+                          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="p-3.5 flex flex-col flex-1">
-                          <h3 className="text-xs font-bold text-slate-900 line-clamp-2 leading-snug mb-2">{product.name}</h3>
+                          <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug mb-2" style={{ letterSpacing: '0.16px' }}>{product.name}</h3>
                           <div className="mt-auto space-y-0.5">
-                            <div className="text-xs font-extrabold text-primary">{priceDisplay}</div>
-                            <div className="text-[11px] text-slate-400 font-medium">{moq}</div>
+                            <div className="text-xs font-normal text-primary" style={{ letterSpacing: '0.16px' }}>{priceDisplay}</div>
+                            <div className="text-[11px] text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>{moq}</div>
                           </div>
                         </div>
                       </Link>
@@ -293,7 +297,7 @@ export function SupplierProfile() {
                   })}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 text-center py-10">{t('chua_co_san_pham_nao')}</p>
+                <p className="text-sm text-ink-subtle text-center py-10" style={{ letterSpacing: '0.16px' }}>{t('chua_co_san_pham_nao')}</p>
               )}
             </div>
           </div>
@@ -302,25 +306,26 @@ export function SupplierProfile() {
           <div className="lg:col-span-3 space-y-6">
 
             {/* Block: LIÊN HỆ */}
-            <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('contact_sidebar')}</h3>
-              <div className="border-t border-slate-200 mb-4" />
+            <div className="bg-canvas border border-hairline p-5" style={{ borderRadius: 0 }}>
+              <h3 className="text-xs font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('contact_sidebar')}</h3>
+              <div className="border-t border-hairline mb-4" />
               <div className="space-y-3.5">
                 <a
                   href={websiteUrl || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-slate-600 hover:text-primary transition-colors"
+                  className="flex items-center gap-3 text-sm text-ink-muted hover:text-primary transition-colors"
+                  style={{ letterSpacing: '0.16px' }}
                 >
-                  <Globe size={16} className="text-slate-400 shrink-0" />
+                  <Globe size={16} className="text-ink-subtle shrink-0" />
                   <span className="truncate">{websiteUrl || 'website.com'}</span>
                 </a>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Mail size={16} className="text-slate-400 shrink-0" />
+                <div className="flex items-center gap-3 text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+                  <Mail size={16} className="text-ink-subtle shrink-0" />
                   <span className="truncate">{supplier.contactEmail || supplier.user?.email || 'contact@company.vn'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Phone size={16} className="text-slate-400 shrink-0" />
+                <div className="flex items-center gap-3 text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+                  <Phone size={16} className="text-ink-subtle shrink-0" />
                   <span>{supplier.contactPhone || supplier.user?.phone || '(028) 1234 5678'}</span>
                 </div>
               </div>
@@ -332,9 +337,9 @@ export function SupplierProfile() {
                 (supplier.channels?.length > 0) ? supplier.channels
                 : [{ type: 'SHOPEE' }, { type: 'FACEBOOK' }, { type: 'TIKTOK_SHOP' }] as any[];
               return (
-                <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('kenh_ban_hang')}</h3>
-                  <div className="border-t border-slate-200 mb-4" />
+                <div className="bg-canvas border border-hairline p-5" style={{ borderRadius: 0 }}>
+                  <h3 className="text-xs font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('kenh_ban_hang')}</h3>
+                  <div className="border-t border-hairline mb-4" />
                   <div className="flex flex-wrap gap-2">
                     {channels.map((channel) => (
                       <a
@@ -343,7 +348,8 @@ export function SupplierProfile() {
                         target={channel.url ? '_blank' : undefined}
                         rel={channel.url ? 'noopener noreferrer' : undefined}
                         onClick={channel.url ? undefined : (e) => e.preventDefault()}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-600 border border-slate-200 bg-slate-50 hover:border-primary/40 hover:text-primary cursor-pointer transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-normal text-ink-muted border border-hairline bg-surface-1 hover:border-primary hover:text-primary cursor-pointer transition-colors"
+                        style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       >
                         {SaleChannelsMap[channel.type]}
                         {channel.url && <ExternalLink size={11} />}
@@ -355,19 +361,19 @@ export function SupplierProfile() {
             })()}
 
             {/* Block: CHỨNG NHẬN & CHỨNG CHỈ */}
-            <div className="bg-white rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">{t('chung_nhan_chung_chi')}</h3>
-              <div className="border-t border-slate-200 mb-4" />
+            <div className="bg-canvas border border-hairline p-5" style={{ borderRadius: 0 }}>
+              <h3 className="text-xs font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('chung_nhan_chung_chi')}</h3>
+              <div className="border-t border-hairline mb-4" />
               <div className="space-y-2.5">
                 {displayCerts.map((cert: any, i: number) => {
                   const inner = (
-                    <div className="flex items-center gap-3 px-4 py-3.5 bg-blue-50/60 border border-slate-300 hover:border-orange-400 group/cert cursor-pointer transition-all duration-200">
-                      <Award size={18} className="text-blue-500 shrink-0" />
+                    <div className="flex items-center gap-3 px-4 py-3.5 bg-surface-1 border border-hairline hover:border-primary group/cert cursor-pointer transition-colors" style={{ borderRadius: 0 }}>
+                      <Award size={18} className="text-primary shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-slate-800 group-hover/cert:text-primary transition-colors">{cert.name}</div>
-                        <div className="text-xs text-slate-400 mt-0.5">{cert.issuedBy || t('org_cert')}</div>
+                        <div className="text-sm font-normal text-ink group-hover/cert:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{cert.name}</div>
+                        <div className="text-xs text-ink-subtle mt-0.5" style={{ letterSpacing: '0.16px' }}>{cert.issuedBy || t('org_cert')}</div>
                       </div>
-                      <ExternalLink size={13} className="text-slate-200 group-hover/cert:text-primary shrink-0 transition-colors" />
+                      <ExternalLink size={13} className="text-hairline group-hover/cert:text-primary shrink-0 transition-colors" />
                     </div>
                   );
                   return cert.documentUrl

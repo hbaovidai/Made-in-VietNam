@@ -112,10 +112,18 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
       size="lg"
       footer={
         <>
-          <button className="btn-ghost" onClick={onClose}>
+          <button 
+            className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2" 
+            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            onClick={onClose}
+          >
             {t('cancel')}
           </button>
-          <button className="btn-primary" onClick={handleSubmit}>
+          <button 
+            className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2" 
+            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            onClick={handleSubmit}
+          >
             {product ? t('save_changes') : t('create_product')}
           </button>
         </>
@@ -130,21 +138,23 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="input-label">{t('product_name')}</label>
+                    <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('product_name')}</label>
                     <input
                       name="name"
                       type="text"
-                      className="input"
+                      className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       placeholder={t('product_name_placeholder')}
                       value={formData.name}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="input-label">{t('category')}</label>
+                    <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('category')}</label>
                     <select
                       name="category"
-                      className="input"
+                      className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary"
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={formData.category}
                       onChange={handleChange}
                     >
@@ -157,11 +167,12 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
                 </div>
 
                 <div>
-                  <label className="input-label">{t('price_range_label')}</label>
+                  <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('price_range_label')}</label>
                   <input
                     name="priceRange"
                     type="text"
-                    className="input"
+                    className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     placeholder={t('price_range_placeholder')}
                     value={formData.priceRange}
                     onChange={handleChange}
@@ -169,11 +180,12 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
                 </div>
 
                 <div>
-                  <label className="input-label">{t('moq_label')}</label>
+                  <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('moq_label')}</label>
                   <input
                     name="moq"
                     type="text"
-                    className="input"
+                    className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     placeholder={t('moq_placeholder')}
                     value={formData.moq}
                     onChange={handleChange}
@@ -181,15 +193,16 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
                 </div>
 
                 <div>
-                  <label className="input-label">{t('product_desc')}</label>
+                  <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('product_desc')}</label>
                   <textarea
                     name="description"
-                    className="input min-h-[120px] resize-none"
+                    className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary min-h-[120px] resize-none"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     placeholder={t('product_desc_placeholder')}
                     value={formData.description}
                     onChange={handleChange}
                   />
-                  <p className="input-helper">{t('product_desc_helper')}</p>
+                  <p className="text-[11px] text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>{t('product_desc_helper')}</p>
                 </div>
               </div>
             ),
@@ -199,16 +212,16 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
             label: t('images'),
             content: (
               <div className="space-y-6">
-                <label className="border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer block">
+                <label className="border border-dashed border-hairline p-8 flex flex-col items-center justify-center text-center bg-surface-1 hover:bg-surface-2 transition-colors cursor-pointer block" style={{ borderRadius: 0 }}>
                   {uploading ? (
                     <Loader2 size={32} className="animate-spin text-primary mb-4" />
                   ) : (
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-primary mb-4">
+                    <div className="w-16 h-16 bg-canvas border border-hairline flex items-center justify-center text-primary mb-4" style={{ borderRadius: 0 }}>
                       <UploadCloud size={32} />
                     </div>
                   )}
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">{uploading ? 'Đang tải lên...' : t('click_to_upload')}</h4>
-                  <p className="text-xs text-slate-500">{t('upload_format')}</p>
+                  <h4 className="text-sm font-normal text-ink uppercase mb-1" style={{ letterSpacing: '0.32px' }}>{uploading ? 'Đang tải lên...' : t('click_to_upload')}</h4>
+                  <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('upload_format')}</p>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif"
@@ -223,8 +236,8 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
 
                 {formData.image && (
                   <div>
-                    <label className="input-label">{t('uploaded_image')}</label>
-                    <div className="relative w-32 h-32 rounded-xl overflow-hidden border border-slate-200 group">
+                    <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('uploaded_image')}</label>
+                    <div className="relative w-32 h-32 overflow-hidden border border-hairline group" style={{ borderRadius: 0 }}>
                       <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
                         <button className="btn-icon text-white hover:text-red-400" onClick={() => setFormData((p) => ({...p, image: ''}))}>

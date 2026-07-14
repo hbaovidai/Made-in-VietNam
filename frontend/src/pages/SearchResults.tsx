@@ -227,7 +227,7 @@ export function SearchResults() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-50 flex flex-col">
+        <div className="w-full min-h-screen bg-canvas flex flex-col">
       <SEOHead 
         title={`${searchParams.get('search') ? `Tìm kiếm: "${searchParams.get('search')}"` : 'Kết quả tìm kiếm'} - MIVN`}
         description="Trang tìm kiếm sản phẩm và nhà cung cấp MIVN"
@@ -238,10 +238,10 @@ export function SearchResults() {
 
       <div className="flex-1 flex max-w-[1600px] w-full mx-auto">
         {/* ═══ Left Sidebar (Desktop/Tablet) ═══ */}
-        <aside className="hidden md:flex flex-col bg-white border-r border-slate-200 shrink-0 transition-all duration-300 w-16 lg:w-[280px]">
-          <div className="p-4 lg:p-5 border-b border-slate-100 flex items-center justify-center lg:justify-start">
-            <h2 className="text-base font-bold text-slate-900 lg:block hidden">Danh mục sản phẩm</h2>
-            <span className="lg:hidden text-center block text-[10px] font-black text-slate-400 uppercase tracking-wider">{t('search_items_label')}</span>
+        <aside className="hidden md:flex flex-col bg-canvas border-r border-hairline shrink-0 transition-all duration-300 w-16 lg:w-[280px]">
+          <div className="p-4 lg:p-5 border-b border-hairline flex items-center justify-center lg:justify-start">
+            <h2 className="text-base font-normal text-ink lg:block hidden" style={{ letterSpacing: '0.16px' }}>Danh mục sản phẩm</h2>
+            <span className="lg:hidden text-center block text-[10px] font-normal text-ink-subtle uppercase tracking-wider">{t('search_items_label')}</span>
           </div>
           
           <div className="flex-1 py-4 overflow-y-auto px-2 lg:px-3">
@@ -253,15 +253,16 @@ export function SearchResults() {
                   key={cat.slug}
                   onClick={() => handleCategorySelect(cat.slug)}
                   className={cn(
-                    "w-full flex items-center justify-center lg:justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-left mb-1",
+                    "w-full flex items-center justify-center lg:justify-start gap-3 px-3 py-2.5 text-sm font-normal transition-all duration-200 text-left mb-1",
                     isActive
-                      ? "bg-blue-50 text-primary border-l-4 border-primary font-bold"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-surface-1 text-primary border-l-2 border-primary"
+                      : "text-ink-muted hover:bg-surface-1 hover:text-ink"
                   )}
+                  style={{ borderRadius: 0 }}
                   title={cat.name}
                 >
                   <span className="shrink-0">{icon}</span>
-                  <span className="truncate lg:block hidden">{cat.name}</span>
+                  <span className="truncate lg:block hidden" style={{ letterSpacing: '0.16px' }}>{cat.name}</span>
                 </button>
               );
             })}
@@ -272,20 +273,21 @@ export function SearchResults() {
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl font-light text-ink uppercase tracking-tight mb-4" style={{ letterSpacing: '0.16px' }}>
               Kết quả tìm kiếm
             </h1>
 
             {/* Search inputs */}
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <form onSubmit={handleSearchSubmit} className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle" size={18} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm kiếm sản phẩm, nhà cung cấp..."
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                  className="w-full pl-11 pr-4 py-2.5 bg-surface-1 border border-hairline text-sm text-ink placeholder-ink-subtle outline-none focus:border-b-2 focus:border-b-primary transition-all"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 />
               </form>
               
@@ -293,25 +295,27 @@ export function SearchResults() {
                 <select
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : (searchParams.get('sortBy') === 'createdAt' ? 'newest' : 'default')}
                   onChange={handleSortChange}
-                  className="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer appearance-none"
+                  className="w-full pl-4 pr-10 py-2.5 bg-surface-1 border border-hairline text-sm text-ink outline-none focus:border-b-2 focus:border-b-primary transition-all cursor-pointer appearance-none"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   <option value="default">{t('search_sort_default')}</option>
                   <option value="price-asc">{t('search_price_asc')}</option>
                   <option value="price-desc">{t('search_price_desc')}</option>
                   <option value="newest">{t('search_newest')}</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none" size={16} />
               </div>
             </div>
 
             {/* Chips Suggestions */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('goi_y')}</span>
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('goi_y')}</span>
               {['Phụ tùng CNC', 'Inox 304', 'Nhôm định hình', 'Động cơ điện'].map(chip => (
                 <button
                   key={chip}
                   onClick={() => handleSuggestionClick(chip)}
-                  className="text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition-colors cursor-pointer border border-slate-200"
+                  className="text-xs font-normal px-3 py-1.5 bg-surface-1 hover:bg-surface-2 text-ink transition-colors cursor-pointer border border-hairline"
+                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 >
                   {chip}
                 </button>
@@ -346,27 +350,29 @@ export function SearchResults() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="group bg-white rounded-xl border border-slate-300 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:border-viet-gold/50 shadow-viet-gold/5 hover:shadow-viet-gold/10 relative"
+                      className="group bg-canvas border border-hairline overflow-hidden flex flex-col h-full hover:border-primary relative"
+                      style={{ borderRadius: 0 }}
                     >
                       {/* Image Block */}
-                      <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-slate-100">
+                      <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-surface-2 border-b border-hairline">
                         <img
                           src={imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-3 left-3 bg-white/95 backdrop-blur text-viet-gold px-2.5 py-1 rounded drop-shadow-sm border border-viet-gold/20 flex items-center gap-1 text-[9px] font-black tracking-widest uppercase">
-                          <ShieldCheck size={12} className="fill-viet-gold text-white" />
+                        <div className="absolute top-3 left-3 bg-surface-1 text-primary px-2.5 py-1 border border-hairline flex items-center gap-1 text-[9px] font-normal tracking-widest uppercase" style={{ borderRadius: 0 }}>
+                          <ShieldCheck size={12} className="fill-primary text-white" />
                           VERIFIED
                         </div>
                         {/* Favorite button */}
                         <button
                           onClick={(e) => toggleFavorite(product.id, e)}
-                          className="absolute top-3 right-3 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-transform duration-200 active:scale-90 z-10"
+                          className="absolute top-3 right-3 w-8 h-8 bg-surface-1/90 hover:bg-surface-1 border border-hairline flex items-center justify-center transition-colors z-10"
+                          style={{ borderRadius: 0 }}
                         >
                           <Heart 
                             size={16} 
-                            className={cn("transition-colors duration-200", isLiked ? "fill-red-500 text-red-500" : "text-slate-400 hover:text-red-500")} 
+                            className={cn("transition-colors duration-200", isLiked ? "fill-red-500 text-red-500" : "text-ink-subtle hover:text-red-500")} 
                           />
                         </button>
                       </Link>
@@ -374,25 +380,25 @@ export function SearchResults() {
                       {/* Card Content */}
                       <div className="p-4 flex flex-col flex-1">
                         <Link to={`/products/${product.id}`} className="flex flex-col flex-1">
-                          <h3 className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug mb-2 min-h-[2.6em] hover:text-primary transition-colors">
+                          <h3 className="text-sm font-normal text-ink line-clamp-2 leading-snug mb-2 min-h-[2.6em] hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>
                             {localized(product, 'name')}
                           </h3>
                           
                           {/* Price */}
-                          <div className="text-base font-extrabold text-[#1a2b4a] mb-1">
-                            {priceDisplay} <span className="text-xs font-normal text-slate-400">/ {unitDisplay}</span>
+                          <div className="text-base font-normal text-primary mb-1" style={{ letterSpacing: '0.16px' }}>
+                            {priceDisplay} <span className="text-xs font-normal text-ink-subtle">/ {unitDisplay}</span>
                           </div>
 
                           {/* MOQ */}
                           <div className="mb-3">
-                            <span className="inline-block bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-1 rounded">
+                            <span className="inline-block bg-surface-1 text-ink-muted text-[10px] font-normal px-2 py-1 border border-hairline" style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
                               MOQ: {moqDisplay}
                             </span>
                           </div>
 
                           {/* Supplier Name */}
-                          <div className="mt-auto pt-2 border-t border-slate-100 mb-4">
-                            <span className="text-[11px] font-bold text-slate-500 hover:text-primary transition-colors truncate block">
+                          <div className="mt-auto pt-2 border-t border-hairline mb-4">
+                            <span className="text-[11px] font-normal text-ink-subtle hover:text-primary transition-colors truncate block" style={{ letterSpacing: '0.16px' }}>
                               {product.supplier?.companyName || 'Công ty TNHH MIVN'}
                             </span>
                           </div>
@@ -402,13 +408,15 @@ export function SearchResults() {
                         <div className="flex flex-col gap-2">
                           <Link
                             to={`/rfq?product=${product.id}`}
-                            className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-bold text-xs text-center rounded-lg transition-colors duration-200"
+                            className="w-full py-2 bg-primary hover:bg-primary-hover text-white font-normal text-xs text-center transition-colors"
+                            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                           >
                             {t('product_request_quote')}
                           </Link>
                           <Link
                             to={`/products/${product.id}`}
-                            className="w-full py-2 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs text-center rounded-lg transition-colors duration-200"
+                            className="w-full py-2 bg-surface-1 border border-hairline text-ink hover:bg-surface-2 font-normal text-xs text-center transition-colors"
+                            style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                           >
                             Xem chi tiết
                           </Link>
@@ -420,14 +428,15 @@ export function SearchResults() {
               </div>
             ) : (
               <div className="text-center py-24">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search size={28} className="text-slate-400" />
+                <div className="w-16 h-16 bg-surface-1 border border-hairline flex items-center justify-center mx-auto mb-4" style={{ borderRadius: 0 }}>
+                  <Search size={28} className="text-ink-subtle" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">Không tìm thấy sản phẩm</h3>
-                <p className="text-slate-500 text-sm max-w-xs mx-auto mb-4">{t('thu_nhap_tu_khoa_khac_hoac_xoa_bo_loc')}</p>
+                <h3 className="text-lg font-normal text-ink mb-1" style={{ letterSpacing: '0.16px' }}>Không tìm thấy sản phẩm</h3>
+                <p className="text-ink-muted text-sm max-w-xs mx-auto mb-4" style={{ letterSpacing: '0.16px' }}>{t('thu_nhap_tu_khoa_khac_hoac_xoa_bo_loc')}</p>
                 <button
                   onClick={() => setSearchParams({})}
-                  className="text-primary font-bold text-sm hover:underline"
+                  className="text-primary font-normal text-sm hover:text-primary-hover"
+                  style={{ letterSpacing: '0.16px' }}
                 >
                   Xóa tất cả bộ lọc
                 </button>
@@ -441,7 +450,7 @@ export function SearchResults() {
               {loadingMore && (
                 <div className="flex items-center gap-2 text-primary">
                   <Loader2 size={20} className="animate-spin" />
-                  <span className="text-xs font-semibold text-slate-500">{t('dang_tai_them_san_pham')}</span>
+                  <span className="text-xs font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('dang_tai_them_san_pham')}</span>
                 </div>
               )}
             </div>
@@ -450,7 +459,7 @@ export function SearchResults() {
           {/* Show count when all loaded */}
           {!loading && !hasMore && products.length > 0 && (
             <div className="flex items-center justify-center mt-8">
-              <p className="text-xs text-slate-400 font-semibold">
+              <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>
                 Đã hiển thị tất cả {totalProducts} sản phẩm
               </p>
             </div>
@@ -462,7 +471,8 @@ export function SearchResults() {
       <div className="md:hidden fixed bottom-6 right-6 z-40">
         <button
           onClick={() => setIsMobileSidebarOpen(true)}
-          className="flex items-center justify-center w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary/95 transition-colors"
+          className="flex items-center justify-center w-12 h-12 bg-primary text-white hover:bg-primary-hover transition-colors"
+          style={{ borderRadius: 0 }}
         >
           <Menu size={20} />
         </button>
@@ -473,12 +483,12 @@ export function SearchResults() {
         <div className="fixed inset-0 z-50 md:hidden">
           <div
             onClick={() => setIsMobileSidebarOpen(false)}
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50"
           />
-          <aside className="absolute top-0 left-0 w-[280px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-900">Danh mục sản phẩm</h2>
-              <button onClick={() => setIsMobileSidebarOpen(false)} className="p-2 text-slate-400 hover:text-slate-600">
+          <aside className="absolute top-0 left-0 w-[280px] max-w-[85vw] h-full bg-canvas border-r border-hairline flex flex-col" style={{ borderRadius: 0 }}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-hairline">
+              <h2 className="text-lg font-normal text-ink" style={{ letterSpacing: '0.16px' }}>Danh mục sản phẩm</h2>
+              <button onClick={() => setIsMobileSidebarOpen(false)} className="p-2 text-ink-subtle hover:text-ink">
                 ✕
               </button>
             </div>
@@ -494,14 +504,15 @@ export function SearchResults() {
                       setIsMobileSidebarOpen(false);
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-left mb-1",
+                      "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-normal transition-all duration-200 text-left mb-1",
                       isActive
-                        ? "bg-blue-50 text-primary border-l-4 border-primary font-bold"
-                        : "text-slate-600 hover:bg-slate-50"
+                        ? "bg-surface-1 text-primary border-l-2 border-primary"
+                        : "text-ink-muted hover:bg-surface-1"
                     )}
+                    style={{ borderRadius: 0 }}
                   >
                     <span className="shrink-0">{icon}</span>
-                    <span>{cat.name}</span>
+                    <span style={{ letterSpacing: '0.16px' }}>{cat.name}</span>
                   </button>
                 );
               })}

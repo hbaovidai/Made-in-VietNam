@@ -20,14 +20,15 @@ function SidebarItem({ icon, label, path, active, onClick }: SidebarItemProps) {
       to={path}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all group relative",
+        "flex items-center gap-3 px-4 py-2.5 text-sm transition-all group relative",
         active
-          ? "bg-primary/5 text-primary font-bold"
-          : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+          ? "bg-primary text-white font-semibold"
+          : "text-white/70 hover:bg-primary/30 hover:text-white font-normal"
       )}
+      style={{ letterSpacing: '0.16px' }}
     >
-      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />}
-      <div className={cn("shrink-0 transition-transform group-hover:scale-105", active ? "text-primary" : "text-slate-400 group-hover:text-slate-600")}>
+      {active && <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-viet-gold" />}
+      <div className={cn("shrink-0", active ? "text-viet-gold" : "text-white/50 group-hover:text-white/80")}>
         {icon}
       </div>
       <span>{label}</span>
@@ -42,12 +43,12 @@ function BottomNavItem({ icon, label, path, active }: { icon: React.ReactNode; l
       to={path}
       className={cn(
         "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 transition-colors relative",
-        active ? "text-primary" : "text-slate-400"
+        active ? "text-primary" : "text-ink-subtle"
       )}
     >
-      {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />}
-      <div className={cn("transition-transform", active && "scale-110")}>{icon}</div>
-      <span className="text-[10px] font-bold leading-none">{label}</span>
+      {active && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-primary" />}
+      <div>{icon}</div>
+      <span className="text-[10px] font-normal leading-none" style={{ letterSpacing: '0.32px' }}>{label}</span>
     </Link>
   );
 }
@@ -138,12 +139,12 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
   /* ─────── Sidebar Content (shared between desktop & mobile) ─────── */
   const sidebarContent = (
     <>
-      <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between">
+      <div className="p-6 lg:p-8 border-b border-hairline flex items-center justify-between bg-white">
         <Link to="/" className="flex items-center gap-1" onClick={closeSidebar}>
-          <img src="/logoVIE.png" alt="Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
-          <div className="flex flex-row items-center">
-            <span className="text-sm font-bold text-primary leading-none tracking-tight">VIE</span>
-            <span className="text-sm font-bold text-slate-900 leading-none tracking-tight">PRODUCT</span>
+          <img src="/logoVIE.png" alt="Logo" className="h-10 w-auto object-contain" />
+          <div className="flex items-center">
+            <span className="text-lg sm:text-xl font-black text-primary tracking-tighter">VIE</span>
+            <span className="text-lg sm:text-xl font-black text-slate-900 tracking-tighter">product</span>
           </div>
         </Link>
         {/* Close button — mobile only */}
@@ -152,9 +153,9 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
         </button>
       </div>
 
-      <div className="flex-1 p-4 lg:p-6 space-y-2 overflow-y-auto">
-        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-4">
-          {type === 'admin' ? 'ADMIN' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('dashboard')}
+      <div className="flex-1 p-4 lg:p-6 space-y-1 overflow-y-auto">
+        <div className="text-xs font-semibold text-white/50 mb-4 px-4 uppercase tracking-wider" style={{ letterSpacing: '0.05em' }}>
+          {type === 'admin' ? 'Admin' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('dashboard')}
         </div>
         {links.map((link) => (
           <SidebarItem
@@ -168,19 +169,13 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
         ))}
       </div>
 
-      <div className="p-4 lg:p-6 border-t border-slate-100">
-        {/* Go Premium button - hidden for now
-        {type !== 'admin' && (
-          <div className="bg-slate-900 rounded-2xl p-4 mb-4 lg:mb-6 relative overflow-hidden group cursor-pointer">
-            ...
-          </div>
-        )}
-        */}
+      <div className="p-4 lg:p-6 border-t border-white/10">
         <button
           onClick={() => logout()}
-          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-bold text-slate-500 hover:bg-blue-50 hover:text-primary transition-all"
+          className="flex items-center gap-3 px-4 py-3 w-full text-sm font-normal text-white/70 hover:bg-primary hover:text-white transition-all"
+          style={{ letterSpacing: '0.16px' }}
         >
-          <LogOut size={20} />
+          <LogOut size={20} className="text-white/50" />
           <span>{t('sign_out')}</span>
         </button>
       </div>
@@ -188,9 +183,9 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-surface-bg flex">
       {/* ═══ Desktop Sidebar ═══ */}
-      <aside className="w-72 bg-white border-r border-slate-200 hidden lg:flex flex-col sticky top-0 h-screen">
+      <aside className="w-72 bg-primary-dark hidden lg:flex flex-col sticky top-0 h-screen">
         {sidebarContent}
       </aside>
 
@@ -199,12 +194,12 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
         <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in"
+            className="absolute inset-0 bg-black/50"
             onClick={closeSidebar}
           />
           {/* Slide-in panel */}
           <aside
-            className="absolute left-0 top-0 h-full w-[280px] max-w-[85vw] bg-white shadow-2xl flex flex-col animate-in slide-in-from-left"
+            className="absolute left-0 top-0 h-full w-[280px] max-w-[85vw] bg-primary-dark flex flex-col"
             style={{ animation: 'slideInLeft 0.25s ease-out' }}
           >
             {sidebarContent}
@@ -215,31 +210,31 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
       {/* ═══ Main Content Area ═══ */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-14 sm:h-16 lg:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
+        <header className="h-12 sm:h-14 lg:h-16 bg-canvas border-b border-hairline flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile & tablet */}
             <button
-              className="lg:hidden p-2 -ml-2 text-slate-600 hover:text-primary transition-colors"
+              className="lg:hidden p-2 -ml-2 text-ink-muted hover:text-primary transition-colors"
               onClick={() => setIsSidebarOpen(true)}
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
             <div>
-              <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">
+              <h2 className="text-base sm:text-lg lg:text-xl font-bold text-ink truncate" style={{ letterSpacing: 0 }}>
                 {pageTitle}
               </h2>
               {pageSubtitle && (
-                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-none">{pageSubtitle}</p>
+                <p className="text-[11px] sm:text-xs text-ink-subtle font-normal truncate max-w-[200px] sm:max-w-none" style={{ letterSpacing: '0.16px' }}>{pageSubtitle}</p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <div className="text-sm font-bold text-slate-900">{user?.fullName || 'User'}</div>
-                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{type === 'admin' ? 'ADMIN' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('account')}</div>
+                <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{user?.fullName || 'User'}</div>
+                <div className="text-[10px] text-ink-subtle font-normal" style={{ letterSpacing: '0.32px' }}>{type === 'admin' ? 'Admin' : (type === 'buyer' ? t('buyer') : t('supplier'))} {t('account')}</div>
               </div>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs sm:text-sm overflow-hidden">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-surface-1 border border-hairline flex items-center justify-center text-ink-subtle font-normal text-xs sm:text-sm overflow-hidden">
                 {(user as any)?.avatar ? (
                   <img src={(user as any).avatar.startsWith('http') ? (user as any).avatar : `${(import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '')}${(user as any).avatar}`} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -257,7 +252,7 @@ export function DashboardLayout({ type }: { type: 'buyer' | 'supplier' | 'admin'
       </main>
 
       {/* ═══ Bottom Navigation Bar — Mobile Only ═══ */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-slate-200 flex items-stretch safe-area-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-canvas border-t border-hairline flex items-stretch safe-area-bottom">
         {bottomNavItems.map((item) => (
           <BottomNavItem
             key={item.path}

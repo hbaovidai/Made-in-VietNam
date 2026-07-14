@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink } from 'lucide-react';
+import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink, Factory, Package, Ship } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { api } from '../lib/api';
@@ -67,12 +67,12 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   return (
     <div
       onClick={() => navigate(`/suppliers/${supplier.id}`)}
-      className="group bg-white rounded-xl border border-slate-200 p-5 md:p-6 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+      className="group bg-canvas border border-hairline p-5 md:p-6 hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200 cursor-pointer"
     >
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-stretch">
         
         {/* LEFT — Square Logo Container */}
-        <div className="w-full md:w-[180px] h-[180px] shrink-0 border border-slate-200 rounded-lg p-4 flex items-center justify-center bg-white mx-auto md:mx-0">
+        <div className="w-full md:w-[180px] h-[180px] shrink-0 border border-hairline p-4 flex items-center justify-center bg-canvas mx-auto md:mx-0">
           <img
             src={supplier.logo || 'https://via.placeholder.com/150'}
             alt={name}
@@ -90,33 +90,54 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           
           {/* Top Info Row */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-              <span className="text-lg md:text-xl font-bold text-[#1a3a6b] group-hover:text-primary transition-colors tracking-tight line-clamp-1 block">
+            <div className="mb-2">
+              <span className="text-lg md:text-xl font-normal text-ink group-hover:text-primary transition-colors line-clamp-1 block" style={{ letterSpacing: 0 }}>
                 {name}
               </span>
-              
-              {isVerified && (
-                <div className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold border bg-[#d1f5e0] text-[#0d6b3e] border-[#8edcb3] shrink-0">
-                  {t('home_verified_supplier_badge')}
-                </div>
-              )}
             </div>
 
             {/* Location Row */}
-            <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 font-medium mb-4">
-              <MapPin size={15} className="text-slate-400 shrink-0" />
+            <div className="flex items-center gap-1.5 text-xs md:text-sm text-ink-muted font-normal mb-3" style={{ letterSpacing: '0.16px' }}>
+              <MapPin size={15} className="text-ink-subtle shrink-0" />
               <span>{primaryLocation}</span>
             </div>
+
+            {/* Role Badges Row */}
+            {(() => {
+              const hasManufacturer = !!supplier.manufacturerProfile || supplier.supplierType === 'MANUFACTURER' || supplier.supplierType === 'MANU_EXPORT';
+              const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (supplier.markets && supplier.markets.length > 0);
+
+              return (
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  {/* Always show Nhà cung cấp */}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-primary/5 text-primary border border-primary/20 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                    <Package size={13} /> Nhà cung cấp
+                  </span>
+                  {/* Nhà sản xuất */}
+                  {hasManufacturer && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                      <Factory size={13} /> Nhà sản xuất
+                    </span>
+                  )}
+                  {/* Nhà xuất khẩu */}
+                  {hasExporter && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                      <Ship size={13} /> Nhà xuất khẩu
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Main Products / Tags Row */}
             {categoriesNames.length > 0 && (
               <div className="space-y-1.5 mb-4">
-                <span className="block text-xs font-bold text-slate-700">{t('supplier_main_products_label')}</span>
+                <span className="block text-xs font-semibold text-ink" style={{ letterSpacing: '0.16px' }}>{t('supplier_main_products_label')}</span>
                 <div className="flex flex-wrap gap-2">
                   {categoriesNames.map((name: string) => (
                     <span 
                       key={name} 
-                      className="bg-[#dbeafe] text-[#1e40af] border border-[#93c5fd] px-2.5 py-1 rounded text-xs font-bold whitespace-nowrap"
+                      className="bg-surface-1 text-ink border border-hairline px-2.5 py-1 text-xs font-normal whitespace-nowrap" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     >
                       {name}
                     </span>
@@ -129,7 +150,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           {/* Bottom Row: Divider + Social/Marketplace Buttons */}
           <div className="mt-auto">
             {/* Thin Divider */}
-            <div className="border-t border-slate-100 my-4" />
+            <div className="border-t border-hairline my-4" />
 
             <div className="flex flex-wrap items-center gap-2">
               {name.includes('Lộc Trời') || name.includes('Loc Troi') ? (
@@ -139,9 +160,9 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   >
-                    <Globe size={14} className="text-slate-500" />
+                    <Globe size={14} className="text-ink-subtle" />
                     Website
                   </a>
                   <a
@@ -149,9 +170,9 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   >
-                    <ExternalLink size={14} className="text-slate-500" />
+                    <ExternalLink size={14} className="text-ink-subtle" />
                     Alibaba
                   </a>
                 </>
@@ -162,9 +183,9 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                       <a href={channel.url} target='_blank rel'
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#f1f5f9] text-slate-800 text-xs font-extrabold rounded border border-slate-300 hover:bg-slate-200 hover:border-slate-400 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       >
-                        <ExternalLink size={14} className="text-slate-500" />
+                        <ExternalLink size={14} className="text-ink-subtle" />
                         {SaleChannelsMap[channel.type]}
                       </a>
                     );

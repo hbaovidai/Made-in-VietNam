@@ -127,23 +127,23 @@ export function BuyerRFQs() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('my_rfqs_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('my_rfqs_subtitle')}</p>
+        <h1 className="text-xl font-bold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('my_rfqs_title')}</h1>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('my_rfqs_subtitle')}</p>
       </div>
-      <div className="divide-y divide-slate-100">
+      <div className="space-y-4">
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
         ) : rfqs.map((rfq) => (
-          <div key={rfq.id} onClick={() => viewQuotes(rfq.id)} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50 transition-colors group cursor-pointer">
+          <div key={rfq.id} onClick={() => viewQuotes(rfq.id)} className="p-6 bg-card-bg shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-surface-bg transition-all group cursor-pointer rounded-lg">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
-                <FileText size={24} className="text-slate-400 group-hover:text-primary transition-colors" />
+              <div className="w-12 h-12 bg-surface-1 border border-hairline flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
+                <FileText size={24} className="text-ink-muted group-hover:text-primary transition-colors" />
               </div>
               <div className="space-y-1">
-                <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{rfq.productName}</div>
-                <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="text-sm font-semibold text-ink group-hover:text-primary transition-colors" style={{ letterSpacing: '0.16px' }}>{rfq.productName}</div>
+                <div className="flex items-center gap-4 text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>
                   <span>ID: {rfq.id.slice(0, 8)}...</span>
                   <span>{t('posted_label')} {new Date(rfq.createdAt).toLocaleDateString()}</span>
                 </div>
@@ -151,37 +151,37 @@ export function BuyerRFQs() {
             </div>
             <div className="flex items-center gap-8">
               <div className="text-center">
-                <div className="text-lg font-black text-slate-900">{rfq._count?.quotes || 0}<span className="text-xs font-bold text-slate-400">/10</span></div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('quotes_label')}</div>
+                <div className="text-lg font-bold text-ink">{rfq._count?.quotes || 0}<span className="text-xs font-normal text-ink-subtle">/10</span></div>
+                <div className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('quotes_label')}</div>
               </div>
               <div className="flex items-center gap-2">
                 {rfq.status === 'OPEN' ? (
-                  <span className="flex items-center gap-1.5 bg-green-50 text-green-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-green-100">
+                  <span className="flex items-center gap-1.5 bg-surface-1 text-emerald-600 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <Clock size={12} /> {t('status_active')}
                   </span>
                 ) : rfq.status === 'CLOSED' ? (
-                  <span className="flex items-center gap-1.5 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
+                  <span className="flex items-center gap-1.5 bg-surface-1 text-blue-600 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <CheckCircle2 size={12} /> {t('status_completed')}
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 bg-slate-50 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200">
+                  <span className="flex items-center gap-1.5 bg-surface-2 text-ink-muted px-3 py-1 text-[10px] font-semibold uppercase tracking-widest border border-hairline" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                     <AlertCircle size={12} /> {t('status_expired')}
                   </span>
                 )}
-                <ChevronRight size={16} className="text-slate-300 group-hover:text-primary" />
+                <ChevronRight size={16} className="text-hairline group-hover:text-primary" />
               </div>
             </div>
           </div>
         ))}
       </div>
       {!loading && rfqs.length === 0 && (
-        <div className="p-20 text-center space-y-4">
-          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
-            <FileText size={40} className="text-slate-200" />
+        <div className="p-20 text-center space-y-4 bg-card-bg shadow-subtle rounded-lg">
+          <div className="w-20 h-20 bg-surface-1 border border-hairline flex items-center justify-center mx-auto" style={{ borderRadius: '4px' }}>
+            <FileText size={40} className="text-ink-subtle" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">{t('no_rfqs_title')}</h3>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto">{t('no_rfqs_buyer_desc')}</p>
-          <Link to="/rfq" className="inline-block bg-primary text-white px-8 py-3 font-bold hover:bg-primary-dark transition-colors uppercase tracking-widest text-xs">
+          <h3 className="text-lg font-bold text-ink uppercase tracking-tight" style={{ letterSpacing: '0.32px' }}>{t('no_rfqs_title')}</h3>
+          <p className="text-ink-muted text-sm max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>{t('no_rfqs_buyer_desc')}</p>
+          <Link to="/rfq" className="inline-block bg-primary text-white px-8 py-3 font-semibold hover:bg-primary-hover transition-colors uppercase tracking-widest text-xs" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
             {t('post_rfq_now')}
           </Link>
         </div>
@@ -189,19 +189,19 @@ export function BuyerRFQs() {
 
       {/* Quotes Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-card-bg w-full max-w-3xl shadow-lg flex flex-col max-h-[85vh] rounded-lg overflow-hidden">
+            <div className="p-6 border-b border-hairline flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">{t('rfq_quotes_for', { name: selectedRfq?.productName || 'RFQ' })}</h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <h3 className="text-lg font-bold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('rfq_quotes_for', { name: selectedRfq?.productName || 'RFQ' })}</h3>
+                <p className="text-xs text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>
                   {t('rfq_quotes_received', { count: selectedRfq?.quotes?.length || 0 })}
                   {selectedRfq?.status === 'CLOSED' && <span className="text-blue-500 ml-2">{t('rfq_closed_label')}</span>}
                 </p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-900 text-2xl leading-none">&times;</button>
+              <button onClick={() => setIsModalOpen(false)} className="text-ink-muted hover:text-ink text-2xl leading-none">&times;</button>
             </div>
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50">
+            <div className="p-6 overflow-y-auto flex-1 bg-surface-1">
               {loadingQuotes ? (
                 <div className="flex justify-center p-12">
                   <Loader2 className="animate-spin text-primary" size={32} />
@@ -209,42 +209,42 @@ export function BuyerRFQs() {
               ) : selectedRfq?.quotes?.length > 0 ? (
                 <div className="space-y-4">
                   {selectedRfq.quotes.map((quote: any) => (
-                    <div key={quote.id} className={`bg-white p-6 rounded-xl border transition-all ${
+                    <div key={quote.id} className={`bg-card-bg p-6 border transition-all rounded-lg ${
                       quote.status === 'ACCEPTED' 
-                        ? 'border-green-300 ring-2 ring-green-100' 
+                        ? 'border-emerald-500 shadow-md' 
                         : quote.status === 'REJECTED' 
-                        ? 'border-slate-200 opacity-50' 
-                        : 'border-slate-200'
+                        ? 'border-hairline opacity-50' 
+                        : 'border-hairline shadow-subtle'
                     }`}>
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex gap-3 items-center">
-                          <img src={quote.supplier?.logo || 'https://via.placeholder.com/40'} alt="" className="w-10 h-10 rounded border" />
+                          <img src={quote.supplier?.logo || 'https://via.placeholder.com/40'} alt="" className="w-10 h-10 border border-hairline" style={{ borderRadius: '4px' }} />
                           <div>
-                            <div className="font-bold text-slate-900">{quote.supplier?.companyName}</div>
+                            <div className="font-semibold text-ink" style={{ letterSpacing: '0.16px' }}>{quote.supplier?.companyName}</div>
                             <div className="flex items-center gap-2 mt-0.5">
                               {quote.supplier?.status === SupplierStatus.VERIFIED && (
-                                <span className="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase">
+                                <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold uppercase" style={{ letterSpacing: '0.32px' }}>
                                   <ShieldCheck size={10} /> Verified
                                 </span>
                               )}
                               {quote.status === 'ACCEPTED' && (
-                                <span className="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase bg-green-50 px-2 py-0.5 rounded-full">
+                                <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold uppercase bg-surface-1 border border-hairline px-2 py-0.5" style={{ borderRadius: '4px', letterSpacing: '0.32px' }}>
                                   <CheckCircle2 size={10} /> {t('rfq_accepted_label')}
                                 </span>
                               )}
                               {quote.status === 'REJECTED' && (
-                                <span className="text-[10px] text-slate-400 font-bold uppercase">{t('rfq_rejected_label')}</span>
+                                <span className="text-[10px] text-ink-subtle font-semibold uppercase" style={{ letterSpacing: '0.32px' }}>{t('rfq_rejected_label')}</span>
                               )}
                             </div>
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-primary">{quote.price?.toLocaleString()} {quote.currency}</div>
-                          <div className="text-[10px] text-slate-500 uppercase font-bold">{t('rfq_delivery_label')} {quote.leadTime}</div>
+                          <div className="text-[10px] text-ink-subtle uppercase font-normal" style={{ letterSpacing: '0.32px' }}>{t('rfq_delivery_label')} {quote.leadTime}</div>
                         </div>
                       </div>
                       {quote.message && (
-                        <div className="text-sm text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-100 mb-4 whitespace-pre-wrap">
+                        <div className="text-sm text-ink-muted bg-surface-1 p-4 border border-hairline mb-4 whitespace-pre-wrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
                           {quote.message}
                         </div>
                       )}
@@ -254,7 +254,8 @@ export function BuyerRFQs() {
                           <button 
                             onClick={(e) => { e.stopPropagation(); handleAcceptQuote(quote); }}
                             disabled={!!acceptingQuoteId}
-                            className="flex-1 bg-primary text-white py-2.5 text-xs font-bold transition-all uppercase tracking-widest hover:bg-primary-dark rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="flex-1 bg-primary text-white py-2.5 text-xs font-semibold transition-all uppercase tracking-widest hover:bg-primary-hover flex items-center justify-center gap-2 disabled:opacity-50"
+                            style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                           >
                             {acceptingQuoteId === quote.id ? (
                               <Loader2 size={14} className="animate-spin" />
@@ -266,7 +267,8 @@ export function BuyerRFQs() {
                           <button 
                             onClick={(e) => { e.stopPropagation(); handleContactSupplier(quote); }}
                             disabled={!!contactingQuoteId}
-                            className="flex-1 bg-white border border-slate-200 text-slate-700 py-2.5 text-xs font-bold transition-all uppercase tracking-widest hover:bg-slate-50 hover:text-slate-900 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="flex-1 bg-canvas border border-hairline text-ink py-2.5 text-xs font-semibold transition-all uppercase tracking-widest hover:bg-surface-1 flex items-center justify-center gap-2 disabled:opacity-50"
+                            style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                           >
                             {contactingQuoteId === quote.id ? (
                               <Loader2 size={14} className="animate-spin" />
@@ -282,7 +284,8 @@ export function BuyerRFQs() {
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleContactSupplier(quote); }}
                           disabled={!!contactingQuoteId}
-                          className="w-full bg-green-50 border border-green-200 text-green-700 py-2.5 text-xs font-bold transition-all uppercase tracking-widest hover:bg-green-100 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                          className="w-full bg-surface-1 border border-hairline text-emerald-600 py-2.5 text-xs font-semibold transition-all uppercase tracking-widest hover:bg-surface-2 flex items-center justify-center gap-2 disabled:opacity-50"
+                          style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
                         >
                           {contactingQuoteId === quote.id ? (
                             <Loader2 size={14} className="animate-spin" />
@@ -297,16 +300,17 @@ export function BuyerRFQs() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-slate-500 text-sm">{t('rfq_no_quotes')}</p>
+                  <p className="text-ink-subtle text-sm" style={{ letterSpacing: '0.16px' }}>{t('rfq_no_quotes')}</p>
                 </div>
               )}
             </div>
-            <div className="p-6 border-t border-slate-100 bg-white">
+            <div className="p-6 border-t border-hairline bg-canvas">
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="w-full bg-slate-100 text-slate-900 py-3 font-bold transition-all uppercase tracking-widest text-xs hover:bg-slate-200 rounded-lg"
+                className="w-full bg-surface-2 text-ink py-3 font-semibold transition-all uppercase tracking-widest text-xs hover:bg-surface-3"
+                style={{ borderRadius: '4px', letterSpacing: '0.16px' }}
               >
-                                {t('rfq_close_btn')}
+                {t('rfq_close_btn')}
               </button>
             </div>
           </div>

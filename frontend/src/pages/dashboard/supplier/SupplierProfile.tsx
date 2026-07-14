@@ -235,8 +235,8 @@ export function SupplierProfile() {
     return (
       <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('supplier_profile_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('supplier_profile_subtitle')}</p>
+        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('supplier_profile_title')}</h1>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('supplier_profile_subtitle')}</p>
       </div>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="animate-spin text-primary" size={40} />
@@ -250,26 +250,27 @@ export function SupplierProfile() {
       <div className="min-h-[70vh] flex flex-col items-center justify-center py-10 px-4">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-10">
-            <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-surface-1 border border-hairline text-primary flex items-center justify-center mx-auto mb-6" style={{ borderRadius: 0 }}>
               <Building2 size={40} strokeWidth={1.5} />
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">{t('khoi_tao_ho_so_doanh_nghiep')}</h1>
-            <p className="text-base text-slate-500 max-w-md mx-auto">
+            <h1 className="text-xl font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('khoi_tao_ho_so_doanh_nghiep')}</h1>
+            <p className="text-sm text-ink-muted max-w-md mx-auto" style={{ letterSpacing: '0.16px' }}>
               Hồ sơ doanh nghiệp giúp bạn xây dựng uy tín, tiếp cận hàng ngàn người mua tiềm năng trên nền tảng MIVN.
             </p>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-            <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-400 to-primary"></div>
+          <div className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
+            <div className="h-1 w-full bg-primary"></div>
             <div className="p-8 sm:p-10">
               <form onSubmit={handleCreateProfile} className="space-y-8">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                     <Building2 size={14} className="text-primary" /> Tên công ty chính thức *
                   </label>
                   <input 
                     type="text" 
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                    className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     required 
                     value={createForm.companyName} 
                     onChange={e => setCreateForm({...createForm, companyName: e.target.value})} 
@@ -279,11 +280,12 @@ export function SupplierProfile() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       <Globe size={14} className="text-primary" /> Lĩnh vực hoạt động
                     </label>
                     <select 
-                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none" 
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal focus:outline-none focus:border-b-2 focus:border-b-primary transition-all appearance-none" 
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={createForm.businessType} 
                       onChange={e => setCreateForm({...createForm, businessType: e.target.value})}
                     >
@@ -294,12 +296,13 @@ export function SupplierProfile() {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       <Shield size={14} className="text-primary" /> Mã số thuế
                     </label>
                     <input 
                       type="text" 
-                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={createForm.taxCode} 
                       onChange={e => setCreateForm({...createForm, taxCode: e.target.value})} 
                       placeholder="Mã số thuế doanh nghiệp" 
@@ -307,12 +310,13 @@ export function SupplierProfile() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       {t('nguoi_dai_dien')}
                     </label>
                     <input 
                       type="text" 
-                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={createForm.legalRepresentative} 
                       onChange={e => setCreateForm({...createForm, legalRepresentative: e.target.value})} 
                       placeholder="Người đại diện pháp luật" 
@@ -320,12 +324,13 @@ export function SupplierProfile() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       Email công ty
                     </label>
                     <input 
                       type="email" 
-                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={createForm.companyEmail} 
                       onChange={e => setCreateForm({...createForm, companyEmail: e.target.value})} 
                       placeholder="Email liên hệ chính thức" 
@@ -333,12 +338,13 @@ export function SupplierProfile() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       Số điện thoại
                     </label>
                     <input 
                       type="text" 
-                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                       value={createForm.companyPhone} 
                       onChange={e => setCreateForm({...createForm, companyPhone: e.target.value})} 
                       placeholder="Hotline / SĐT công ty" 
@@ -347,11 +353,12 @@ export function SupplierProfile() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                     <Edit2 size={14} className="text-primary" /> Giới thiệu ngắn gọn
                   </label>
                   <textarea 
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[120px] resize-none" 
+                    className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all min-h-[120px] resize-none" 
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     value={createForm.description} 
                     onChange={e => setCreateForm({...createForm, description: e.target.value})} 
                     placeholder="Giới thiệu về thế mạnh, năng lực sản xuất và tầm nhìn của doanh nghiệp..."
@@ -362,21 +369,21 @@ export function SupplierProfile() {
                   <button 
                     type="submit" 
                     disabled={isCreating} 
-                    className="w-full relative group overflow-hidden bg-slate-900 text-white rounded-xl font-bold py-4 px-6 transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-primary-hover text-white py-4 px-6 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                   >
-                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                    <div className="relative flex items-center justify-center gap-3">
+                    <div className="flex items-center justify-center gap-3">
                       {isCreating ? (
-                        <Loader2 size={20} className="animate-spin text-primary" />
+                        <Loader2 size={20} className="animate-spin text-white" />
                       ) : (
-                        <CheckCircle2 size={20} className="text-primary group-hover:scale-110 transition-transform" />
+                        <CheckCircle2 size={20} className="text-white" />
                       )}
-                      <span className="text-base tracking-wide">
+                      <span className="text-sm font-normal uppercase tracking-wider">
                         {isCreating ? 'Đang khởi tạo...' : 'LƯU & BẮT ĐẦU KINH DOANH'}
                       </span>
                     </div>
                   </button>
-                  <p className="text-center text-[11px] text-slate-400 mt-4 font-medium">
+                  <p className="text-center text-[11px] text-ink-subtle mt-4 font-normal" style={{ letterSpacing: '0.16px' }}>
                     Bằng việc tạo hồ sơ, bạn đồng ý với Điều khoản Dịch vụ của MIVN.
                   </p>
                 </div>
@@ -391,15 +398,15 @@ export function SupplierProfile() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{t('supplier_profile_title')}</h1>
-        <p className="text-sm text-slate-500 mt-1">{t('supplier_profile_subtitle')}</p>
+        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('supplier_profile_title')}</h1>
+        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('supplier_profile_subtitle')}</p>
       </div>
       {/* Company Header Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
+      <div className="bg-canvas border border-hairline p-6 sm:p-8" style={{ borderRadius: 0 }}>
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="flex flex-col items-center gap-3">
             <div className="relative group">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-black text-2xl overflow-hidden relative">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-surface-1 border border-hairline flex items-center justify-center text-ink-subtle font-light text-2xl overflow-hidden relative" style={{ borderRadius: 0 }}>
                 {uploading && (
                   <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <Loader2 className="animate-spin text-primary" size={24} />
@@ -411,28 +418,29 @@ export function SupplierProfile() {
                   <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
                 )}
               </div>
-              <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs rounded-lg shadow-lg hover:bg-primary-dark transition-colors cursor-pointer">
+              <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs hover:bg-primary-hover transition-colors cursor-pointer" style={{ borderRadius: 0 }}>
                 <Camera size={16} />
                 <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
               </label>
             </div>
             <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-normal text-primary hover:text-primary-hover transition-colors"
+              style={{ letterSpacing: '0.16px' }}
             >
               <Edit2 size={12} /> Chỉnh sửa hồ sơ
             </button>
           </div>
           <div className="space-y-3 flex-1">
-            <h2 className="text-lg sm:text-2xl font-black text-slate-900 uppercase tracking-tight">{supplier?.companyName || 'Công ty của bạn'}</h2>
+            <h2 className="text-lg sm:text-2xl font-normal text-ink uppercase tracking-tight" style={{ letterSpacing: '0.32px' }}>{supplier?.companyName || 'Công ty của bạn'}</h2>
             <div className="flex flex-wrap gap-2">
               {supplier?.status === SupplierStatus.VERIFIED && <SupplierBadge type="verified" />}
             </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>
               <MapPin size={14} className="text-primary" />
               <span>{supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật địa chỉ'}</span>
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
+            <p className="text-sm text-ink-muted leading-relaxed max-w-3xl" style={{ letterSpacing: '0.16px' }}>
               {supplier?.description || 'Chưa có mô tả.'}
             </p>
           </div>
@@ -442,65 +450,69 @@ export function SupplierProfile() {
       {/* Business Info + Certifications Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Business Info Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 mb-5">
+        <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+          <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2 mb-5" style={{ letterSpacing: '0.32px' }}>
             <Building2 size={16} className="text-primary" /> {t('biz_info_title')}
           </h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('year_established')}</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.yearEstablished || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('year_established')}</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.yearEstablished || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Mã số thuế</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.taxCode || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Mã số thuế</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.taxCode || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('nguoi_dai_dien')}</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.legalRepresentative || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.legalRepresentative || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email công ty</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.companyEmail || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Email công ty</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.companyEmail || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Số điện thoại</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.companyPhone || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Số điện thoại</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.companyPhone || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('total_employees')}</span>
-              <span className="text-sm font-semibold text-slate-800">{supplier?.employeeCount || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('total_employees')}</span>
+              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.employeeCount || 'N/A'}</span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-slate-100">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('main_markets')}</span>
-              <span className="text-sm font-semibold text-slate-800 text-right max-w-[200px]">{supplier?.markets?.map((m: any) => m.market).join(', ') || 'N/A'}</span>
+            <div className="flex items-center justify-between py-3 border-b border-hairline">
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('main_markets')}</span>
+              <span className="text-sm font-normal text-ink text-right max-w-[200px]" style={{ letterSpacing: '0.16px' }}>{supplier?.markets?.map((m: any) => m.market).join(', ') || 'N/A'}</span>
             </div>
             <div className="flex items-center justify-between py-3">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Industries</span>
-              <span className="text-sm font-semibold text-slate-800 text-right max-w-[200px]">{supplier?.industries?.map((i: any) => i.industry).join(', ') || 'N/A'}</span>
+              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Industries</span>
+              <span className="text-sm font-normal text-ink text-right max-w-[200px]" style={{ letterSpacing: '0.16px' }}>{supplier?.industries?.map((i: any) => i.industry).join(', ') || 'N/A'}</span>
             </div>
           </div>
         </div>
 
         {/* Certifications Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+            <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
               <Award size={16} className="text-primary" /> {t('certs_awards_title')}
             </h3>
-            <button onClick={() => setIsCertModalOpen(true)} className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+            <button 
+              onClick={() => setIsCertModalOpen(true)} 
+              className="text-xs font-normal text-primary hover:text-primary-hover flex items-center gap-1"
+              style={{ letterSpacing: '0.16px' }}
+            >
               <Plus size={12} /> {t('add_new_btn')}
             </button>
           </div>
           <div className="space-y-3">
-            {certifications.length === 0 && <p className="text-sm text-slate-400 italic py-4">{t('chua_co_chung_nhan_nao')}</p>}
+            {certifications.length === 0 && <p className="text-sm text-ink-muted italic py-4" style={{ letterSpacing: '0.16px' }}>{t('chua_co_chung_nhan_nao')}</p>}
             {certifications.map((cert) => (
-              <div key={cert.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between group hover:border-slate-200 transition-colors">
+              <div key={cert.id} className="p-4 bg-surface-1 border border-hairline flex items-center justify-between group transition-colors" style={{ borderRadius: 0 }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm border border-slate-100"><CheckCircle2 size={18} className="text-green-500" /></div>
+                  <div className="w-9 h-9 bg-canvas border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}><CheckCircle2 size={18} className="text-green-500" /></div>
                   <div>
-                    <div className="text-sm font-semibold text-slate-800">{cert.name}</div>
-                    {cert.issuedBy && <div className="text-[10px] text-slate-400 font-medium mt-0.5">Cấp bởi: {cert.issuedBy}</div>}
+                    <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{cert.name}</div>
+                    {cert.issuedBy && <div className="text-[10px] text-ink-subtle font-normal mt-0.5" style={{ letterSpacing: '0.16px' }}>Cấp bởi: {cert.issuedBy}</div>}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -509,13 +521,13 @@ export function SupplierProfile() {
                       href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 text-slate-300 hover:text-blue-500 transition-colors"
+                      className="p-1.5 text-ink-subtle hover:text-primary transition-colors"
                       title="Xem chứng nhận"
                     >
                       <Eye size={14} />
                     </a>
                   )}
-                  <button onClick={() => handleDeleteCert(cert.id)} className="p-1.5 text-slate-300 hover:text-red-500 transition-colors" title="Xóa chứng nhận"><Trash2 size={14} /></button>
+                  <button onClick={() => handleDeleteCert(cert.id)} className="p-1.5 text-ink-subtle hover:text-red-500 transition-colors" title="Xóa chứng nhận"><Trash2 size={14} /></button>
                 </div>
               </div>
             ))}
@@ -524,20 +536,20 @@ export function SupplierProfile() {
       </div>
 
       {/* Featured Products Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 mb-5">
+      <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+        <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2 mb-5" style={{ letterSpacing: '0.32px' }}>
           <Shield size={16} className="text-primary" /> {t('featured_products_profile')}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {supplierProducts.length === 0 && <p className="text-sm text-slate-400 italic col-span-4">{t('chua_co_san_pham_nao')}</p>}
+          {supplierProducts.length === 0 && <p className="text-sm text-ink-muted italic col-span-4" style={{ letterSpacing: '0.16px' }}>{t('chua_co_san_pham_nao')}</p>}
           {supplierProducts.map(product => (
-            <div key={product.id} className="rounded-xl overflow-hidden border border-slate-100 group hover:shadow-md transition-shadow">
-              <div className="aspect-square relative overflow-hidden bg-slate-100">
+            <div key={product.id} className="border border-hairline group hover:bg-surface-1 transition-all" style={{ borderRadius: 0 }}>
+              <div className="aspect-square relative overflow-hidden bg-surface-1">
                 <img src={product.images?.[0] || 'https://via.placeholder.com/200'} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
               </div>
               <div className="p-3">
-                <h4 className="font-semibold text-sm text-slate-800 line-clamp-1">{product.name}</h4>
-                <div className="text-primary font-bold text-xs mt-1">{(product.minPrice || 0).toLocaleString('vi-VN')} ₫</div>
+                <h4 className="font-normal text-sm text-ink line-clamp-1" style={{ letterSpacing: '0.16px' }}>{product.name}</h4>
+                <div className="text-primary font-normal text-xs mt-1" style={{ letterSpacing: '0.16px' }}>{(product.minPrice || 0).toLocaleString('vi-VN')} ₫</div>
               </div>
             </div>
           ))}
@@ -549,12 +561,23 @@ export function SupplierProfile() {
         <form onSubmit={handleUpdateProfile} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="input-label">{t('company_name_en_label')}</label>
-              <input type="text" className="input" value={editForm.companyName} onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('company_name_en_label')}</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.companyName} 
+                onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} 
+              />
             </div>
             <div className="space-y-2">
-              <label className="input-label">{t('biz_type_label')}</label>
-              <select className="input" value={editForm.businessType} onChange={(e) => setEditForm({...editForm, businessType: e.target.value})}>
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('biz_type_label')}</label>
+              <select 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.businessType} 
+                onChange={(e) => setEditForm({...editForm, businessType: e.target.value})}
+              >
                 <option value="">-- Chọn loại hình --</option>
                 <option value="PRIVATE">Tư nhân</option>
                 <option value="LIMITED_LIABILITY">TNHH</option>
@@ -562,28 +585,39 @@ export function SupplierProfile() {
               </select>
             </div>
 
-            {/*
-              <div className="space-y-2">
-                <label className="input-label">Mã số thuế</label>
-                <input type="text" className="input" value={editForm.taxCode} onChange={(e) => setEditForm({...editForm, taxCode: e.target.value})} />
-              </div>
-            */}
-
             <div className="space-y-2">
-              <label className="input-label">{t('nguoi_dai_dien')}</label>
-              <input type="text" className="input" value={editForm.legalRepName} onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.legalRepName} 
+                onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} 
+              />
             </div>
             <div className="space-y-2">
-              <label className="input-label">Email công ty</label>
-              <input type="email" className="input" value={editForm.companyEmail} onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Email công ty</label>
+              <input 
+                type="email" 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.companyEmail} 
+                onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} 
+              />
             </div>
             <div className="space-y-2">
-              <label className="input-label">Số điện thoại</label>
-              <input type="text" className="input" value={editForm.companyPhone} onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} />
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Số điện thoại</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.companyPhone} 
+                onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} 
+              />
             </div>
             <div className="space-y-2 col-span-2">
-              <label className="input-label">Ngành hàng</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl min-h-[44px]">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>
+              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
                 {['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'].map((ind) => {
                   const isSelected = editForm.industries.includes(ind);
                   return (
@@ -596,11 +630,12 @@ export function SupplierProfile() {
                           : [...editForm.industries, ind];
                         setEditForm({ ...editForm, industries: next });
                       }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
                         isSelected
-                          ? 'bg-primary text-white border-primary shadow-sm'
-                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
                       }`}
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     >
                       {ind}
                     </button>
@@ -609,8 +644,8 @@ export function SupplierProfile() {
               </div>
             </div>
             <div className="space-y-2 col-span-2">
-              <label className="input-label">Thị trường xuất khẩu</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl min-h-[44px]">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Thị trường xuất khẩu</label>
+              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
                 {['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'].map((mkt) => {
                   const isSelected = editForm.markets.includes(mkt);
                   return (
@@ -623,11 +658,12 @@ export function SupplierProfile() {
                           : [...editForm.markets, mkt];
                         setEditForm({ ...editForm, markets: next });
                       }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
                         isSelected
-                          ? 'bg-primary text-white border-primary shadow-sm'
-                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
                       }`}
+                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     >
                       {mkt}
                     </button>
@@ -637,12 +673,30 @@ export function SupplierProfile() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="input-label">{t('short_desc_label')}</label>
-            <textarea className="input min-h-[100px]" value={editForm.description} onChange={(e) => setEditForm({...editForm, description: e.target.value})}></textarea>
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('short_desc_label')}</label>
+            <textarea 
+              className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary min-h-[100px]" 
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+              value={editForm.description} 
+              onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+            />
           </div>
-          <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
-            <button type="button" onClick={() => setIsEditModalOpen(false)} className="btn-ghost">{t('cancel_btn')}</button>
-            <button type="submit" className="btn-primary">{t('save_changes_btn')}</button>
+          <div className="flex justify-end gap-3 pt-6 border-t border-hairline">
+            <button 
+              type="button" 
+              onClick={() => setIsEditModalOpen(false)} 
+              className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            >
+              {t('cancel_btn')}
+            </button>
+            <button 
+              type="submit" 
+              className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            >
+              {t('save_changes_btn')}
+            </button>
           </div>
         </form>
       </Modal>
@@ -651,31 +705,60 @@ export function SupplierProfile() {
       <Modal isOpen={isCertModalOpen} onClose={() => setIsCertModalOpen(false)} title={t('add_cert_modal_title')}>
         <form onSubmit={handleAddCert} className="space-y-6">
           <div className="space-y-2">
-            <label className="input-label">{t('cert_name_label')}</label>
-            <input type="text" className="input" placeholder={t('cert_name_placeholder')} required value={certForm.name} onChange={(e) => setCertForm({...certForm, name: e.target.value})} />
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('cert_name_label')}</label>
+            <input 
+              type="text" 
+              className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+              placeholder={t('cert_name_placeholder')} 
+              required 
+              value={certForm.name} 
+              onChange={(e) => setCertForm({...certForm, name: e.target.value})} 
+            />
           </div>
           <div className="space-y-2">
-            <label className="input-label">{t('cert_issuer_label')}</label>
-            <input type="text" className="input" placeholder={t('cert_issuer_placeholder')} required value={certForm.issuedBy} onChange={(e) => setCertForm({...certForm, issuedBy: e.target.value})} />
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('cert_issuer_label')}</label>
+            <input 
+              type="text" 
+              className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+              placeholder={t('cert_issuer_placeholder')} 
+              required 
+              value={certForm.issuedBy} 
+              onChange={(e) => setCertForm({...certForm, issuedBy: e.target.value})} 
+            />
           </div>
           <div className="space-y-2">
-            <label className="input-label">{t('anhfile_chung_nhan')}</label>
+            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('anhfile_chung_nhan')}</label>
             <div className="relative">
               <input
                 type="file"
                 accept="image/*,.pdf"
                 onChange={(e) => setCertFile(e.target.files?.[0] || null)}
-                className="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-slate-200 rounded-xl"
+                className="w-full text-sm text-ink-muted file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-sm file:font-normal file:bg-surface-2 file:text-ink hover:file:bg-surface-3 file:cursor-pointer cursor-pointer border border-hairline"
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               />
             </div>
             {certFile && (
-              <p className="text-xs text-emerald-600 font-medium">✓ Đã chọn: {certFile.name}</p>
+              <p className="text-xs text-emerald-600 font-normal" style={{ letterSpacing: '0.16px' }}>✓ Đã chọn: {certFile.name}</p>
             )}
-            <p className="text-[11px] text-slate-400">{t('ho_tro_anh_jpg_png_hoac_pdf_toi_da_5mb')}</p>
+            <p className="text-[11px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('ho_tro_anh_jpg_png_hoac_pdf_toi_da_5mb')}</p>
           </div>
-          <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
-            <button type="button" onClick={() => setIsCertModalOpen(false)} className="btn-ghost">{t('cancel_btn')}</button>
-            <button type="submit" disabled={uploading} className="btn-primary flex items-center gap-2">
+          <div className="flex justify-end gap-3 pt-6 border-t border-hairline">
+            <button 
+              type="button" 
+              onClick={() => setIsCertModalOpen(false)} 
+              className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            >
+              {t('cancel_btn')}
+            </button>
+            <button 
+              type="submit" 
+              disabled={uploading} 
+              className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2 flex items-center gap-2"
+              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+            >
               {uploading && <Loader2 size={14} className="animate-spin" />}
               {uploading ? 'Đang tải lên...' : t('upload_btn')}
             </button>
