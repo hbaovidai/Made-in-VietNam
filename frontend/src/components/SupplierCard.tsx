@@ -111,18 +111,18 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   {/* Always show Nhà cung cấp */}
                   <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-primary/5 text-primary border border-primary/20 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                    Nhà cung cấp
+                    Nhà cung cấp xác thực
                   </span>
                   {/* Nhà sản xuất */}
                   {hasManufacturer && (
                     <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                      Nhà sản xuất
+                      Nhà sản xuất xác thực
                     </span>
                   )}
                   {/* Nhà xuất khẩu */}
                   {hasExporter && (
                     <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                      Nhà xuất khẩu
+                      Nhà xuất khẩu xác thực
                     </span>
                   )}
                 </div>

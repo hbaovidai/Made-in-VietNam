@@ -159,7 +159,7 @@ export function SupplierProfile() {
                   // Badge 1: Verified Supplier (always if verified)
                   if (isVerified) {
                     badges.push({ 
-                      label: t('supplier', 'Nhà cung cấp'), 
+                      label: t('verified_supplier', 'Nhà cung cấp xác thực'), 
                       classes: 'bg-primary/5 text-primary border-primary/20',
                     });
                   }
@@ -167,7 +167,7 @@ export function SupplierProfile() {
                   const hasManufacturer = !!supplier.manufacturerProfile || supplier.supplierType === 'MANUFACTURER' || supplier.supplierType === 'MANU_EXPORT';
                   if (isVerified && hasManufacturer) {
                     badges.push({ 
-                      label: t('manufacturer', 'Nhà sản xuất'), 
+                      label: t('verified_manufacturer', 'Nhà sản xuất xác thực'), 
                       classes: 'bg-amber-50 text-amber-700 border-amber-200',
                     });
                   }
@@ -175,7 +175,7 @@ export function SupplierProfile() {
                   const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (markets && markets.length > 0);
                   if (isVerified && hasExporter) {
                     badges.push({ 
-                      label: t('exporters', 'Nhà xuất khẩu'), 
+                      label: t('verified_exporter', 'Nhà xuất khẩu xác thực'), 
                       classes: 'bg-emerald-50 text-emerald-700 border-emerald-200',
                     });
                   }
