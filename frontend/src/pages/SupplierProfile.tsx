@@ -290,7 +290,7 @@ export function SupplierProfile() {
                           <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="p-3.5 flex flex-col flex-1">
-                          <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug mb-2" style={{ letterSpacing: '0.16px' }}>{product.name}</h3>
+                          <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug mb-2 h-[2.5rem]" style={{ letterSpacing: '0.16px' }}>{product.name}</h3>
                           <div className="mt-auto space-y-0.5">
                             <div className="text-xs font-normal text-primary" style={{ letterSpacing: '0.16px' }}>{priceDisplay}</div>
                             <div className="text-[11px] text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>{moq}</div>
