@@ -117,6 +117,8 @@ let SuppliersService = class SuppliersService {
                     where: { isPrimary: true },
                     select: { isPrimary: true, address: true }
                 },
+                manufacturerProfile: { select: { id: true } },
+                exporterProfile: { select: { id: true } },
                 _count: { select: { products: true } },
             },
         });
@@ -203,7 +205,8 @@ let SuppliersService = class SuppliersService {
                         userId: user.id,
                         slug: `${slug}-${dto.taxCode}`,
                         ...supplierData,
-                        isFake: true
+                        isFake: true,
+                        status: client_1.SupplierStatus.VERIFIED,
                     },
                 });
                 if (website)

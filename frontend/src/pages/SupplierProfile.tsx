@@ -155,32 +155,36 @@ export function SupplierProfile() {
                 </div>
                 {/* Badges — auto-generated from verification status, business type & export markets */}
                 {(() => {
-                  const badgeStyles = [
-                    { bg: 'bg-surface-1', text: 'text-emerald-600', border: 'border-hairline' },
-                    { bg: 'bg-surface-1', text: 'text-primary', border: 'border-hairline' },
-                    { bg: 'bg-surface-1', text: 'text-amber-700', border: 'border-hairline' },
-                  ];
-                  const badges: { label: string }[] = [];
+                  const badges: { label: string; classes: string }[] = [];
                   // Badge 1: Verified Supplier (always if verified)
                   if (isVerified) {
-                    badges.push({ label: t('verified_supplier') });
+                    badges.push({ 
+                      label: t('supplier', 'Nhà cung cấp'), 
+                      classes: 'bg-primary/5 text-primary border-primary/20',
+                    });
                   }
-                  // Badge 2: Verified Manufacturer (if businessType is manufacturer)
-                  if (isVerified && supplier.businessType === 'manufacturer') {
-                    badges.push({ label: t('verified_manufacturer') });
+                  // Badge 2: Verified Manufacturer
+                  const hasManufacturer = !!supplier.manufacturerProfile || supplier.supplierType === 'MANUFACTURER' || supplier.supplierType === 'MANU_EXPORT';
+                  if (isVerified && hasManufacturer) {
+                    badges.push({ 
+                      label: t('manufacturer', 'Nhà sản xuất'), 
+                      classes: 'bg-amber-50 text-amber-700 border-amber-200',
+                    });
                   }
-                  // Badge 3: Verified Exporter (if has export markets)
-                  if (isVerified && markets.length > 0) {
-                    badges.push({ label: t('verified_exporter') });
+                  // Badge 3: Verified Exporter
+                  const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (markets && markets.length > 0);
+                  if (isVerified && hasExporter) {
+                    badges.push({ 
+                      label: t('exporters', 'Nhà xuất khẩu'), 
+                      classes: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    });
                   }
                   if (badges.length === 0) return null;
                   return (
                     <div className="flex flex-wrap items-center gap-2 mt-3">
                       {badges.slice(0, 3).map((badge, idx) => {
-                        const style = badgeStyles[idx % badgeStyles.length];
                         return (
-                          <div key={idx} className={`inline-flex items-center gap-1.5 ${style.bg} ${style.text} px-3 py-1 text-xs font-normal border ${style.border}`} style={{ borderRadius: 0, letterSpacing: '0.16px' }}>
-                            <CheckCircle2 size={13} />
+                          <div key={idx} className={`inline-flex items-center ${badge.classes} px-3 py-1 text-xs font-semibold border`} style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
                             {badge.label}
                           </div>
                         );

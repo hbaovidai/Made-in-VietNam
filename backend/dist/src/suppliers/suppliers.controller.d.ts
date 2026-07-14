@@ -153,6 +153,12 @@ export declare class SuppliersController {
             url: string;
             type: import("@prisma/client").$Enums.SaleChannelType;
         }[];
+        manufacturerProfile: {
+            id: string;
+        } | null;
+        exporterProfile: {
+            id: string;
+        } | null;
         _count: {
             products: number;
         };
@@ -406,6 +412,12 @@ export declare class SuppliersController {
             url: string;
             type: import("@prisma/client").$Enums.SaleChannelType;
         }[];
+        manufacturerProfile: {
+            id: string;
+        } | null;
+        exporterProfile: {
+            id: string;
+        } | null;
         _count: {
             products: number;
         };

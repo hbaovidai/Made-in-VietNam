@@ -110,19 +110,19 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
               return (
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   {/* Always show Nhà cung cấp */}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-primary/5 text-primary border border-primary/20 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                    <Package size={13} /> Nhà cung cấp
+                  <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-primary/5 text-primary border border-primary/20 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                    Nhà cung cấp
                   </span>
                   {/* Nhà sản xuất */}
                   {hasManufacturer && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                      <Factory size={13} /> Nhà sản xuất
+                    <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                      Nhà sản xuất
                     </span>
                   )}
                   {/* Nhà xuất khẩu */}
                   {hasExporter && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                      <Ship size={13} /> Nhà xuất khẩu
+                    <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap" style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
+                      Nhà xuất khẩu
                     </span>
                   )}
                 </div>

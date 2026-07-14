@@ -38,7 +38,7 @@ export function Home() {
         desc: i18n.language?.startsWith('vi') ? (b.descVi || b.desc) : b.desc,
         link: b.link || '/products',
       }));
-    } catch {}
+    } catch { }
     return [];
   }, [siteSettings, i18n.language]);
 
@@ -68,7 +68,7 @@ export function Home() {
         ]);
         setProducts(prodRes.data.data);
         setSuppliers(suppRes.data.data);
-        
+
         // Extract level 3 categories from the tree
         const lvl3: any[] = [];
         catRes.data.forEach((lvl1: any) => {
@@ -152,9 +152,8 @@ export function Home() {
             {heroSlides.map((slide, idx) => (
               <div
                 key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                }`}
+                className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  }`}
               >
                 <img
                   src={slide.image}
@@ -172,7 +171,7 @@ export function Home() {
                   >
                     <h2 className="text-xl sm:text-3xl lg:text-5xl font-light leading-tight" style={{ letterSpacing: '-0.4px' }}>{slide.title}</h2>
                     <p className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-xl" style={{ letterSpacing: '0.16px' }}>{slide.desc}</p>
-                    
+
                     <div className="flex flex-wrap gap-3 pt-2">
                       <Link to={slide.link} className="bg-white text-ink px-6 py-3 text-xs sm:text-sm font-normal hover:bg-surface-1 transition-all flex items-center gap-1.5" style={{ letterSpacing: '0.16px' }}>
                         {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
@@ -189,14 +188,14 @@ export function Home() {
             {/* Arrow Navigation */}
             {heroSlides.length > 1 && (
               <>
-                <button 
+                <button
                   onClick={prevSlide}
                   className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
                   aria-label="Previous slide"
                 >
                   <ChevronLeft size={22} />
                 </button>
-                <button 
+                <button
                   onClick={nextSlide}
                   className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
                   aria-label="Next slide"
@@ -213,9 +212,8 @@ export function Home() {
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`transition-all duration-300 outline-none ${
-                      idx === currentSlide ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-                    }`}
+                    className={`transition-all duration-300 outline-none ${idx === currentSlide ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                      }`}
                   />
                 ))}
               </div>
@@ -293,7 +291,7 @@ export function Home() {
                   const industries = supplier.industries 
                     ? supplier.industries.map((i: any) => i.industry) 
                     : (supplier.industry || []);
-                  
+
                   return (
                     <div key={supplier.id} className="w-[280px] shrink-0 bg-canvas border border-hairline p-6 flex flex-col justify-between h-full">
                       <div className="flex flex-col items-center text-center">
@@ -302,10 +300,10 @@ export function Home() {
                             <img src={supplier.logo} alt="" className="max-w-full max-h-full object-contain" />
                           ) : (
                             idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
-                            idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
-                            idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
-                            idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
-                            <Zap size={24} className="text-ink-subtle" />
+                              idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
+                                idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
+                                  idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
+                                    <Zap size={24} className="text-ink-subtle" />
                           )}
                         </div>
                         <h3 className="font-semibold text-ink text-xs mb-1 line-clamp-2 h-10 flex items-center justify-center px-1" style={{ letterSpacing: '0.16px' }}>
@@ -341,7 +339,7 @@ export function Home() {
                 const industries = supplier.industries 
                   ? supplier.industries.map((i: any) => i.industry) 
                   : (supplier.industry || []);
-                
+
                 return (
                   <div key={supplier.id} className="bg-canvas border border-hairline p-6 flex flex-col justify-between h-full hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200">
                     <div className="flex flex-col items-center text-center">
@@ -350,10 +348,10 @@ export function Home() {
                           <img src={supplier.logo} alt="" className="max-w-full max-h-full object-contain" />
                         ) : (
                           idx % 5 === 0 ? <Factory size={24} className="text-ink-subtle" /> :
-                          idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
-                          idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
-                          idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
-                          <Zap size={24} className="text-ink-subtle" />
+                            idx % 5 === 1 ? <Wrench size={24} className="text-ink-subtle" /> :
+                              idx % 5 === 2 ? <Beaker size={24} className="text-ink-subtle" /> :
+                                idx % 5 === 3 ? <Shirt size={24} className="text-ink-subtle" /> :
+                                  <Zap size={24} className="text-ink-subtle" />
                         )}
                       </div>
                       <h3 className="font-semibold text-ink text-xs mb-1 line-clamp-2 h-10 flex items-center justify-center px-1" style={{ letterSpacing: '0.16px' }}>
@@ -385,21 +383,21 @@ export function Home() {
 
       {/* ═══ Register Digital Profile Section ═══ */}
       <section className="max-w-[1584px] mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12">
-        <div 
+        <div
           className="relative bg-primary text-white p-12 sm:p-16 flex flex-col items-center justify-center overflow-hidden"
         >
           <div className="w-12 h-12 bg-white/10 flex items-center justify-center text-white mb-6 border border-white/10">
             <ShieldCheck size={26} />
           </div>
-          
+
           <h2 className="text-xl sm:text-3xl font-light text-white text-center mb-3 max-w-2xl leading-tight" style={{ letterSpacing: '-0.4px' }}>
             {t('home_digital_profile_title')}
           </h2>
-          
+
           <p className="text-white/80 text-xs sm:text-sm max-w-2xl text-center mb-8 leading-relaxed" style={{ letterSpacing: '0.16px' }}>
             {t('home_digital_profile_desc')} <span className="font-semibold text-white">Verified Supplier</span> {t('at_vieproduct', 'tại VIEproduct')}.
           </p>
-          
+
           <div className="flex flex-wrap gap-4 justify-center items-center">
             <Link to="/profile-submission" className="bg-white text-primary px-6 py-3 text-sm font-normal hover:bg-surface-1 transition-all flex items-center gap-2" style={{ letterSpacing: '0.16px' }}>
               {t('register_now')} <ArrowRight size={16} />
