@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, Menu, ShieldCheck, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -116,6 +116,7 @@ export function ProductListing() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
@@ -201,11 +202,30 @@ export function ProductListing() {
     }
   };
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
+    if (loadingMore || loading || currentPage >= totalPages) return;
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', String(currentPage + 1));
     setSearchParams(newParams);
-  };
+  }, [loadingMore, loading, currentPage, totalPages, searchParams, setSearchParams]);
+
+  // Infinite scroll: observe sentinel element
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages && !loadingMore && !loading) {
+          handleLoadMore();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [handleLoadMore, currentPage, totalPages, loadingMore, loading]);
 
   // Price display helper
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
@@ -516,23 +536,20 @@ export function ProductListing() {
               </div>
             )}
 
-            {/* ═══ Load More ═══ */}
+            {/* ═══ Infinite Scroll Sentinel ═══ */}
             {currentPage < totalPages && (
-              <div className="flex flex-col items-center gap-3 mt-10">
+              <div ref={sentinelRef} className="flex flex-col items-center gap-3 mt-10 py-6">
+                <Loader2 size={24} className="animate-spin text-primary" />
                 <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.32px' }}>
-                  Đang hiển thị {products.length} / {totalProducts} sản phẩm
+                  Đang tải thêm... ({products.length} / {totalProducts})
                 </p>
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                  className="px-8 py-3 bg-primary text-white text-sm font-normal hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center gap-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                >
-                  {loadingMore ? (
-                    <><Loader2 size={16} className="animate-spin" /> {t('loading_text')}</>
-                  ) : (
-                    'Xem thêm sản phẩm'
-                  )}
-                </button>
+              </div>
+            )}
+            {currentPage >= totalPages && products.length > 0 && (
+              <div className="flex flex-col items-center mt-10 py-4">
+                <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.32px' }}>
+                  Đã hiển thị tất cả {totalProducts} sản phẩm
+                </p>
               </div>
             )}
           </div>

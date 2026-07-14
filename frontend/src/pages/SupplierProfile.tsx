@@ -286,7 +286,7 @@ export function SupplierProfile() {
                         className="group bg-canvas border border-hairline overflow-hidden flex flex-col shrink-0 w-[200px]"
                         style={{ borderRadius: 0 }}
                       >
-                        <div className="aspect-square bg-surface-2 border-b border-hairline">
+                        <div className="w-full h-[200px] bg-surface-2 border-b border-hairline overflow-hidden">
                           <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="p-3.5 flex flex-col flex-1">
