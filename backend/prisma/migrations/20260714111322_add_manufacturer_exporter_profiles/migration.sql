@@ -1,24 +1,50 @@
--- CreateEnum
-CREATE TYPE "SaleChannelType" AS ENUM ('INSTAGRAM', 'FACEBOOK', 'SHOPEE', 'LAZADA', 'TIKTOK_SHOP', 'SHOPIFY', 'ZALO', 'CUSTOM_WEBSITE');
+-- CreateEnum (Safe)
+DO $$ BEGIN
+    CREATE TYPE "SaleChannelType" AS ENUM ('INSTAGRAM', 'FACEBOOK', 'SHOPEE', 'LAZADA', 'TIKTOK_SHOP', 'SHOPIFY', 'ZALO', 'CUSTOM_WEBSITE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- CreateEnum
-CREATE TYPE "SupplierMediaType" AS ENUM ('AUTHORIZATION_LETTER', 'BUSINESS_LICENSE', 'LEGAL_REP_GOV_ID');
+-- CreateEnum (Safe)
+DO $$ BEGIN
+    CREATE TYPE "SupplierMediaType" AS ENUM ('AUTHORIZATION_LETTER', 'BUSINESS_LICENSE', 'LEGAL_REP_GOV_ID');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- CreateEnum
-CREATE TYPE "MarketCode" AS ENUM ('USA', 'JPN', 'CHN', 'KOR', 'AUS', 'ASEAN', 'EU', 'AF', 'ME', 'OTHER');
+-- CreateEnum (Safe)
+DO $$ BEGIN
+    CREATE TYPE "MarketCode" AS ENUM ('USA', 'JPN', 'CHN', 'KOR', 'AUS', 'ASEAN', 'EU', 'AF', 'ME', 'OTHER');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- AlterTable
-ALTER TABLE "suppliers" DROP COLUMN "address",
-DROP COLUMN "province",
-DROP COLUMN "ward",
-ADD COLUMN     "is_fake" BOOLEAN DEFAULT false,
-DROP COLUMN "business_type",
-ADD COLUMN     "business_type" "BusinessType",
-ALTER COLUMN "account_holder_role" DROP NOT NULL,
-ALTER COLUMN "account_holder_role" DROP DEFAULT;
+-- AlterTable (Safe)
+ALTER TABLE "suppliers" 
+DROP COLUMN IF EXISTS "address",
+DROP COLUMN IF EXISTS "province",
+DROP COLUMN IF EXISTS "ward";
 
--- CreateTable
-CREATE TABLE "manufacturer_profile" (
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='is_fake') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "is_fake" BOOLEAN DEFAULT false;
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='business_type' AND data_type <> 'USER-DEFINED') THEN
+        ALTER TABLE "suppliers" DROP COLUMN "business_type";
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='suppliers' AND column_name='business_type') THEN
+        ALTER TABLE "suppliers" ADD COLUMN "business_type" "BusinessType";
+    END IF;
+END $$;
+
+ALTER TABLE "suppliers" ALTER COLUMN "account_holder_role" DROP NOT NULL;
+ALTER TABLE "suppliers" ALTER COLUMN "account_holder_role" DROP DEFAULT;
+
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "manufacturer_profile" (
     "id" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
     "fact_address" TEXT NOT NULL,
@@ -34,8 +60,8 @@ CREATE TABLE "manufacturer_profile" (
     "environmental_certs_url" TEXT[]
 );
 
--- CreateTable
-CREATE TABLE "exporter_profile" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "exporter_profile" (
     "id" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
     "years_exp" INTEGER NOT NULL DEFAULT 0,
@@ -48,16 +74,16 @@ CREATE TABLE "exporter_profile" (
     CONSTRAINT "exporter_profile_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "exporter_market_map" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "exporter_market_map" (
     "exporter_id" TEXT NOT NULL,
     "market_code" "MarketCode" NOT NULL,
 
     CONSTRAINT "exporter_market_map_pkey" PRIMARY KEY ("exporter_id","market_code")
 );
 
--- CreateTable
-CREATE TABLE "supplier_category_map" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "supplier_category_map" (
     "category_slug" TEXT NOT NULL,
     "category_level" INTEGER NOT NULL DEFAULT 1,
     "supplier_slug" TEXT NOT NULL,
@@ -67,8 +93,8 @@ CREATE TABLE "supplier_category_map" (
     CONSTRAINT "supplier_category_map_pkey" PRIMARY KEY ("category_slug","supplier_slug")
 );
 
--- CreateTable
-CREATE TABLE "supplier_channel_map" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "supplier_channel_map" (
     "supplier_slug" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "type" "SaleChannelType" NOT NULL,
@@ -78,8 +104,8 @@ CREATE TABLE "supplier_channel_map" (
     CONSTRAINT "supplier_channel_map_pkey" PRIMARY KEY ("supplier_slug","type")
 );
 
--- CreateTable
-CREATE TABLE "supplier_address_map" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "supplier_address_map" (
     "supplier_slug" TEXT NOT NULL,
     "address" TEXT NOT NULL,
     "is_primary" BOOLEAN NOT NULL DEFAULT false,
@@ -88,8 +114,8 @@ CREATE TABLE "supplier_address_map" (
     CONSTRAINT "supplier_address_map_pkey" PRIMARY KEY ("supplier_slug","address")
 );
 
--- CreateTable
-CREATE TABLE "supplier_document_media_map" (
+-- CreateTable (Safe)
+CREATE TABLE IF NOT EXISTS "supplier_document_media_map" (
     "supplier_id" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "type" "SupplierMediaType" NOT NULL,
@@ -98,38 +124,65 @@ CREATE TABLE "supplier_document_media_map" (
     CONSTRAINT "supplier_document_media_map_pkey" PRIMARY KEY ("url")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "manufacturer_profile_supplierId_key" ON "manufacturer_profile"("supplierId");
+-- CreateIndex (Safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "manufacturer_profile_supplierId_key" ON "manufacturer_profile"("supplierId");
+CREATE UNIQUE INDEX IF NOT EXISTS "exporter_profile_supplierId_key" ON "exporter_profile"("supplierId");
+CREATE INDEX IF NOT EXISTS "supplier_document_media_map_supplier_id_type_idx" ON "supplier_document_media_map"("supplier_id", "type");
+CREATE INDEX IF NOT EXISTS "suppliers_slug_idx" ON "suppliers"("slug");
 
--- CreateIndex
-CREATE UNIQUE INDEX "exporter_profile_supplierId_key" ON "exporter_profile"("supplierId");
+-- AddForeignKey (Safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'manufacturer_profile_supplierId_fkey') THEN
+        ALTER TABLE "manufacturer_profile" ADD CONSTRAINT "manufacturer_profile_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateIndex
-CREATE INDEX "supplier_document_media_map_supplier_id_type_idx" ON "supplier_document_media_map"("supplier_id", "type");
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'exporter_profile_supplierId_fkey') THEN
+        ALTER TABLE "exporter_profile" ADD CONSTRAINT "exporter_profile_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateIndex
-CREATE INDEX "suppliers_slug_idx" ON "suppliers"("slug");
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'exporter_market_map_exporter_id_fkey') THEN
+        ALTER TABLE "exporter_market_map" ADD CONSTRAINT "exporter_market_map_exporter_id_fkey" FOREIGN KEY ("exporter_id") REFERENCES "exporter_profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "manufacturer_profile" ADD CONSTRAINT "manufacturer_profile_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'supplier_category_map_category_slug_fkey') THEN
+        ALTER TABLE "supplier_category_map" ADD CONSTRAINT "supplier_category_map_category_slug_fkey" FOREIGN KEY ("category_slug") REFERENCES "categories"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "exporter_profile" ADD CONSTRAINT "exporter_profile_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'supplier_category_map_supplier_slug_fkey') THEN
+        ALTER TABLE "supplier_category_map" ADD CONSTRAINT "supplier_category_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "exporter_market_map" ADD CONSTRAINT "exporter_market_map_exporter_id_fkey" FOREIGN KEY ("exporter_id") REFERENCES "exporter_profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'supplier_channel_map_supplier_slug_fkey') THEN
+        ALTER TABLE "supplier_channel_map" ADD CONSTRAINT "supplier_channel_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "supplier_category_map" ADD CONSTRAINT "supplier_category_map_category_slug_fkey" FOREIGN KEY ("category_slug") REFERENCES "categories"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'supplier_address_map_supplier_slug_fkey') THEN
+        ALTER TABLE "supplier_address_map" ADD CONSTRAINT "supplier_address_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "supplier_category_map" ADD CONSTRAINT "supplier_category_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "supplier_channel_map" ADD CONSTRAINT "supplier_channel_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "supplier_address_map" ADD CONSTRAINT "supplier_address_map_supplier_slug_fkey" FOREIGN KEY ("supplier_slug") REFERENCES "suppliers"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "supplier_document_media_map" ADD CONSTRAINT "supplier_document_media_map_supplier_id_fkey" FOREIGN KEY ("supplier_id") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'supplier_document_media_map_supplier_id_fkey') THEN
+        ALTER TABLE "supplier_document_media_map" ADD CONSTRAINT "supplier_document_media_map_supplier_id_fkey" FOREIGN KEY ("supplier_id") REFERENCES "suppliers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
