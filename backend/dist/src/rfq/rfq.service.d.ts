@@ -54,8 +54,8 @@ export declare class RfqService {
         leadTime: string;
         supplierId: string;
         message: string | null;
-        rfqId: string;
         price: number;
+        rfqId: string;
     }>;
     getRFQDetails(id: string): Promise<{
         quotes: ({
@@ -74,8 +74,8 @@ export declare class RfqService {
             leadTime: string;
             supplierId: string;
             message: string | null;
-            rfqId: string;
             price: number;
+            rfqId: string;
         })[];
         buyer: {
             id: string;

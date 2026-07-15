@@ -9,7 +9,7 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ProductStatus } from '@prisma/client';
+import { ProductStatus, PricingMode } from '@prisma/client';
 
 export class CreateProductDto {
   @IsString()
@@ -21,12 +21,12 @@ export class CreateProductDto {
   description?: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @Type(() => Number)
   minPrice: number;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @Type(() => Number)
   maxPrice: number;
 
@@ -60,6 +60,14 @@ export class CreateProductDto {
   @IsOptional()
   @Type(() => Number)
   rfqMinQuantity?: number;
+
+  @IsOptional()
+  @IsEnum(PricingMode)
+  pricingMode?: PricingMode;
+
+  @IsOptional()
+  @IsArray()
+  priceTiers?: { minQty: number; maxQty?: number; price: number }[];
 }
 
 export class UpdateProductDto {
@@ -114,6 +122,14 @@ export class UpdateProductDto {
   @IsOptional()
   @Type(() => Number)
   rfqMinQuantity?: number;
+
+  @IsOptional()
+  @IsEnum(PricingMode)
+  pricingMode?: PricingMode;
+
+  @IsOptional()
+  @IsArray()
+  priceTiers?: { minQty: number; maxQty?: number; price: number }[];
 }
 
 export class ProductQueryDto {

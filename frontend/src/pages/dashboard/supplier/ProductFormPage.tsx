@@ -204,14 +204,37 @@ export function ProductFormPage() {
     e.preventDefault();
     setSubmitting(true);
 
+    // Build price fields based on pricingMode
+    let minPrice = Number(formData.minPrice) || 0;
+    let maxPrice = Number(formData.minPrice) || 0;
+    let priceTiersPayload: { minQty: number; maxQty?: number | null; price: number }[] | undefined;
+
+    if (pricingMode === 'contact') {
+      minPrice = 0;
+      maxPrice = 0;
+    } else if (pricingMode === 'tiered') {
+      const tiers = tieredPrices
+        .filter(t => t.price)
+        .map(t => ({
+          minQty: Number(t.minQty) || 1,
+          maxQty: t.maxQty ? Number(t.maxQty) : null,
+          price: Number(t.price),
+        }));
+      minPrice = tiers.length > 0 ? Math.min(...tiers.map(t => t.price)) : 0;
+      maxPrice = tiers.length > 0 ? Math.max(...tiers.map(t => t.price)) : 0;
+      priceTiersPayload = tiers;
+    }
+
     const payload = {
       name: formData.name.trim(),
       description: formData.description.trim(),
-      minPrice: Number(formData.minPrice),
-      maxPrice: Number(formData.minPrice),
+      pricingMode: pricingMode.toUpperCase(),
+      minPrice,
+      maxPrice,
+      ...(priceTiersPayload ? { priceTiers: priceTiersPayload } : {}),
       unit: formData.unit,
       moq: Number(formData.moq),
-      moqUnit: formData.unit, // Use same unit
+      moqUnit: formData.unit,
       categoryId: formData.categoryId,
       images: formData.images.filter(url => url.trim() !== ''),
       rfqMinQuantity: formData.rfqMinQuantity ? Number(formData.rfqMinQuantity) : null,
@@ -498,22 +521,6 @@ export function ProductFormPage() {
             </div>
           </div>
 
-          {/* Ngưỡng báo giá */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('nguong_bao_gia_don_hang_lon')}</label>
-              <input 
-                type="number" 
-                min="1"
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary font-normal"
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                placeholder="Ví dụ: 100 (để trống nếu không cần)"
-                value={formData.rfqMinQuantity}
-                onChange={e => handleChange('rfqMinQuantity', e.target.value)}
-              />
-              <p className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{t('khi_nguoi_mua_dat_so_luong_nguong_nay_he')}</p>
-            </div>
-          </div>
 
           {/* Mô tả sản phẩm - Markdown Editor */}
           <div className="space-y-3">

@@ -19,8 +19,8 @@ export declare class BatchesController {
         createdAt: Date;
         status: import("@prisma/client").$Enums.BatchStatus;
         supplierId: string;
-        expiryDate: Date;
         productId: string;
+        expiryDate: Date;
         batchNumber: string;
         manufactureDate: Date;
         quantity: number;
@@ -37,8 +37,8 @@ export declare class BatchesController {
             createdAt: Date;
             status: import("@prisma/client").$Enums.BatchStatus;
             supplierId: string;
-            expiryDate: Date;
             productId: string;
+            expiryDate: Date;
             batchNumber: string;
             manufactureDate: Date;
             quantity: number;
@@ -59,8 +59,8 @@ export declare class BatchesController {
         createdAt: Date;
         status: import("@prisma/client").$Enums.BatchStatus;
         supplierId: string;
-        expiryDate: Date;
         productId: string;
+        expiryDate: Date;
         batchNumber: string;
         manufactureDate: Date;
         quantity: number;
@@ -86,6 +86,7 @@ export declare class BatchesController {
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -123,6 +124,7 @@ export declare class BatchesController {
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                pricingMode: import("@prisma/client").$Enums.PricingMode;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;

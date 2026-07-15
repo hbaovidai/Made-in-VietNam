@@ -21,6 +21,7 @@ export declare class CartService {
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                pricingMode: import("@prisma/client").$Enums.PricingMode;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
@@ -75,6 +76,7 @@ export declare class CartService {
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                pricingMode: import("@prisma/client").$Enums.PricingMode;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
@@ -129,6 +131,7 @@ export declare class CartService {
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                pricingMode: import("@prisma/client").$Enums.PricingMode;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;
@@ -183,6 +186,7 @@ export declare class CartService {
                 name: string;
                 nameEn: string | null;
                 descriptionEn: string | null;
+                pricingMode: import("@prisma/client").$Enums.PricingMode;
                 minPrice: number;
                 maxPrice: number;
                 currency: string;

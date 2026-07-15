@@ -1,4 +1,4 @@
-import { ProductStatus } from '@prisma/client';
+import { ProductStatus, PricingMode } from '@prisma/client';
 export declare class CreateProductDto {
     name: string;
     description?: string;
@@ -11,6 +11,12 @@ export declare class CreateProductDto {
     categoryId: string;
     images?: string[];
     rfqMinQuantity?: number;
+    pricingMode?: PricingMode;
+    priceTiers?: {
+        minQty: number;
+        maxQty?: number;
+        price: number;
+    }[];
 }
 export declare class UpdateProductDto {
     name?: string;
@@ -24,6 +30,12 @@ export declare class UpdateProductDto {
     images?: string[];
     status?: ProductStatus;
     rfqMinQuantity?: number;
+    pricingMode?: PricingMode;
+    priceTiers?: {
+        minQty: number;
+        maxQty?: number;
+        price: number;
+    }[];
 }
 export declare class ProductQueryDto {
     search?: string;

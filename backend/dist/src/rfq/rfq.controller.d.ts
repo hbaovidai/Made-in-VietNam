@@ -97,8 +97,8 @@ export declare class RfqController {
             leadTime: string;
             supplierId: string;
             message: string | null;
-            rfqId: string;
             price: number;
+            rfqId: string;
         })[];
         buyer: {
             id: string;
@@ -154,7 +154,7 @@ export declare class RfqController {
         leadTime: string;
         supplierId: string;
         message: string | null;
-        rfqId: string;
         price: number;
+        rfqId: string;
     }>;
 }

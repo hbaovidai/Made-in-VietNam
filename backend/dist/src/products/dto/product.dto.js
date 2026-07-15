@@ -25,6 +25,8 @@ class CreateProductDto {
     categoryId;
     images;
     rfqMinQuantity;
+    pricingMode;
+    priceTiers;
 }
 exports.CreateProductDto = CreateProductDto;
 __decorate([
@@ -39,13 +41,13 @@ __decorate([
 ], CreateProductDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.Min)(0),
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "minPrice", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.Min)(0),
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "maxPrice", void 0);
@@ -87,6 +89,16 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "rfqMinQuantity", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.PricingMode),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "pricingMode", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateProductDto.prototype, "priceTiers", void 0);
 class UpdateProductDto {
     name;
     description;
@@ -99,6 +111,8 @@ class UpdateProductDto {
     images;
     status;
     rfqMinQuantity;
+    pricingMode;
+    priceTiers;
 }
 exports.UpdateProductDto = UpdateProductDto;
 __decorate([
@@ -164,6 +178,16 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], UpdateProductDto.prototype, "rfqMinQuantity", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.PricingMode),
+    __metadata("design:type", String)
+], UpdateProductDto.prototype, "pricingMode", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], UpdateProductDto.prototype, "priceTiers", void 0);
 class ProductQueryDto {
     search;
     category;

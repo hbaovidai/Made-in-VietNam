@@ -19,6 +19,13 @@ export declare class ProductsController {
                 slug: string;
                 name: string;
             };
+            priceTiers: {
+                id: string;
+                minQty: number;
+                productId: string;
+                maxQty: number | null;
+                price: number;
+            }[];
         } & {
             id: string;
             slug: string;
@@ -29,6 +36,7 @@ export declare class ProductsController {
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -74,6 +82,13 @@ export declare class ProductsController {
                 slug: string;
                 name: string;
             };
+            priceTiers: {
+                id: string;
+                minQty: number;
+                productId: string;
+                maxQty: number | null;
+                price: number;
+            }[];
         } & {
             id: string;
             slug: string;
@@ -84,6 +99,7 @@ export declare class ProductsController {
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;
@@ -130,6 +146,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -178,6 +195,13 @@ export declare class ProductsController {
             slug: string;
             name: string;
         };
+        priceTiers: {
+            id: string;
+            minQty: number;
+            productId: string;
+            maxQty: number | null;
+            price: number;
+        }[];
     } & {
         id: string;
         slug: string;
@@ -188,6 +212,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -227,6 +252,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -266,6 +292,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -308,6 +335,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;
@@ -348,6 +376,7 @@ export declare class ProductsController {
         name: string;
         nameEn: string | null;
         descriptionEn: string | null;
+        pricingMode: import("@prisma/client").$Enums.PricingMode;
         minPrice: number;
         maxPrice: number;
         currency: string;

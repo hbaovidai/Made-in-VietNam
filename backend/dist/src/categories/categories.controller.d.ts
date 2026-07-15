@@ -42,6 +42,7 @@ export declare class CategoriesController {
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;

@@ -9,7 +9,7 @@ import {
   UpdateProductDto,
   ProductQueryDto,
 } from './dto/product.dto';
-import { Prisma, ProductStatus } from '@prisma/client';
+import { Prisma, ProductStatus, PricingMode } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TranslationService } from '../translation/translation.service';
 
@@ -73,6 +73,7 @@ export class ProductsService {
               logo: true,
             },
           },
+          priceTiers: { orderBy: { minQty: 'asc' } },
         },
         orderBy: { [sortBy]: sortOrder },
         skip: (page - 1) * limit,
@@ -123,6 +124,7 @@ export class ProductsService {
               markets: { select: { market: true } },
             },
           },
+          priceTiers: { orderBy: { minQty: 'asc' } },
         },
       });
     }
@@ -148,6 +150,7 @@ export class ProductsService {
               markets: { select: { market: true } },
             },
           },
+          priceTiers: { orderBy: { minQty: 'asc' } },
         },
       });
     }
@@ -186,25 +189,44 @@ export class ProductsService {
       '-' +
       Date.now();
 
-    const product = await this.prisma.product.create({
-      data: {
-        supplierId,
-        name: dto.name,
-        slug,
-        description: dto.description,
-        minPrice: dto.minPrice,
-        maxPrice: dto.maxPrice,
-        currency: dto.currency || 'VND',
-        unit: dto.unit,
-        moq: dto.moq,
-        moqUnit: dto.moqUnit,
-        categoryId: dto.categoryId,
-        images: dto.images || [],
-        rfqMinQuantity: dto.rfqMinQuantity || null,
-      },
-      include: {
-        category: { select: { name: true, slug: true } },
-      },
+    const { priceTiers, ...productData } = dto;
+
+    const product = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.product.create({
+        data: {
+          supplierId,
+          name: productData.name,
+          slug,
+          description: productData.description,
+          pricingMode: productData.pricingMode || 'STANDARD',
+          minPrice: productData.minPrice,
+          maxPrice: productData.maxPrice,
+          currency: productData.currency || 'VND',
+          unit: productData.unit,
+          moq: productData.moq,
+          moqUnit: productData.moqUnit,
+          categoryId: productData.categoryId,
+          images: productData.images || [],
+          rfqMinQuantity: productData.rfqMinQuantity || null,
+        },
+        include: {
+          category: { select: { name: true, slug: true } },
+        },
+      });
+
+      // Create price tiers if tiered pricing mode
+      if (priceTiers?.length && productData.pricingMode === 'TIERED') {
+        await tx.priceTier.createMany({
+          data: priceTiers.map((t) => ({
+            productId: created.id,
+            minQty: t.minQty,
+            maxQty: t.maxQty || null,
+            price: t.price,
+          })),
+        });
+      }
+
+      return created;
     });
 
     // Auto-translate to English (non-blocking)
@@ -265,12 +287,35 @@ export class ProductsService {
       newStatus = ProductStatus.PENDING;
     }
 
-    const updated = await this.prisma.product.update({
-      where: { id: productId },
-      data: { ...dto, status: newStatus },
-      include: {
-        category: { select: { name: true, slug: true } },
-      },
+    const { priceTiers, ...updateData } = dto;
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.product.update({
+        where: { id: productId },
+        data: { ...updateData, status: newStatus },
+        include: {
+          category: { select: { name: true, slug: true } },
+        },
+      });
+
+      // Update price tiers if provided
+      if (priceTiers !== undefined) {
+        // Delete existing tiers
+        await tx.priceTier.deleteMany({ where: { productId } });
+        // Create new tiers
+        if (priceTiers.length > 0 && updateData.pricingMode === 'TIERED') {
+          await tx.priceTier.createMany({
+            data: priceTiers.map((t) => ({
+              productId,
+              minQty: t.minQty,
+              maxQty: t.maxQty || null,
+              price: t.price,
+            })),
+          });
+        }
+      }
+
+      return result;
     });
 
     // Re-translate if name or description changed

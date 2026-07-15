@@ -58,6 +58,7 @@ let ProductsService = class ProductsService {
                             logo: true,
                         },
                     },
+                    priceTiers: { orderBy: { minQty: 'asc' } },
                 },
                 orderBy: { [sortBy]: sortOrder },
                 skip: (page - 1) * limit,
@@ -99,6 +100,7 @@ let ProductsService = class ProductsService {
                             markets: { select: { market: true } },
                         },
                     },
+                    priceTiers: { orderBy: { minQty: 'asc' } },
                 },
             });
         }
@@ -123,6 +125,7 @@ let ProductsService = class ProductsService {
                             markets: { select: { market: true } },
                         },
                     },
+                    priceTiers: { orderBy: { minQty: 'asc' } },
                 },
             });
         }
@@ -153,25 +156,40 @@ let ProductsService = class ProductsService {
             .replace(/(^-|-$)/g, '') +
             '-' +
             Date.now();
-        const product = await this.prisma.product.create({
-            data: {
-                supplierId,
-                name: dto.name,
-                slug,
-                description: dto.description,
-                minPrice: dto.minPrice,
-                maxPrice: dto.maxPrice,
-                currency: dto.currency || 'VND',
-                unit: dto.unit,
-                moq: dto.moq,
-                moqUnit: dto.moqUnit,
-                categoryId: dto.categoryId,
-                images: dto.images || [],
-                rfqMinQuantity: dto.rfqMinQuantity || null,
-            },
-            include: {
-                category: { select: { name: true, slug: true } },
-            },
+        const { priceTiers, ...productData } = dto;
+        const product = await this.prisma.$transaction(async (tx) => {
+            const created = await tx.product.create({
+                data: {
+                    supplierId,
+                    name: productData.name,
+                    slug,
+                    description: productData.description,
+                    pricingMode: productData.pricingMode || 'STANDARD',
+                    minPrice: productData.minPrice,
+                    maxPrice: productData.maxPrice,
+                    currency: productData.currency || 'VND',
+                    unit: productData.unit,
+                    moq: productData.moq,
+                    moqUnit: productData.moqUnit,
+                    categoryId: productData.categoryId,
+                    images: productData.images || [],
+                    rfqMinQuantity: productData.rfqMinQuantity || null,
+                },
+                include: {
+                    category: { select: { name: true, slug: true } },
+                },
+            });
+            if (priceTiers?.length && productData.pricingMode === 'TIERED') {
+                await tx.priceTier.createMany({
+                    data: priceTiers.map((t) => ({
+                        productId: created.id,
+                        minQty: t.minQty,
+                        maxQty: t.maxQty || null,
+                        price: t.price,
+                    })),
+                });
+            }
+            return created;
         });
         this.translationService
             .translateProduct(dto.name, dto.description)
@@ -217,12 +235,29 @@ let ProductsService = class ProductsService {
             product.status !== client_1.ProductStatus.ACTIVE) {
             newStatus = client_1.ProductStatus.PENDING;
         }
-        const updated = await this.prisma.product.update({
-            where: { id: productId },
-            data: { ...dto, status: newStatus },
-            include: {
-                category: { select: { name: true, slug: true } },
-            },
+        const { priceTiers, ...updateData } = dto;
+        const updated = await this.prisma.$transaction(async (tx) => {
+            const result = await tx.product.update({
+                where: { id: productId },
+                data: { ...updateData, status: newStatus },
+                include: {
+                    category: { select: { name: true, slug: true } },
+                },
+            });
+            if (priceTiers !== undefined) {
+                await tx.priceTier.deleteMany({ where: { productId } });
+                if (priceTiers.length > 0 && updateData.pricingMode === 'TIERED') {
+                    await tx.priceTier.createMany({
+                        data: priceTiers.map((t) => ({
+                            productId,
+                            minQty: t.minQty,
+                            maxQty: t.maxQty || null,
+                            price: t.price,
+                        })),
+                    });
+                }
+            }
+            return result;
         });
         if (dto.name || dto.description) {
             this.translationService

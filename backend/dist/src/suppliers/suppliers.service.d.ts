@@ -27,9 +27,9 @@ export declare class SuppliersService {
             channels: {
                 createdAt: Date | null;
                 updatedAt: Date | null;
+                type: import("@prisma/client").$Enums.SaleChannelType;
                 supplierSlug: string;
                 url: string;
-                type: import("@prisma/client").$Enums.SaleChannelType;
             }[];
             manufacturerProfile: {
                 id: string;
@@ -94,17 +94,16 @@ export declare class SuppliersService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.ProductStatus;
-            supplierId: string;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -120,11 +119,13 @@ export declare class SuppliersService {
             productionCapacity: string | null;
             sku: string | null;
             specifications: Prisma.JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         })[];
         certifications: {
             id: string;
-            supplierId: string;
             name: string;
+            supplierId: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -146,9 +147,9 @@ export declare class SuppliersService {
         channels: {
             createdAt: Date | null;
             updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
             supplierSlug: string;
             url: string;
-            type: import("@prisma/client").$Enums.SaleChannelType;
         }[];
         manufacturerProfile: {
             id: string;
@@ -203,9 +204,9 @@ export declare class SuppliersService {
         channels: {
             createdAt: Date | null;
             updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
             supplierSlug: string;
             url: string;
-            type: import("@prisma/client").$Enums.SaleChannelType;
         }[];
     } & {
         id: string;
@@ -290,17 +291,16 @@ export declare class SuppliersService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.ProductStatus;
-            supplierId: string;
             name: string;
             nameEn: string | null;
             descriptionEn: string | null;
+            pricingMode: import("@prisma/client").$Enums.PricingMode;
             minPrice: number;
             maxPrice: number;
             currency: string;
             unit: string;
             moq: number;
             moqUnit: string;
-            categoryId: string;
             images: string[];
             rating: number;
             reviewCount: number;
@@ -316,11 +316,13 @@ export declare class SuppliersService {
             productionCapacity: string | null;
             sku: string | null;
             specifications: Prisma.JsonValue | null;
+            supplierId: string;
+            categoryId: string;
         })[];
         certifications: {
             id: string;
-            supplierId: string;
             name: string;
+            supplierId: string;
             issuedBy: string | null;
             issuedDate: Date | null;
             expiryDate: Date | null;
@@ -342,9 +344,9 @@ export declare class SuppliersService {
         channels: {
             createdAt: Date | null;
             updatedAt: Date | null;
+            type: import("@prisma/client").$Enums.SaleChannelType;
             supplierSlug: string;
             url: string;
-            type: import("@prisma/client").$Enums.SaleChannelType;
         }[];
         manufacturerProfile: {
             id: string;
@@ -390,8 +392,8 @@ export declare class SuppliersService {
         documentUrl?: string;
     }): Promise<{
         id: string;
-        supplierId: string;
         name: string;
+        supplierId: string;
         issuedBy: string | null;
         issuedDate: Date | null;
         expiryDate: Date | null;

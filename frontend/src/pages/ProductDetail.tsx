@@ -225,91 +225,110 @@ export function ProductDetail() {
               </div>
             </div>
 
-            {/* Price Tiers Card */}
-            <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
-              <h3 className="text-xs font-normal text-ink-subtle uppercase mb-3" style={{ letterSpacing: '0.32px' }}>
-                {t('product_moq_pricing')}
-              </h3>
+            {/* Pricing Card */}
+            {(() => {
+              const pricingMode = product.pricingMode;
+              const priceTiers = product.priceTiers;
 
-              {hasPricing ? (
-                <div className="grid grid-cols-3 gap-3">
-                  {/* Tier 1 */}
-                  <button
-                    type="button"
-                    onClick={() => setRfqQuantity(50)}
-                    className={cn(
-                      "p-3 border text-center transition-colors cursor-pointer",
-                      rfqQuantity < 100
-                        ? "border-2 border-primary bg-surface-1"
-                        : "border-hairline bg-canvas hover:border-ink-muted"
-                    )}
-                    style={{ borderRadius: 0 }}
+              // === CONTACT: Liên hệ để nhận báo giá ===
+              if (pricingMode === 'CONTACT') {
+                return (
+                  <div
+                    className="border-2 border-primary p-8 text-center"
+                    style={{
+                      borderRadius: 0,
+                      background: 'linear-gradient(135deg, rgba(31,56,100,0.06) 0%, rgba(31,56,100,0.12) 100%)',
+                    }}
                   >
-                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
-                      1 - 99 {product.unit || 'cái'}
+                    <div className="text-3xl font-semibold text-primary mb-3" style={{ letterSpacing: '-0.2px' }}>
+                      Liên hệ để nhận báo giá
                     </div>
-                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
-                      {(product.maxPrice || product.minPrice)?.toLocaleString()}
-                    </div>
-                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
-                      {product.currency || 'VND'}
-                    </div>
-                  </button>
+                    <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+                      Gửi yêu cầu báo giá hoặc liên hệ trực tiếp nhà cung cấp để được tư vấn giá tốt nhất.
+                    </p>
+                  </div>
+                );
+              }
 
-                  {/* Tier 2 */}
-                  <button
-                    type="button"
-                    onClick={() => setRfqQuantity(500)}
-                    className={cn(
-                      "p-3 border text-center transition-colors cursor-pointer",
-                      rfqQuantity >= 100 && rfqQuantity < 1000
-                        ? "border-2 border-primary bg-surface-1"
-                        : "border-hairline bg-canvas hover:border-ink-muted"
-                    )}
-                    style={{ borderRadius: 0 }}
-                  >
-                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
-                      100 - 999 {product.unit || 'cái'}
-                    </div>
-                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
-                      {Math.round((product.minPrice + (product.maxPrice || product.minPrice)) / 2)?.toLocaleString()}
-                    </div>
-                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
-                      {product.currency || 'VND'}
-                    </div>
-                  </button>
+              // === TIERED: Giá theo số lượng ===
+              if (pricingMode === 'TIERED' && priceTiers?.length > 0) {
+                const colCount = priceTiers.length;
+                return (
+                  <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
+                    <h3 className="text-xs font-semibold text-ink uppercase mb-4" style={{ letterSpacing: '0.5px' }}>
+                      {t('product_moq_pricing')}
+                    </h3>
+                    <div
+                      className="grid gap-3"
+                      style={{ gridTemplateColumns: `repeat(${Math.min(colCount, 4)}, 1fr)` }}
+                    >
+                      {priceTiers.map((tier: any, idx: number) => {
+                        const isLast = !tier.maxQty;
+                        const label = isLast
+                          ? `≥ ${tier.minQty.toLocaleString()} ${product.unit || 'cái'}`
+                          : `${tier.minQty.toLocaleString()} - ${tier.maxQty.toLocaleString()} ${product.unit || 'cái'}`;
+                        const inRange = isLast
+                          ? rfqQuantity >= tier.minQty
+                          : rfqQuantity >= tier.minQty && rfqQuantity <= tier.maxQty;
 
-                  {/* Tier 3 */}
-                  <button
-                    type="button"
-                    onClick={() => setRfqQuantity(1000)}
-                    className={cn(
-                      "p-3 border text-center transition-colors cursor-pointer",
-                      rfqQuantity >= 1000
-                        ? "border-2 border-primary bg-surface-1"
-                        : "border-hairline bg-canvas hover:border-ink-muted"
-                    )}
-                    style={{ borderRadius: 0 }}
-                  >
-                    <div className="text-[10px] font-normal text-ink-subtle mb-1" style={{ letterSpacing: '0.16px' }}>
-                      ≥ 1,000 {product.unit || 'cái'}
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setRfqQuantity(tier.minQty)}
+                            className={cn(
+                              "p-4 border text-center transition-all cursor-pointer",
+                              inRange
+                                ? "border-2 border-primary bg-primary/5 shadow-sm"
+                                : "border-hairline bg-canvas hover:border-primary/40 hover:bg-surface-1"
+                            )}
+                            style={{ borderRadius: 0 }}
+                          >
+                            <div className="text-[11px] font-medium text-ink-muted mb-2 uppercase" style={{ letterSpacing: '0.3px' }}>
+                              {label}
+                            </div>
+                            <div className={cn(
+                              "text-xl lg:text-2xl font-bold mb-1",
+                              inRange ? "text-primary" : "text-ink"
+                            )} style={{ letterSpacing: '-0.2px' }}>
+                              {tier.price.toLocaleString()}
+                            </div>
+                            <div className="text-[10px] font-medium text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
+                              {product.currency || 'VND'} / {product.unit || 'cái'}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
-                    <div className="text-sm lg:text-base font-normal text-primary" style={{ letterSpacing: '0.16px' }}>
+                  </div>
+                );
+              }
+
+              // === STANDARD / Legacy: Giá cố định ===
+              if (hasPricing) {
+                return (
+                  <div
+                    className="border border-hairline p-8 text-center"
+                    style={{
+                      borderRadius: 0,
+                      background: 'linear-gradient(180deg, rgba(31,56,100,0.03) 0%, rgba(31,56,100,0.08) 100%)',
+                    }}
+                  >
+                    <div className="text-[10px] font-semibold text-ink-muted uppercase tracking-widest mb-3">
+                      Đơn giá
+                    </div>
+                    <div className="text-4xl font-bold text-primary mb-2" style={{ letterSpacing: '-0.5px' }}>
                       {product.minPrice?.toLocaleString()}
                     </div>
-                    <div className="text-[9px] text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
-                      {product.currency || 'VND'}
+                    <div className="text-sm font-medium text-ink-muted" style={{ letterSpacing: '0.16px' }}>
+                      {product.currency || 'VND'} / {product.unit || 'cái'}
                     </div>
-                  </button>
-                </div>
-              ) : (
-                <div className="bg-surface-1 border border-hairline border-dashed p-6 text-center" style={{ borderRadius: 0 }}>
-                  <p className="text-xs text-ink-subtle font-normal" style={{ letterSpacing: '0.16px' }}>
-                    Chưa có bảng giá theo số lượng
-                  </p>
-                </div>
-              )}
-            </div>
+                  </div>
+                );
+              }
+
+              return null;
+            })()}
 
             {/* RFQ Form Card */}
             <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
