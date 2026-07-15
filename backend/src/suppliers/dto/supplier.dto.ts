@@ -9,7 +9,7 @@ export class UpdateSupplierDto {
   @IsString() @IsOptional() banner?: string;
   @IsEnum(BusinessType) @IsOptional() businessType?: BusinessType;
   @IsInt() @IsOptional() @Type(() => Number) yearEstablished?: number;
-  @IsString() @IsOptional() employeeCount?: string;
+  @IsString() @IsOptional() employee_count?: string;
   @IsString() @IsOptional() primaryLocation?: string;
   @IsString() @IsOptional() website?: string;
   @IsString() @IsOptional() taxCode?: string;

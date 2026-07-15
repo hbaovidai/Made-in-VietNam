@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, ShieldCheck, MessageSquare, ChevronRight, MapPin, Loader2, Building2, Clock, Package, Globe, Award, Factory, Users, Calendar, ExternalLink, Heart, Play, Check, Zap, Send } from 'lucide-react';
+import { Star, ShieldCheck, MessageSquare, ChevronRight, ChevronLeft, MapPin, Loader2, Building2, Clock, Package, Globe, Award, Factory, Users, Calendar, ExternalLink, Heart, Play, Check, Zap, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../utils/cn';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
@@ -68,7 +68,14 @@ export function ProductDetail() {
   const handleLocalRFQSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) { setAuthModalMessage('Vui lòng đăng nhập để gửi Yêu cầu Báo giá.'); setIsAuthModalOpen(true); return; }
-    navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}&quantity=${rfqQuantity}&message=${encodeURIComponent(rfqMessage)}`);
+    const params = new URLSearchParams({
+      productId: product.id,
+      productName: product.name,
+      quantity: String(rfqQuantity),
+      ...(product.category?.name && { category: product.category.name }),
+      ...(rfqMessage && { message: rfqMessage }),
+    });
+    navigate(`/rfq?${params.toString()}`);
   };
 
   const handleContact = () => {
@@ -85,10 +92,18 @@ export function ProductDetail() {
       return;
     }
 
+    let initialMessage = `Xin chào ${supplier.companyName}! 👋\nTôi muốn trao đổi về sản phẩm "${product.name}".`;
+    if (rfqQuantity !== 1000) {
+      initialMessage += `\n📦 Số lượng cần: ${rfqQuantity.toLocaleString()} ${product.unit || 'cái'}`;
+    }
+    if (rfqMessage.trim()) {
+      initialMessage += `\n📝 Yêu cầu: ${rfqMessage.trim()}`;
+    }
+
     window.dispatchEvent(new CustomEvent('open-trade-chat', {
       detail: {
         supplierUserId,
-        initialMessage: `Xin chào ${supplier.companyName}! 👋 Tôi muốn trao đổi về sản phẩm "${product.name}".`
+        initialMessage,
       }
     }));
   };
@@ -138,13 +153,34 @@ export function ProductDetail() {
         {/* Two-Column Grid: Left (50% lg:col-span-6), Right (50% lg:col-span-6) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* LEFT COLUMN: Gallery & Supplier Card */}
-          <div className="lg:col-span-6 space-y-6">
+          {/* LEFT COLUMN: Gallery */}
+          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-4 lg:self-start">
             
             {/* Gallery Card */}
-            <div className="bg-canvas border border-hairline p-5" style={{ borderRadius: 0 }}>
-              <div className="aspect-square bg-surface-1 overflow-hidden mb-4 relative group flex items-center justify-center" style={{ borderRadius: 0 }}>
+            <div className="p-0" style={{ borderRadius: 0 }}>
+              <div className="bg-surface-1 overflow-hidden mb-4 relative group flex items-center justify-center" style={{ borderRadius: 0, aspectRatio: '1/1', maxHeight: '520px' }}>
                 <img src={images[activeImage]} alt={product.name} className="max-h-full max-w-full object-contain" />
+
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setActiveImage(activeImage === 0 ? images.length - 1 : activeImage - 1)}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white border border-hairline flex items-center justify-center text-ink-muted hover:text-ink transition-all opacity-0 group-hover:opacity-100"
+                      style={{ borderRadius: 0 }}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={() => setActiveImage(activeImage === images.length - 1 ? 0 : activeImage + 1)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white border border-hairline flex items-center justify-center text-ink-muted hover:text-ink transition-all opacity-0 group-hover:opacity-100"
+                      style={{ borderRadius: 0 }}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
+
                 <button
                   onClick={handleToggleFavorite}
                   className={cn(
@@ -155,6 +191,13 @@ export function ProductDetail() {
                 >
                   <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
                 </button>
+
+                {/* Image Counter */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-[10px] font-medium px-2 py-0.5" style={{ borderRadius: 0 }}>
+                    {activeImage + 1} / {images.length}
+                  </div>
+                )}
               </div>
 
               {/* Thumbnails */}
@@ -179,16 +222,7 @@ export function ProductDetail() {
                             <span className="text-[10px] font-normal text-ink-subtle">Ảnh</span>
                           </div>
                         ) : (
-                          <>
                             <img src={img} alt="" className="w-full h-full object-cover" />
-                            {idx === 1 && (
-                              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                                <div className="w-8 h-8 bg-surface-1/90 flex items-center justify-center" style={{ borderRadius: 0 }}>
-                                  <Play size={14} className="text-ink fill-ink ml-0.5" />
-                                </div>
-                              </div>
-                            )}
-                          </>
                         )}
                       </button>
                     );
@@ -200,7 +234,7 @@ export function ProductDetail() {
           </div>
 
           {/* RIGHT COLUMN: Product Info, Price Tiers, RFQ Form */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-7 space-y-6">
             
             {/* Product Info — no card, sits on background */}
             <div className="mb-6">
@@ -332,7 +366,7 @@ export function ProductDetail() {
 
             {/* RFQ Form Card */}
             <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
-              <h3 className="text-base font-normal text-ink mb-4" style={{ letterSpacing: '0.16px' }}>
+              <h3 className="text-lg font-semibold text-ink mb-4" style={{ letterSpacing: '0.16px' }}>
                 {t('create_rfq')}
               </h3>
               <form onSubmit={handleLocalRFQSubmit} className="space-y-4">

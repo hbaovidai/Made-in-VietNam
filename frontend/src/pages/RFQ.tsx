@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Send, Info, CheckCircle2, ShieldCheck, Zap, Clock, MessageSquare, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
@@ -28,6 +28,8 @@ export function RFQ() {
     contactPhone: user?.phone || '',
   });
 
+  const [searchParams] = useSearchParams();
+
   React.useEffect(() => {
     if (user) {
       setFormData(prev => ({
@@ -38,6 +40,24 @@ export function RFQ() {
       }));
     }
   }, [user]);
+
+  // Pre-fill from URL params (from ProductDetail RFQ mini-form)
+  React.useEffect(() => {
+    const productName = searchParams.get('productName');
+    const quantity = searchParams.get('quantity');
+    const message = searchParams.get('message');
+    const category = searchParams.get('category');
+
+    if (productName || quantity || message || category) {
+      setFormData(prev => ({
+        ...prev,
+        ...(productName && { productName }),
+        ...(quantity && { quantity }),
+        ...(message && { description: message }),
+        ...(category && { category }),
+      }));
+    }
+  }, [searchParams]);
 
   React.useEffect(() => {
     api.get('/products?limit=100')

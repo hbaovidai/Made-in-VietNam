@@ -20,7 +20,7 @@ export function SupplierProfile() {
   const [loading, setLoading] = useState(true);
 
   // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', industries: [] as string[], markets: [] as string[] });
+  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', yearEstablished: '', employee_count: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -67,6 +67,8 @@ export function SupplierProfile() {
           companyEmail: s.companyEmail || '',
           companyPhone: s.companyPhone || '',
           legalRepName: s.legalRepName || '',
+          yearEstablished: s.yearEstablished ? String(s.yearEstablished) : '',
+          employee_count: s.employee_count || '',
           industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
           markets: s.markets ? s.markets.map((m: any) => m.market) : [],
         });
@@ -221,6 +223,10 @@ export function SupplierProfile() {
         } else if (value !== '') {
           payload[key] = value;
         }
+      }
+      // Convert yearEstablished to number for backend validation
+      if (payload.yearEstablished) {
+        payload.yearEstablished = parseInt(payload.yearEstablished, 10);
       }
       const res = await api.put(`/suppliers/${supplierId}`, payload);
       setSupplier(res.data);
@@ -614,6 +620,36 @@ export function SupplierProfile() {
                 value={editForm.companyPhone} 
                 onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} 
               />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Năm thành lập</label>
+              <input 
+                type="number" 
+                min="1900"
+                max={new Date().getFullYear()}
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                placeholder="VD: 2010"
+                value={editForm.yearEstablished} 
+                onChange={(e) => setEditForm({...editForm, yearEstablished: e.target.value})} 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Tổng nhân sự</label>
+              <select 
+                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                value={editForm.employee_count} 
+                onChange={(e) => setEditForm({...editForm, employee_count: e.target.value})}
+              >
+                <option value="">-- Chọn --</option>
+                <option value="1-10">1 - 10 người</option>
+                <option value="11-50">11 - 50 người</option>
+                <option value="51-200">51 - 200 người</option>
+                <option value="201-500">201 - 500 người</option>
+                <option value="501-1000">501 - 1,000 người</option>
+                <option value="1000+">Trên 1,000 người</option>
+              </select>
             </div>
             <div className="space-y-2 col-span-2">
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>

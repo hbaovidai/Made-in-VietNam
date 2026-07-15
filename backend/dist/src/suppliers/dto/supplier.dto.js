@@ -20,7 +20,7 @@ class UpdateSupplierDto {
     banner;
     businessType;
     yearEstablished;
-    employeeCount;
+    employee_count;
     primaryLocation;
     website;
     taxCode;
@@ -70,7 +70,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateSupplierDto.prototype, "employeeCount", void 0);
+], UpdateSupplierDto.prototype, "employee_count", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

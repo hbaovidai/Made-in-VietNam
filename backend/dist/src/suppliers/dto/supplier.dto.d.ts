@@ -6,7 +6,7 @@ export declare class UpdateSupplierDto {
     banner?: string;
     businessType?: BusinessType;
     yearEstablished?: number;
-    employeeCount?: string;
+    employee_count?: string;
     primaryLocation?: string;
     website?: string;
     taxCode?: string;
