@@ -152,7 +152,8 @@
 }
 .wp-sidebar-item:hover { color: #72aee6; background: var(--wp-sidebar-hover); }
 .wp-sidebar-item.active {
-  color: #fff; background: var(--wp-accent);
+  color: var(--wp-sidebar) !important; background: #fff !important;
+  font-weight: 600;
 }
 .wp-sidebar-item-label { flex: 1; text-align: left; }
 .wp-sidebar-item-badge {
@@ -173,17 +174,27 @@
   color: #8c8f94; margin-left: auto;
 }
 .wp-menu-arrow.open { transform: rotate(180deg); }
-.wp-menu-group.active > .wp-menu-parent { color: #fff; background: var(--wp-accent); }
+.wp-menu-group.active > .wp-menu-parent {
+  color: var(--wp-sidebar) !important; background: #fff !important;
+  font-weight: 600;
+}
+.wp-menu-group.active > .wp-menu-parent .wp-menu-arrow {
+  color: var(--wp-sidebar) !important;
+}
 .wp-submenu {
   background: rgba(0,0,0,.15); padding: 4px 0;
 }
 .wp-submenu-item {
-  display: block; padding: 4px 12px 4px 40px;
+  display: block; padding: 6px 12px 6px 40px;
   color: #c3c4c7; font-size: 12px; text-decoration: none;
-  transition: color .12s;
+  transition: all .12s;
 }
 .wp-submenu-item:hover { color: #72aee6; }
-.wp-submenu-item.active { color: #fff; font-weight: 600; }
+.wp-submenu-item.active {
+  color: var(--wp-sidebar) !important;
+  background: #fff !important;
+  font-weight: 600;
+}
 
 /* Profile dropdown item */
 .wp-admin-profile-item {

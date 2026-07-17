@@ -31,6 +31,7 @@ export function ProductDetail() {
   const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({});
   const [rfqQuantity, setRfqQuantity] = useState(1000);
   const [rfqMessage, setRfqMessage] = useState('');
+  const [selectedTierIdx, setSelectedTierIdx] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -301,18 +302,19 @@ export function ProductDetail() {
                         const label = isLast
                           ? `≥ ${tier.minQty.toLocaleString()} ${product.unit || 'cái'}`
                           : `${tier.minQty.toLocaleString()} - ${tier.maxQty.toLocaleString()} ${product.unit || 'cái'}`;
-                        const inRange = isLast
-                          ? rfqQuantity >= tier.minQty
-                          : rfqQuantity >= tier.minQty && rfqQuantity <= tier.maxQty;
+                        const isSelected = selectedTierIdx === idx;
 
                         return (
                           <button
                             key={idx}
                             type="button"
-                            onClick={() => setRfqQuantity(tier.minQty)}
+                            onClick={() => {
+                              setSelectedTierIdx(idx);
+                              setRfqQuantity(tier.minQty);
+                            }}
                             className={cn(
                               "p-4 border text-center transition-all cursor-pointer",
-                              inRange
+                              isSelected
                                 ? "border-2 border-primary bg-primary/5 shadow-sm"
                                 : "border-hairline bg-canvas hover:border-primary/40 hover:bg-surface-1"
                             )}
@@ -323,7 +325,7 @@ export function ProductDetail() {
                             </div>
                             <div className={cn(
                               "text-xl lg:text-2xl font-bold mb-1",
-                              inRange ? "text-primary" : "text-ink"
+                              isSelected ? "text-primary" : "text-ink"
                             )} style={{ letterSpacing: '-0.2px' }}>
                               {tier.price.toLocaleString()}
                             </div>
@@ -603,15 +605,23 @@ export function ProductDetail() {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.slice(0, 5).map((rp: any) => {
                 const rpImage = rp.images?.[0] || rp.image || 'https://via.placeholder.com/300';
-                const rpPrice = (() => {
-                  if (rp.minPrice != null && rp.maxPrice != null && rp.minPrice !== rp.maxPrice) {
-                    return `${rp.minPrice.toLocaleString('vi-VN')} - ${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
+                const rpPriceInfo = (() => {
+                  if (rp.pricingMode === 'CONTACT') return { label: 'Liên hệ để báo giá', type: 'contact' };
+                  if (rp.pricingMode === 'TIERED' && rp.priceTiers?.length > 0) {
+                    const prices = rp.priceTiers.map((t: any) => t.price).filter(Boolean);
+                    const min = Math.min(...prices);
+                    const max = Math.max(...prices);
+                    const c = rp.currency || 'VND';
+                    return { label: min === max ? `${min.toLocaleString('vi-VN')} ${c}` : `${min.toLocaleString('vi-VN')} - ${max.toLocaleString('vi-VN')} ${c}`, type: 'tiered' };
                   }
-                  if (rp.minPrice != null) return `${rp.minPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
-                  if (rp.maxPrice != null) return `${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`;
-                  return rp.priceRange || 'Liên hệ';
+                  if (rp.minPrice != null && rp.maxPrice != null && rp.minPrice !== rp.maxPrice) {
+                    return { label: `${rp.minPrice.toLocaleString('vi-VN')} - ${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`, type: 'fixed' };
+                  }
+                  if (rp.minPrice != null) return { label: `${rp.minPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`, type: 'fixed' };
+                  if (rp.maxPrice != null) return { label: `${rp.maxPrice.toLocaleString('vi-VN')} ${rp.currency || 'VND'}`, type: 'fixed' };
+                  return { label: 'Liên hệ để báo giá', type: 'contact' };
                 })();
-                const rpMoq = rp.moq ? `${rp.moq.toLocaleString('vi-VN')} ${rp.moqUnit || rp.unit || 'cái'}` : null;
+                const rpMoq = rp.moq ? `${rp.moq.toLocaleString('vi-VN')} ${rp.moqUnit || rp.unit || 'cái'}` : `1 ${rp.unit || 'cái'}`;
                 const rpSupplier = rp.supplier?.companyName || '';
 
                 return (
@@ -621,8 +631,8 @@ export function ProductDetail() {
                     className="group bg-canvas border border-hairline overflow-hidden hover:border-primary transition-colors duration-300 flex flex-col h-full"
                     style={{ borderRadius: 0 }}
                   >
-                    {/* Image — 60% height */}
-                    <div className="relative aspect-[4/3] overflow-hidden bg-surface-1">
+                    {/* Image — square */}
+                    <div className="relative aspect-square overflow-hidden bg-surface-1">
                       <img
                         src={rpImage}
                         alt={rp.name}
@@ -630,33 +640,39 @@ export function ProductDetail() {
                       />
                     </div>
 
-                    {/* Info */}
+                    {/* Content — flex column with pinned bottom */}
                     <div className="p-3.5 flex flex-col flex-1">
-                      {/* Product Name — bold, 2 lines max */}
-                      <h3 className="text-sm font-normal text-ink line-clamp-2 leading-snug mb-2" style={{ letterSpacing: '0.16px' }}>
+                      {/* Title zone — fixed min-height for 2 lines */}
+                      <h3 className="text-sm font-normal text-ink line-clamp-2 leading-snug min-h-[2.5em]" style={{ letterSpacing: '0.16px' }}>
                         {rp.name}
                       </h3>
 
-                      {/* Price — prominent, dark blue */}
-                      <p className="text-base font-normal text-primary mb-1" style={{ letterSpacing: '0.16px' }}>
-                        {rpPrice}
-                      </p>
+                      {/* Spacer pushes bottom zone down */}
+                      <div className="flex-1" />
 
-                      {/* MOQ */}
-                      {rpMoq && (
-                        <p className="text-xs text-ink-muted mb-auto" style={{ letterSpacing: '0.16px' }}>
-                          MOQ: <span className="font-normal text-ink">{rpMoq}</span>
-                        </p>
-                      )}
-
-                      {/* Supplier — with separator */}
-                      {rpSupplier && (
-                        <div className="mt-3 pt-2.5 border-t border-hairline">
-                          <p className="text-[11px] text-ink-subtle truncate" style={{ letterSpacing: '0.16px' }}>
-                            Nhà cung cấp: <span className="font-normal text-ink-muted">{rpSupplier}</span>
+                      {/* Bottom zone — pinned: price, MOQ, supplier */}
+                      <div className="mt-2">
+                        {/* Price — gray frame */}
+                        <div className="bg-slate-50 px-3 py-2.5 mb-2" style={{ borderRadius: 4 }}>
+                          <p className="text-sm font-semibold leading-tight text-primary" style={{ letterSpacing: '0.16px' }}>
+                            {rpPriceInfo.label}
                           </p>
                         </div>
-                      )}
+
+                        {/* MOQ */}
+                        <p className="text-xs text-ink-muted mb-2" style={{ letterSpacing: '0.16px' }}>
+                          MOQ: <span className="font-normal text-ink">{rpMoq}</span>
+                        </p>
+
+                        {/* Supplier — with separator */}
+                        {rpSupplier && (
+                          <div className="pt-2.5 border-t border-hairline">
+                            <p className="text-[11px] text-ink-subtle line-clamp-2" style={{ letterSpacing: '0.16px' }}>
+                              Nhà cung cấp: <span className="font-normal text-ink-muted">{rpSupplier}</span>
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 );

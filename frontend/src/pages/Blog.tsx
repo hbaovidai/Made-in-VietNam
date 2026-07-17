@@ -99,81 +99,83 @@ export function Blog() {
 
       <BreadcrumbBar items={[{ label: t('blog') }]} />
 
-      {/* ─── Hero Section ─── */}
-      <section className="bg-white border-b border-slate-200 py-12 md:py-16">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <span className="text-xs font-bold text-primary tracking-widest uppercase mb-3 block">
-            {isVi ? "CỔNG THÔNG TIN & INSIGHTS" : "VIEPRODUCT INSIGHTS"}
-          </span>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-            {displayTitle}
-          </h1>
-          <p className="text-slate-500 max-w-xl mx-auto text-sm md:text-base mb-8 leading-relaxed">
-            {displaySubtitle}
-          </p>
+      {/* ─── Header: 2-column layout on plain background ─── */}
+      <section className="px-6 sm:px-10 lg:px-16 py-8 border-b border-slate-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
+          {/* Left Column: Title + Description */}
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+              VIE Share
+            </h1>
+            <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+              {displaySubtitle}
+            </p>
+          </div>
 
-          {/* Search bar (conditional based on settings) */}
-          {settings.showSearch && (
-            <div className="max-w-md mx-auto relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4.5 h-4.5" />
-              <input
-                type="text"
-                placeholder={isVi ? "Tìm kiếm bài viết..." : "Search articles..."}
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all"
-              />
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+          {/* Right Column: Search + Category Tags */}
+          <div className="flex flex-col gap-4">
+            {/* Search bar */}
+            {settings.showSearch && (
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder={isVi ? "Tìm kiếm bài viết..." : "Search articles..."}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  style={{ borderRadius: 8 }}
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Category Tags */}
+            {settings.showCategories && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => setActiveCategory('all')}
+                  className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                    activeCategory === 'all'
+                      ? 'bg-primary text-white border-primary shadow-sm' 
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:text-slate-900'
+                  }`}
+                  style={{ borderRadius: 999 }}
                 >
-                  <X className="w-3.5 h-3.5" />
+                  {isVi ? "Tất cả" : "All"}
                 </button>
-              )}
-            </div>
-          )}
+                {categories.map(cat => {
+                  const active = activeCategory === cat.key;
+                  return (
+                    <button
+                      key={cat.key}
+                      onClick={() => setActiveCategory(cat.key)}
+                      className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        active 
+                          ? 'bg-primary text-white border-primary shadow-sm' 
+                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:text-slate-900'
+                      }`}
+                      style={{ borderRadius: 999 }}
+                    >
+                      {isVi ? cat.vi : cat.en}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* ─── Category Filter Navigation (conditional) ─── */}
-      {settings.showCategories && (
-        <section className="sticky top-[110px] md:top-[122px] z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs py-3.5">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap">
-              <button
-                onClick={() => setActiveCategory('all')}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  activeCategory === 'all'
-                    ? 'bg-primary text-white shadow-sm shadow-primary/25' 
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'
-                }`}
-              >
-                {isVi ? "Tất cả" : "All"}
-              </button>
-              {categories.map(cat => {
-                const active = activeCategory === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    onClick={() => setActiveCategory(cat.key)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      active 
-                        ? 'bg-primary text-white shadow-sm shadow-primary/25' 
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'
-                    }`}
-                  >
-                    {isVi ? cat.vi : cat.en}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ─── Blog Listing Section ─── */}
-      <main className="max-w-6xl mx-auto px-4 mt-10">
+      <main className="px-6 sm:px-10 lg:px-16 mt-10">
         {filteredPosts.length === 0 ? (
           <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl p-8 max-w-md mx-auto">
             <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
@@ -197,7 +199,7 @@ export function Blog() {
             {/* Card Grid Layout or List Layout */}
             <div className={settings.layout === 'list' 
               ? "flex flex-col gap-6" 
-              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
             }>
               {displayedPosts.map(post => {
                 const categoryObj = categories.find(c => c.key === post.category);
@@ -295,7 +297,7 @@ export function Blog() {
           <div className="absolute inset-0" onClick={() => setSelectedPost(null)} />
 
           {/* Modal Panel */}
-          <div className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-y-auto flex flex-col animate-modal-content z-10">
+          <div className="relative w-full max-w-6xl max-h-[95vh] bg-white shadow-2xl overflow-y-auto flex flex-col animate-modal-content z-10" style={{ borderRadius: 0 }}>
             {/* Header Sticky Info */}
             <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between z-20">
               <div className="flex items-center gap-2">
@@ -340,7 +342,7 @@ export function Blog() {
               </div>
 
               {/* Large Image */}
-              <div className="aspect-video w-full rounded-xl overflow-hidden mb-6 bg-slate-50 border border-slate-100">
+              <div className="aspect-video w-full overflow-hidden mb-6 bg-slate-50 border border-slate-100" style={{ borderRadius: 0 }}>
                 <img 
                   src={selectedPost.image || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80'} 
                   alt={isVi ? selectedPost.title.vi : selectedPost.title.en} 

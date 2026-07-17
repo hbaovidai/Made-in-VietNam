@@ -23,6 +23,8 @@ export function Header() {
   const [notifications, setNotifications] = React.useState<any[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [cartCount, setCartCount] = React.useState(0);
+  const [isSubnavVisible, setIsSubnavVisible] = React.useState(true);
+  const lastScrollY = React.useRef(0);
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -102,6 +104,61 @@ export function Header() {
     setIsMenuOpen(false);
     setIsMobileSearchOpen(false);
   }, [location.pathname]);
+
+  // Detect scroll direction to hide/show subnav
+  const isTransitioning = React.useRef(false);
+
+  React.useEffect(() => {
+    const SCROLL_THRESHOLD = 15;
+    let timeoutId: any;
+
+    const handleScroll = () => {
+      if (isTransitioning.current) return;
+
+      const currentY = window.scrollY;
+      const diff = currentY - lastScrollY.current;
+
+      if (Math.abs(diff) < SCROLL_THRESHOLD) return;
+
+      if (diff > 0 && currentY > 120) {
+        // Scrolling DOWN past 120px
+        setIsSubnavVisible((visible) => {
+          if (visible) {
+            document.documentElement.style.setProperty('--subnav-h', '0px');
+            isTransitioning.current = true;
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+              isTransitioning.current = false;
+            }, 350);
+            return false;
+          }
+          return visible;
+        });
+      } else if (diff < 0) {
+        // Scrolling UP
+        setIsSubnavVisible((visible) => {
+          if (!visible) {
+            document.documentElement.style.setProperty('--subnav-h', '40px');
+            isTransitioning.current = true;
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+              isTransitioning.current = false;
+            }, 350);
+            return true;
+          }
+          return visible;
+        });
+      }
+      lastScrollY.current = currentY;
+    };
+
+    document.documentElement.style.setProperty('--subnav-h', '40px');
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   // Lock body scroll when mobile menu is open
   React.useEffect(() => {
@@ -225,7 +282,7 @@ export function Header() {
 
           {/* ═══ Desktop Search Bar ═══ */}
           <div className="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl ml-4">
-            <form onSubmit={handleSearch} className="flex items-center w-full h-11 rounded-full border border-slate-200 bg-[#f8fafc] overflow-hidden transition-all focus-within:border-slate-300 focus-within:bg-white focus-within:shadow-sm">
+            <form onSubmit={handleSearch} className="flex items-center w-full h-11 rounded-full border-2 border-primary bg-[#f8fafc] overflow-hidden transition-all focus-within:bg-white focus-within:shadow-sm">
               <button type="submit" className="shrink-0 pl-4 pr-2 h-full flex items-center bg-transparent border-none outline-none cursor-pointer">
                 <Search size={18} className="text-slate-400" strokeWidth={2} />
               </button>
@@ -404,7 +461,14 @@ export function Header() {
       )}
 
       {/* ═══ Desktop Sub Navigation Bar ═══ */}
-      <div className="border-t border-b border-slate-200 bg-white hidden md:block">
+      <div
+        className="border-t border-slate-200 bg-white hidden md:block transition-all duration-300 ease-in-out"
+        style={{
+          maxHeight: isSubnavVisible ? 44 : 0,
+          overflow: 'hidden',
+          borderBottom: isSubnavVisible ? '1px solid #e2e8f0' : 'none',
+        }}
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-10">
           <div className="flex items-center h-full">
             <div

@@ -35,7 +35,7 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-4 py-3 bg-surface-1 border outline-none text-left text-sm text-ink transition-all select-none ${
+        className={`w-full flex items-center justify-between px-3 py-1.5 bg-surface-1 border outline-none text-left text-xs text-ink transition-all select-none ${
           isOpen ? 'border-primary' : 'border-hairline'
         }`}
         style={{ borderRadius: 0 }}
@@ -44,9 +44,9 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
           {selectedOption ? selectedOption.label : placeholder || 'Select option'}
         </span>
         {isOpen ? (
-          <ChevronUp size={16} className="text-ink-muted shrink-0 ml-2" />
+          <ChevronUp size={14} className="text-ink-muted shrink-0 ml-1.5" />
         ) : (
-          <ChevronDown size={16} className="text-ink-muted shrink-0 ml-2" />
+          <ChevronDown size={14} className="text-ink-muted shrink-0 ml-1.5" />
         )}
       </button>
 
@@ -64,7 +64,7 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
                   onChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`px-4 py-2.5 text-sm cursor-pointer select-none transition-colors ${
+                className={`px-3 py-1 text-xs cursor-pointer select-none transition-colors ${
                   isSelected 
                     ? 'bg-surface-2 text-ink font-normal' 
                     : 'text-ink-muted hover:bg-surface-1'

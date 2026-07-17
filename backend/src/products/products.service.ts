@@ -21,7 +21,7 @@ export class ProductsService {
     private translationService: TranslationService,
   ) {}
 
-  async findAll(query: ProductQueryDto) {
+  async findAll(query: ProductQueryDto, isAdmin: boolean = false) {
     const {
       search,
       category,
@@ -35,10 +35,13 @@ export class ProductsService {
 
     const where: Prisma.ProductWhereInput = {};
 
-    // Nếu có truyền status (do admin filter) thì lấy status đó, ngược lại mặc định chỉ lấy ACTIVE cho public view
+    // Nếu có truyền status (do admin filter) thì lấy status đó.
+    // Nếu không truyền status:
+    // - Đối với Admin (isAdmin = true): Lấy tất cả các trạng thái (không set where.status)
+    // - Đối với Public (isAdmin = false): Chỉ lấy ACTIVE
     if (status) {
       where.status = status;
-    } else {
+    } else if (!isAdmin) {
       where.status = 'ACTIVE';
     }
 
@@ -122,6 +125,16 @@ export class ProductsService {
               },
               industries: { select: { industry: true } },
               markets: { select: { market: true } },
+              certifications: {
+                select: {
+                  id: true,
+                  name: true,
+                  issuedBy: true,
+                  issuedDate: true,
+                  expiryDate: true,
+                  documentUrl: true,
+                }
+              },
             },
           },
           priceTiers: { orderBy: { minQty: 'asc' } },
@@ -148,6 +161,16 @@ export class ProductsService {
               },
               industries: { select: { industry: true } },
               markets: { select: { market: true } },
+              certifications: {
+                select: {
+                  id: true,
+                  name: true,
+                  issuedBy: true,
+                  issuedDate: true,
+                  expiryDate: true,
+                  documentUrl: true,
+                }
+              },
             },
           },
           priceTiers: { orderBy: { minQty: 'asc' } },
@@ -379,7 +402,7 @@ export class ProductsService {
   }
 
   // Admin Duyệt sản phẩm
-  async verifyProduct(productId: string, status: 'ACTIVE' | 'REJECTED') {
+  async verifyProduct(productId: string, status: 'ACTIVE' | 'REJECTED', reason?: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
       include: { supplier: { select: { userId: true, companyName: true } } },
@@ -399,7 +422,7 @@ export class ProductsService {
         title: isApproved ? 'Product Approved' : 'Product Rejected',
         message: isApproved
           ? `Your product "${product.name}" has been approved and is now live on the marketplace.`
-          : `Your product "${product.name}" has been rejected by admin. Please review and resubmit.`,
+          : `Your product "${product.name}" has been rejected by admin. Reason: ${reason || 'No reason specified'}. Please review and resubmit.`,
         type: isApproved ? 'success' : 'warning',
         link: '/dashboard/supplier/products',
       });

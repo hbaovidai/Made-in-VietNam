@@ -24,6 +24,7 @@ import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { useLocalized } from '../hooks/useLocalized';
 import { SearchHeader } from '../components/SearchHeader';
+import { CustomSelect } from '../components/CustomSelect';
 
 
 const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
@@ -155,9 +156,7 @@ export function SearchResults() {
     setSearchParams(newParams);
   };
 
-  // Handler for sort dropdown change
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleSortChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', '1');
 
@@ -291,19 +290,17 @@ export function SearchResults() {
                 />
               </form>
               
-              <div className="relative sm:w-56">
-                <select
+              <div className="sm:w-56">
+                <CustomSelect
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : (searchParams.get('sortBy') === 'createdAt' ? 'newest' : 'default')}
                   onChange={handleSortChange}
-                  className="w-full pl-4 pr-10 py-2.5 bg-surface-1 border border-hairline text-sm text-ink outline-none focus:border-b-2 focus:border-b-primary transition-all cursor-pointer appearance-none"
-                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                >
-                  <option value="default">{t('search_sort_default')}</option>
-                  <option value="price-asc">{t('search_price_asc')}</option>
-                  <option value="price-desc">{t('search_price_desc')}</option>
-                  <option value="newest">{t('search_newest')}</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none" size={16} />
+                  options={[
+                    { value: 'default', label: t('search_sort_default') },
+                    { value: 'price-asc', label: t('search_price_asc') },
+                    { value: 'price-desc', label: t('search_price_desc') },
+                    { value: 'newest', label: t('search_newest') },
+                  ]}
+                />
               </div>
             </div>
 

@@ -40,7 +40,7 @@ export class ProductsController {
   @Roles('ADMIN')
   @Get('admin')
   findAllForAdmin(@Query() query: ProductQueryDto) {
-    return this.productsService.findAll(query);
+    return this.productsService.findAll(query, true);
   }
 
   // PROTECTED: Lấy toàn bộ sản phẩm của chính Supplier (bao gồm PENDING, REJECTED)
@@ -132,7 +132,8 @@ export class ProductsController {
   verifyProduct(
     @Param('id') id: string,
     @Body('status') status: 'ACTIVE' | 'REJECTED',
+    @Body('reason') reason?: string,
   ) {
-    return this.productsService.verifyProduct(id, status);
+    return this.productsService.verifyProduct(id, status, reason);
   }
 }

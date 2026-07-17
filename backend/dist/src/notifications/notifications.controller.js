@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const notifications_service_1 = require("./notifications.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let NotificationsController = class NotificationsController {
     notificationsService;
     constructor(notificationsService) {
@@ -36,6 +38,10 @@ let NotificationsController = class NotificationsController {
     async markAsRead(id, userId) {
         await this.notificationsService.markAsRead(id, userId);
         return { success: true };
+    }
+    async broadcastNotification(body) {
+        await this.notificationsService.broadcast(body);
+        return { success: true, message: 'Đã phát thông báo toàn hệ thống.' };
     }
 };
 exports.NotificationsController = NotificationsController;
@@ -68,6 +74,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], NotificationsController.prototype, "markAsRead", null);
+__decorate([
+    (0, common_1.Post)('broadcast'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], NotificationsController.prototype, "broadcastNotification", null);
 exports.NotificationsController = NotificationsController = __decorate([
     (0, common_1.Controller)('notifications'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

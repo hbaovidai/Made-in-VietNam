@@ -163,293 +163,294 @@ export function RFQ() {
   }
 
   return (
-    <div className="bg-canvas min-h-screen pb-24">
+    <div className="bg-slate-50 min-h-screen pb-24">
       <BreadcrumbBar items={[{ label: t('rfq_title') }]} />
 
-      {/* Header */}
-      <div className="pt-16 pb-8">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-8 flex flex-col items-center text-center">
-          <h1 className="text-3xl md:text-4xl font-light text-ink uppercase" style={{ letterSpacing: '0.16px' }}>
-            {t('rfq_title')}
-          </h1>
-          <p className="text-ink-subtle text-sm md:text-base max-w-xl mt-3 font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
-            {t('rfq_desc')}
-          </p>
-        </div>
-      </div>
+      <div className="max-w-[1600px] mx-auto px-6 lg:px-8 pt-8 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Cột trái: Header & Form */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-light text-ink uppercase" style={{ letterSpacing: '0.16px' }}>
+                {t('rfq_title')}
+              </h1>
+              <p className="text-ink-subtle text-sm mt-2 font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
+                {t('rfq_desc')}
+              </p>
+            </div>
 
-      <div className="max-w-[800px] mx-auto px-6 pb-24 space-y-12">
-        <div>
-          <form onSubmit={handleSubmit} className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
-            <div className="p-8 md:p-12 space-y-12">
-              
-              {/* SECTION 1: Product Info */}
-              <section className="space-y-6">
-                <div className="border-l-2 border-primary pl-3">
-                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_product_info')}</h2>
-                </div>
+            <form onSubmit={handleSubmit} className="bg-canvas border border-hairline overflow-hidden" style={{ borderRadius: 0 }}>
+              <div className="p-6 md:p-8 space-y-8">
                 
-                {errorMsg && (
-                  <div className="p-4 bg-surface-1 text-red-600 text-sm border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
-                    <AlertCircle size={16} className="mr-2 shrink-0" /> {errorMsg}
-                  </div>
-                )}
-
-                <div className="space-y-6">
-                  {/* Product Name (Full width) */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_product_name')}</label>
-                    <input 
-                      type="text"
-                      required
-                      list="product-suggestions"
-                      name="productName"
-                      value={formData.productName}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_product_name')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                    <datalist id="product-suggestions">
-                       {products
-                         .filter(p => !formData.category || formData.category === 'General' || p.category?.name === formData.category)
-                         .map(p => (
-                           <option key={p.id} value={p.name} />
-                       ))}
-                    </datalist>
+                {/* SECTION 1: Product Info */}
+                <section className="space-y-4">
+                  <div className="border-l-2 border-primary pl-3">
+                    <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_product_info')}</h2>
                   </div>
                   
-                  {/* Category Selection */}
+                  {errorMsg && (
+                    <div className="p-4 bg-surface-1 text-red-600 text-sm border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}>
+                      <AlertCircle size={16} className="mr-2 shrink-0" /> {errorMsg}
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    {/* Product Name (Full width) */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_product_name')}</label>
+                      <input 
+                        type="text"
+                        required
+                        list="product-suggestions"
+                        name="productName"
+                        value={formData.productName}
+                        onChange={handleChange}
+                        placeholder={t('rfq_placeholder_product_name')}
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
+                      />
+                      <datalist id="product-suggestions">
+                         {products
+                           .filter(p => !formData.category || formData.category === 'General' || p.category?.name === formData.category)
+                           .map(p => (
+                             <option key={p.id} value={p.name} />
+                         ))}
+                      </datalist>
+                    </div>
+                    
+                    {/* Category Selection */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_category')}</label>
+                      <CustomSelect
+                        options={categoryOptions}
+                        value={formData.category}
+                        onChange={(val) => handleSelectChange('category', val)}
+                        placeholder={t('rfq_placeholder_category')}
+                      />
+                    </div>
+
+                    {/* Quantity & Unit (Grid 2 columns) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('quantity_label')}</label>
+                        <input
+                          required
+                          name="quantity"
+                          value={formData.quantity}
+                          onChange={handleChange}
+                          type="number"
+                          min="1"
+                          placeholder={t('rfq_placeholder_quantity')}
+                          className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_quantity_unit')}</label>
+                        <CustomSelect
+                          options={unitOptions}
+                          value={formData.quantityUnit}
+                          onChange={(val) => handleSelectChange('quantityUnit', val)}
+                          placeholder="Select Unit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECTION 2: Tech Requirements */}
+                <section className="space-y-4">
+                  <div className="border-l-2 border-primary pl-3">
+                    <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_tech_requirements')}</h2>
+                  </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_category')}</label>
-                    <CustomSelect
-                      options={categoryOptions}
-                      value={formData.category}
-                      onChange={(val) => handleSelectChange('category', val)}
-                      placeholder={t('rfq_placeholder_category')}
+                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_description')}</label>
+                    <textarea
+                      required
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows={6}
+                      placeholder={t('rfq_placeholder_description')}
+                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink resize-none leading-relaxed placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                     />
                   </div>
+                </section>
 
-                  {/* Quantity & Unit (Grid 2 columns) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* SECTION 3: Commercial Requirements */}
+                <section className="space-y-4">
+                  <div className="border-l-2 border-primary pl-3">
+                    <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_commercial')}</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('quantity_label')}</label>
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_budget')}</label>
                       <input
-                        required
-                        name="quantity"
-                        value={formData.quantity}
+                        type="text"
+                        name="budget"
+                        value={formData.budget}
                         onChange={handleChange}
-                        type="number"
-                        min="1"
-                        placeholder={t('rfq_placeholder_quantity')}
+                        placeholder={t('rfq_placeholder_budget')}
                         className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_quantity_unit')}</label>
-                      <CustomSelect
-                        options={unitOptions}
-                        value={formData.quantityUnit}
-                        onChange={(val) => handleSelectChange('quantityUnit', val)}
-                        placeholder="Select Unit"
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_destination')}</label>
+                      <input
+                        required
+                        type="text"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleChange}
+                        placeholder={t('rfq_placeholder_destination')}
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
                       />
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
 
-              {/* SECTION 2: Tech Requirements */}
-              <section className="space-y-6">
-                <div className="border-l-2 border-primary pl-3">
-                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_tech_requirements')}</h2>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_description')}</label>
-                  <textarea
-                    required
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={6}
-                    placeholder={t('rfq_placeholder_description')}
-                    className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink resize-none leading-relaxed placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                  />
-                </div>
-              </section>
+                {/* SECTION 4: Contact Details */}
+                <section className="space-y-4">
+                  <div className="border-l-2 border-primary pl-3">
+                    <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_contact')}</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_contact_name')}</label>
+                      <input
+                        type="text"
+                        name="contactName"
+                        value={formData.contactName}
+                        onChange={handleChange}
+                        placeholder={t('rfq_placeholder_contact_name')}
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_phone')}</label>
+                      <input
+                        type="text"
+                        name="contactPhone"
+                        value={formData.contactPhone}
+                        onChange={handleChange}
+                        placeholder={t('rfq_placeholder_phone')}
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
+                      />
+                    </div>
+                    <div className="space-y-1.5 md:col-span-2">
+                      <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_email')}</label>
+                      <input
+                        required
+                        type="email"
+                        name="contactEmail"
+                        value={formData.contactEmail}
+                        onChange={handleChange}
+                        placeholder={t('rfq_placeholder_email')}
+                        className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
+                      />
+                    </div>
+                  </div>
+                </section>
 
-              {/* SECTION 3: Commercial Requirements */}
-              <section className="space-y-6">
-                <div className="border-l-2 border-primary pl-3">
-                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_commercial')}</h2>
+                {/* Submit Button */}
+                <div className="pt-4 space-y-3">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-primary hover:bg-primary-hover text-white py-4 font-normal text-base transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                  >
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : (
+                      <>
+                        {t('submit_request')}
+                        <Send size={16} />
+                      </>
+                    )}
+                  </button>
+                  <p className="text-center text-ink-subtle text-xs leading-relaxed" style={{ letterSpacing: '0.16px' }}>
+                    {t('rfq_terms')}
+                  </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_budget')}</label>
-                    <input
-                      type="text"
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_budget')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_destination')}</label>
-                    <input
-                      required
-                      type="text"
-                      name="destination"
-                      value={formData.destination}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_destination')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                  </div>
-                </div>
-              </section>
 
-              {/* SECTION 4: Contact Details */}
-              <section className="space-y-6">
-                <div className="border-l-2 border-primary pl-3">
-                  <h2 className="text-base font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{t('rfq_section_contact')}</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_contact_name')}</label>
-                    <input
-                      type="text"
-                      name="contactName"
-                      value={formData.contactName}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_contact_name')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_phone')}</label>
-                    <input
-                      type="text"
-                      name="contactPhone"
-                      value={formData.contactPhone}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_phone')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                  </div>
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-xs font-normal uppercase text-ink-subtle" style={{ letterSpacing: '0.32px' }}>{t('rfq_label_email')}</label>
-                    <input
-                      required
-                      type="email"
-                      name="contactEmail"
-                      value={formData.contactEmail}
-                      onChange={handleChange}
-                      placeholder={t('rfq_placeholder_email')}
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline outline-none focus:border-b-2 focus:border-b-primary transition-all text-sm font-normal text-ink placeholder:text-ink-subtle" style={{ borderRadius: 0 }}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              {/* Submit Button */}
-              <div className="pt-6 space-y-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary hover:bg-primary-hover text-white py-4 font-normal text-base transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                >
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : (
-                    <>
-                      {t('submit_request')}
-                      <Send size={16} />
-                    </>
-                  )}
-                </button>
-                <p className="text-center text-ink-subtle text-xs leading-relaxed" style={{ letterSpacing: '0.16px' }}>
-                  {t('rfq_terms')}
-                </p>
               </div>
-
-            </div>
-          </form>
-        </div>
-
-        {/* Bottom Tips & Info Hub */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Card 1: Tips for RFQ */}
-          <div className="bg-surface-1 border border-hairline p-8" style={{ borderRadius: 0 }}>
-            <h3 className="text-base font-normal text-ink mb-8 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
-              {t('tips_for_rfq')}
-            </h3>
-            <div className="space-y-6">
-              {[
-                {
-                  icon: <Zap size={18} className="text-primary mt-0.5 shrink-0" />,
-                  title: t('be_specific'),
-                  desc: t('be_specific_desc')
-                },
-                {
-                  icon: <ShieldCheck size={18} className="text-primary mt-0.5 shrink-0" />,
-                  title: t('mention_standards'),
-                  desc: t('mention_standards_desc')
-                },
-                {
-                  icon: <Clock size={18} className="text-primary mt-0.5 shrink-0" />,
-                  title: t('set_deadline'),
-                  desc: t('set_deadline_desc')
-                },
-                {
-                  icon: <MessageSquare size={18} className="text-primary mt-0.5 shrink-0" />,
-                  title: t('communication'),
-                  desc: t('communication_desc')
-                }
-              ].map((tip, idx) => (
-                <div key={idx} className="flex gap-3">
-                  {tip.icon}
-                  <div>
-                    <h4 className="font-normal text-ink text-sm" style={{ letterSpacing: '0.16px' }}>{tip.title}</h4>
-                    <p className="text-xs text-ink-muted mt-1 leading-relaxed" style={{ letterSpacing: '0.16px' }}>{tip.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            </form>
           </div>
 
-          {/* Card 2: How it works */}
-          <div className="bg-surface-1 border border-hairline p-8" style={{ borderRadius: 0 }}>
-            <h3 className="text-base font-normal text-ink mb-8 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
-              {t('how_it_works')}
-            </h3>
-            
-            {/* Timeline Wrapper */}
-            <div className="relative pl-8 space-y-8">
-              {/* Thin timeline connection line */}
-              <div className="absolute left-[11px] top-2.5 bottom-2.5 w-[1px] bg-hairline" />
+          {/* Cột phải: Tips & How it works */}
+          <div className="lg:col-span-5 xl:col-span-4 space-y-6 lg:sticky lg:top-24">
+            {/* Card 1: Tips for RFQ */}
+            <div className="bg-surface-1 border border-hairline p-6 md:p-8" style={{ borderRadius: 0 }}>
+              <h3 className="text-base font-normal text-ink mb-6 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
+                {t('tips_for_rfq')}
+              </h3>
+              <div className="space-y-4">
+                {[
+                  {
+                    icon: <Zap size={16} className="text-primary mt-0.5 shrink-0" />,
+                    title: t('be_specific'),
+                    desc: t('be_specific_desc')
+                  },
+                  {
+                    icon: <ShieldCheck size={16} className="text-primary mt-0.5 shrink-0" />,
+                    title: t('mention_standards'),
+                    desc: t('mention_standards_desc')
+                  },
+                  {
+                    icon: <Clock size={16} className="text-primary mt-0.5 shrink-0" />,
+                    title: t('set_deadline'),
+                    desc: t('set_deadline_desc')
+                  },
+                  {
+                    icon: <MessageSquare size={16} className="text-primary mt-0.5 shrink-0" />,
+                    title: t('communication'),
+                    desc: t('communication_desc')
+                  }
+                ].map((tip, idx) => (
+                  <div key={idx} className="flex gap-3">
+                    {tip.icon}
+                    <div>
+                      <h4 className="font-normal text-ink text-sm" style={{ letterSpacing: '0.16px' }}>{tip.title}</h4>
+                      <p className="text-xs text-ink-muted mt-1 leading-relaxed" style={{ letterSpacing: '0.16px' }}>{tip.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Card 2: How it works */}
+            <div className="bg-surface-1 border border-hairline p-6 md:p-8" style={{ borderRadius: 0 }}>
+              <h3 className="text-base font-normal text-ink mb-6 border-l-2 border-primary pl-3" style={{ letterSpacing: '0.16px' }}>
+                {t('how_it_works')}
+              </h3>
               
-              {[
-                t('rfq_step_1'),
-                t('rfq_step_2'),
-                t('rfq_step_3'),
-                t('rfq_step_4')
-              ].map((step, idx) => {
-                // Strip leading "1. ", "2. ", etc.
-                const cleanStepText = step.replace(/^\d+\.\s*/, '');
+              {/* Timeline Wrapper */}
+              <div className="relative pl-8 space-y-6">
+                {/* Thin timeline connection line */}
+                <div className="absolute left-[11px] top-2.5 bottom-2.5 w-[1px] bg-hairline" />
                 
-                return (
-                  <div key={idx} className="relative flex items-start">
-                    {/* Circle step number indicator */}
-                    <div className="absolute left-[-29px] w-6 h-6 border border-hairline bg-surface-2 flex items-center justify-center text-[10px] text-ink font-normal z-10" style={{ borderRadius: 0 }}>
-                      {idx + 1}
+                {[
+                  t('rfq_step_1'),
+                  t('rfq_step_2'),
+                  t('rfq_step_3'),
+                  t('rfq_step_4')
+                ].map((step, idx) => {
+                  const cleanStepText = step.replace(/^\d+\.\s*/, '');
+                  
+                  return (
+                    <div key={idx} className="relative flex items-start">
+                      {/* Circle step number indicator */}
+                      <div className="absolute left-[-29px] w-6 h-6 border border-hairline bg-surface-2 flex items-center justify-center text-[10px] text-ink font-normal z-10" style={{ borderRadius: 0 }}>
+                        {idx + 1}
+                      </div>
+                      <div className="text-xs md:text-sm text-ink font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
+                        {cleanStepText}
+                      </div>
                     </div>
-                    <div className="text-xs md:text-sm text-ink font-normal leading-relaxed" style={{ letterSpacing: '0.16px' }}>
-                      {cleanStepText}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>

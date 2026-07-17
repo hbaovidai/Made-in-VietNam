@@ -85,8 +85,12 @@
   }
 
   ::selection {
-    background: #003366;
-    color: #fff;
+    background: #334155;
+    color: #ffffff;
+  }
+  ::-moz-selection {
+    background: #334155;
+    color: #ffffff;
   }
 
   /* Hide number input spinners */

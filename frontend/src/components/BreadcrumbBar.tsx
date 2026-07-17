@@ -22,13 +22,12 @@ export function BreadcrumbBar({ items }: BreadcrumbBarProps) {
   return (
     <div className="breadcrumb-bar" style={{
       background: 'linear-gradient(180deg, #f0f4f8 0%, #f7f9fb 100%)',
-      borderBottom: '1px solid #e5eaf0',
-      padding: '12px 0',
+      padding: '8px 0',
     }}>
       <nav style={{
         maxWidth: 1600, margin: '0 auto', padding: '0 24px',
-        display: 'flex', alignItems: 'center', gap: 8,
-        fontSize: 14, color: '#6b7a8d',
+        display: 'flex', alignItems: 'center', gap: 6,
+        fontSize: 12, color: '#6b7a8d',
       }}>
         <Link
           to="/"
@@ -40,7 +39,7 @@ export function BreadcrumbBar({ items }: BreadcrumbBarProps) {
           onMouseEnter={e => (e.currentTarget.style.color = '#003366')}
           onMouseLeave={e => (e.currentTarget.style.color = '#6b7a8d')}
         >
-          <Home size={14} />
+          <Home size={12} />
           <span>{t('home')}</span>
         </Link>
 
@@ -48,7 +47,7 @@ export function BreadcrumbBar({ items }: BreadcrumbBarProps) {
           const isLast = idx === items.length - 1;
           return (
             <React.Fragment key={idx}>
-              <ChevronRight size={13} style={{ color: '#b0bac6', flexShrink: 0 }} />
+              <ChevronRight size={11} style={{ color: '#b0bac6', flexShrink: 0 }} />
               {item.href && !isLast ? (
                 <Link
                   to={item.href}

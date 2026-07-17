@@ -28,25 +28,37 @@ export interface AboutData {
 }
 
 const DEFAULT_DATA: AboutData = {
-  heroTitleVi: 'Nâng tầm chất lượng sản xuất Việt Nam ra thế giới',
-  heroTitleEn: 'Empowering Vietnamese Excellence Globally',
-  heroDescVi: 'VIEproduct là nền tảng B2B kết nối các nhà sản xuất và cung cấp uy tín tại Việt Nam với người mua trên toàn thế giới — giúp đơn giản hoá quy trình tìm kiếm nguồn hàng, xác minh đối tác và giao thương quốc tế.',
-  heroDescEn: 'VIEproduct is a B2B platform connecting verified Vietnamese manufacturers and suppliers with global buyers — simplifying sourcing, partner verification, and international trade.',
+  heroTitleVi: 'Nền Tảng Kết Nối Trực Tiếp Người Mua và Nhà Cung Cấp',
+  heroTitleEn: 'Connecting Buyers and Suppliers Directly',
+  heroDescVi: 'VIEproduct đơn giản hóa quy trình tìm kiếm nguồn cung ứng hàng hóa an toàn, chất lượng cao đã qua xác minh thực địa. Chúng tôi giúp doanh nghiệp tối ưu chi phí, giảm thiểu rủi ro pháp lý và đẩy nhanh tiến độ giao thương quốc tế.',
+  heroDescEn: 'VIEproduct simplifies the process of sourcing safe, high-quality, and on-site verified products. We help businesses optimize costs, reduce legal risks, and accelerate international trade.',
   stats: [
-    { labelVi: 'Nhà cung cấp đã xác minh', labelEn: 'Verified Suppliers', value: '50+', icon: 'shield' },
-    { labelVi: 'Sản phẩm trên sàn', labelEn: 'Products Listed', value: '500+', icon: 'globe' },
-    { labelVi: 'Người mua quốc tế', labelEn: 'Global Buyers', value: '200+', icon: 'users' },
-    { labelVi: 'Thị trường xuất khẩu', labelEn: 'Export Markets', value: '10+', icon: 'award' },
+    { labelVi: 'Nhà máy Đạt Chuẩn Xuất Khẩu', labelEn: 'Certified Export Factories', value: '150+', icon: 'shield' },
+    { labelVi: 'Nguồn Hàng Đã Xác Minh', labelEn: 'Verified Sourcing Items', value: '5,000+', icon: 'globe' },
+    { labelVi: 'Nhà Nhập Khẩu Quốc Tế', labelEn: 'International Importers', value: '850+', icon: 'users' },
+    { labelVi: 'Thị Trường Giao Thương', labelEn: 'Active Trade Markets', value: '25+', icon: 'award' },
   ],
-  missionTitleVi: 'Sứ mệnh của chúng tôi',
-  missionTitleEn: 'Our Mission',
-  missionDescVi: 'Chúng tôi tin rằng các doanh nghiệp sản xuất Việt Nam hoàn toàn có thể cạnh tranh trên thị trường quốc tế. VIEproduct cam kết trở thành cầu nối tin cậy nhất, giúp các nhà cung cấp Việt Nam tiếp cận người mua toàn cầu một cách dễ dàng và minh bạch.',
-  missionDescEn: 'We believe Vietnamese manufacturers can compete globally. VIEproduct is committed to being the most trusted bridge, helping Vietnamese suppliers reach global buyers with ease and transparency.',
+  missionTitleVi: 'Tại sao chọn VIEproduct?',
+  missionTitleEn: 'Why Choose VIEproduct?',
+  missionDescVi: 'Chúng tôi loại bỏ các khâu trung gian kém hiệu quả để cung cấp một giải pháp giao thương toàn diện, giúp doanh nghiệp nhập khẩu tìm kiếm đúng nhà sản xuất gốc tại Việt Nam với đầy đủ chứng nhận kiểm định chất lượng sản phẩm.',
+  missionDescEn: 'We eliminate inefficient intermediaries to provide a comprehensive trade solution, helping global importers locate original manufacturers in Vietnam with complete quality certifications.',
   missionPoints: [
-    { vi: 'Xác minh nhà cung cấp thực địa 100%', en: 'On-site supplier verification' },
-    { vi: 'Hỗ trợ giao thương đa ngôn ngữ', en: 'Multi-language trade support' },
-    { vi: 'Bảo vệ giao dịch an toàn (Trade Assurance)', en: 'Trade Assurance protection' },
-    { vi: 'Báo giá nhanh — RFQ trong 24h', en: 'Fast quotation — RFQ within 24h' },
+    {
+      vi: 'Xác minh thực địa 100% | Đội ngũ chuyên gia của chúng tôi trực tiếp kiểm tra quy mô nhà máy, dây chuyền sản xuất và tính pháp lý của doanh nghiệp tại thực địa.',
+      en: '100% On-site Verification | Our expert team directly inspects factory scale, production lines, and business compliance on-site.'
+    },
+    {
+      vi: 'Giao thương đa ngôn ngữ | Phá bỏ rào cản giao tiếp với đội ngũ hỗ trợ đàm phán, biên dịch hợp đồng thương mại và tài liệu kỹ thuật chuyên nghiệp.',
+      en: 'Multi-language Trading | Break communication barriers with our professional negotiation support, contract translation, and technical documentation services.'
+    },
+    {
+      vi: 'Bảo vệ thanh toán toàn diện | Giải pháp bảo hiểm giao dịch giữ tiền an toàn cho đến khi hàng hóa được giao đúng chất lượng và tiến độ cam kết.',
+      en: 'Secure Trade Assurance | Our transaction insurance solution keeps funds secure until goods are delivered with the agreed quality and timeline.'
+    },
+    {
+      vi: 'Phản hồi RFQ trong 24h | Kết nối yêu cầu báo giá của bạn tới các nhà sản xuất phù hợp nhất và nhận báo giá cạnh tranh chỉ trong vòng 24 giờ.',
+      en: '24-Hour RFQ Turnaround | Connect your sourcing requests to the most matching manufacturers and receive competitive quotes within 24 hours.'
+    },
   ],
   missionImage: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&q=80&w=1000',
   missionQuoteVi: '"Kết nối Việt Nam với thế giới — từng sản phẩm, từng đối tác."',
@@ -57,7 +69,20 @@ const COLLECTION = 'about';
 
 export const aboutDb = {
   getData: (): AboutData => {
-    return jsonStorage.readCached<AboutData>(COLLECTION, DEFAULT_DATA);
+    const data = jsonStorage.readCached<AboutData>(COLLECTION, DEFAULT_DATA);
+    
+    // Auto-upgrade cache if it is the old version (old title or missing pipe format)
+    const isOldTitle = data && (
+      data.heroTitleVi === 'Nền Tảng Kết Nối Trực Tiếp Nhà Máy Việt Nam Với Người Mua Quốc Tế' ||
+      data.heroTitleVi === 'Nền Tảng Kết Nối Trực Tiếp Nhà Máy Với Người Mua'
+    );
+    const isOldPointFormat = data && data.missionPoints && data.missionPoints[0] && !data.missionPoints[0].vi.includes('|');
+
+    if (isOldTitle || isOldPointFormat) {
+      jsonStorage.writeCached(COLLECTION, DEFAULT_DATA);
+      return DEFAULT_DATA;
+    }
+    return data;
   },
 
   saveData: (data: AboutData): void => {

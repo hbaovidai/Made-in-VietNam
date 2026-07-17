@@ -266,19 +266,20 @@ export function AdminCategories() {
               <Loader2 className="animate-spin" size={24} style={{ color: '#2271b1' }} />
             </div>
           ) : (
-            <table className="wp-list-table widefat fixed striped" style={{ borderCollapse: 'collapse', width: '100%' }}>
-              <thead>
-                <tr style={{ background: '#f6f7f7', borderBottom: '1px solid #c3c4c7' }}>
-                  <th style={thStyle}>Tên</th>
-                  <th style={{ ...thStyle, width: 140 }}>Mô tả</th>
-                  <th style={{ ...thStyle, width: 80, textAlign: 'center' }}>{t('duong_dan')}</th>
-                  <th style={{ ...thStyle, width: 60, textAlign: 'center' }}>{t('so_sp')}</th>
+            <div className="wp-table-wrap">
+              <table className="wp-table">
+                <thead>
+                  <tr>
+                  <th>Tên</th>
+                  <th style={{ width: 200 }}>Mô tả</th>
+                  <th style={{ width: 120, textAlign: 'center' }}>{t('duong_dan')}</th>
+                  <th style={{ width: 80, textAlign: 'center' }}>{t('so_sp')}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredParents.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: 40, color: '#646970', fontSize: 13 }}>
+                    <td colSpan={4} style={{ textAlign: 'center', padding: 40, color: 'var(--wp-text-muted)', fontSize: 13 }}>
                       Chưa có danh mục nào
                     </td>
                   </tr>
@@ -291,8 +292,8 @@ export function AdminCategories() {
                   return (
                     <React.Fragment key={cat.id}>
                       {/* Parent Row */}
-                      <tr style={trStyle} onMouseEnter={e => (e.currentTarget.style.background = '#f6f7f7')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
-                        <td style={tdStyle}>
+                      <tr>
+                        <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                             {children.length > 0 && (
                               <button
@@ -306,79 +307,71 @@ export function AdminCategories() {
                               <a
                                 href="#"
                                 onClick={e => { e.preventDefault(); startEdit(cat); }}
-                                style={{ color: '#2271b1', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+                                className="wp-row-title"
+                                style={{ textDecoration: 'none' }}
                               >
                                 {cat.name}
                               </a>
                               {/* Row actions */}
-                              <div className="wp-row-actions" style={{ fontSize: 11, marginTop: 2 }}>
-                                <span>
-                                  <a href="#" onClick={e => { e.preventDefault(); startEdit(cat); }} style={{ color: '#2271b1', textDecoration: 'none' }}>Sửa</a>
-                                </span>
-                                {' | '}
-                                <span>
-                                  <a
-                                    href="#"
-                                    onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: cat }); }}
-                                    style={{ color: '#b32d2e', textDecoration: 'none' }}
-                                  >
-                                    {t('xoa')}
-                                  </a>
-                                </span>
-                                {' | '}
-                                <span>
-                                  <a href={`/products?category=${cat.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: '#2271b1', textDecoration: 'none' }}>
-                                    Xem
-                                  </a>
-                                </span>
+                              <div className="wp-row-actions">
+                                <a href="#" onClick={e => { e.preventDefault(); startEdit(cat); }}>Sửa</a>
+                                <span className="sep">|</span>
+                                <button
+                                  type="button"
+                                  onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: cat }); }}
+                                  className="delete"
+                                >
+                                  {t('xoa')}
+                                </button>
+                                <span className="sep">|</span>
+                                <a href={`/products?category=${cat.slug}`} target="_blank" rel="noopener noreferrer">
+                                  Xem
+                                </a>
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td style={{ ...tdStyle, fontSize: 12, color: '#646970' }}>
+                        <td style={{ fontSize: 12, color: 'var(--wp-text-muted)' }}>
                           {cat.description ? (
-                            <span style={{ display: 'block', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span style={{ display: 'block', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {cat.description}
                             </span>
                           ) : '—'}
                         </td>
-                        <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{cat.slug}</td>
-                        <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 600, fontSize: 13 }}>{totalProducts}</td>
+                        <td style={{ textAlign: 'center', fontSize: 12, color: 'var(--wp-text-muted)' }}>{cat.slug}</td>
+                        <td style={{ textAlign: 'center', fontWeight: 600 }}>{totalProducts}</td>
                       </tr>
 
                       {/* Children Rows */}
                       {isExpanded && children.map((sub: any) => (
-                        <tr key={sub.id} style={trStyle} onMouseEnter={e => (e.currentTarget.style.background = '#f6f7f7')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
-                          <td style={{ ...tdStyle, paddingLeft: 36 }}>
+                        <tr key={sub.id}>
+                          <td style={{ paddingLeft: 36 }}>
                             <span style={{ color: '#8c8f94', marginRight: 4 }}>—</span>
                             <a
                               href="#"
                               onClick={e => { e.preventDefault(); startEdit(sub); }}
-                              style={{ color: '#2271b1', fontWeight: 500, fontSize: 13, textDecoration: 'none' }}
+                              className="wp-row-title"
+                              style={{ fontWeight: 500, textDecoration: 'none' }}
                             >
                               {sub.name}
                             </a>
-                            <div className="wp-row-actions" style={{ fontSize: 11, marginTop: 2, paddingLeft: 18 }}>
-                              <span>
-                                <a href="#" onClick={e => { e.preventDefault(); startEdit(sub); }} style={{ color: '#2271b1', textDecoration: 'none' }}>Sửa</a>
-                              </span>
-                              {' | '}
-                              <span>
-                                <a
-                                  href="#"
-                                  onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: sub }); }}
-                                  style={{ color: '#b32d2e', textDecoration: 'none' }}
-                                >
-                                  {t('xoa')}
-                                </a>
-                              </span>
+                            <div className="wp-row-actions" style={{ paddingLeft: 18 }}>
+                              <a href="#" onClick={e => { e.preventDefault(); startEdit(sub); }}>Sửa</a>
+                              <span className="sep">|</span>
+                              <button
+                                type="button"
+                                onClick={e => { e.preventDefault(); setConfirmDelete({ isOpen: true, category: sub }); }}
+                                className="delete"
+                              >
+                                {t('xoa')}
+                              </button>
                             </div>
                           </td>
-                          <td style={{ ...tdStyle, fontSize: 12, color: '#646970' }}>
+                          <td style={{ fontSize: 12, color: 'var(--wp-text-muted)' }}>
                             {sub.description || '—'}
                           </td>
-                          <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{sub.slug}</td>
-                          <td style={{ ...tdStyle, textAlign: 'center', fontSize: 12, color: '#646970' }}>{sub._count?.products || 0}</td>
+                          <td style={{ textAlign: 'center', fontSize: 12, color: 'var(--wp-text-muted)' }}>{sub.slug}</td>
+                          <td style={{ textAlign: 'center', fontSize: 12, color: 'var(--wp-text-muted)' }}>{sub._count?.products || 0}</td>
                         </tr>
                       ))}
                     </React.Fragment>
@@ -386,6 +379,7 @@ export function AdminCategories() {
                 })}
               </tbody>
             </table>
+          </div>
           )}
         </div>
       </div>

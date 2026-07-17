@@ -29,11 +29,6 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
   },
   {
     icon: FileText, label: t('admin_pages'), path: '/dashboard/admin/pages',
-    children: [
-      { label: 'Tất cả trang', path: '/dashboard/admin/pages' },
-      { label: t('terms_of_service'), path: '/dashboard/admin/legal' },
-      { label: t('privacy_policy') || 'Chính sách bảo mật', path: '/dashboard/admin/legal/privacy' },
-    ],
   },
   {
     icon: Newspaper, label: t('blog'), path: '/dashboard/admin/blog/posts',
@@ -53,7 +48,7 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: Package, label: t('products'), path: '/dashboard/admin/products',
     children: [
       { label: t('admin_all_products'), path: '/dashboard/admin/products' },
-      { label: t('admin_add_product'), path: '/dashboard/admin/products/add' },
+      { label: t('admin_pending_products'), path: '/dashboard/admin/products?status=PENDING' },
       { label: t('admin_brands'), path: '/dashboard/admin/products/brands' },
       { label: t('admin_categories'), path: '/dashboard/admin/categories' },
       { label: t('admin_attributes'), path: '/dashboard/admin/products/attributes' },
@@ -144,6 +139,17 @@ export function WPAdminLayout() {
   const isSubActive = (sub: SubMenuItem) => {
     const [subPath, subQuery] = sub.path.split('?');
     if (subPath !== location.pathname) return false;
+
+    // Special case for products sub-menus:
+    if (location.pathname === '/dashboard/admin/products') {
+      const searchStatus = searchParams.get('status');
+      if (sub.path.includes('status=PENDING')) {
+        return searchStatus === 'PENDING';
+      } else if (sub.path === '/dashboard/admin/products') {
+        return searchStatus !== 'PENDING';
+      }
+    }
+
     if (!subQuery) return !location.search || location.search === '?';
     return location.search === `?${subQuery}`;
   };
@@ -184,19 +190,6 @@ export function WPAdminLayout() {
           </Link>
         </div>
         <div className="wp-admin-bar-right">
-          <form onSubmit={handleGlobalSearchSubmit} className="wp-admin-bar-search">
-            <Search size={14} />
-            <input 
-              type="text" 
-              placeholder={`${t('search')}...`} 
-              value={globalSearch}
-              onChange={e => setGlobalSearch(e.target.value)}
-            />
-          </form>
-          <button className="wp-admin-bar-btn">
-            <Bell size={16} />
-            <span className="wp-admin-bar-badge">3</span>
-          </button>
           <div className="wp-admin-bar-profile" onClick={() => setProfileOpen(!profileOpen)}>
             <div className="wp-admin-bar-avatar">{user?.fullName?.charAt(0) || 'A'}</div>
             <span className="wp-admin-bar-name">{user?.fullName || 'Admin'}</span>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, Menu, ShieldCheck, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, Menu, ShieldCheck, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings, MapPin, Package } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { useLocalized } from '../hooks/useLocalized';
+import { CustomSelect } from '../components/CustomSelect';
 
 // Icon map for sidebar categories
 const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
@@ -228,11 +229,33 @@ export function ProductListing() {
   }, [handleLoadMore, currentPage, totalPages, loadingMore, loading]);
 
   // Price display helper
-  const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
-  const getPriceDisplay = (product: any) => {
+  const formatVND = (n: number) => n.toLocaleString('vi-VN');
+  const getPriceInfo = (product: any) => {
+    // CONTACT mode
+    if (product.pricingMode === 'CONTACT') {
+      return { label: 'Liên hệ để báo giá', type: 'contact' as const };
+    }
+    // TIERED mode — show min to max range
+    if (product.pricingMode === 'TIERED' && product.priceTiers?.length > 0) {
+      const prices = product.priceTiers.map((t: any) => t.price).filter(Boolean);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      const currency = product.currency || 'VND';
+      if (min === max) {
+        return { label: `${formatVND(min)} ${currency}`, type: 'tiered' as const };
+      }
+      return { label: `${formatVND(min)} - ${formatVND(max)} ${currency}`, type: 'tiered' as const };
+    }
+    // FIXED price
     const price = product.minPrice ?? product.price;
-    if (price != null) return formatVND(price);
-    return 'Liên hệ';
+    if (price != null) {
+      const currency = product.currency || 'VND';
+      if (product.maxPrice != null && product.maxPrice !== price) {
+        return { label: `${formatVND(price)} - ${formatVND(product.maxPrice)} ${currency}`, type: 'fixed' as const };
+      }
+      return { label: `${formatVND(price)} ${currency}`, type: 'fixed' as const };
+    }
+    return { label: 'Liên hệ để báo giá', type: 'contact' as const };
   };
   const getMoqDisplay = (product: any) => {
     if (product.moq) return `${product.moq.toLocaleString('vi-VN')} ${product.unit || 'pcs'}`;
@@ -253,9 +276,10 @@ export function ProductListing() {
         {/* ═══ Sidebar — Collapsed icon bar, expands on hover ═══ */}
         <aside
           className={cn(
-            "hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 sticky top-0 h-screen z-30 transition-all duration-200 ease-in-out overflow-hidden",
+            "hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 self-start sticky z-30 transition-all duration-300 ease-in-out overflow-hidden",
             sidebarHover ? "w-[260px]" : "w-[72px]"
           )}
+          style={{ top: 'calc(64px + var(--subnav-h, 40px))', height: 'calc(100vh - 64px - var(--subnav-h, 40px))' }}
           onMouseEnter={() => setSidebarHover(true)}
           onMouseLeave={() => setSidebarHover(false)}
         >
@@ -283,7 +307,7 @@ export function ProductListing() {
               )}
             >
               {!categoryFilter && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
-              <Search size={20} className="shrink-0" />
+              <Search size={20} className={cn("shrink-0 transition-opacity duration-200", sidebarHover ? "opacity-0 w-0" : "opacity-100")} />
               <span className={cn(
                 "text-sm font-normal whitespace-nowrap transition-opacity duration-200",
                 sidebarHover ? "opacity-100" : "opacity-0"
@@ -292,7 +316,7 @@ export function ProductListing() {
               </span>
             </button>
 
-            {l1Categories.map((cat, idx) => (
+            {l1Categories.map((cat) => (
               <button
                 key={cat.slug}
                 onClick={() => handleCategoryClick(cat.slug)}
@@ -304,7 +328,7 @@ export function ProductListing() {
                 )}
               >
                 {activeL1?.slug === cat.slug && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
-                <span className="shrink-0">{SIDEBAR_ICONS[idx % 6] || <Settings size={20} />}</span>
+                <Package size={18} className={cn("shrink-0 transition-opacity duration-200", sidebarHover ? "opacity-0 w-0" : "opacity-100")} />
                 <span className={cn(
                   "text-sm font-normal whitespace-nowrap transition-opacity duration-200 truncate",
                   sidebarHover ? "opacity-100" : "opacity-0"
@@ -419,11 +443,10 @@ export function ProductListing() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-ink-subtle font-normal hidden sm:inline" style={{ letterSpacing: '0.16px' }}>{t('listing_sort_by')}</span>
-                <select
-                  className="bg-surface-1 border border-hairline px-4 py-[11px] text-sm font-normal text-ink outline-none cursor-pointer appearance-none pr-8" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                <CustomSelect
+                  className="w-48"
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : 'popular'}
-                  onChange={(e) => {
-                    const val = e.target.value;
+                  onChange={(val) => {
                     const newParams = new URLSearchParams(searchParams);
                     if (val === 'price-asc') {
                       newParams.set('sortBy', 'minPrice');
@@ -438,11 +461,12 @@ export function ProductListing() {
                     newParams.set('page', '1');
                     setSearchParams(newParams);
                   }}
-                >
-                  <option value="popular">Phù hợp nhất</option>
-                  <option value="price-asc">{t('sort_price_low_high')}</option>
-                  <option value="price-desc">{t('sort_price_high_low')}</option>
-                </select>
+                  options={[
+                    { value: 'popular', label: 'Phù hợp nhất' },
+                    { value: 'price-asc', label: t('sort_price_low_high') },
+                    { value: 'price-desc', label: t('sort_price_high_low') },
+                  ]}
+                />
               </div>
             </div>
           </div>
@@ -457,9 +481,8 @@ export function ProductListing() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                 {products.map((product, index) => {
                   const imageUrl = product.images?.[0] || product.image || 'https://via.placeholder.com/300';
-                  const priceDisplay = getPriceDisplay(product);
+                  const priceInfo = getPriceInfo(product);
                   const moqDisplay = getMoqDisplay(product);
-                  const isContact = priceDisplay === 'Liên hệ';
 
                   return (
                     <motion.div
@@ -487,32 +510,44 @@ export function ProductListing() {
                         </div>
                       </div>
 
-                      {/* Content */}
+                      {/* Content — flex column with pinned bottom */}
                       <div className="p-3 flex flex-col flex-1">
-                        <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug mb-2 min-h-[2.4em]" style={{ letterSpacing: '0.16px' }}>
+                        {/* Title zone — fixed min-height for 2 lines */}
+                        <h3 className="text-xs font-normal text-ink line-clamp-2 leading-snug min-h-[2.5em]" style={{ letterSpacing: '0.16px' }}>
                           {localized(product, 'name')}
                         </h3>
 
-                        {/* MOQ chip */}
-                        <div className="mb-3">
-                          <span className="inline-block bg-surface-1 text-ink text-[10px] font-normal px-2 py-1" style={{ letterSpacing: '0.32px' }}>
+                        {/* Spacer pushes everything below to bottom */}
+                        <div className="flex-1" />
+
+                        {/* Bottom zone — price, MOQ, contact, supplier all pinned */}
+                        <div className="mt-2">
+                          {/* Price — gray frame */}
+                          <div className="bg-slate-50 px-3 py-2.5 mb-2.5" style={{ borderRadius: 4 }}>
+                            <p className="text-sm font-semibold leading-tight text-primary" style={{ letterSpacing: '0.16px' }}>
+                              {priceInfo.label}
+                            </p>
+                          </div>
+
+                          {/* MOQ */}
+                          <p className="text-[10px] text-ink-muted mb-2.5" style={{ letterSpacing: '0.32px' }}>
                             MOQ: {moqDisplay}
-                          </span>
-                        </div>
+                          </p>
 
-                        {/* Contact button */}
-                        <button
-                          onClick={(e) => { e.preventDefault(); navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`); }}
-                          className="w-full py-2 border border-primary text-primary text-[11px] font-normal hover:bg-primary hover:text-white transition-colors duration-150 mb-2" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                        >
-                          {t('listing_contact_btn')}
-                        </button>
+                          {/* Contact button */}
+                          <button
+                            onClick={(e) => { e.preventDefault(); navigate(`/rfq?productId=${product.id}&productName=${encodeURIComponent(product.name)}`); }}
+                            className="w-full py-2 border border-primary text-primary text-[11px] font-normal hover:bg-primary hover:text-white transition-colors duration-150 mb-2.5" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                          >
+                            {t('listing_contact_btn')}
+                          </button>
 
-                        {/* Supplier */}
-                        <div className="mt-auto pt-2 border-t border-hairline">
-                          <span className="text-[10px] font-normal text-ink-muted truncate block" style={{ letterSpacing: '0.32px' }}>
-                            {product.supplier?.companyName || 'Nhà cung cấp'}
-                          </span>
+                          {/* Supplier */}
+                          <div className="pt-2 border-t border-hairline">
+                            <span className="text-[10px] font-normal text-ink-muted line-clamp-2 block" style={{ letterSpacing: '0.32px' }}>
+                              {product.supplier?.companyName || 'Nhà cung cấp'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </Link>

@@ -8,15 +8,15 @@ export declare class RfqService {
     constructor(prisma: PrismaService, notificationsService: NotificationsService);
     createRFQ(buyerId: string, dto: CreateRFQDto): Promise<{
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        updatedAt: Date;
+        description: string;
+        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        category: string;
-        quantity: number;
         productName: string;
+        quantity: number;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -30,15 +30,15 @@ export declare class RfqService {
         };
     } & {
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        updatedAt: Date;
+        description: string;
+        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        category: string;
-        quantity: number;
         productName: string;
+        quantity: number;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -48,12 +48,12 @@ export declare class RfqService {
     })[]>;
     submitQuote(supplierId: string, dto: CreateQuoteDto): Promise<{
         id: string;
+        message: string | null;
         createdAt: Date;
         status: import("@prisma/client").$Enums.QuoteStatus;
+        supplierId: string;
         currency: string;
         leadTime: string;
-        supplierId: string;
-        message: string | null;
         price: number;
         rfqId: string;
     }>;
@@ -62,18 +62,18 @@ export declare class RfqService {
             supplier: {
                 id: string;
                 userId: string;
+                status: import("@prisma/client").$Enums.SupplierStatus;
                 companyName: string;
                 logo: string | null;
-                status: import("@prisma/client").$Enums.SupplierStatus;
             };
         } & {
             id: string;
+            message: string | null;
             createdAt: Date;
             status: import("@prisma/client").$Enums.QuoteStatus;
+            supplierId: string;
             currency: string;
             leadTime: string;
-            supplierId: string;
-            message: string | null;
             price: number;
             rfqId: string;
         })[];
@@ -85,15 +85,15 @@ export declare class RfqService {
         };
     } & {
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        updatedAt: Date;
+        description: string;
+        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        category: string;
-        quantity: number;
         productName: string;
+        quantity: number;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -136,15 +136,15 @@ export declare class RfqService {
             fullName: string;
         };
         id: string;
+        createdAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        updatedAt: Date;
+        description: string;
+        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        description: string;
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        category: string;
-        quantity: number;
         productName: string;
+        quantity: number;
         quantityUnit: string;
         budget: string | null;
         destination: string;

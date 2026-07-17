@@ -24,13 +24,13 @@ let ProductsService = class ProductsService {
         this.notificationsService = notificationsService;
         this.translationService = translationService;
     }
-    async findAll(query) {
+    async findAll(query, isAdmin = false) {
         const { search, category, supplierId, page = 1, limit = 70, sortBy = 'createdAt', sortOrder = 'desc', status, } = query;
         const where = {};
         if (status) {
             where.status = status;
         }
-        else {
+        else if (!isAdmin) {
             where.status = 'ACTIVE';
         }
         if (search) {
@@ -98,6 +98,16 @@ let ProductsService = class ProductsService {
                             },
                             industries: { select: { industry: true } },
                             markets: { select: { market: true } },
+                            certifications: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    issuedBy: true,
+                                    issuedDate: true,
+                                    expiryDate: true,
+                                    documentUrl: true,
+                                }
+                            },
                         },
                     },
                     priceTiers: { orderBy: { minQty: 'asc' } },
@@ -123,6 +133,16 @@ let ProductsService = class ProductsService {
                             },
                             industries: { select: { industry: true } },
                             markets: { select: { market: true } },
+                            certifications: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    issuedBy: true,
+                                    issuedDate: true,
+                                    expiryDate: true,
+                                    documentUrl: true,
+                                }
+                            },
                         },
                     },
                     priceTiers: { orderBy: { minQty: 'asc' } },
@@ -308,7 +328,7 @@ let ProductsService = class ProductsService {
             take: limit,
         });
     }
-    async verifyProduct(productId, status) {
+    async verifyProduct(productId, status, reason) {
         const product = await this.prisma.product.findUnique({
             where: { id: productId },
             include: { supplier: { select: { userId: true, companyName: true } } },
@@ -326,7 +346,7 @@ let ProductsService = class ProductsService {
                 title: isApproved ? 'Product Approved' : 'Product Rejected',
                 message: isApproved
                     ? `Your product "${product.name}" has been approved and is now live on the marketplace.`
-                    : `Your product "${product.name}" has been rejected by admin. Please review and resubmit.`,
+                    : `Your product "${product.name}" has been rejected by admin. Reason: ${reason || 'No reason specified'}. Please review and resubmit.`,
                 type: isApproved ? 'success' : 'warning',
                 link: '/dashboard/supplier/products',
             });

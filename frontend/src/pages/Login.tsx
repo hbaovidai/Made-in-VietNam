@@ -113,11 +113,15 @@ export function Login() {
     <div className="min-h-screen flex flex-col bg-canvas">
       {/* Custom Header (Height exactly 72px) */}
       <header className="sticky top-0 w-full h-[72px] px-6 lg:px-12 flex items-center justify-between border-b border-hairline shrink-0 bg-canvas z-20">
-        <Link to="/" className="flex items-center gap-1.5">
-          <img src="/logoVIE.png" alt="Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
-          <span className="text-xl font-semibold text-ink" style={{ letterSpacing: '0.16px' }}>
-            VIE<span className="text-primary font-normal">Product</span>
-          </span>
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          {settings.site_logo ? (
+            <img src={settings.site_logo} alt="Logo" style={{ maxHeight: 40, maxWidth: 160 }} />
+          ) : (
+            <div className="flex items-center">
+              <span className="text-lg sm:text-2xl font-black text-primary tracking-tighter">VIE</span>
+              <span className="text-lg sm:text-2xl font-black text-slate-900 tracking-tighter">product</span>
+            </div>
+          )}
         </Link>
         <div className="flex items-center gap-6">
           <Link to="/help" className="text-sm font-normal text-ink-subtle hover:text-ink transition-colors" style={{ letterSpacing: '0.16px' }}>

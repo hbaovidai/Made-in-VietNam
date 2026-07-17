@@ -85,7 +85,7 @@ const AdminAddUser = React.lazy(() => import('./pages/dashboard/admin/AdminAddUs
 const AdminUserProfile = React.lazy(() => import('./pages/dashboard/admin/AdminUserProfile').then(m => ({ default: m.AdminUserProfile })));
 const AdminSuppliers = React.lazy(() => import('./pages/dashboard/admin/AdminSuppliers').then(m => ({ default: m.AdminSuppliers })));
 const AdminProducts = React.lazy(() => import('./pages/dashboard/admin/AdminProducts').then(m => ({ default: m.AdminProducts })));
-const AdminAddProduct = React.lazy(() => import('./pages/dashboard/admin/AdminAddProduct').then(m => ({ default: m.AdminAddProduct })));
+const AdminProductApproval = React.lazy(() => import('./pages/dashboard/admin/AdminProductApproval').then(m => ({ default: m.AdminProductApproval })));
 const AdminBrands = React.lazy(() => import('./pages/dashboard/admin/AdminBrands').then(m => ({ default: m.AdminBrands })));
 const AdminAttributes = React.lazy(() => import('./pages/dashboard/admin/AdminAttributes').then(m => ({ default: m.AdminAttributes })));
 const AdminReviews = React.lazy(() => import('./pages/dashboard/admin/AdminReviews').then(m => ({ default: m.AdminReviews })));
@@ -283,7 +283,7 @@ export default function App() {
               <Route path="users/add" element={<AdminAddUser />} />
               <Route path="profile" element={<AdminUserProfile />} />
               <Route path="products" element={<AdminProducts />} />
-              <Route path="products/add" element={<AdminAddProduct />} />
+              <Route path="products/approve/:id" element={<AdminProductApproval />} />
               <Route path="products/brands" element={<AdminBrands />} />
               <Route path="products/attributes" element={<AdminAttributes />} />
               <Route path="products/reviews" element={<AdminReviews />} />

@@ -32,7 +32,7 @@ let ProductsController = class ProductsController {
         return this.productsService.findAll({ ...query, status: 'ACTIVE' });
     }
     findAllForAdmin(query) {
-        return this.productsService.findAll(query);
+        return this.productsService.findAll(query, true);
     }
     async getMyProducts(userId) {
         const supplier = await this.prisma.supplier.findUnique({
@@ -78,8 +78,8 @@ let ProductsController = class ProductsController {
             throw new common_1.ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
         return this.productsService.delete(id, supplier.id);
     }
-    verifyProduct(id, status) {
-        return this.productsService.verifyProduct(id, status);
+    verifyProduct(id, status, reason) {
+        return this.productsService.verifyProduct(id, status, reason);
     }
 };
 exports.ProductsController = ProductsController;
@@ -159,8 +159,9 @@ __decorate([
     (0, common_1.Put)(':id/verify'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('status')),
+    __param(2, (0, common_1.Body)('reason')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "verifyProduct", null);
 exports.ProductsController = ProductsController = __decorate([

@@ -30,8 +30,16 @@ export const jsonStorage = {
 
   readCached<T>(collection: string, defaultData: T): T {
     const cacheKey = `jsonStorage_${collection}`;
+
+    // Always kick off background fetch to keep cache fresh
+    this.read(collection, defaultData).then(data => {
+      this._cache[cacheKey] = data;
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+    });
+
     // Return from memory cache if available
     if (this._cache[cacheKey] !== undefined) return this._cache[cacheKey];
+
     // Otherwise try localStorage as fallback cache
     const local = localStorage.getItem(cacheKey);
     if (local) {
@@ -40,11 +48,7 @@ export const jsonStorage = {
         return this._cache[cacheKey];
       } catch { /* ignore */ }
     }
-    // Kick off background fetch
-    this.read(collection, defaultData).then(data => {
-      this._cache[cacheKey] = data;
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-    });
+
     // Return default for first render
     this._cache[cacheKey] = defaultData;
     return defaultData;

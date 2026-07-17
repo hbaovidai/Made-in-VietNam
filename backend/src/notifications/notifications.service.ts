@@ -75,4 +75,28 @@ export class NotificationsService {
       });
     }
   }
+
+  // Broadcast to all active users
+  async broadcast(data: {
+    title: string;
+    message: string;
+    type?: string;
+    link?: string;
+  }) {
+    const users = await this.prisma.user.findMany({
+      where: { status: 'ACTIVE' },
+      select: { id: true },
+    });
+    if (users.length > 0) {
+      return this.prisma.notification.createMany({
+        data: users.map((u) => ({
+          userId: u.id,
+          title: data.title,
+          message: data.message,
+          type: data.type || 'info',
+          link: data.link,
+        })),
+      });
+    }
+  }
 }

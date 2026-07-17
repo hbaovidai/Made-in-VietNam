@@ -4,6 +4,7 @@ import { BreadcrumbBar } from '../components/BreadcrumbBar';
 import { Search, MapPin, Briefcase, Clock, DollarSign, Calendar, X, CheckCircle, FileText, Send, Building } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { careersDb, CareerJob } from '../utils/careersDb';
+import { CustomSelect } from '../components/CustomSelect';
 
 export function Careers() {
   const { t, i18n } = useTranslation();
@@ -80,18 +81,24 @@ export function Careers() {
             <input type="text" placeholder={loc('Tìm kiếm vị trí...', 'Search jobs...')} value={searchTerm} onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }} className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <select value={selectedDept} onChange={e => { setSelectedDept(e.target.value); setCurrentPage(1); }} className="px-3 py-2 border border-slate-200 rounded text-sm bg-white outline-none focus:border-primary transition">
-              <option value="">{loc('Tất cả phòng ban', 'All Departments')}</option>
-              {departments.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-            <select value={selectedLoc} onChange={e => { setSelectedLoc(e.target.value); setCurrentPage(1); }} className="px-3 py-2 border border-slate-200 rounded text-sm bg-white outline-none focus:border-primary transition">
-              <option value="">{loc('Tất cả địa điểm', 'All Locations')}</option>
-              {locations.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-            <select value={selectedType} onChange={e => { setSelectedType(e.target.value); setCurrentPage(1); }} className="px-3 py-2 border border-slate-200 rounded text-sm bg-white outline-none focus:border-primary transition">
-              <option value="">{loc('Mọi hình thức', 'All Types')}</option>
-              {types.map(tp => <option key={tp} value={tp}>{tp}</option>)}
-            </select>
+            <CustomSelect
+              value={selectedDept}
+              onChange={(v) => { setSelectedDept(v); setCurrentPage(1); }}
+              placeholder={loc('Tất cả phòng ban', 'All Departments')}
+              options={[{ value: '', label: loc('Tất cả phòng ban', 'All Departments') }, ...departments.map(d => ({ value: d, label: d }))]}
+            />
+            <CustomSelect
+              value={selectedLoc}
+              onChange={(v) => { setSelectedLoc(v); setCurrentPage(1); }}
+              placeholder={loc('Tất cả địa điểm', 'All Locations')}
+              options={[{ value: '', label: loc('Tất cả địa điểm', 'All Locations') }, ...locations.map(l => ({ value: l, label: l }))]}
+            />
+            <CustomSelect
+              value={selectedType}
+              onChange={(v) => { setSelectedType(v); setCurrentPage(1); }}
+              placeholder={loc('Mọi hình thức', 'All Types')}
+              options={[{ value: '', label: loc('Mọi hình thức', 'All Types') }, ...types.map(tp => ({ value: tp, label: tp }))]}
+            />
           </div>
         </div>
 
