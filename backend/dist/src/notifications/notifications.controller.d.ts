@@ -5,12 +5,12 @@ export declare class NotificationsController {
     getMyNotifications(userId: string): Promise<{
         id: string;
         userId: string;
-        title: string;
+        createdAt: Date;
         message: string;
+        link: string | null;
+        title: string;
         type: string;
         isRead: boolean;
-        link: string | null;
-        createdAt: Date;
     }[]>;
     getUnreadCount(userId: string): Promise<{
         count: number;

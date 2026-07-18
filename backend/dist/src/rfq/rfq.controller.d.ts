@@ -39,15 +39,15 @@ export declare class RfqController {
             fullName: string;
         };
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
-        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        productName: string;
+        description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
+        productName: string;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -64,15 +64,15 @@ export declare class RfqController {
         };
     } & {
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
-        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        productName: string;
+        description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
+        productName: string;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -85,18 +85,18 @@ export declare class RfqController {
             supplier: {
                 id: string;
                 userId: string;
-                status: import("@prisma/client").$Enums.SupplierStatus;
                 companyName: string;
                 logo: string | null;
+                status: import("@prisma/client").$Enums.SupplierStatus;
             };
         } & {
             id: string;
-            message: string | null;
             createdAt: Date;
             status: import("@prisma/client").$Enums.QuoteStatus;
-            supplierId: string;
             currency: string;
             leadTime: string;
+            supplierId: string;
+            message: string | null;
             price: number;
             rfqId: string;
         })[];
@@ -108,15 +108,15 @@ export declare class RfqController {
         };
     } & {
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
-        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        productName: string;
+        description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
+        productName: string;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -126,15 +126,15 @@ export declare class RfqController {
     }>;
     createRFQ(dto: CreateRFQDto, userId: string): Promise<{
         id: string;
-        createdAt: Date;
-        status: import("@prisma/client").$Enums.RFQStatus;
-        updatedAt: Date;
-        description: string;
-        category: string;
         contactEmail: string | null;
         contactPhone: string | null;
-        productName: string;
+        description: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.RFQStatus;
+        category: string;
         quantity: number;
+        productName: string;
         quantityUnit: string;
         budget: string | null;
         destination: string;
@@ -148,12 +148,12 @@ export declare class RfqController {
     }>;
     submitQuote(dto: CreateQuoteDto, userId: string): Promise<{
         id: string;
-        message: string | null;
         createdAt: Date;
         status: import("@prisma/client").$Enums.QuoteStatus;
-        supplierId: string;
         currency: string;
         leadTime: string;
+        supplierId: string;
+        message: string | null;
         price: number;
         rfqId: string;
     }>;

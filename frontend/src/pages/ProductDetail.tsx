@@ -294,8 +294,7 @@ export function ProductDetail() {
                       {t('product_moq_pricing')}
                     </h3>
                     <div
-                      className="grid gap-3"
-                      style={{ gridTemplateColumns: `repeat(${Math.min(colCount, 4)}, 1fr)` }}
+                      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
                     >
                       {priceTiers.map((tier: any, idx: number) => {
                         const isLast = !tier.maxQty;
