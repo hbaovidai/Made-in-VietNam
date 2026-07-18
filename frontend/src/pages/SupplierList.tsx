@@ -31,7 +31,7 @@ export function SupplierList() {
   const { t } = useTranslation();
   const [urlParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
-  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
   const [sidebarHover, setSidebarHover] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   
@@ -61,13 +61,17 @@ export function SupplierList() {
     return allCategories.filter((c: any) => !c.parentId);
   }, [allCategories]);
 
+  const selectedCategory = useMemo(() => {
+    return categories.find((c: any) => c.slug === selectedCategorySlug);
+  }, [categories, selectedCategorySlug]);
+
   useEffect(() => {
     async function fetchSuppliers() {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-        if (selectedIndustry) {
-          queryParams.append('industry', selectedIndustry);
+        if (selectedCategorySlug) {
+          queryParams.append('categorySlug', selectedCategorySlug);
         }
         if (searchTerm) {
           queryParams.append('search', searchTerm);
@@ -93,12 +97,12 @@ export function SupplierList() {
       fetchSuppliers();
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [selectedIndustry, searchTerm, currentPage]);
+  }, [selectedCategorySlug, searchTerm, currentPage]);
 
   // Reset page when search/filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedIndustry, searchTerm]);
+  }, [selectedCategorySlug, searchTerm]);
 
   return (
     <div className="bg-canvas min-h-screen">
@@ -124,15 +128,15 @@ export function SupplierList() {
           <nav className="py-3 overflow-y-auto">
             {/* "All" item */}
             <button
-              onClick={() => setSelectedIndustry(null)}
+              onClick={() => setSelectedCategorySlug(null)}
               className={cn(
                 "w-full flex items-center gap-3 px-5 py-2.5 text-left transition-all duration-150 relative group/item",
-                !selectedIndustry
+                !selectedCategorySlug
                   ? "text-primary bg-surface-1"
                   : "text-ink-muted hover:bg-surface-1 hover:text-ink"
               )}
             >
-              {!selectedIndustry && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
+              {!selectedCategorySlug && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
               <Search size={18} className="shrink-0" />
               <span className="text-[13px] font-normal whitespace-nowrap" style={{ letterSpacing: '0.16px' }}>
                 Tất cả ngành hàng
@@ -142,15 +146,15 @@ export function SupplierList() {
             {categories.map((cat: any, idx: number) => (
               <button
                 key={cat.slug || cat.id}
-                onClick={() => setSelectedIndustry(cat.name)}
+                onClick={() => setSelectedCategorySlug(cat.slug)}
                 className={cn(
                   "w-full flex items-center gap-3 px-5 py-2.5 text-left transition-all duration-150 relative group/item",
-                  selectedIndustry === cat.name
+                  selectedCategorySlug === cat.slug
                     ? "text-primary bg-surface-1"
                     : "text-ink-muted hover:bg-surface-1 hover:text-ink"
                 )}
               >
-                {selectedIndustry === cat.name && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
+                {selectedCategorySlug === cat.slug && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />}
                 <span className="shrink-0">{getCategoryIcon(cat.slug)}</span>
                 <span className="text-[13px] font-normal whitespace-nowrap truncate" style={{ letterSpacing: '0.16px' }}>
                   {cat.name}
@@ -196,10 +200,10 @@ export function SupplierList() {
           </div>
           <div className="flex-1 overflow-y-auto py-2">
             <button
-              onClick={() => { setSelectedIndustry(null); setIsMobileSidebarOpen(false); }}
+              onClick={() => { setSelectedCategorySlug(null); setIsMobileSidebarOpen(false); }}
               className={cn(
                 "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors text-left",
-                !selectedIndustry ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
+                !selectedCategorySlug ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
               )}
             >
               <Search size={18} className="shrink-0" />
@@ -208,10 +212,10 @@ export function SupplierList() {
             {categories.map((cat: any, idx: number) => (
               <button
                 key={cat.slug || cat.id}
-                onClick={() => { setSelectedIndustry(cat.name); setIsMobileSidebarOpen(false); }}
+                onClick={() => { setSelectedCategorySlug(cat.slug); setIsMobileSidebarOpen(false); }}
                 className={cn(
                   "w-full flex items-center gap-3 px-5 py-3 text-sm font-normal transition-colors text-left",
-                  selectedIndustry === cat.name ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
+                  selectedCategorySlug === cat.slug ? "text-primary bg-surface-1" : "text-ink-muted hover:bg-surface-1"
                 )}
               >
                 <span className="shrink-0">{getCategoryIcon(cat.slug, 18)}</span>
@@ -232,7 +236,7 @@ export function SupplierList() {
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-xl md:text-2xl font-light text-ink" style={{ letterSpacing: 0 }}>
-                  {selectedIndustry || t('suppliers')}
+                  {selectedCategory ? selectedCategory.name : t('suppliers')}
                 </h1>
                 <div className="relative w-full md:w-96 group">
                   <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle group-focus-within:text-primary transition-colors z-10" />
@@ -255,10 +259,10 @@ export function SupplierList() {
             >
               <style>{`.mobile-cat-scroll::-webkit-scrollbar { display: none; }`}</style>
               <button
-                onClick={() => setSelectedIndustry(null)}
+                onClick={() => setSelectedCategorySlug(null)}
                 className={cn(
                   "shrink-0 flex items-center gap-1.5 px-3 py-[7px] text-xs font-medium border transition-all whitespace-nowrap",
-                  !selectedIndustry
+                  !selectedCategorySlug
                     ? "bg-primary text-white border-primary"
                     : "bg-white text-ink-muted border-hairline hover:border-primary hover:text-primary"
                 )}
@@ -270,10 +274,10 @@ export function SupplierList() {
               {categories.map((cat: any) => (
                 <button
                   key={cat.slug || cat.id}
-                  onClick={() => setSelectedIndustry(cat.name)}
+                  onClick={() => setSelectedCategorySlug(cat.slug)}
                   className={cn(
                     "shrink-0 flex items-center gap-1.5 px-3 py-[7px] text-xs font-medium border transition-all whitespace-nowrap",
-                    selectedIndustry === cat.name
+                    selectedCategorySlug === cat.slug
                       ? "bg-primary text-white border-primary"
                       : "bg-white text-ink-muted border-hairline hover:border-primary hover:text-primary"
                   )}
