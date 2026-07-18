@@ -171,15 +171,7 @@ export function SupplierList() {
           </div>
         </aside>
 
-        {/* Mobile Sidebar Toggle Button */}
-        <div className="lg:hidden fixed bottom-6 right-6 z-40">
-          <button
-            onClick={() => setIsMobileSidebarOpen(true)}
-            className="flex items-center justify-center w-12 h-12 bg-primary text-white hover:bg-primary-hover transition-colors" style={{ borderRadius: 0 }}
-          >
-            <Filter size={20} />
-          </button>
-        </div>
+        {/* Mobile Filter Button removed — replaced by horizontal category bar */}
 
         {/* Mobile Sidebar Overlay */}
         {isMobileSidebarOpen && (
@@ -253,6 +245,45 @@ export function SupplierList() {
                   />
                 </div>
               </div>
+          </div>
+
+          {/* ═══ Mobile Horizontal Category Filter ═══ */}
+          <div className="lg:hidden px-4 pb-3 -mt-1">
+            <div
+              className="flex items-center gap-2 overflow-x-auto pb-2"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+            >
+              <style>{`.mobile-cat-scroll::-webkit-scrollbar { display: none; }`}</style>
+              <button
+                onClick={() => setSelectedIndustry(null)}
+                className={cn(
+                  "shrink-0 flex items-center gap-1.5 px-3 py-[7px] text-xs font-medium border transition-all whitespace-nowrap",
+                  !selectedIndustry
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-ink-muted border-hairline hover:border-primary hover:text-primary"
+                )}
+                style={{ borderRadius: 0 }}
+              >
+                <Layers size={14} />
+                Tất cả
+              </button>
+              {categories.map((cat: any) => (
+                <button
+                  key={cat.slug || cat.id}
+                  onClick={() => setSelectedIndustry(cat.name)}
+                  className={cn(
+                    "shrink-0 flex items-center gap-1.5 px-3 py-[7px] text-xs font-medium border transition-all whitespace-nowrap",
+                    selectedIndustry === cat.name
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-ink-muted border-hairline hover:border-primary hover:text-primary"
+                  )}
+                  style={{ borderRadius: 0 }}
+                >
+                  <span className="shrink-0">{getCategoryIcon(cat.slug, 14)}</span>
+                  {cat.name}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Supplier List Section */}

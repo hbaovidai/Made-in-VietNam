@@ -288,7 +288,7 @@ export function TradeMessageModal({
         <div className="flex items-center gap-2">
           <MessageSquare size={16} className="text-blue-400 fill-blue-400/15" />
           <span className="text-xs font-bold tracking-wide">
-            Trade Messenger Workspace
+            Trade Messenger
           </span>
         </div>
 

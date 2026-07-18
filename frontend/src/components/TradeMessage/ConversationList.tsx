@@ -37,10 +37,6 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
     <div className="h-full flex flex-col bg-white border-r border-slate-200">
       {/* List Header */}
       <div className="p-4 border-b border-slate-200 shrink-0">
-        <div className="flex items-center gap-2 mb-3">
-          <MessageSquare size={18} className="text-blue-600" />
-          <h2 className="text-sm font-bold text-slate-800 tracking-tight">Tin nhắn Thương mại</h2>
-        </div>
 
         {/* Search Bar */}
         <div className="relative">
