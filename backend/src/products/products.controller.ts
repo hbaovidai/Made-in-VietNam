@@ -78,7 +78,12 @@ export class ProductsController {
     @Body() dto: CreateProductDto,
     @CurrentUser('id') userId: string,
   ) {
-    return this.productsService.create(userId, dto);
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { userId },
+    });
+    if (!supplier)
+      throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+    return this.productsService.create(supplier.id, dto);
   }
 
   // PROTECTED: SUPPLIER chỉ sửa sản phẩm của mình, ADMIN sửa tất cả
