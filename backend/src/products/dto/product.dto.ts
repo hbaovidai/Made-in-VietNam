@@ -142,6 +142,7 @@ export class UpdateProductDto {
 
   @IsOptional()
   @IsArray()
+  @ValidateNested({ each: true })
   @Type(() => PricingTierDto)
   priceTiers?: PricingTierDto[];
 
