@@ -36,7 +36,7 @@ export function ProductFormPage() {
     categoryId: '',
     images: [''] as string[],
     rfqMinQuantity: '',
-    certifications: [] as { name: string; url: string }[],
+    specifications: [] as { name: string; url: string }[],
   });
 
   const [editorTab, setEditorTab] = useState<'write' | 'preview'>('write');
@@ -145,7 +145,7 @@ export function ProductFormPage() {
           categoryId: p.categoryId || '',
           images: p.images?.length ? p.images : [''],
           rfqMinQuantity: p.rfqMinQuantity ? String(p.rfqMinQuantity) : '',
-          certifications: p.certifications?.length ? p.certifications : [],
+          specifications: p.specifications?.length ? p.specifications : [],
         });
       }).catch(() => {
         addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải thông tin sản phẩm' });
@@ -238,7 +238,7 @@ export function ProductFormPage() {
       categoryId: formData.categoryId,
       images: formData.images.filter(url => url.trim() !== ''),
       rfqMinQuantity: formData.rfqMinQuantity ? Number(formData.rfqMinQuantity) : null,
-      certifications: formData.certifications.filter(c => c.name.trim() || c.url.trim()),
+      specifications: formData.specifications.filter(c => c.name.trim() || c.url.trim()),
     };
 
     try {
@@ -714,27 +714,27 @@ export function ProductFormPage() {
               </label>
               <button
                 type="button"
-                onClick={() => setFormData(prev => ({ ...prev, certifications: [...prev.certifications, { name: '', url: '' }] }))}
+                onClick={() => setFormData(prev => ({ ...prev, specifications: [...prev.specifications, { name: '', url: '' }] }))}
                 className="text-xs font-normal text-primary hover:bg-primary-hover/10 px-2 py-1 transition-all flex items-center gap-1"
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               >
                 <Plus size={12} /> Thêm chứng chỉ
               </button>
             </div>
-            {formData.certifications.length === 0 && (
+            {formData.specifications.length === 0 && (
               <div className="text-center py-8 bg-surface-1 border border-dashed border-hairline" style={{ borderRadius: 0 }}>
                 <Award size={28} className="mx-auto text-ink-subtle mb-2" />
                 <p className="text-sm text-ink-muted" style={{ letterSpacing: '0.16px' }}>Chưa có chứng chỉ nào</p>
                 <p className="text-xs text-ink-subtle mt-1" style={{ letterSpacing: '0.16px' }}>Thêm chứng chỉ như FDA, ISO, HACCP, Organic... để tăng uy tín sản phẩm.</p>
               </div>
             )}
-            {formData.certifications.map((cert, idx) => (
+            {formData.specifications.map((cert, idx) => (
               <div key={idx} className="p-4 bg-surface-1 border border-hairline space-y-3" style={{ borderRadius: 0 }}>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-normal text-ink-muted uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Chứng chỉ #{idx + 1}</span>
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, certifications: prev.certifications.filter((_, i) => i !== idx) }))}
+                    onClick={() => setFormData(prev => ({ ...prev, specifications: prev.specifications.filter((_, i) => i !== idx) }))}
                     className="p-1 text-ink-subtle hover:text-red-500 transition-colors"
                   >
                     <Trash2 size={14} />
@@ -748,9 +748,9 @@ export function ProductFormPage() {
                     placeholder="Tên chứng chỉ (VD: ISO 9001, HACCP...)"
                     value={cert.name}
                     onChange={e => {
-                      const updated = [...formData.certifications];
+                      const updated = [...formData.specifications];
                       updated[idx] = { ...updated[idx], name: e.target.value };
-                      setFormData(prev => ({ ...prev, certifications: updated }));
+                      setFormData(prev => ({ ...prev, specifications: updated }));
                     }}
                   />
                   <div className="flex gap-2">
@@ -763,9 +763,9 @@ export function ProductFormPage() {
                         placeholder="Link hoặc URL ảnh chứng chỉ"
                         value={cert.url}
                         onChange={e => {
-                          const updated = [...formData.certifications];
+                          const updated = [...formData.specifications];
                           updated[idx] = { ...updated[idx], url: e.target.value };
-                          setFormData(prev => ({ ...prev, certifications: updated }));
+                          setFormData(prev => ({ ...prev, specifications: updated }));
                         }}
                       />
                     </div>
@@ -783,9 +783,9 @@ export function ProductFormPage() {
                             const fd = new FormData();
                             fd.append('file', file);
                             const res = await api.post('/uploads', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                            const updated = [...formData.certifications];
+                            const updated = [...formData.specifications];
                             updated[idx] = { ...updated[idx], url: res.data.url };
-                            setFormData(prev => ({ ...prev, certifications: updated }));
+                            setFormData(prev => ({ ...prev, specifications: updated }));
                           } catch {
                             addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải ảnh chứng chỉ' });
                           }

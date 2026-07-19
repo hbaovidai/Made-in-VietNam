@@ -7,9 +7,16 @@ import {
   IsPositive,
   IsString,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProductStatus, PricingMode } from '@prisma/client';
+
+class PricingTierDto {
+  @IsNumber() @IsNotEmpty() @Type(() => Number) minQty: number;
+  @IsOptional() @IsNumber() @Type(() => Number) maxQty?: number;
+  @IsNumber() @IsNotEmpty() @Type(() => Number) price: number;
+}
 
 export class CreateProductDto {
   @IsString()
@@ -67,7 +74,13 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsArray()
-  priceTiers?: { minQty: number; maxQty?: number; price: number }[];
+  @ValidateNested({ each: true })
+  @Type(() => PricingTierDto)
+  priceTiers?: PricingTierDto[];
+
+  @IsOptional()
+  @IsArray()
+  specifications?: {name?: string; url?: string}[];
 }
 
 export class UpdateProductDto {
@@ -129,7 +142,12 @@ export class UpdateProductDto {
 
   @IsOptional()
   @IsArray()
-  priceTiers?: { minQty: number; maxQty?: number; price: number }[];
+  @Type(() => PricingTierDto)
+  priceTiers?: PricingTierDto[];
+
+  @IsOptional()
+  @IsArray()
+  specifications?: {name?: string; url?: string}[];
 }
 
 export class ProductQueryDto {

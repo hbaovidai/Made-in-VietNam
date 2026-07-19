@@ -212,33 +212,34 @@ export class ProductsService {
       '-' +
       Date.now();
 
-    const { priceTiers, ...productData } = dto;
+    const { 
+      priceTiers, pricingMode, currency,
+      images, rfqMinQuantity, specifications,
+      ...remainingProductData
+    } = dto;
+
+    const data = {
+      supplierId,
+      slug,
+      pricingMode: pricingMode || PricingMode.STANDARD,
+      currency: currency || 'VND',
+      rfqMinQuantity: rfqMinQuantity || null,
+      images: images || [],
+      specifications: specifications || [],
+      ...remainingProductData,
+    };
+    console.log(data);
 
     const product = await this.prisma.$transaction(async (tx) => {
       const created = await tx.product.create({
-        data: {
-          supplierId,
-          name: productData.name,
-          slug,
-          description: productData.description,
-          pricingMode: productData.pricingMode || 'STANDARD',
-          minPrice: productData.minPrice,
-          maxPrice: productData.maxPrice,
-          currency: productData.currency || 'VND',
-          unit: productData.unit,
-          moq: productData.moq,
-          moqUnit: productData.moqUnit,
-          categoryId: productData.categoryId,
-          images: productData.images || [],
-          rfqMinQuantity: productData.rfqMinQuantity || null,
-        },
+        data,
         include: {
           category: { select: { name: true, slug: true } },
         },
       });
 
       // Create price tiers if tiered pricing mode
-      if (priceTiers?.length && productData.pricingMode === 'TIERED') {
+      if (priceTiers?.length && pricingMode === PricingMode.TIERED) {
         await tx.priceTier.createMany({
           data: priceTiers.map((t) => ({
             productId: created.id,
