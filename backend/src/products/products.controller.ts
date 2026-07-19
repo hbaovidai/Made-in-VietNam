@@ -21,6 +21,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Controller('products')
 export class ProductsController {
@@ -71,18 +72,13 @@ export class ProductsController {
   // PROTECTED: Chỉ SUPPLIER mới tạo được sản phẩm
   // supplierId lấy từ JWT token, KHÔNG từ body
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER')
+  @Roles(Role.SUPPLIER)
   @Post()
   async create(
     @Body() dto: CreateProductDto,
     @CurrentUser('id') userId: string,
   ) {
-    const supplier = await this.prisma.supplier.findUnique({
-      where: { userId },
-    });
-    if (!supplier)
-      throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
-    return this.productsService.create(supplier.id, dto);
+    return this.productsService.create(userId, dto);
   }
 
   // PROTECTED: SUPPLIER chỉ sửa sản phẩm của mình, ADMIN sửa tất cả
