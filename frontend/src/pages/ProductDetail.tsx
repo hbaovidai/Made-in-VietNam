@@ -9,7 +9,7 @@ import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { SEOHead } from '../components/SEOHead';
-import { SaleChannels, SupplierStatus } from '../lib/enums';
+import { SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { parseMarkdownToHtml } from '../utils/markdown';
 
 export function ProductDetail() {
@@ -640,7 +640,8 @@ export function ProductDetail() {
 
               const colorMap: Record<string, string> = {
                 [SaleChannels.SHOPEE]: '#ee4d2d', [SaleChannels.FACEBOOK]: '#1877f2', [SaleChannels.TIKTOK_SHOP]: '#000000',
-                [SaleChannels.INSTAGRAM]: '#e4405f', [SaleChannels.CUSTOM_WEBSITE]: '#475569', [SaleChannels.ZALO]: '#0068ff',
+                [SaleChannels.INSTAGRAM]: '#e4405f', [SaleChannels.ZALO]: '#0068ff',
+                [SaleChannels.CUSTOM_WEBSITE]: '#475569',
               };
 
               return (
@@ -696,7 +697,7 @@ export function ProductDetail() {
                               style={{ backgroundColor: bg, borderRadius: 0, letterSpacing: '0.16px' }}
                             >
                               <ExternalLink size={13} />
-                              {ch.type}
+                              {SaleChannelsMap[ch.type]}
                             </a>
                           );
                         })}
