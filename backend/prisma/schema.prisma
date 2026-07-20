@@ -816,6 +816,7 @@ model SupplierChannelMap {
   supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
 
   @@id([supplierSlug, type])
+  @@index([supplierSlug])
   @@map("supplier_channel_map")
 }
 

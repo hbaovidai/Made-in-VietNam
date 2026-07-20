@@ -65,6 +65,23 @@ export class SuppliersController {
     return { found: false, addresses: [] };
   }
 
+  @Get(':slug/address')
+  async findChannelsById(
+    @Param('slug') slug: string,
+  ) {
+    try {
+      const channels = await this.prisma.supplierChannelMap.findMany({
+        where: { supplierSlug: slug },
+        select: { url: true, type: true, },
+      })
+
+      return { found: channels.length > 0, channels, };
+
+    } catch (error) { console.log(error) }
+
+    return { found: false, channels: [] };
+  }
+
   // PROTECTED: ADMIN ONLY
   @Get('adminShotGun/:slugOrId')
   findBySlugAdmin(@Param('slugOrId') slugOrId: string) {
