@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Loader2, Menu, ShieldCheck, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Settings, MapPin, Package } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
@@ -276,7 +276,7 @@ export function ProductListing() {
         {/* ═══ Sidebar — Collapsed icon bar, expands on hover ═══ */}
         <aside
           className={cn(
-            "hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 self-start sticky z-30 transition-all duration-300 ease-in-out overflow-hidden",
+            "hidden lg:flex flex-col bg-canvas border-r border-hairline shrink-0 self-start sticky z-30 transition-[width] duration-300 ease-in-out overflow-hidden",
             sidebarHover ? "w-[260px]" : "w-[72px]"
           )}
           style={{ top: 'calc(64px + var(--subnav-h, 40px))', height: 'calc(100vh - 64px - var(--subnav-h, 40px))' }}
@@ -300,7 +300,7 @@ export function ProductListing() {
             <button
               onClick={() => { setSearchParams({}); }}
               className={cn(
-                "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-150 relative group/item",
+                "w-full flex items-center gap-4 px-5 py-3 text-left transition-[background-color,color] duration-150 relative group/item",
                 !categoryFilter
                   ? "text-primary bg-surface-1"
                   : "text-ink-muted hover:bg-surface-1 hover:text-ink"
@@ -321,7 +321,7 @@ export function ProductListing() {
                 key={cat.slug}
                 onClick={() => handleCategoryClick(cat.slug)}
                 className={cn(
-                  "w-full flex items-center gap-4 px-5 py-3 text-left transition-all duration-150 relative group/item",
+                  "w-full flex items-center gap-4 px-5 py-3 text-left transition-[background-color,color] duration-150 relative group/item",
                   activeL1?.slug === cat.slug
                     ? "text-primary bg-surface-1"
                     : "text-ink-muted hover:bg-surface-1 hover:text-ink"
@@ -367,7 +367,7 @@ export function ProductListing() {
                       <button
                         onClick={() => handleL2Click(cat.slug)}
                         className={cn(
-                          "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
+                          "text-xs px-3 py-1 transition-[background-color,color,border-color] duration-150 whitespace-nowrap",
                           selectedL2 === cat.slug
                             ? "text-primary font-semibold border-b-2 border-primary"
                             : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
@@ -388,7 +388,7 @@ export function ProductListing() {
                         <button
                           onClick={() => handleL3Click(cat.slug)}
                           className={cn(
-                            "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
+                            "text-xs px-3 py-1 transition-[background-color,color,border-color] duration-150 whitespace-nowrap",
                             selectedL3 === cat.slug
                               ? "text-primary font-semibold border-b-2 border-primary"
                               : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
@@ -410,7 +410,7 @@ export function ProductListing() {
                         <button
                           onClick={() => handleL4Click(cat.slug)}
                           className={cn(
-                            "text-xs px-3 py-1 transition-all duration-150 whitespace-nowrap",
+                            "text-xs px-3 py-1 transition-[background-color,color,border-color] duration-150 whitespace-nowrap",
                             selectedL4 === cat.slug
                               ? "text-primary font-semibold border-b-2 border-primary"
                               : "text-ink-muted hover:bg-surface-1 hover:text-ink font-normal"
@@ -485,22 +485,24 @@ export function ProductListing() {
                   const moqDisplay = getMoqDisplay(product);
 
                   return (
-                    <motion.div
+                      <m.div
                       key={product.id}
                       initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-50px' }}
+                      transition={{ duration: 0.25, delay: Math.min(index, 12) * 0.04 }}
                     >
                     <Link
                       to={`/products/${product.id}`}
-                      className="group bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200 flex flex-col cursor-pointer h-full"
+                      className="group bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-[background-color,border-color] duration-150 flex flex-col cursor-pointer h-full"
                     >
                       {/* Image */}
                       <div className="relative aspect-square overflow-hidden bg-surface-1">
-                        <img
+                        <m.img
+                          layoutId={`product-image-${product.id}`}
                           src={imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200 ease-out"
                           referrerPolicy="no-referrer"
                           loading="lazy"
                         />
@@ -551,7 +553,7 @@ export function ProductListing() {
                         </div>
                       </div>
                     </Link>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>

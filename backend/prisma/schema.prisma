@@ -30,6 +30,7 @@ model User {
   supplier      Supplier?
   subscriptions UserSubscription[]
   viewHistory   ViewHistory[]
+  reviews       ProductReview[]
 
   @@map("users")
 }
@@ -248,6 +249,7 @@ model Product {
   supplier           Supplier       @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   savedBy            SavedProduct[]
   viewedBy           ViewHistory[]
+  reviews            ProductReview[]
 
   @@index([status, createdAt])
   @@index([categoryId, status])
@@ -448,6 +450,29 @@ model ContactSubmission {
 
   @@map("contact_submissions")
 }
+
+model ProductReview {
+  id               String    @id @default(uuid())
+  productId        String    @map("product_id")
+  userId           String?   @map("user_id")
+  rating           Int       @default(5)
+  content          String
+  images           String[]  @default([])
+  verifiedPurchase Boolean   @default(false) @map("verified_purchase")
+  helpfulCount     Int       @default(0) @map("helpful_count")
+  sellerReply      String?   @map("seller_reply")
+  sellerRepliedAt  DateTime? @map("seller_replied_at")
+  status           String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  authorName       String    @map("author_name")
+  authorEmail      String    @map("author_email")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  product          Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user             User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("product_reviews")
+}
+
 
 model MembershipPlan {
   id            String             @id @default(uuid())

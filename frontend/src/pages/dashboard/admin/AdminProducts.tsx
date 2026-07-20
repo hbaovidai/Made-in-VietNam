@@ -33,15 +33,24 @@ export function AdminProducts() {
 
   const filtered = products.filter(p => {
     const matchSearch = p.name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus === 'all' || p.status === filterStatus;
-    return matchSearch && matchStatus;
+    
+    if (filterStatus === 'PENDING') {
+      return matchSearch && p.status === 'PENDING';
+    }
+    
+    if (filterStatus === 'all') {
+      // In the "All Products" menu, only show APPROVED (ACTIVE) or REJECTED products
+      return matchSearch && (p.status === 'ACTIVE' || p.status === 'REJECTED');
+    }
+    
+    return matchSearch && p.status === filterStatus;
   });
 
   const totalPages = Math.ceil(filtered.length / perPage);
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
 
   const statusCounts = {
-    all: products.length,
+    all: products.filter(p => p.status === 'ACTIVE' || p.status === 'REJECTED').length,
     ACTIVE: products.filter(p => p.status === 'ACTIVE').length,
     REJECTED: products.filter(p => p.status === 'REJECTED').length,
   };

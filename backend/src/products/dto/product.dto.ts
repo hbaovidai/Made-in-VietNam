@@ -93,13 +93,13 @@ export class UpdateProductDto {
   description?: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @Type(() => Number)
   minPrice?: number;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @Type(() => Number)
   maxPrice?: number;

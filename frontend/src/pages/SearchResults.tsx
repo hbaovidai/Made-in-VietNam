@@ -18,7 +18,7 @@ import {
   Heart 
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
@@ -342,20 +342,22 @@ export function SearchResults() {
                   const moqDisplay = product.moq ? `${product.moq.toLocaleString('vi-VN')} ${product.unit || 'Cái'}` : '100 Cái';
 
                   return (
-                    <motion.div
+                    <m.div
                       key={product.id}
                       initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="group bg-canvas border border-hairline overflow-hidden flex flex-col h-full hover:border-primary relative"
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-50px' }}
+                      transition={{ duration: 0.25, delay: Math.min(index, 12) * 0.04 }}
+                      className="group bg-canvas border border-hairline overflow-hidden flex flex-col h-full hover:border-primary transition-[border-color] duration-150 relative"
                       style={{ borderRadius: 0 }}
                     >
                       {/* Image Block */}
                       <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-surface-2 border-b border-hairline">
-                        <img
+                        <m.img
+                          layoutId={`product-image-${product.id}`}
                           src={imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200 ease-out"
                         />
                         <div className="absolute top-3 left-3 bg-surface-1 text-primary px-2.5 py-1 border border-hairline flex items-center gap-1 text-[9px] font-normal tracking-widest uppercase" style={{ borderRadius: 0 }}>
                           <ShieldCheck size={12} className="fill-primary text-white" />
@@ -364,12 +366,12 @@ export function SearchResults() {
                         {/* Favorite button */}
                         <button
                           onClick={(e) => toggleFavorite(product.id, e)}
-                          className="absolute top-3 right-3 w-8 h-8 bg-surface-1/90 hover:bg-surface-1 border border-hairline flex items-center justify-center transition-colors z-10"
+                          className="absolute top-3 right-3 w-8 h-8 bg-surface-1/90 hover:bg-surface-1 border border-hairline flex items-center justify-center transition-colors duration-150 z-10"
                           style={{ borderRadius: 0 }}
                         >
                           <Heart 
                             size={16} 
-                            className={cn("transition-colors duration-200", isLiked ? "fill-red-500 text-red-500" : "text-ink-subtle hover:text-red-500")} 
+                            className={cn("transition-colors duration-150", isLiked ? "fill-red-500 text-red-500" : "text-ink-subtle hover:text-red-500")} 
                           />
                         </button>
                       </Link>
@@ -419,7 +421,7 @@ export function SearchResults() {
                           </Link>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, MapPin, ShieldCheck, Star, ChevronRight, ChevronLeft, Award, Globe, Loader2, Menu, Sprout, ShieldAlert, Truck, Factory, Shirt, Wrench, Zap, FlaskConical, Leaf, TreePine, Sofa, Hammer, Package, Layers, Send } from 'lucide-react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { SupplierCard } from '../components/SupplierCard';
 import { cn } from '../utils/cn';
@@ -300,14 +300,15 @@ export function SupplierList() {
             ) : suppliers.length > 0 ? (
               <div className="space-y-5 flex-1">
                 {suppliers.map((supplier, index) => (
-                  <motion.div
+                  <m.div
                     key={supplier.id}
                     initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: 0.25, delay: Math.min(index, 12) * 0.04 }}
                   >
                     <SupplierCard supplier={supplier} />
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
              ) : (

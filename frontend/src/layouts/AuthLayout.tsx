@@ -44,7 +44,6 @@ export function AuthLayout({ children, rightActionText, rightActionLink }: AuthL
           <Link to="/privacy" className="hover:text-slate-800 transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-slate-800 transition-colors">Terms of Service</Link>
           <Link to="/contact" className="hover:text-slate-800 transition-colors">Contact Support</Link>
-          <Link to="/verify" className="hover:text-slate-800 transition-colors">Manufacturer Verification</Link>
         </div>
       </footer>
     </div>

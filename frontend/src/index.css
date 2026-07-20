@@ -330,9 +330,27 @@
   }
 }
 
-@keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+/* Shimmer — premium loading effect (replaces pulse) */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Bounce limited — bounces 3 times then stops */
+@keyframes bounce-limited {
+  0%, 100% { transform: translateY(0); }
+  10% { transform: translateY(-25%); }
+  20% { transform: translateY(0); }
+  30% { transform: translateY(-15%); }
+  40% { transform: translateY(0); }
+  50% { transform: translateY(-8%); }
+  60% { transform: translateY(0); }
+}
+
+/* Slide progress bar for hero slideshow */
+@keyframes slide-progress {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
 @keyframes fade-in {
@@ -356,10 +374,23 @@
   animation: modal-content-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Shimmer skeleton — horizontal light streak */
 .animate-skeleton {
-  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Bounce limited — 3 bounces then stop (1.2s total) */
+.animate-bounce-limited {
+  animation: bounce-limited 1.2s ease-out forwards;
 }
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Hero slideshow progress bar */
+.animate-slide-progress {
+  animation: slide-progress var(--slide-duration, 5s) linear forwards;
 }

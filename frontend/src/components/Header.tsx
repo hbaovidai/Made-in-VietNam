@@ -314,10 +314,10 @@ export function Header() {
             */}
 
             <div className="flex items-center gap-1">
-              <Link to="/rfq" className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('post_rfQ')}>
+              <Link to="/rfq" className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors relative" title={t('post_rfQ')}>
                 <ClipboardList size={20} />
               </Link>
-              <Link to={user?.role === 'SUPPLIER' ? "/dashboard/supplier/messages" : "/dashboard/buyer/messages"} className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative" title={t('contact')}>
+              <Link to={user?.role === 'SUPPLIER' ? "/dashboard/supplier/messages" : "/dashboard/buyer/messages"} className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors relative" title={t('contact')}>
                 <MessageSquare size={20} />
               </Link>
 
@@ -325,7 +325,7 @@ export function Header() {
               <div className="relative">
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
-                  className="p-2 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-full transition-colors relative"
+                  className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors relative"
                   title={t('notifications')}
                 >
                   <Bell size={20} />
@@ -385,7 +385,7 @@ export function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-2 group relative">
-                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-600 transition-colors">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 transition-colors">
                   <User size={18} />
                 </div>
                 <div className="flex items-center justify-center text-sm font-bold">
@@ -406,14 +406,14 @@ export function Header() {
             {/* Search icon — opens mobile search */}
             <button
               onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-              className="p-2 text-slate-600 hover:text-primary transition-colors md:hidden"
+              className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors md:hidden"
             >
               <Search size={22} />
             </button>
             {/* Notification bell — mobile */}
             <button
               onClick={(e) => { e.stopPropagation(); toggleNotifDropdown(); }}
-              className="p-2 text-slate-600 hover:text-primary transition-colors relative"
+              className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors relative"
               title={t('notifications')}
             >
               <Bell size={22} />
@@ -426,7 +426,7 @@ export function Header() {
             {/* Menu toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-slate-600 hover:text-primary transition-colors"
+              className="p-2 text-slate-700 hover:text-primary hover:bg-slate-100 rounded-full transition-colors"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -465,7 +465,7 @@ export function Header() {
         className="border-t border-slate-200 bg-white hidden md:block transition-all duration-300 ease-in-out"
         style={{
           maxHeight: isSubnavVisible ? 44 : 0,
-          overflow: 'hidden',
+          overflow: isSubnavVisible ? 'visible' : 'hidden',
           borderBottom: isSubnavVisible ? '1px solid #e2e8f0' : 'none',
         }}
       >

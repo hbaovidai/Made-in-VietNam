@@ -22,8 +22,6 @@ import { ProfileSubmission } from './pages/ProfileSubmission';
 // Main Public Pages
 const Home = React.lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const UITest = React.lazy(() => import('./pages/UITest').then(m => ({ default: m.UITest })));
-const VerifyProduct = React.lazy(() => import('./pages/public/VerifyProduct').then(m => ({ default: m.VerifyProduct })));
-const ProductTrace = React.lazy(() => import('./pages/public/ProductTrace').then(m => ({ default: m.ProductTrace })));
 const ProductListing = React.lazy(() => import('./pages/ProductListing').then(m => ({ default: m.ProductListing })));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const SupplierList = React.lazy(() => import('./pages/SupplierList').then(m => ({ default: m.SupplierList })));
@@ -91,6 +89,7 @@ const AdminAttributes = React.lazy(() => import('./pages/dashboard/admin/AdminAt
 const AdminReviews = React.lazy(() => import('./pages/dashboard/admin/AdminReviews').then(m => ({ default: m.AdminReviews })));
 const AdminCategories = React.lazy(() => import('./pages/dashboard/admin/AdminCategories').then(m => ({ default: m.AdminCategories })));
 const AdminContacts = React.lazy(() => import('./pages/dashboard/admin/AdminContacts').then(m => ({ default: m.AdminContacts })));
+const AdminComplaints = React.lazy(() => import('./pages/dashboard/admin/AdminComplaints').then(m => ({ default: m.AdminComplaints })));
 const AdminOrders = React.lazy(() => import('./pages/dashboard/admin/AdminOrders').then(m => ({ default: m.AdminOrders })));
 const AdminAuditLog = React.lazy(() => import('./pages/dashboard/admin/AdminAuditLog').then(m => ({ default: m.AdminAuditLog })));
 const AdminSettings = React.lazy(() => import('./pages/dashboard/admin/AdminSettings').then(m => ({ default: m.AdminSettings })));
@@ -182,8 +181,6 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/ui-test" element={<UITest />} />
-              <Route path="/verify" element={<VerifyProduct />} />
-              <Route path="/trace/:code" element={<ProductTrace />} />
               <Route path="/products" element={<ProductListing />} />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/suppliers" element={<SupplierList />} />
@@ -289,6 +286,7 @@ export default function App() {
               <Route path="products/reviews" element={<AdminReviews />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="contacts" element={<AdminContacts />} />
+              <Route path="complaints" element={<AdminComplaints />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="audit-log" element={<AdminAuditLog />} />
               <Route path="requests" element={<AdminRequests />} />

@@ -147,6 +147,18 @@ export function ProductFormPage() {
           rfqMinQuantity: p.rfqMinQuantity ? String(p.rfqMinQuantity) : '',
           specifications: p.specifications?.length ? p.specifications : [],
         });
+
+        if (p.pricingMode) {
+          const mode = p.pricingMode.toLowerCase() as 'standard' | 'contact' | 'tiered';
+          setPricingMode(mode);
+          if (mode === 'tiered' && p.priceTiers?.length) {
+            setTieredPrices(p.priceTiers.map((t: any) => ({
+              minQty: String(t.minQty || ''),
+              maxQty: t.maxQty ? String(t.maxQty) : '',
+              price: String(t.price || ''),
+            })));
+          }
+        }
       }).catch(() => {
         addToast({ type: 'error', title: 'Lỗi', message: 'Không thể tải thông tin sản phẩm' });
       }).finally(() => setLoadingProduct(false));
@@ -231,7 +243,7 @@ export function ProductFormPage() {
       pricingMode: pricingMode.toUpperCase(),
       minPrice,
       maxPrice,
-      ...(priceTiersPayload ? { priceTiers: priceTiersPayload } : {}),
+      priceTiers: priceTiersPayload || [],
       unit: formData.unit,
       moq: Number(formData.moq),
       moqUnit: formData.unit,

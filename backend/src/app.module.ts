@@ -27,6 +27,7 @@ import { SupplierApplicationModule } from './supplier_applications/supplier_app.
 import { FaqModule } from './faqs/faq.module';
 import { JsonStorageModule } from './json-storage/json-storage.module';
 import { LegalModule } from './legal/legal.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { LegalModule } from './legal/legal.module';
     FaqModule,
     JsonStorageModule,
     LegalModule,
+    ReviewsModule,
   ],
   providers: [
     // Kích hoạt Rate Limiter toàn cục cho mọi endpoint

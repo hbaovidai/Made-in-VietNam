@@ -316,12 +316,17 @@
   border-bottom: 1px solid var(--wp-border-light); text-align: left;
   background: #f6f7f7; white-space: nowrap;
 }
+.wp-table thead th:not(:last-child) {
+  border-right: 1px solid var(--wp-border-light);
+}
 .wp-table tbody td {
-  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid #f0f0f1;
+  padding: 8px 10px; font-size: 13px;
   vertical-align: middle;
 }
+.wp-table tbody td:not(:last-child) {
+  border-right: 1px solid #f0f0f1;
+}
 .wp-table tbody tr:hover { background: #f6f7f7 !important; }
-.wp-table tbody tr:last-child td { border-bottom: none; }
 .wp-table .wp-row-title {
   color: var(--wp-accent); font-weight: 600; text-decoration: none; cursor: pointer;
 }

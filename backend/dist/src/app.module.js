@@ -36,6 +36,7 @@ const supplier_app_module_1 = require("./supplier_applications/supplier_app.modu
 const faq_module_1 = require("./faqs/faq.module");
 const json_storage_module_1 = require("./json-storage/json-storage.module");
 const legal_module_1 = require("./legal/legal.module");
+const reviews_module_1 = require("./reviews/reviews.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -82,6 +83,7 @@ exports.AppModule = AppModule = __decorate([
             faq_module_1.FaqModule,
             json_storage_module_1.JsonStorageModule,
             legal_module_1.LegalModule,
+            reviews_module_1.ReviewsModule,
         ],
         providers: [
             {

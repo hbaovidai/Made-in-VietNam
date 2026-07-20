@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Globe, Zap, Award, CheckCircle2, MessageSquare, ChevronRight, ChevronLeft, LayoutGrid, Star, Factory, Shield, Loader2, Wrench, Beaker, Shirt, MapPin } from 'lucide-react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { CategorySidebar } from '../components/CategorySidebar';
 import { SEOHead } from '../components/SEOHead';
@@ -16,6 +16,7 @@ export function Home() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slideKey, setSlideKey] = useState(0);
 
   const { settings: siteSettings } = useAppearance();
 
@@ -42,20 +43,25 @@ export function Home() {
     return [];
   }, [siteSettings, i18n.language]);
 
+  const SLIDE_INTERVAL = 5000;
+
   useEffect(() => {
     if (heroSlides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 15000);
+      setSlideKey((k) => k + 1);
+    }, SLIDE_INTERVAL);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    setSlideKey((k) => k + 1);
   };
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    setSlideKey((k) => k + 1);
   };
 
   useEffect(() => {
@@ -152,7 +158,7 @@ export function Home() {
             {heroSlides.map((slide, idx) => (
               <div
                 key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                className={`absolute inset-0 transition-opacity duration-500 ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
                   }`}
               >
                 <img
@@ -162,7 +168,7 @@ export function Home() {
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6 sm:px-12 lg:px-16 text-white">
-                  <motion.div
+                  <m.div
                     key={`text-${idx}`}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -173,14 +179,14 @@ export function Home() {
                     <p className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-xl" style={{ letterSpacing: '0.16px' }}>{slide.desc}</p>
 
                     <div className="flex flex-wrap gap-3 pt-2">
-                      <Link to={slide.link} className="bg-white text-ink px-6 py-3 text-xs sm:text-sm font-normal hover:bg-surface-1 transition-all flex items-center gap-1.5" style={{ letterSpacing: '0.16px' }}>
+                      <Link to={slide.link} className="bg-white text-ink px-6 py-3 text-xs sm:text-sm font-normal hover:bg-surface-1 transition-colors flex items-center gap-1.5" style={{ letterSpacing: '0.16px' }}>
                         {idx === 1 ? t('register_now') : t('explore_now')} {idx === 1 && <ArrowRight size={14} />}
                       </Link>
-                      <Link to="/about" className="border border-white/40 text-white px-6 py-3 text-xs sm:text-sm font-normal hover:bg-white/10 transition-all" style={{ letterSpacing: '0.16px' }}>
+                      <Link to="/about" className="border border-white/40 text-white px-6 py-3 text-xs sm:text-sm font-normal hover:bg-white/10 transition-colors" style={{ letterSpacing: '0.16px' }}>
                         {idx === 1 ? t('learn_process') : t('learn_more')}
                       </Link>
                     </div>
-                  </motion.div>
+                  </m.div>
                 </div>
               </div>
             ))}
@@ -190,14 +196,14 @@ export function Home() {
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
+                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-[opacity,background-color] z-20"
                   aria-label="Previous slide"
                 >
                   <ChevronLeft size={22} />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20"
+                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 bg-black/20 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-[opacity,background-color] z-20"
                   aria-label="Next slide"
                 >
                   <ChevronRight size={22} />
@@ -207,15 +213,25 @@ export function Home() {
 
             {/* Slider Dots */}
             {heroSlides.length > 1 && (
-              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`transition-all duration-300 outline-none ${idx === currentSlide ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-                      }`}
+              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20">
+                <div className="flex gap-2">
+                  {heroSlides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setCurrentSlide(idx); setSlideKey((k) => k + 1); }}
+                      className={`transition-[width,background-color] duration-300 outline-none ${idx === currentSlide ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                        }`}
+                    />
+                  ))}
+                </div>
+                {/* Auto-progress bar */}
+                <div className="w-24 h-[2px] bg-white/20 overflow-hidden" style={{ borderRadius: 1 }}>
+                  <div
+                    key={slideKey}
+                    className="h-full bg-white animate-slide-progress"
+                    style={{ '--slide-duration': `${SLIDE_INTERVAL}ms` } as React.CSSProperties}
                   />
-                ))}
+                </div>
               </div>
             )}
           </div>
@@ -245,13 +261,13 @@ export function Home() {
                 <Link
                   key={cat.id}
                   to={`/products?category=${cat.slug}`}
-                  className="bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200 group flex flex-col"
+                  className="bg-canvas border border-hairline overflow-hidden hover:bg-surface-1 hover:border-ink-subtle transition-[background-color,border-color] duration-150 group flex flex-col"
                 >
                   <div className="w-full aspect-[4/3] overflow-hidden bg-surface-1 border-b border-hairline">
                     <img
                       src={imgSrc}
                       alt={cat.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200 ease-out"
                       referrerPolicy="no-referrer"
                       loading="lazy"
                     />
@@ -341,7 +357,7 @@ export function Home() {
                   : (supplier.industry || []);
 
                 return (
-                  <div key={supplier.id} className="bg-canvas border border-hairline p-6 flex flex-col justify-between h-full hover:bg-surface-1 hover:border-ink-subtle transition-all duration-200">
+                  <div key={supplier.id} className="bg-canvas border border-hairline p-6 flex flex-col justify-between h-full hover:bg-surface-1 hover:border-ink-subtle transition-[background-color,border-color] duration-150">
                     <div className="flex flex-col items-center text-center">
                       <div className="w-14 h-14 bg-surface-1 border border-hairline flex items-center justify-center mb-4 overflow-hidden shrink-0 p-1">
                         {supplier.logo ? (

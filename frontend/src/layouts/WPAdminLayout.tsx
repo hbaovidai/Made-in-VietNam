@@ -42,7 +42,11 @@ const baseMenuItems = (t: (key: string) => string): MenuItem[] => [
     icon: Briefcase, label: t('careers'), path: '/dashboard/admin/careers',
   },
   {
-    icon: MessageSquare, label: t('admin_feedbacks'), path: '/dashboard/admin/contacts',
+    icon: MessageSquare, label: t('admin_support'), path: '/dashboard/admin/contacts',
+    children: [
+      { label: t('admin_contact_inquiries'), path: '/dashboard/admin/contacts' },
+      { label: t('admin_reports_complaints'), path: '/dashboard/admin/complaints' },
+    ],
   },
   {
     icon: Package, label: t('products'), path: '/dashboard/admin/products',
@@ -148,6 +152,11 @@ export function WPAdminLayout() {
       } else if (sub.path === '/dashboard/admin/products') {
         return searchStatus !== 'PENDING';
       }
+    }
+
+    // Special case for support/contacts sub-menus:
+    if (location.pathname === '/dashboard/admin/contacts') {
+      return sub.path === '/dashboard/admin/contacts';
     }
 
     if (!subQuery) return !location.search || location.search === '?';
