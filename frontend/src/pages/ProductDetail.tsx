@@ -9,7 +9,7 @@ import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { SEOHead } from '../components/SEOHead';
-import { SupplierStatus } from '../lib/enums';
+import { SaleChannels, SupplierStatus } from '../lib/enums';
 import { parseMarkdownToHtml } from '../utils/markdown';
 
 export function ProductDetail() {
@@ -23,6 +23,7 @@ export function ProductDetail() {
   const [supplier, setSupplier] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [categoryProducts, setCategoryProducts] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -46,6 +47,15 @@ export function ProductDetail() {
   const [likedReviews, setLikedReviews] = useState<string[]>([]);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  const fetchSupplierInfo = async (id: string) => {
+    const s = await api.get(`/suppliers/${id}`); setSupplier(s.data);
+  }
+
+  const fetchAdditionalProductInfo = async (id: string) => {
+    const r = await api.get(`/products/${id}/related`); setRelatedProducts(r.data || []); 
+    const rev = await api.get(`/reviews/product/${id}`); setProductReviews(rev.data || []);
+  }
+
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -53,15 +63,15 @@ export function ProductDetail() {
         const prodRes = await api.get(`/products/${id}`);
         const p = prodRes.data;
         setProduct(p);
-        if (p.supplierId) {
-          try { const s = await api.get(`/suppliers/${p.supplierId}`); setSupplier(s.data); } catch {}
-        }
-        try { const r = await api.get(`/products/${p.id}/related`); setRelatedProducts(r.data || []); } catch {}
-        try { const rev = await api.get(`/reviews/product/${p.id}`); setProductReviews(rev.data || []); } catch {}
-        if (p.category?.slug) { try { const c = await api.get(`/products?category=${p.category.slug}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); } catch {} }
-        if (user?.id) { try { await api.post(`/users/${user.id}/history`, { productId: p.id }); } catch {} }
-      } catch {
-        setProduct(null);
+
+        if (product.id) await fetchAdditionalProductInfo(product.id);
+        if (product.supplierId) await fetchSupplierInfo(product.supplierId);
+
+        if (p.category?.slug) { const c = await api.get(`/products?category=${p.category.slug}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); }
+        if (user?.id) { await api.post(`/users/${user.id}/history`, { productId: p.id }); }
+
+      } catch (error) {
+        console.error(error); setProduct(null);
       } finally { setLoading(false); }
     }
     if (id) loadData();
@@ -625,12 +635,12 @@ export function ProductDetail() {
               const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
               const primaryLocation = primaryRecord ? primaryRecord.address : '';
 
-              const channels: { name: string; url?: string; color?: string }[] = Array.isArray(supplier.salesChannels)
-                ? supplier.salesChannels
-                : [{ name: 'Shopee', color: '#ee4d2d' }, { name: 'Facebook', color: '#1877f2' }, { name: 'Website', color: '#475569' }];
+              const channels: { type: SaleChannels; url: string; }[] =
+                Array.isArray(supplier.channels) ? supplier.channels : [ ] ;
+
               const colorMap: Record<string, string> = {
-                shopee: '#ee4d2d', facebook: '#1877f2', tiktok: '#000000',
-                instagram: '#e4405f', website: '#475569', zalo: '#0068ff',
+                [SaleChannels.SHOPEE]: '#ee4d2d', [SaleChannels.FACEBOOK]: '#1877f2', [SaleChannels.TIKTOK_SHOP]: '#000000',
+                [SaleChannels.INSTAGRAM]: '#e4405f', [SaleChannels.CUSTOM_WEBSITE]: '#475569', [SaleChannels.ZALO]: '#0068ff',
               };
 
               return (
@@ -676,18 +686,17 @@ export function ProductDetail() {
                       </h4>
                       <div className="flex flex-wrap gap-2.5">
                         {channels.map((ch) => {
-                          const bg = ch.color || colorMap[ch.name.toLowerCase()] || '#475569';
+                          const bg = colorMap[ch.type] || '#475569';
                           return (
                             <a
-                              key={ch.name}
-                              href={ch.url || supplier.website || '#'}
-                              target={ch.url || supplier.website ? '_blank' : undefined}
+                              key={ch.type}
+                              href={ch.url} target={ch.url}
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-2 px-4 py-2 text-white text-xs font-normal transition-opacity hover:opacity-90"
                               style={{ backgroundColor: bg, borderRadius: 0, letterSpacing: '0.16px' }}
                             >
                               <ExternalLink size={13} />
-                              {ch.name}
+                              {ch.type}
                             </a>
                           );
                         })}
