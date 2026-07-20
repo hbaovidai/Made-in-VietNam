@@ -67,7 +67,7 @@ model Supplier {
   employee_count       String?
   yearEstablished      Int?                        @map("year_established")
   website              String?
-  salesChannels        Json?                       @map("sales_channels")
+  salesChannels        Json?                       @map("sales_channels") // we don't use this, queue for deletion
   createdAt            DateTime                    @default(now()) @map("created_at")
   updatedAt            DateTime                    @updatedAt @map("updated_at")
   status               SupplierStatus              @default(APPLICATION_PENDING)
@@ -816,6 +816,7 @@ model SupplierChannelMap {
   supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
 
   @@id([supplierSlug, type])
+  @@index([supplierSlug])
   @@map("supplier_channel_map")
 }
 
