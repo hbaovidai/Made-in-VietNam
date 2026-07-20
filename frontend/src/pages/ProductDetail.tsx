@@ -64,8 +64,8 @@ export function ProductDetail() {
         const p = prodRes.data;
         setProduct(p);
 
-        if (product.id) await fetchAdditionalProductInfo(product.id);
-        if (product.supplierId) await fetchSupplierInfo(product.supplierId);
+        if (p.id) await fetchAdditionalProductInfo(p.id);
+        if (p.supplierId) await fetchSupplierInfo(p.supplierId);
 
         if (p.category?.slug) { const c = await api.get(`/products?category=${p.category.slug}&limit=6`); setCategoryProducts((c.data.data || []).filter((x: any) => x.id !== p.id).slice(0, 5)); }
         if (user?.id) { await api.post(`/users/${user.id}/history`, { productId: p.id }); }
