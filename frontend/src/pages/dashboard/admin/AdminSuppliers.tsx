@@ -93,12 +93,8 @@ export function AdminSuppliers() {
     const { data } = await api.get(
       '/suppliers',
       { 
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`
-        }, 
-        params: {
-          limit, page,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` }, 
+        params: { limit, page, },
       }
     );
 
@@ -183,19 +179,13 @@ export function AdminSuppliers() {
   };
 
   const handleDelete = async (id: string) => {
-    // handle later
+    // handle deletion later
     return;
     try {
-      const result = await api.delete(
-        `/supp_apps/${id}`,
-        { headers: {Authorization: `Bearer ${localStorage.getItem('mivn5_token')}`} }
-      );
-      if (result.data?.success === true) {
+      const result = await api.delete( `/suppliers/${id}`,);
+      if (result.data?.success === true) 
         setSuppliers(prev => prev.filter(a => a.id !== id));
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) { console.log(error); }
   }
 
   const filtered = suppliers.filter(supp => {
