@@ -23,7 +23,6 @@ import { OrdersModule } from './orders/orders.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { TranslationModule } from './translation/translation.module';
 import { SettingsModule } from './settings/settings.module';
-import { SupplierApplicationModule } from './supplier_applications/supplier_app.module';
 import { FaqModule } from './faqs/faq.module';
 import { JsonStorageModule } from './json-storage/json-storage.module';
 import { LegalModule } from './legal/legal.module';
@@ -54,7 +53,6 @@ import { ReviewsModule } from './reviews/reviews.module';
     CategoriesModule,
     ProductsModule,
     SuppliersModule,
-    SupplierApplicationModule,
     RfqModule,
     MessagesModule,
     BatchesModule,

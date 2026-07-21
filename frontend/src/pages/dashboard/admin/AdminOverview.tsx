@@ -29,13 +29,14 @@ import {
   Tooltip, 
   Legend 
 } from 'recharts';
+import { SupplierStatus } from '@/src/lib/enums';
 
 interface PendingSupplier {
   id: string;
   companyName: string;
   taxCode: string;
   createdAt: string;
-  status: string;
+  status: SupplierStatus;
 }
 
 interface AuditLogItem {
@@ -81,7 +82,7 @@ export function AdminOverview() {
         api.get('/products/admin', { ...authHeaders, params: { status: 'PENDING', limit: 1 } }),
         api.get('/rfqs/open', authHeaders),
         api.get('/messages/admin/all', authHeaders),
-        api.post('/supp_apps/supp_apps_all', { page: 1, limit: 5 }, authHeaders),
+        api.get('/suppliers', { ...authHeaders, params: { page: 1, limit: 5, status: SupplierStatus.APPLICATION_PENDING } }),
         api.get('/audit-logs', { ...authHeaders, params: { limit: 5 } })
       ]);
 

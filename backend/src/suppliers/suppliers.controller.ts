@@ -88,6 +88,14 @@ export class SuppliersController {
     return this.suppliersService.findBySlugAdmin(slugOrId);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  async delete(@Param(':id') id: string) {
+    const supplier =  this.prisma.supplier.delete({ where: {id} });
+    return { success: supplier ?? false, supplier };
+  }
+
   // PUBLIC
   @Get(':id/stats')
   getStats(@Param('id') id: string) {
