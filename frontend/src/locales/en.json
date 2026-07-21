@@ -2435,5 +2435,6 @@
   "guide_buyer_s2_d1_inquiry": "Step 1: Select the product and click 'Request Quote'.",
   "guide_buyer_s2_d2_inquiry": "Step 2: Fill in the quantity and product specifications.",
   "guide_buyer_s2_d3_inquiry": "Step 3: Receive quotations directly from manufacturers.",
-  "guide_buyer_s2_d4_inquiry": "Step 4: Negotiate payment and shipping methods."
+  "guide_buyer_s2_d4_inquiry": "Step 4: Negotiate payment and shipping methods.",
+  "price_display_contact": "Contact for price inquiry"
 }

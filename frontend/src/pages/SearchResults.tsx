@@ -25,6 +25,7 @@ import { SEOHead } from '../components/SEOHead';
 import { useLocalized } from '../hooks/useLocalized';
 import { SearchHeader } from '../components/SearchHeader';
 import { CustomSelect } from '../components/CustomSelect';
+import { PricingMode } from '../lib/enums';
 
 
 const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
@@ -331,14 +332,19 @@ export function SearchResults() {
                 {products.map((product, index) => {
                   const imageUrl = product.images?.[0] || product.image || 'https://via.placeholder.com/300';
                   const isLiked = favorites[product.id] || false;
-                  
+
                   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
                   const priceDisplay = (() => {
-                    const price = product.minPrice ?? product.price;
-                    if (price != null) return `${formatVND(price)}`;
-                    return product.priceRange || 'Liên hệ';
+                    if (!product.pricingMode) return t('price_display_contact');
+                    if (product.pricingMode === PricingMode.STANDARD) return formatVND(product.minPrice);
+                    if (product.pricingMode === PricingMode.TIERED) {
+                      const priceRange = `${formatVND(product.minPrice)} - ${formatVND(product.maxPrice)}`;
+                      return priceRange;
+                    }
+                    if (product.pricingMode === PricingMode.CONTACT) return t('price_display_contact');
                   })();
-                  const unitDisplay = product.unit || 'Cái';
+
+                  const unitDisplay = (product.pricingMode !== PricingMode.CONTACT) ? ('/' + product.unit || 'Cái') : '';
                   const moqDisplay = product.moq ? `${product.moq.toLocaleString('vi-VN')} ${product.unit || 'Cái'}` : '100 Cái';
 
                   return (
@@ -385,7 +391,7 @@ export function SearchResults() {
                           
                           {/* Price */}
                           <div className="text-base font-normal text-primary mb-1" style={{ letterSpacing: '0.16px' }}>
-                            {priceDisplay} <span className="text-xs font-normal text-ink-subtle">/ {unitDisplay}</span>
+                            {priceDisplay} <span className="text-xs font-normal text-ink-subtle">{unitDisplay}</span>
                           </div>
 
                           {/* MOQ */}

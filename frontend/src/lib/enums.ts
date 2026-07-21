@@ -142,3 +142,8 @@ export const BusinessTypeMap = {
   [BusinessType.LIMITED_LIABILITY]: 'Công ty TNHH',
 }
 
+export enum PricingMode{
+  STANDARD = 'STANDARD',
+  TIERED = 'TIERED',
+  CONTACT = 'CONTACT',
+}
