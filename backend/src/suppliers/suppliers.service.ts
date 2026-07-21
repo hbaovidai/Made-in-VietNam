@@ -15,36 +15,43 @@ export class SuppliersService {
     const where: Prisma.SupplierWhereInput = {};
 
     if (search) {
-      where.companyName = { contains: search, mode: 'insensitive' };
+      // we will have to content ourselves with this until a better solution is found
+      const companyNameCond: Prisma.SupplierWhereInput =
+        { companyName: { contains: search, mode: 'insensitive' } };
+      const categoryNameCond: Prisma.SupplierWhereInput = { categories: { some: { 
+        category: { name: { contains: search, mode: 'insensitive' }
+      }}}};
+      const productNamecond: Prisma.SupplierWhereInput = { products: { some: {
+        name: { contains: search, mode: 'insensitive' }
+      }}};
+
+      where.OR = [ companyNameCond, categoryNameCond, productNamecond, ];
     }
 
-    if (industry) {
-      where.industries = { some: { industry } };
-    }
-
+    if (industry) where.industries = { some: { industry } };
     if (query.categorySlug) where.categories = { some: { categorySlug: query.categorySlug } };
-
     if (query.status) where.status = query.status;
+
+    const include = {
+      categories: true,
+      channels: true,
+      industries: { select: { industry: true } },
+      markets: { select: { market: true } },
+      // conjecture: primary addresses are used the most
+      addresses: { 
+        where: { isPrimary: true },
+        select: { supplierSlug: true, address: true, isPrimary: true },
+      },
+      manufacturerProfile: { select: { id: true } },
+      exporterProfile: { select: { id: true } },
+    };
 
     const [suppliers, total] = await Promise.all([
       this.prisma.supplier.findMany({
-        where,
+        where, include,
         orderBy: { updatedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
-        include: {
-          categories: true,
-          channels: true,
-          industries: { select: { industry: true } },
-          markets: { select: { market: true } },
-          // conjecture: primary addresses are used the most
-          addresses: { 
-            where: { isPrimary: true },
-            select: { supplierSlug: true, address: true, isPrimary: true },
-          },
-          manufacturerProfile: { select: { id: true } },
-          exporterProfile: { select: { id: true } },
-        },
       }),
       this.prisma.supplier.count({ where }),
     ]);
