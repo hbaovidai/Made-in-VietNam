@@ -65,13 +65,13 @@ export class SuppliersController {
     return { found: false, addresses: [] };
   }
 
-  @Get(':slug/address')
+  @Get(':id/channels')
   async findChannelsById(
-    @Param('slug') slug: string,
+    @Param('id') id: string,
   ) {
     try {
       const channels = await this.prisma.supplierChannelMap.findMany({
-        where: { supplierSlug: slug },
+        where: { supplierId: id },
         select: { url: true, type: true, },
       })
 

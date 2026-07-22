@@ -337,7 +337,7 @@ export function SupplierProfile() {
 
             {/* Block: KÊNH BÁN HÀNG */}
             {(() => {
-              const channels: { supplierSlug: string; url: string; type: SaleChannels }[] = 
+              const channels: { url: string; type: SaleChannels }[] = 
                 (supplier.channels?.length > 0) ? supplier.channels
                 : [{ type: 'SHOPEE' }, { type: 'FACEBOOK' }, { type: 'TIKTOK_SHOP' }] as any[];
               return (

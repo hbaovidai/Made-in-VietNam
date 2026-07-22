@@ -779,7 +779,7 @@ model SupplierCategoryMap {
 }
 
 model SupplierChannelMap {
-  supplierSlug String @map("supplier_slug")
+  supplierId String @map("supplier_id")
   url String
   type SaleChannelType
 
@@ -787,10 +787,10 @@ model SupplierChannelMap {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   // relation
-  supplier Supplier @relation(fields: [supplierSlug], references: [slug], onUpdate: Cascade, onDelete: Cascade)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@id([supplierSlug, type])
-  @@index([supplierSlug])
+  @@id([supplierId, type])
+  @@index([supplierId])
   @@map("supplier_channel_map")
 }
 
