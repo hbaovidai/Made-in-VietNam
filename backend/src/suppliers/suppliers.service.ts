@@ -32,9 +32,9 @@ export class SuppliersService {
     if (query.categorySlug) where.categories = { some: { categorySlug: query.categorySlug } };
     if (query.status) where.status = query.status;
 
-    const include = {
+    const include: Prisma.SupplierInclude = {
       categories: true,
-      channels: true,
+      channels: { select: { url: true, type: true } },
       industries: { select: { industry: true } },
       markets: { select: { market: true } },
       // conjecture: primary addresses are used the most
@@ -70,34 +70,36 @@ export class SuppliersService {
         slugOrId,
       );
 
+    const include: Prisma.SupplierInclude = {
+      user: { select: { fullName: true, email: true } },
+      industries: { select: { industry: true } },
+      markets: { select: { market: true } },
+      certifications: true,
+      products: {
+        where: { status: 'ACTIVE' },
+        take: 8,
+        include: {
+          category: { select: { name: true, slug: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      },
+      categories: true,
+      channels: { select: { url: true, type: true } },
+      addresses: { 
+        where: { isPrimary: true },
+        select: {isPrimary: true, address: true}
+      },
+      manufacturerProfile: { select: { id: true } },
+      exporterProfile: { select: { id: true } },
+      _count: { select: { products: true } },
+    }
+
     const supplier = await this.prisma.supplier.findFirst({
       where: {
         status: SupplierStatus.VERIFIED,
         ...(isUUID ? { id: slugOrId } : { slug: slugOrId }),
       },
-
-      include: {
-        user: { select: { fullName: true, email: true } },
-        industries: { select: { industry: true } },
-        markets: { select: { market: true } },
-        certifications: true,
-        products: {
-          where: { status: 'ACTIVE' },
-          take: 8,
-          include: {
-            category: { select: { name: true, slug: true } },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
-        categories: true, channels: true,
-        addresses: { 
-          where: { isPrimary: true },
-          select: {isPrimary: true, address: true}
-        },
-        manufacturerProfile: { select: { id: true } },
-        exporterProfile: { select: { id: true } },
-        _count: { select: { products: true } },
-      },
+      include,
     });
 
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
@@ -203,25 +205,25 @@ export class SuppliersService {
 
         if (website) await tx.supplierChannelMap.create({
           data: {
-            supplierSlug: supplierProfile.slug, url: website, type: SaleChannelType.CUSTOM_WEBSITE
+            supplierId: supplierProfile.id, url: website, type: SaleChannelType.CUSTOM_WEBSITE
           }
         })
 
         if (facebook) await tx.supplierChannelMap.create({
           data: {
-            supplierSlug: supplierProfile.slug, url: facebook, type: SaleChannelType.FACEBOOK
+            supplierId: supplierProfile.id, url: facebook, type: SaleChannelType.FACEBOOK
           }
         })
 
         if (shopee) await tx.supplierChannelMap.create({
           data: {
-            supplierSlug: supplierProfile.slug, url: shopee, type: SaleChannelType.SHOPEE
+            supplierId: supplierProfile.id, url: shopee, type: SaleChannelType.SHOPEE
           }
         })
 
         if (instagram) await tx.supplierChannelMap.create({
           data: {
-            supplierSlug: supplierProfile.slug, url: instagram, type: SaleChannelType.INSTAGRAM
+            supplierId: supplierProfile.id, url: instagram, type: SaleChannelType.INSTAGRAM
           }
         })
 
