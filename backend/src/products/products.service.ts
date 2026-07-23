@@ -46,22 +46,45 @@ export class ProductsService {
       where.status = 'ACTIVE';
     }
 
-    // Smart Multi-field Search (Hỗ trợ tiếng Việt có dấu + không dấu)
+    // Smart Multi-field Search (Hỗ trợ tiếng Việt có dấu + không dấu 100% bằng PostgreSQL unaccent)
     if (search) {
       const cleanSearch = search.trim();
-      const unaccented = removeVietnameseTones(cleanSearch);
-      const keywords = Array.from(new Set([cleanSearch, unaccented])).filter(Boolean);
-
-      where.OR = keywords.flatMap((kw) => [
-        { name: { contains: kw, mode: 'insensitive' } },
-        { nameEn: { contains: kw, mode: 'insensitive' } },
-        { slug: { contains: kw, mode: 'insensitive' } },
-        { description: { contains: kw, mode: 'insensitive' } },
-        { brand: { contains: kw, mode: 'insensitive' } },
-        { origin: { contains: kw, mode: 'insensitive' } },
-        { category: { name: { contains: kw, mode: 'insensitive' } } },
-        { supplier: { companyName: { contains: kw, mode: 'insensitive' } } },
-      ]);
+      if (cleanSearch) {
+        const searchPattern = `%${cleanSearch}%`;
+        try {
+          const matchingIds: { id: string }[] = await this.prisma.$queryRawUnsafe(
+            `SELECT DISTINCT p.id 
+             FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id
+             LEFT JOIN suppliers s ON p.supplier_id = s.id
+             WHERE 
+               public.unaccent('unaccent', p.name) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(p.name_en, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(p.description, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(p.brand, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(p.origin, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(c.name, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(s.company_name, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               p.slug ILIKE $1::text`,
+            searchPattern,
+          );
+          const ids = matchingIds.map((row) => row.id);
+          where.id = { in: ids };
+        } catch {
+          const unaccented = removeVietnameseTones(cleanSearch);
+          const keywords = Array.from(new Set([cleanSearch, unaccented])).filter(Boolean);
+          where.OR = keywords.flatMap((kw) => [
+            { name: { contains: kw, mode: 'insensitive' } },
+            { nameEn: { contains: kw, mode: 'insensitive' } },
+            { slug: { contains: kw, mode: 'insensitive' } },
+            { description: { contains: kw, mode: 'insensitive' } },
+            { brand: { contains: kw, mode: 'insensitive' } },
+            { origin: { contains: kw, mode: 'insensitive' } },
+            { category: { name: { contains: kw, mode: 'insensitive' } } },
+            { supplier: { companyName: { contains: kw, mode: 'insensitive' } } },
+          ]);
+        }
+      }
     }
 
     // Filter by category slug (match the category itself or any of its children)

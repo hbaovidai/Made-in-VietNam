@@ -66,7 +66,7 @@ export function CustomSelect({ options, value, onChange, placeholder, className 
           setIsOpen(!isOpen);
           if (isOpen) setSearchTerm('');
         }}
-        className={`w-full flex items-center justify-between px-4 py-3 bg-surface-1 border outline-none text-left text-sm text-ink transition-all select-none font-normal ${
+        className={`w-full h-[38px] flex items-center justify-between px-3.5 py-2 bg-surface-1 border outline-none text-left text-xs text-ink transition-all select-none font-normal ${
           isOpen ? 'border-primary' : 'border-hairline'
         }`}
         style={{ borderRadius: 0, letterSpacing: '0.16px' }}

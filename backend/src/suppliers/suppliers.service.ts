@@ -15,17 +15,32 @@ export class SuppliersService {
     const where: Prisma.SupplierWhereInput = {};
 
     if (search) {
-      // we will have to content ourselves with this until a better solution is found
-      const companyNameCond: Prisma.SupplierWhereInput =
-        { companyName: { contains: search, mode: 'insensitive' } };
-      const categoryNameCond: Prisma.SupplierWhereInput = { categories: { some: { 
-        category: { name: { contains: search, mode: 'insensitive' }
-      }}}};
-      const productNamecond: Prisma.SupplierWhereInput = { products: { some: {
-        name: { contains: search, mode: 'insensitive' }
-      }}};
-
-      where.OR = [ companyNameCond, categoryNameCond, productNamecond, ];
+      const cleanSearch = search.trim();
+      if (cleanSearch) {
+        const searchPattern = `%${cleanSearch}%`;
+        try {
+          const matchingIds: { id: string }[] = await this.prisma.$queryRawUnsafe(
+            `SELECT DISTINCT s.id
+             FROM suppliers s
+             LEFT JOIN supplier_category_map sc ON s.id = sc.supplier_id
+             LEFT JOIN categories c ON sc.category_id = c.id
+             LEFT JOIN products p ON s.id = p.supplier_id
+             WHERE 
+               public.unaccent('unaccent', s.company_name) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(c.name, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               public.unaccent('unaccent', COALESCE(p.name, '')) ILIKE public.unaccent('unaccent', $1::text) OR
+               s.slug ILIKE $1::text`,
+            searchPattern,
+          );
+          const ids = matchingIds.map((row) => row.id);
+          where.id = { in: ids };
+        } catch {
+          const companyNameCond: Prisma.SupplierWhereInput = { companyName: { contains: search, mode: 'insensitive' } };
+          const categoryNameCond: Prisma.SupplierWhereInput = { categories: { some: { category: { name: { contains: search, mode: 'insensitive' } } } } };
+          const productNamecond: Prisma.SupplierWhereInput = { products: { some: { name: { contains: search, mode: 'insensitive' } } } };
+          where.OR = [ companyNameCond, categoryNameCond, productNamecond ];
+        }
+      }
     }
 
     if (industry) where.industries = { some: { industry } };

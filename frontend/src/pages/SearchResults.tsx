@@ -278,20 +278,20 @@ export function SearchResults() {
             </h1>
 
             {/* Search inputs */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-              <form onSubmit={handleSearchSubmit} className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle" size={18} />
+            <div className="flex flex-col sm:flex-row items-center gap-3 mb-4">
+              <form onSubmit={handleSearchSubmit} className="flex-1 relative w-full">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-subtle" size={15} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm kiếm sản phẩm, nhà cung cấp..."
-                  className="w-full pl-11 pr-4 py-2.5 bg-surface-1 border border-hairline text-sm text-ink placeholder-ink-subtle outline-none focus:border-b-2 focus:border-b-primary transition-all"
+                  className="w-full h-[38px] pl-9 pr-4 bg-surface-1 border border-hairline text-xs text-ink placeholder-ink-subtle outline-none focus:border-b-2 focus:border-b-primary transition-all"
                   style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 />
               </form>
               
-              <div className="sm:w-56">
+              <div className="sm:w-56 w-full shrink-0">
                 <CustomSelect
                   value={searchParams.get('sortBy') === 'minPrice' ? (searchParams.get('sortOrder') === 'asc' ? 'price-asc' : 'price-desc') : (searchParams.get('sortBy') === 'createdAt' ? 'newest' : 'default')}
                   onChange={handleSortChange}
@@ -301,6 +301,7 @@ export function SearchResults() {
                     { value: 'price-desc', label: t('search_price_desc') },
                     { value: 'newest', label: t('search_newest') },
                   ]}
+                  searchable={false}
                 />
               </div>
             </div>

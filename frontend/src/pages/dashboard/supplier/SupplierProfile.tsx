@@ -720,14 +720,14 @@ export function SupplierProfile() {
       )}
 
       {/* Edit Profile Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')}>
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')} size="xl">
         <form onSubmit={handleUpdateProfile} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('company_name_en_label')}</label>
               <input 
                 type="text" 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 value={editForm.companyName} 
                 onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} 
@@ -752,7 +752,7 @@ export function SupplierProfile() {
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</label>
               <input 
                 type="text" 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 value={editForm.legalRepName} 
                 onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} 
@@ -762,7 +762,7 @@ export function SupplierProfile() {
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Email công ty</label>
               <input 
                 type="email" 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 value={editForm.companyEmail} 
                 onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} 
@@ -772,7 +772,7 @@ export function SupplierProfile() {
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Số điện thoại</label>
               <input 
                 type="text" 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 value={editForm.companyPhone} 
                 onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} 
@@ -784,7 +784,7 @@ export function SupplierProfile() {
                 type="number" 
                 min="1900"
                 max={new Date().getFullYear()}
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
+                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
                 style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                 placeholder="VD: 2010"
                 value={editForm.yearEstablished} 
@@ -868,7 +868,7 @@ export function SupplierProfile() {
           <div className="space-y-2">
             <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('short_desc_label')}</label>
             <textarea 
-              className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary min-h-[100px]" 
+              className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary min-h-[90px]" 
               style={{ borderRadius: 0, letterSpacing: '0.16px' }}
               value={editForm.description} 
               onChange={(e) => setEditForm({...editForm, description: e.target.value})}
