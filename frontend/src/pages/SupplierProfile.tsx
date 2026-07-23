@@ -9,6 +9,7 @@ import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
 import { useAuth } from '../contexts/AuthContext';
 import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
+import { SupplierBadge } from '../components/ui/SupplierBadge';
 import { useToast } from '../components/ui/Toast';
 
 export function SupplierProfile() {
@@ -155,40 +156,14 @@ export function SupplierProfile() {
                 </div>
                 {/* Badges — auto-generated from verification status, business type & export markets */}
                 {(() => {
-                  const badges: { label: string; classes: string }[] = [];
-                  // Badge 1: Verified Supplier (always if verified)
-                  if (isVerified) {
-                    badges.push({ 
-                      label: t('verified_supplier', 'Nhà cung cấp xác thực'), 
-                      classes: 'bg-primary/5 text-primary border-primary/20',
-                    });
-                  }
-                  // Badge 2: Verified Manufacturer
                   const hasManufacturer = !!supplier.manufacturerProfile || supplier.supplierType === 'MANUFACTURER' || supplier.supplierType === 'MANU_EXPORT';
-                  if (isVerified && hasManufacturer) {
-                    badges.push({ 
-                      label: t('verified_manufacturer', 'Nhà sản xuất xác thực'), 
-                      classes: 'bg-amber-50 text-amber-700 border-amber-200',
-                    });
-                  }
-                  // Badge 3: Verified Exporter
                   const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (markets && markets.length > 0);
-                  if (isVerified && hasExporter) {
-                    badges.push({ 
-                      label: t('verified_exporter', 'Nhà xuất khẩu xác thực'), 
-                      classes: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                    });
-                  }
-                  if (badges.length === 0) return null;
+
                   return (
                     <div className="flex flex-wrap items-center gap-2 mt-3">
-                      {badges.slice(0, 3).map((badge, idx) => {
-                        return (
-                          <div key={idx} className={`inline-flex items-center ${badge.classes} px-3 py-1 text-xs font-semibold border`} style={{ borderRadius: '4px', letterSpacing: '0.16px' }}>
-                            {badge.label}
-                          </div>
-                        );
-                      })}
+                      {isVerified && <SupplierBadge type="verified" />}
+                      {isVerified && hasManufacturer && <SupplierBadge type="manufacturer" />}
+                      {isVerified && hasExporter && <SupplierBadge type="exporter" />}
                     </div>
                   );
                 })()}

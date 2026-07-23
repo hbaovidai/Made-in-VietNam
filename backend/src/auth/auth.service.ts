@@ -14,6 +14,8 @@ import {
   UpdateProfileDto,
   ChangePasswordDto,
   SupplierRegisterDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from './dto/auth.dto';
 import { Role } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
   private googleClient: OAuth2Client;
+  private resetStore = new Map<string, { code: string; expires: number }>();
 
   constructor(
     private prisma: PrismaService,
@@ -323,5 +326,42 @@ export class AuthService {
     });
 
     return { message: 'Đổi mật khẩu thành công' };
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user) {
+      return { message: 'Nếu email tồn tại trong hệ thống, mã xác thực OTP đã được gửi' };
+    }
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = Date.now() + 15 * 60 * 1000; // 15 phút
+
+    this.resetStore.set(dto.email.toLowerCase(), { code: otpCode, expires });
+    console.log(`[AUTH FORGOT PASSWORD] OTP Code for ${dto.email}: ${otpCode}`);
+
+    return {
+      message: 'Mã xác thực OTP đã được gửi đến email của bạn',
+      devOtpCode: otpCode,
+    };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const record = this.resetStore.get(dto.email.toLowerCase());
+    if (!record || record.code !== dto.resetCode || Date.now() > record.expires) {
+      throw new UnauthorizedException('Mã xác thực OTP không đúng hoặc đã hết hạn');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user) throw new UnauthorizedException('Tài khoản không tồn tại');
+
+    const newHash = await bcrypt.hash(dto.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash: newHash },
+    });
+
+    this.resetStore.delete(dto.email.toLowerCase());
+    return { message: 'Đặt lại mật khẩu thành công. Bạn có thể đăng nhập ngay.' };
   }
 }

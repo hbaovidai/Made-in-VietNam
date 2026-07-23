@@ -312,12 +312,12 @@ export function SupplierList() {
                 ))}
               </div>
              ) : (
-              <div className="text-center py-24 bg-canvas border border-hairline flex-1 flex flex-col justify-center">
-                <div className="w-20 h-20 bg-surface-1 flex items-center justify-center mx-auto mb-6">
-                  <Search size={32} className="text-ink-subtle" />
+              <div className="text-center py-24 flex-1 flex flex-col justify-center items-center">
+                <div className="w-16 h-16 bg-surface-1 border border-hairline flex items-center justify-center mx-auto mb-4" style={{ borderRadius: '4px' }}>
+                  <Search size={28} className="text-ink-subtle" />
                 </div>
                 <h3 className="text-xl font-light text-ink mb-2">{t('no_suppliers_found')}</h3>
-                <p className="text-ink-muted font-normal max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>{t('no_suppliers_desc')}</p>
+                <p className="text-ink-muted font-normal max-w-xs mx-auto text-sm" style={{ letterSpacing: '0.16px' }}>{t('no_suppliers_desc')}</p>
               </div>
             )}
 

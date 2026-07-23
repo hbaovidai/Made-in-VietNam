@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { memoryStorage } from 'multer';
 import { extname } from 'path';
@@ -17,11 +18,16 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // Cấu hình lưu file vào bộ nhớ đệm (RAM) trước khi đẩy lên Supabase
 const storage = memoryStorage();
 
-// Chỉ cho phép ảnh
-const imageFileFilter = (_req: any, file: any, cb: any) => {
-  if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+// Chấp nhận file ảnh (JPG, PNG, WEBP, GIF) và tài liệu (PDF)
+const allowedFileFilter = (_req: any, file: any, cb: any) => {
+  if (
+    !file.mimetype.match(/\/(jpg|jpeg|png|gif|webp|pdf)$/) &&
+    file.mimetype !== 'application/pdf'
+  ) {
     return cb(
-      new BadRequestException('Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF)'),
+      new BadRequestException(
+        'Chỉ chấp nhận file ảnh (JPG, PNG, WEBP, GIF) hoặc tài liệu (PDF)',
+      ),
       false,
     );
   }
@@ -44,18 +50,9 @@ export class UploadsController {
     }
   }
 
-  @Post()
-  // @UseGuards(JwtAuthGuard) // turn off so you can upload from the supplier registration form
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage,
-      fileFilter: imageFileFilter,
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    }),
-  )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  private async processUpload(file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('Vui lòng chọn file ảnh để tải lên');
+      throw new BadRequestException('Vui lòng chọn tệp để tải lên');
     }
 
     if (!this.supabase) {
@@ -78,7 +75,7 @@ export class UploadsController {
 
       if (error) {
         console.error('Supabase upload error:', error);
-        throw new InternalServerErrorException('Lỗi tải ảnh lên cloud');
+        throw new InternalServerErrorException('Lỗi tải tệp lên cloud');
       }
 
       // 2. Lấy URL công khai
@@ -94,7 +91,37 @@ export class UploadsController {
       };
     } catch (err) {
       console.error('Upload failed:', err);
-      throw new InternalServerErrorException('Lỗi hệ thống khi tải ảnh');
+      throw new InternalServerErrorException('Lỗi hệ thống khi tải tệp');
     }
   }
+
+  // 1. Endpoint Upload Chung (Yêu cầu phải đăng nhập)
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage,
+      fileFilter: allowedFileFilter,
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    }),
+  )
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return this.processUpload(file);
+  }
+
+  // 2. Endpoint Upload Công Khai dành riêng cho Form Đăng Ký Nhà Cung Cấp
+  // Trang bị Rate Limiter: Tối đa 10 upload / 1 phút / 1 IP để chống Spam / DoS Storage
+  @Post('public-registration')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage,
+      fileFilter: allowedFileFilter,
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    }),
+  )
+  async uploadRegistrationFile(@UploadedFile() file: Express.Multer.File) {
+    return this.processUpload(file);
+  }
 }
+

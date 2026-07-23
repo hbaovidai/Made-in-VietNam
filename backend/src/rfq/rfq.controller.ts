@@ -25,9 +25,9 @@ export class RfqController {
     private prisma: PrismaService,
   ) {}
 
-  // Tất cả Supplier đều xem được RFQ, nhưng dữ liệu bị giới hạn nếu chưa xác thực
+  // Xem danh sách RFQ mở (Tất cả người dùng đã đăng nhập đều xem được)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'ADMIN')
+  @Roles('BUYER', 'SUPPLIER', 'ADMIN')
   @Get('open')
   async getOpenRFQs(@CurrentUser() currentUser: { id: string; role: string }) {
     let isVerified = true;
@@ -35,23 +35,23 @@ export class RfqController {
       const supplier = await this.prisma.supplier.findUnique({
         where: { userId: currentUser.id },
       });
-      // pls don't explode
-      isVerified = supplier?.status === SupplierStatus.VERIFIED ;
+      isVerified = supplier?.status === SupplierStatus.VERIFIED;
     }
     return this.rfqService.getOpenRFQs(isVerified);
   }
 
-  // PROTECTED: Buyer chỉ xem RFQ của mình
+  // PROTECTED: Xem RFQ của Buyer (Tự động lấy ID người dùng đăng nhập nếu không phải Admin)
   @UseGuards(JwtAuthGuard)
   @Get('buyer/:buyerId')
   getBuyerRFQs(
     @Param('buyerId') buyerId: string,
     @CurrentUser() currentUser: { id: string; role: string },
   ) {
-    if (currentUser.id !== buyerId && currentUser.role !== 'ADMIN') {
-      throw new ForbiddenException('Bạn chỉ có thể xem RFQ của chính mình');
-    }
-    return this.rfqService.getBuyerRFQs(buyerId);
+    const targetId =
+      currentUser.role === 'ADMIN' && buyerId !== 'me'
+        ? buyerId
+        : currentUser.id;
+    return this.rfqService.getBuyerRFQs(targetId);
   }
 
   // PROTECTED: Chi tiết RFQ — cần đăng nhập

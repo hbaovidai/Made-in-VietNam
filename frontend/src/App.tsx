@@ -59,6 +59,7 @@ const BuyerSaved = React.lazy(() => import('./pages/dashboard/buyer/BuyerSaved')
 const BuyerOrders = React.lazy(() => import('./pages/dashboard/buyer/BuyerOrders').then(m => ({ default: m.BuyerOrders })));
 const BuyerMessages = React.lazy(() => import('./pages/dashboard/buyer/BuyerMessages').then(m => ({ default: m.BuyerMessages })));
 const BuyerHistory = React.lazy(() => import('./pages/dashboard/buyer/BuyerHistory').then(m => ({ default: m.BuyerHistory })));
+const BuyerAnalytics = React.lazy(() => import('./pages/dashboard/buyer/BuyerAnalytics').then(m => ({ default: m.BuyerAnalytics })));
 const BuyerSettings = React.lazy(() => import('./pages/dashboard/buyer/BuyerSettings').then(m => ({ default: m.BuyerSettings })));
 
 // Dashboard Pages - Supplier
@@ -248,6 +249,7 @@ export default function App() {
               <Route path="rfqs" element={<BuyerRFQs />} />
               <Route path="saved" element={<BuyerSaved />} />
               <Route path="messages" element={<BuyerMessages />} />
+              <Route path="analytics" element={<BuyerAnalytics />} />
               <Route path="settings" element={<BuyerSettings />} />
             </Route>
 

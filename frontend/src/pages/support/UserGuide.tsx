@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader';
-import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import {
   Search, ShieldCheck, MessageSquare, LayoutGrid, Award, CheckCircle2,
   ChevronRight, ShoppingCart, UserPlus, Package, FileText, QrCode,
@@ -214,7 +213,6 @@ export function UserGuide() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <BreadcrumbBar items={[{ label: t('help'), href: '/help' }, { label: t('guide_title') }]} />
       <PageHeader
         title={t('guide_title')}
         description={t('guide_user_guide_desc')}

@@ -91,19 +91,16 @@ export class UsersController {
     return { message: `Đã xóa người dùng ${result.fullName}` };
   }
 
-  // PROTECTED: Chỉ xem sản phẩm đã lưu của mình
+  // PROTECTED: Xem sản phẩm đã lưu (Tự động lấy ID người dùng đăng nhập)
   @UseGuards(JwtAuthGuard)
   @Get(':id/saved')
   getSavedProducts(
     @Param('id') id: string,
     @CurrentUser() currentUser: { id: string; role: string },
   ) {
-    if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
-      throw new ForbiddenException(
-        'Bạn chỉ có thể xem danh sách của chính mình',
-      );
-    }
-    return this.usersService.getSavedProducts(id);
+    const targetId =
+      currentUser.role === 'ADMIN' && id !== 'me' ? id : currentUser.id;
+    return this.usersService.getSavedProducts(targetId);
   }
 
   // PROTECTED: Chỉ lưu sản phẩm cho mình
@@ -114,8 +111,7 @@ export class UsersController {
     @Body('productId') productId: string,
     @CurrentUser('id') userId: string,
   ) {
-    if (userId !== id) throw new ForbiddenException('Không có quyền');
-    return this.usersService.saveProduct(id, productId);
+    return this.usersService.saveProduct(userId, productId);
   }
 
   // PROTECTED
@@ -126,8 +122,7 @@ export class UsersController {
     @Param('productId') productId: string,
     @CurrentUser('id') userId: string,
   ) {
-    if (userId !== id) throw new ForbiddenException('Không có quyền');
-    return this.usersService.unsaveProduct(id, productId);
+    return this.usersService.unsaveProduct(userId, productId);
   }
 
   // PROTECTED
@@ -137,21 +132,19 @@ export class UsersController {
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
   ) {
-    if (userId !== id) throw new ForbiddenException('Không có quyền');
-    return this.usersService.clearSavedProducts(id);
+    return this.usersService.clearSavedProducts(userId);
   }
 
-  // PROTECTED: Chỉ xem lịch sử của mình
+  // PROTECTED: Xem lịch sử (Tự động lấy ID người dùng đăng nhập)
   @UseGuards(JwtAuthGuard)
   @Get(':id/history')
   getViewHistory(
     @Param('id') id: string,
     @CurrentUser() currentUser: { id: string; role: string },
   ) {
-    if (currentUser.id !== id && currentUser.role !== 'ADMIN') {
-      throw new ForbiddenException('Bạn chỉ có thể xem lịch sử của chính mình');
-    }
-    return this.usersService.getViewHistory(id);
+    const targetId =
+      currentUser.role === 'ADMIN' && id !== 'me' ? id : currentUser.id;
+    return this.usersService.getViewHistory(targetId);
   }
 
   // PROTECTED

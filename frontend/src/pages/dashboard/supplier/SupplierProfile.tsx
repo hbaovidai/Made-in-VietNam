@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye, ExternalLink, Package } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
 import { Modal } from '../../../components/ui/Modal';
 import { SupplierBadge } from '../../../components/ui/SupplierBadge';
@@ -12,6 +13,7 @@ export function SupplierProfile() {
   const { t } = useTranslation();
   const { addToast } = useToast();
   const { user, loginUser, updateUser, token } = useAuth();
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'certs'>('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
@@ -240,10 +242,6 @@ export function SupplierProfile() {
   if (loading) {
     return (
       <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('supplier_profile_title')}</h1>
-        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('supplier_profile_subtitle')}</p>
-      </div>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="animate-spin text-primary" size={40} />
         </div>
@@ -403,164 +401,322 @@ export function SupplierProfile() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('supplier_profile_title')}</h1>
-        <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('supplier_profile_subtitle')}</p>
-      </div>
-      {/* Company Header Card */}
-      <div className="bg-canvas border border-hairline p-6 sm:p-8" style={{ borderRadius: 0 }}>
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="flex flex-col items-center gap-3">
-            <div className="relative group">
-              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-surface-1 border border-hairline flex items-center justify-center text-ink-subtle font-light text-2xl overflow-hidden relative p-2" style={{ borderRadius: 0 }}>
-                {uploading && (
-                  <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-                    <Loader2 className="animate-spin text-primary" size={24} />
-                  </div>
-                )}
-                {supplier?.logo ? (
-                  <img src={supplier.logo} alt="Company Logo" className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
-                ) : (
-                  <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
-                )}
-              </div>
-              <label className="absolute -bottom-2 -right-2 bg-primary text-white p-2 text-xs hover:bg-primary-hover transition-colors cursor-pointer" style={{ borderRadius: 0 }}>
-                <Camera size={16} />
-                <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
-              </label>
+      {/* Hero Header Card */}
+      <div className="bg-canvas border border-hairline p-6 sm:p-8 rounded-xl shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start gap-6">
+          {/* Logo (To hơn) */}
+          <div className="relative group shrink-0">
+            <div className="w-32 h-32 sm:w-36 sm:h-36 bg-surface-1 border border-hairline rounded-xl flex items-center justify-center text-ink-subtle font-medium text-3xl overflow-hidden relative p-3 shadow-inner">
+              {uploading && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-xs flex items-center justify-center z-10">
+                  <Loader2 className="animate-spin text-primary" size={28} />
+                </div>
+              )}
+              {supplier?.logo ? (
+                <img src={supplier.logo} alt="Company Logo" className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+              ) : (
+                <span>{supplier?.companyName?.substring(0, 2).toUpperCase() || 'SP'}</span>
+              )}
             </div>
-            <button 
-              onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-normal text-primary hover:text-primary-hover transition-colors"
-              style={{ letterSpacing: '0.16px' }}
-            >
-              <Edit2 size={12} /> Chỉnh sửa hồ sơ
-            </button>
+            <label className="absolute -bottom-1.5 -right-1.5 bg-primary text-white p-2 rounded-full hover:bg-primary-hover transition-all shadow-md cursor-pointer" title="Tải ảnh logo">
+              <Camera size={16} />
+              <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={uploading} />
+            </label>
           </div>
-          <div className="space-y-3 flex-1">
-            <h2 className="text-lg sm:text-2xl font-normal text-ink uppercase tracking-tight" style={{ letterSpacing: '0.32px' }}>{supplier?.companyName || 'Công ty của bạn'}</h2>
-            <div className="flex flex-wrap gap-2">
-              {supplier?.status === SupplierStatus.VERIFIED && <SupplierBadge type="verified" />}
+
+          {/* Info & Horizontal Action Buttons */}
+          <div className="space-y-3 flex-1 min-w-0">
+            <h2 className="text-base sm:text-lg font-bold text-ink uppercase tracking-tight line-clamp-1">{supplier?.companyName || 'Công ty của bạn'}</h2>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {(() => {
+                const isVerified = supplier?.status === SupplierStatus.VERIFIED;
+                const hasManufacturer = !!supplier?.manufacturerProfile || supplier?.supplierType === 'MANUFACTURER' || supplier?.supplierType === 'MANU_EXPORT' || supplier?.businessType?.toLowerCase().includes('manufacturer');
+                const hasExporter = !!supplier?.exporterProfile || supplier?.supplierType === 'EXPORTER' || supplier?.supplierType === 'MANU_EXPORT' || (supplier?.markets && supplier.markets.length > 0);
+
+                return (
+                  <>
+                    {isVerified && <SupplierBadge type="verified" />}
+                    {isVerified && hasManufacturer && <SupplierBadge type="manufacturer" />}
+                    {isVerified && hasExporter && <SupplierBadge type="exporter" />}
+                  </>
+                );
+              })()}
             </div>
-            <div className="flex items-center gap-2 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>
-              <MapPin size={14} className="text-primary" />
-              <span>{supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật địa chỉ'}</span>
+
+            <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
+              <MapPin size={14} className="text-primary shrink-0" />
+              <span className="truncate">{supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật địa chỉ'}</span>
             </div>
-            <p className="text-sm text-ink-muted leading-relaxed max-w-3xl" style={{ letterSpacing: '0.16px' }}>
-              {supplier?.description || 'Chưa có mô tả.'}
+
+            {/* 2 nút nằm ngang nhau ở dưới địa chỉ */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <Link
+                to={`/suppliers/${supplierId}`}
+                target="_blank"
+                className="inline-flex items-center justify-center gap-2 h-9 px-4 border border-hairline bg-surface-1 hover:bg-surface-2 text-ink text-xs font-normal rounded-lg transition-all shadow-xs leading-none"
+              >
+                <ExternalLink size={14} /> Xem trang công khai
+              </Link>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary hover:bg-primary-hover text-white text-xs font-normal rounded-lg transition-all shadow-xs leading-none"
+              >
+                <Edit2 size={14} /> Chỉnh sửa hồ sơ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="border-b border-hairline bg-canvas rounded-xl shadow-xs overflow-x-auto">
+        <div className="flex items-center gap-6 px-4">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'overview'
+                ? 'border-primary text-primary font-semibold'
+                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+            }`}
+          >
+            Thông tin chung
+          </button>
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'products'
+                ? 'border-primary text-primary font-semibold'
+                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+            }`}
+          >
+            Sản phẩm tiêu biểu ({supplierProducts.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('certs')}
+            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'certs'
+                ? 'border-primary text-primary font-semibold'
+                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+            }`}
+          >
+            Chứng nhận & Giải thưởng ({certifications.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Tab 1: Thông tin chung */}
+      {activeTab === 'overview' && (
+        <div className="space-y-6">
+          {/* Khối Mô tả công ty */}
+          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-3">
+            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+              Giới thiệu công ty
+            </h3>
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed whitespace-pre-line">
+              {supplier?.description || 'Chưa có thông tin giới thiệu chi tiết về công ty.'}
             </p>
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Thông tin kinh doanh */}
+          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
+            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+              Thông tin kinh doanh
+            </h3>
+            <div className="space-y-3.5 text-xs sm:text-sm">
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Mã số thuế</span>
+                <span className="font-semibold text-ink">{supplier?.taxCode || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Người đại diện pháp luật</span>
+                <span className="font-semibold text-ink">{supplier?.legalRepresentative || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Email công ty</span>
+                <span className="font-semibold text-ink">{supplier?.companyEmail || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Số điện thoại</span>
+                <span className="font-semibold text-ink">{supplier?.companyPhone || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Năm thành lập</span>
+                <span className="font-semibold text-ink">{supplier?.yearEstablished || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-hairline/60">
+                <span className="text-ink-subtle">Quy mô nhân sự</span>
+                <span className="font-semibold text-ink">{supplier?.employeeCount || supplier?.employee_count || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-ink-subtle">Loại hình doanh nghiệp</span>
+                <span className="font-semibold text-ink">{supplier?.businessType || 'N/A'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quy mô & Năng lực */}
+          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
+            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+              Quy mô & Năng lực
+            </h3>
+            <div className="space-y-4 text-xs sm:text-sm">
+              <div>
+                <span className="text-ink-subtle block mb-2 font-medium">Ngành hàng chính</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {supplier?.industries && supplier.industries.length > 0 ? (
+                    supplier.industries.map((ind: any, idx: number) => (
+                      <span key={idx} className="px-2.5 py-1 bg-surface-1 border border-hairline text-ink text-xs rounded-md">
+                        {ind.industry || ind}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-ink-muted italic">Chưa cập nhật</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-hairline/60">
+                <span className="text-ink-subtle block mb-2 font-medium">Thị trường xuất khẩu</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {supplier?.markets && supplier.markets.length > 0 ? (
+                    supplier.markets.map((mkt: any, idx: number) => (
+                      <span key={idx} className="px-2.5 py-1 bg-primary/5 text-primary border border-primary/20 text-xs rounded-md font-medium">
+                        {mkt.market || mkt}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-ink-muted italic">Chưa cập nhật</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-hairline/60">
+                <span className="text-ink-subtle block mb-1 font-medium">Địa chỉ trụ sở / Nhà máy</span>
+                <p className="text-ink leading-relaxed">
+                  {supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      )}
 
-      {/* Business Info + Certifications Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Business Info Card */}
-        <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
-          <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2 mb-5" style={{ letterSpacing: '0.32px' }}>
-            <Building2 size={16} className="text-primary" /> {t('biz_info_title')}
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('year_established')}</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.yearEstablished || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Mã số thuế</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.taxCode || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.legalRepresentative || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Email công ty</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.companyEmail || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Số điện thoại</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.companyPhone || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('total_employees')}</span>
-              <span className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{supplier?.employeeCount || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-hairline">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>{t('main_markets')}</span>
-              <span className="text-sm font-normal text-ink text-right max-w-[200px]" style={{ letterSpacing: '0.16px' }}>{supplier?.markets?.map((m: any) => m.market).join(', ') || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <span className="text-xs font-normal text-ink-subtle uppercase tracking-wider" style={{ letterSpacing: '0.32px' }}>Industries</span>
-              <span className="text-sm font-normal text-ink text-right max-w-[200px]" style={{ letterSpacing: '0.16px' }}>{supplier?.industries?.map((i: any) => i.industry).join(', ') || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Certifications Card */}
-        <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
-              <Award size={16} className="text-primary" /> {t('certs_awards_title')}
+      {/* Tab 2: Sản phẩm tiêu biểu */}
+      {activeTab === 'products' && (
+        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
+              Sản phẩm tiêu biểu ({supplierProducts.length})
             </h3>
-            <button 
-              onClick={() => setIsCertModalOpen(true)} 
-              className="text-xs font-normal text-primary hover:text-primary-hover flex items-center gap-1"
-              style={{ letterSpacing: '0.16px' }}
+            <Link
+              to="/dashboard/supplier/products"
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
             >
-              <Plus size={12} /> {t('add_new_btn')}
-            </button>
+              <Plus size={14} /> Quản lý sản phẩm
+            </Link>
           </div>
-          <div className="space-y-3">
-            {certifications.length === 0 && <p className="text-sm text-ink-muted italic py-4" style={{ letterSpacing: '0.16px' }}>{t('chua_co_chung_nhan_nao')}</p>}
-            {certifications.map((cert) => (
-              <div key={cert.id} className="p-4 bg-surface-1 border border-hairline flex items-center justify-between group transition-colors" style={{ borderRadius: 0 }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-canvas border border-hairline flex items-center justify-center" style={{ borderRadius: 0 }}><CheckCircle2 size={18} className="text-green-500" /></div>
-                  <div>
-                    <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{cert.name}</div>
-                    {cert.issuedBy && <div className="text-[10px] text-ink-subtle font-normal mt-0.5" style={{ letterSpacing: '0.16px' }}>Cấp bởi: {cert.issuedBy}</div>}
-                  </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {supplierProducts.length === 0 && (
+              <div className="col-span-4 text-center py-10 bg-surface-1 rounded-xl border border-dashed border-hairline">
+                <Package size={32} className="mx-auto text-ink-subtle mb-2" />
+                <p className="text-sm text-ink-muted italic mb-4">Chưa có sản phẩm nào được tải lên.</p>
+                <Link
+                  to="/dashboard/supplier/products"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-hover transition-colors"
+                >
+                  <Plus size={14} /> Thêm sản phẩm đầu tiên
+                </Link>
+              </div>
+            )}
+            {supplierProducts.map((product) => (
+              <div key={product.id} className="border border-hairline rounded-xl overflow-hidden group hover:shadow-md transition-all bg-canvas flex flex-col">
+                <div className="aspect-square relative overflow-hidden bg-surface-1">
+                  <img
+                    src={product.images?.[0] || 'https://via.placeholder.com/200'}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {cert.documentUrl && (
-                    <a
-                      href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-ink-subtle hover:text-primary transition-colors"
-                      title="Xem chứng nhận"
-                    >
-                      <Eye size={14} />
-                    </a>
-                  )}
-                  <button onClick={() => handleDeleteCert(cert.id)} className="p-1.5 text-ink-subtle hover:text-red-500 transition-colors" title="Xóa chứng nhận"><Trash2 size={14} /></button>
+                <div className="p-3.5 flex-1 flex flex-col justify-between">
+                  <h4 className="font-semibold text-sm text-ink line-clamp-2 leading-snug group-hover:text-primary transition-colors">{product.name}</h4>
+                  <div className="mt-3 pt-2 border-t border-hairline/60 flex items-center justify-between">
+                    <div className="text-primary font-bold text-sm">{(product.minPrice || 0).toLocaleString('vi-VN')} ₫</div>
+                    {product.minOrderQuantity && (
+                      <span className="text-[11px] text-ink-subtle">MOQ: {product.minOrderQuantity}</span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Featured Products Card */}
-      <div className="bg-canvas border border-hairline p-6" style={{ borderRadius: 0 }}>
-        <h3 className="text-sm font-normal text-ink uppercase tracking-wider flex items-center gap-2 mb-5" style={{ letterSpacing: '0.32px' }}>
-          <Shield size={16} className="text-primary" /> {t('featured_products_profile')}
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {supplierProducts.length === 0 && <p className="text-sm text-ink-muted italic col-span-4" style={{ letterSpacing: '0.16px' }}>{t('chua_co_san_pham_nao')}</p>}
-          {supplierProducts.map(product => (
-            <div key={product.id} className="border border-hairline group hover:bg-surface-1 transition-all" style={{ borderRadius: 0 }}>
-              <div className="aspect-square relative overflow-hidden bg-surface-1">
-                <img src={product.images?.[0] || 'https://via.placeholder.com/200'} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+      {/* Tab 3: Chứng nhận & Giải thưởng */}
+      {activeTab === 'certs' && (
+        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
+              Chứng nhận & Giải thưởng ({certifications.length})
+            </h3>
+            <button
+              onClick={() => setIsCertModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-medium rounded-lg transition-colors shadow-xs"
+            >
+              <Plus size={14} /> Thêm mới
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {certifications.length === 0 && (
+              <div className="col-span-2 text-center py-10 bg-surface-1 rounded-xl border border-dashed border-hairline">
+                <Award size={32} className="mx-auto text-ink-subtle mb-2" />
+                <p className="text-sm text-ink-muted italic mb-4">Chưa có chứng nhận hoặc giải thưởng nào.</p>
+                <button
+                  onClick={() => setIsCertModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-hover transition-colors"
+                >
+                  <Plus size={14} /> Tải lên chứng nhận ngay
+                </button>
               </div>
-              <div className="p-3">
-                <h4 className="font-normal text-sm text-ink line-clamp-1" style={{ letterSpacing: '0.16px' }}>{product.name}</h4>
-                <div className="text-primary font-normal text-xs mt-1" style={{ letterSpacing: '0.16px' }}>{(product.minPrice || 0).toLocaleString('vi-VN')} ₫</div>
+            )}
+            {certifications.map((cert) => (
+              <div key={cert.id} className="p-4 bg-surface-1 border border-hairline rounded-xl flex items-center justify-between group hover:border-primary/40 transition-all">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-ink truncate">{cert.name}</div>
+                    {cert.issuedBy && <div className="text-xs text-ink-subtle mt-0.5 truncate">Cấp bởi: {cert.issuedBy}</div>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  {cert.documentUrl && (
+                    <a
+                      href={cert.documentUrl.startsWith('http') ? cert.documentUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}${cert.documentUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-ink-subtle hover:text-primary transition-colors rounded-lg hover:bg-canvas"
+                      title="Xem chứng nhận"
+                    >
+                      <Eye size={16} />
+                    </a>
+                  )}
+                  <button onClick={() => handleDeleteCert(cert.id)} className="p-2 text-ink-subtle hover:text-red-500 transition-colors rounded-lg hover:bg-canvas" title="Xóa chứng nhận">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')}>

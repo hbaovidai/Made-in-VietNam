@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Role, SupplierStatus } from '../lib/enums';
+import { api } from '../lib/api';
 
 // Struct khớp với model ở Backend
 export interface User {
@@ -23,7 +24,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loginUser: (userData: User, token: string) => void;
   updateUser: (userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,12 +71,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('mivn5_token', jwtToken);
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('mivn5_user');
-    localStorage.removeItem('mivn5_token');
-    window.location.href = '/';
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (err) {
+      console.warn('Logout API error:', err);
+    } finally {
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem('mivn5_user');
+      localStorage.removeItem('mivn5_token');
+      window.location.href = '/';
+    }
   };
 
   const updateUser = (userData: User) => {

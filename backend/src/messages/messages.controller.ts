@@ -35,9 +35,18 @@ export class MessagesController {
   @Get('admin/:conversationId/history')
   getAdminMessages(
     @Param('conversationId') conversationId: string,
-    @Query('userId') userId: string,
   ) {
-    return this.messagesService.getMessages(conversationId, userId);
+    return this.messagesService.getAdminMessages(conversationId);
+  }
+
+  // ADMIN: Xoá cuộc hội thoại
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete('admin/:conversationId')
+  deleteAdminConversation(
+    @Param('conversationId') conversationId: string,
+  ) {
+    return this.messagesService.deleteAdminConversation(conversationId);
   }
 
 

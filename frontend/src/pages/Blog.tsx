@@ -104,10 +104,10 @@ export function Blog() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
           {/* Left Column: Title + Description */}
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-3">
               VIE Share
             </h1>
-            <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               {displaySubtitle}
             </p>
           </div>

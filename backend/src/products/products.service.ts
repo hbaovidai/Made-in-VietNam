@@ -12,6 +12,7 @@ import {
 import { Prisma, ProductStatus, PricingMode } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TranslationService } from '../translation/translation.service';
+import { removeVietnameseTones } from '../utils/vietnamese.util';
 
 @Injectable()
 export class ProductsService {
@@ -45,9 +46,22 @@ export class ProductsService {
       where.status = 'ACTIVE';
     }
 
-    // Search by name
+    // Smart Multi-field Search (Hỗ trợ tiếng Việt có dấu + không dấu)
     if (search) {
-      where.name = { contains: search, mode: 'insensitive' };
+      const cleanSearch = search.trim();
+      const unaccented = removeVietnameseTones(cleanSearch);
+      const keywords = Array.from(new Set([cleanSearch, unaccented])).filter(Boolean);
+
+      where.OR = keywords.flatMap((kw) => [
+        { name: { contains: kw, mode: 'insensitive' } },
+        { nameEn: { contains: kw, mode: 'insensitive' } },
+        { slug: { contains: kw, mode: 'insensitive' } },
+        { description: { contains: kw, mode: 'insensitive' } },
+        { brand: { contains: kw, mode: 'insensitive' } },
+        { origin: { contains: kw, mode: 'insensitive' } },
+        { category: { name: { contains: kw, mode: 'insensitive' } } },
+        { supplier: { companyName: { contains: kw, mode: 'insensitive' } } },
+      ]);
     }
 
     // Filter by category slug (match the category itself or any of its children)
@@ -429,11 +443,62 @@ export class ProductsService {
       });
     } catch (err) {
       console.error(
-        'Failed to notify supplier about product verification:',
+        'Failed to send product status notification:',
         err,
       );
     }
 
     return updated;
+  }
+
+  // API Gợi ý tự động (Auto-suggest) khi gõ trên thanh tìm kiếm
+  async getSuggestions(q: string) {
+    if (!q || !q.trim()) return { products: [], categories: [], suppliers: [] };
+
+    const cleanQuery = q.trim();
+    const unaccented = removeVietnameseTones(cleanQuery);
+    const keywords = Array.from(new Set([cleanQuery, unaccented])).filter(Boolean);
+
+    const productWhere: Prisma.ProductWhereInput = {
+      status: 'ACTIVE',
+      OR: keywords.flatMap((kw) => [
+        { name: { contains: kw, mode: 'insensitive' } },
+        { nameEn: { contains: kw, mode: 'insensitive' } },
+      ]),
+    };
+
+    const categoryWhere: Prisma.CategoryWhereInput = {
+      OR: keywords.flatMap((kw) => [
+        { name: { contains: kw, mode: 'insensitive' } },
+        { nameEn: { contains: kw, mode: 'insensitive' } },
+      ]),
+    };
+
+    const supplierWhere: Prisma.SupplierWhereInput = {
+      status: 'VERIFIED',
+      OR: keywords.flatMap((kw) => [
+        { companyName: { contains: kw, mode: 'insensitive' } },
+      ]),
+    };
+
+    const [products, categories, suppliers] = await Promise.all([
+      this.prisma.product.findMany({
+        where: productWhere,
+        select: { id: true, name: true, slug: true, minPrice: true, currency: true, images: true },
+        take: 5,
+      }),
+      this.prisma.category.findMany({
+        where: categoryWhere,
+        select: { id: true, name: true, slug: true },
+        take: 3,
+      }),
+      this.prisma.supplier.findMany({
+        where: supplierWhere,
+        select: { id: true, companyName: true, slug: true, logo: true },
+        take: 3,
+      }),
+    ]);
+
+    return { products, categories, suppliers };
   }
 }

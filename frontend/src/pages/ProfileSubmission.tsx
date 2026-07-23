@@ -67,7 +67,7 @@ export function ProfileSubmission() {
           const formData = new FormData();
           formData.append('file', item);
 
-          const res = await api.post('/uploads', formData, {
+          const res = await api.post('/uploads/public-registration', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
           urls.push(res.data.url);

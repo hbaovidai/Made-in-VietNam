@@ -168,8 +168,7 @@ export function AdminMessages() {
     if (!chat) return;
     try {
       setLoadingMessages(true);
-      const pId = chat.participants?.[0]?.userId || '';
-      const res = await api.get(`/messages/admin/${chat.id}/history?userId=${pId}`);
+      const res = await api.get(`/messages/admin/${chat.id}/history`);
       const formatted = res.data.reverse().map((m: any) => ({
         sender: m.sender?.fullName || 'Người gửi',
         text: m.content,
@@ -241,7 +240,7 @@ export function AdminMessages() {
   const deleteConversation = async (id: string) => {
     if (confirm(t('msg_confirm_delete'))) {
       try {
-        await api.delete(`/messages/conversations/${id}`);
+        await api.delete(`/messages/admin/${id}`);
         setConversations(prev => prev.filter(c => c.id !== id));
         if (detailId === id) {
           setSearchParams({});
@@ -259,7 +258,7 @@ export function AdminMessages() {
     if (bulkAction === 'delete') {
       if (confirm(t('msg_confirm_delete'))) {
         try {
-          await Promise.all(selectedReqs.map(id => api.delete(`/messages/conversations/${id}`)));
+          await Promise.all(selectedReqs.map(id => api.delete(`/messages/admin/${id}`)));
           setConversations(prev => prev.filter(c => !selectedReqs.includes(c.id)));
           setSelectedReqs([]);
         } catch (err) {

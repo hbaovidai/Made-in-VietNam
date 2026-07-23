@@ -6,7 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
 import { api } from '../lib/api';
 import { AuthLayout } from '../layouts/AuthLayout';
-import { Factory, Loader2, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { Factory, Loader2, ShieldCheck, Eye, EyeOff, KeyRound } from 'lucide-react';
+import { Modal } from '../components/ui/Modal';
 
 import { useAppearance } from '../contexts/AppearanceContext';
 
@@ -23,6 +24,60 @@ export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Forgot Password State
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [forgotStep, setForgotStep] = useState<'email' | 'reset'>('email');
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
+
+  const handleOpenForgotModal = () => {
+    setForgotEmail(email);
+    setForgotStep('email');
+    setResetCode('');
+    setNewPassword('');
+    setDevOtpHint(null);
+    setIsForgotModalOpen(true);
+  };
+
+  const handleSendForgotEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    try {
+      setForgotLoading(true);
+      const res = await api.post('/auth/forgot-password', { email: forgotEmail });
+      addToast({ type: 'success', title: 'Thông báo', message: res.data.message || 'Mã OTP đã được gửi đến email' });
+      if (res.data.devOtpCode) {
+        setDevOtpHint(res.data.devOtpCode);
+        setResetCode(res.data.devOtpCode);
+      }
+      setForgotStep('reset');
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: err.response?.data?.message || 'Không thể gửi mã xác thực' });
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleResetPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail || !resetCode || !newPassword) return;
+    try {
+      setForgotLoading(true);
+      const res = await api.post('/auth/reset-password', { email: forgotEmail, resetCode, newPassword });
+      addToast({ type: 'success', title: 'Thành công', message: res.data.message || 'Đặt lại mật khẩu thành công' });
+      setEmail(forgotEmail);
+      setPassword(newPassword);
+      setIsForgotModalOpen(false);
+    } catch (err: any) {
+      addToast({ type: 'error', title: 'Lỗi', message: err.response?.data?.message || 'Không thể đặt lại mật khẩu' });
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const [searchParams] = useSearchParams();
   const redirect_to = searchParams.get('redirect_to');
@@ -178,7 +233,12 @@ export function Login() {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="text-[12px] font-normal text-ink" style={{ letterSpacing: '0.16px' }}>Mật khẩu</label>
-                  <button type="button" className="text-[11px] font-normal text-primary hover:underline transition-colors" style={{ letterSpacing: '0.16px' }}>
+                  <button 
+                    type="button" 
+                    onClick={handleOpenForgotModal}
+                    className="text-[11px] font-normal text-primary hover:underline transition-colors" 
+                    style={{ letterSpacing: '0.16px' }}
+                  >
                     Quên mật khẩu?
                   </button>
                 </div>
@@ -247,6 +307,104 @@ export function Login() {
           </div>
         </div>
       </main>
+
+      {/* Forgot Password Modal */}
+      <Modal
+        isOpen={isForgotModalOpen}
+        onClose={() => setIsForgotModalOpen(false)}
+        title="Khôi Phục Mật Khẩu"
+        description={forgotStep === 'email' ? 'Nhập email tài khoản của bạn để nhận mã xác thực OTP' : 'Nhập mã xác thực OTP 6 chữ số và mật khẩu mới'}
+        size="sm"
+      >
+        {forgotStep === 'email' ? (
+          <form onSubmit={handleSendForgotEmail} className="space-y-4 pt-2">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Email tài khoản</label>
+              <input
+                required
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="name@company.com"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-blue-600 transition-colors"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsForgotModalOpen(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                type="submit"
+                disabled={forgotLoading}
+                className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-60"
+              >
+                {forgotLoading ? <Loader2 size={14} className="animate-spin" /> : 'Gửi mã OTP'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleResetPasswordSubmit} className="space-y-4 pt-2">
+            {devOtpHint && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700 font-medium flex items-center justify-between">
+                <span>Mã OTP xác thực của bạn:</span>
+                <span className="font-mono font-bold text-sm bg-white px-2 py-0.5 rounded border border-blue-300">{devOtpHint}</span>
+              </div>
+            )}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Mã OTP (6 chữ số)</label>
+              <input
+                required
+                type="text"
+                value={resetCode}
+                onChange={(e) => setResetCode(e.target.value)}
+                placeholder="123456"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono outline-none focus:bg-white focus:border-blue-600 transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Mật khẩu mới</label>
+              <input
+                required
+                minLength={6}
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Tối thiểu 6 ký tự"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-blue-600 transition-colors"
+              />
+            </div>
+            <div className="flex items-center justify-between pt-2">
+              <button
+                type="button"
+                onClick={() => setForgotStep('email')}
+                className="text-xs font-semibold text-blue-600 hover:underline"
+              >
+                ← Nhập lại Email
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsForgotModalOpen(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-60"
+                >
+                  {forgotLoading ? <Loader2 size={14} className="animate-spin" /> : 'Đặt lại mật khẩu'}
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+      </Modal>
 
       {/* Footer */}
       <footer className="w-full px-6 lg:px-12 py-5 flex flex-col md:flex-row items-center justify-between border-t border-hairline shrink-0 text-[11px] text-ink-subtle bg-canvas z-10">

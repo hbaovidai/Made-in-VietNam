@@ -10,7 +10,7 @@ import { CustomSelect } from '../../../components/CustomSelect';
 interface CategoryOption {
   id: string;
   name: string;
-  children?: { id: string; name: string }[];
+  children?: CategoryOption[];
 }
 
 export function ProductFormPage() {
@@ -89,14 +89,16 @@ export function ProductFormPage() {
   };
 
   const categoryOptions = React.useMemo(() => {
-    const options: { value: string; label: string }[] = [];
+    const options: { value: string; label: string; breadcrumb?: string }[] = [];
     
-    function traverse(node: CategoryOption, path: string) {
-      const currentPath = path ? `${path} > ${node.name}` : node.name;
+    function traverse(node: CategoryOption, parentPath: string[]) {
+      const currentPath = [...parentPath, node.name];
       if (!node.children || node.children.length === 0) {
+        // Leaf node — chọn được
         options.push({
           value: node.id,
-          label: node.name
+          label: node.name,
+          breadcrumb: parentPath.length > 0 ? parentPath.join(' → ') : undefined,
         });
       } else {
         node.children.forEach(child => {
@@ -106,7 +108,7 @@ export function ProductFormPage() {
     }
 
     categories.forEach(cat => {
-      traverse(cat, '');
+      traverse(cat, []);
     });
     return options;
   }, [categories]);

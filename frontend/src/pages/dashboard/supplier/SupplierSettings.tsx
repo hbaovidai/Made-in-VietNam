@@ -160,7 +160,7 @@ export function SupplierSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-normal text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('account_settings_title')}</h1>
+        <h1 className="text-sm font-semibold text-ink uppercase" style={{ letterSpacing: '0.32px' }}>{t('account_settings_title')}</h1>
         <p className="text-sm text-ink-muted mt-1" style={{ letterSpacing: '0.16px' }}>{t('account_settings_subtitle')}</p>
       </div>
       <div className="space-y-12">

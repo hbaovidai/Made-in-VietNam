@@ -121,6 +121,14 @@ export class SuppliersController {
     return this.suppliersService.getAnalytics(id);
   }
 
+  // PROTECTED: Lấy thông tin profile chi tiết của chính supplier đang đăng nhập
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPPLIER', 'BUYER', 'ADMIN')
+  @Get('me/detail')
+  async getMyProfileDetail(@CurrentUser('id') userId: string) {
+    return this.suppliersService.getMyProfile(userId);
+  }
+
   // PROTECTED: Tạo mới profile nếu chưa có
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPPLIER')

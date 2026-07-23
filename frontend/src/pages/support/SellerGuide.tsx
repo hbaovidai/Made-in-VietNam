@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader';
-import { BreadcrumbBar } from '../../components/BreadcrumbBar';
 import { Store, TrendingUp, ShieldCheck, MessageSquare, LayoutGrid, Award, CheckCircle2, ChevronRight } from 'lucide-react';
 
 export function SellerGuide() {
@@ -26,12 +25,10 @@ export function SellerGuide() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <BreadcrumbBar items={[{ label: t('help'), href: '/help' }, { label: t('seller_guide_title') }]} />
       <PageHeader 
         title={t('seller_guide_title')} 
         description={t('seller_guide_desc')}
         breadcrumbs={[{ label: t('help'), href: "/help" }, { label: t('seller_guide_title') }]}
-        
       />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20">

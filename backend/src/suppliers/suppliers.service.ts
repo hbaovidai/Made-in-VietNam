@@ -124,6 +124,22 @@ export class SuppliersService {
     return supplier;
   }
 
+  async getMyProfile(userId: string) {
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { userId },
+      include: {
+        certifications: true,
+        industries: true,
+        markets: true,
+        categories: true,
+        addresses: true,
+        channels: true,
+      },
+    });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    return supplier;
+  }
+
   // note: idk what this for, we can create supplier profiles in the auth module
   async createProfile(userId: string, data: any) {
     const existing = await this.prisma.supplier.findUnique({

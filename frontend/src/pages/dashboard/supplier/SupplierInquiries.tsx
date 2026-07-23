@@ -62,81 +62,74 @@ export function SupplierInquiries() {
           <Loader2 className="animate-spin text-primary" size={32} />
         </div>
       ) : inquiries.length === 0 ? (
-        <div className="p-20 text-center space-y-4 bg-canvas border border-hairline" style={{ borderRadius: 0 }}>
-          <div className="w-20 h-20 bg-surface-1 border border-hairline flex items-center justify-center mx-auto" style={{ borderRadius: 0 }}>
-            <Inbox size={40} className="text-ink-subtle" />
+        <div className="p-20 text-center space-y-4 bg-white border border-slate-200/80 rounded-xl shadow-sm">
+          <div className="w-20 h-20 bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto rounded-2xl">
+            <Inbox size={40} className="text-blue-600" />
           </div>
-          <h3 className="text-base font-normal text-ink uppercase tracking-tight" style={{ letterSpacing: '0.32px' }}>{t('chua_co_yeu_cau_nao')}</h3>
-          <p className="text-ink-muted text-sm max-w-xs mx-auto" style={{ letterSpacing: '0.16px' }}>
+          <h3 className="text-base font-bold text-slate-900 uppercase tracking-tight">{t('chua_co_yeu_cau_nao')}</h3>
+          <p className="text-slate-500 text-sm max-w-xs mx-auto">
             Khi người mua gửi tin nhắn hoặc inquiry về sản phẩm của bạn, chúng sẽ xuất hiện tại đây.
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-canvas border border-hairline" style={{ borderRadius: 0 }}>
+        <div className="overflow-x-auto bg-white border border-slate-200/80 rounded-xl shadow-sm">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-surface-2 border-b border-hairline">
-                <th className="px-6 py-4 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Người mua</th>
-                <th className="px-6 py-4 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>{t('tin_nhan_moi_nhat')}</th>
-                <th className="px-6 py-4 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Thời gian</th>
-                <th className="px-6 py-4 text-xs font-normal text-ink-subtle uppercase tracking-widest" style={{ letterSpacing: '0.32px' }}>Trạng thái</th>
-                <th className="px-6 py-4 text-xs font-normal text-ink-subtle uppercase tracking-widest text-right" style={{ letterSpacing: '0.32px' }}>Hành động</th>
+              <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-700">
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-1/4">Người mua</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-1/3">{t('tin_nhan_moi_nhat')}</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-32">Thời gian</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-36">Trạng thái</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right w-28">Hành động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-hairline">
+            <tbody className="divide-y divide-slate-100">
               {inquiries.map((conv: any) => {
                 // Find the other participant (buyer)
                 const otherParticipant = conv.participants?.find((p: any) => p.userId !== user?.id);
                 const unread = conv.participants?.find((p: any) => p.userId === user?.id)?.unreadCount || 0;
 
                 return (
-                  <tr key={conv.id} className="hover:bg-surface-1 transition-colors group">
-                    <td className="px-6 py-5 align-top">
+                  <tr key={conv.id} className="hover:bg-slate-50/80 transition-colors group">
+                    <td className="px-6 py-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-surface-2 border border-hairline flex items-center justify-center text-ink font-normal text-sm shrink-0" style={{ borderRadius: 0 }}>
+                        <div className="w-10 h-10 bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 font-bold text-sm shrink-0 rounded-xl">
                           {(otherParticipant?.user?.fullName || '?')[0].toUpperCase()}
                         </div>
-                        <div>
-                          <div className="text-sm font-normal text-ink" style={{ letterSpacing: '0.16px' }}>{otherParticipant?.user?.fullName || 'Người mua'}</div>
-                          <div className="text-xs text-ink-subtle" style={{ letterSpacing: '0.16px' }}>{otherParticipant?.user?.email || ''}</div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-slate-800 truncate">{otherParticipant?.user?.fullName || 'Người mua'}</div>
+                          <div className="text-xs text-slate-400 truncate">{otherParticipant?.user?.email || ''}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5 align-top max-w-xs">
-                      <div className="flex items-start gap-2">
-                        <MessageCircle size={16} className="text-ink-subtle mt-0.5 shrink-0" />
-                        <p className="text-sm text-ink-muted leading-relaxed truncate" style={{ letterSpacing: '0.16px' }}>
+                    <td className="px-6 py-4 align-middle max-w-xs">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle size={16} className="text-slate-400 shrink-0" />
+                        <p className="text-xs font-medium text-slate-600 truncate">
                           {conv.lastMessage || 'Chưa có tin nhắn'}
                         </p>
                       </div>
                     </td>
-                    <td className="px-6 py-5 align-top">
-                      <div className="text-xs font-normal text-ink-subtle" style={{ letterSpacing: '0.16px' }}>
+                    <td className="px-6 py-4 align-middle">
+                      <div className="text-xs font-medium text-slate-500 whitespace-nowrap">
                         {conv.lastMessageAt ? getTimeSince(conv.lastMessageAt) : getTimeSince(conv.createdAt)}
                       </div>
                     </td>
-                    <td className="px-6 py-5 align-top">
+                    <td className="px-6 py-4 align-middle">
                       {unread > 0 ? (
-                        <span 
-                          className="flex items-center gap-1.5 px-3 py-1 bg-amber-100/50 text-amber-800 border border-amber-300 text-xs font-normal uppercase tracking-wider"
-                          style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                        >
-                          <Clock size={14} /> {unread} chưa đọc
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold rounded-full">
+                          <Clock size={13} /> {unread} chưa đọc
                         </span>
                       ) : (
-                        <span 
-                          className="flex items-center gap-1.5 px-3 py-1 bg-green-100/50 text-green-800 border border-green-300 text-xs font-normal uppercase tracking-wider"
-                          style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                        >
-                          <CheckCircle2 size={14} /> Đã phản hồi
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full">
+                          <CheckCircle2 size={13} /> Đã phản hồi
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-5 align-top text-right">
+                    <td className="px-6 py-4 align-middle text-right">
                       <button 
                         onClick={() => handleViewConversation(conv.id)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 border border-hairline text-ink hover:bg-surface-2 text-xs font-normal uppercase tracking-wider transition-all"
-                        style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold rounded-lg shadow-2xs transition-all"
                       >
                         <Eye size={14} /> Xem
                       </button>

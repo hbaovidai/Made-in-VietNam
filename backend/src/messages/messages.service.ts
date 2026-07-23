@@ -94,6 +94,11 @@ export class MessagesService {
                 email: true,
                 role: true,
                 avatar: true,
+                supplier: {
+                  select: {
+                    companyName: true,
+                  },
+                },
               },
             },
           },
@@ -103,15 +108,24 @@ export class MessagesService {
     });
 
     return conversations.map((c: any) => {
+      const p1 = c.participants[0]?.user;
+      const p2 = c.participants[1]?.user;
+
       const buyerPart = c.participants.find((p: any) => p.user.role === 'BUYER');
       const supplierPart = c.participants.find((p: any) => p.user.role === 'SUPPLIER');
 
+      const bName = buyerPart?.user.fullName || (p1 ? p1.fullName : 'Khách hàng');
+      const bEmail = buyerPart?.user.email || (p1 ? p1.email : 'N/A');
+
+      const sName = supplierPart?.user.supplier?.companyName || supplierPart?.user.fullName || (p2 ? (p2.supplier?.companyName || p2.fullName) : 'Nhà cung cấp');
+      const sEmail = supplierPart?.user.email || (p2 ? p2.email : 'N/A');
+
       return {
         id: c.id,
-        buyerName: buyerPart?.user.fullName || 'Unknown',
-        buyerEmail: buyerPart?.user.email || 'N/A',
-        supplierName: supplierPart?.user.fullName || 'Unknown',
-        supplierEmail: supplierPart?.user.email || 'N/A',
+        buyerName: bName,
+        buyerEmail: bEmail,
+        supplierName: sName,
+        supplierEmail: sEmail,
         lastMessage: c.lastMessage,
         lastMessageAt: c.lastMessageAt,
         updatedAt: c.updatedAt,
@@ -120,6 +134,23 @@ export class MessagesService {
         participants: c.participants,
       };
     });
+  }
+
+  async getAdminMessages(conversationId: string, limit = 50, skip = 0) {
+    return this.prisma.message.findMany({
+      where: { conversationId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip,
+      include: { sender: { select: { id: true, fullName: true, role: true } } },
+    });
+  }
+
+  async deleteAdminConversation(conversationId: string) {
+    await this.prisma.conversation.delete({
+      where: { id: conversationId },
+    });
+    return { message: 'Đã xóa cuộc hội thoại' };
   }
 
   async getMessages(

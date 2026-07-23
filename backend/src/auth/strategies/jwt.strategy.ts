@@ -10,6 +10,23 @@ export interface JwtPayload {
   role: string;
 }
 
+const cookieExtractor = (req: any) => {
+  let token = null;
+  if (req && req.cookies && req.cookies['mivn5_token']) {
+    token = req.cookies['mivn5_token'];
+  } else if (req && req.headers && req.headers.cookie) {
+    const rawCookies = req.headers.cookie.split(';');
+    for (const cookie of rawCookies) {
+      const [key, value] = cookie.trim().split('=');
+      if (key === 'mivn5_token') {
+        token = value;
+        break;
+      }
+    }
+  }
+  return token;
+};
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -17,7 +34,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private prisma: PrismaService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        cookieExtractor,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey:
         configService.get<string>('JWT_SECRET') || 'mivn5-secret-key-2026',

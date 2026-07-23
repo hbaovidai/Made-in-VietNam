@@ -46,15 +46,20 @@ export class ProductsController {
 
   // PROTECTED: Lấy toàn bộ sản phẩm của chính Supplier (bao gồm PENDING, REJECTED)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER')
+  @Roles('BUYER', 'SUPPLIER', 'ADMIN')
   @Get('me')
   async getMyProducts(@CurrentUser('id') userId: string) {
     const supplier = await this.prisma.supplier.findUnique({
       where: { userId },
     });
-    if (!supplier)
-      throw new ForbiddenException('Tài khoản chưa có hồ sơ nhà cung cấp');
+    if (!supplier) return [];
     return this.productsService.findAllForSupplier(supplier.id);
+  }
+
+  // PUBLIC: Gợi ý tự động từ khóa (Auto-suggest)
+  @Get('suggest')
+  suggest(@Query('q') query: string) {
+    return this.productsService.getSuggestions(query);
   }
 
   // PUBLIC: Ai cũng xem được chi tiết sản phẩm

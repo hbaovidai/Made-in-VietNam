@@ -114,3 +114,21 @@ export class SupplierRegisterDto {
   @IsEnum(SupplierType) supplierType: SupplierType;
   @IsString({each: true}) @IsOptional() extraDocsUrl: string[];
 }
+
+export class ForgotPasswordDto {
+  @IsEmail({}, { message: 'Email không hợp lệ' })
+  email: string;
+}
+
+export class ResetPasswordDto {
+  @IsEmail({}, { message: 'Email không hợp lệ' })
+  email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Mã xác thực OTP không được để trống' })
+  resetCode: string;
+
+  @IsString()
+  @MinLength(6, { message: 'Mật khẩu mới tối thiểu 6 ký tự' })
+  newPassword: string;
+}

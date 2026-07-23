@@ -296,9 +296,9 @@ export function Header() {
               <button
                 type="submit"
                 className="shrink-0 h-[calc(100%-6px)] mr-[3px] px-5 rounded-full text-sm font-bold text-white transition-colors"
-                style={{ background: '#1e293b' }}
-                onMouseOver={(e) => (e.currentTarget.style.background = '#334155')}
-                onMouseOut={(e) => (e.currentTarget.style.background = '#1e293b')}
+                style={{ background: 'var(--color-footer-bg, #043365)' }}
+                onMouseOver={(e) => (e.currentTarget.style.background = '#002244')}
+                onMouseOut={(e) => (e.currentTarget.style.background = 'var(--color-footer-bg, #043365)')}
               >
                 {t('search_btn', 'Tìm kiếm')}
               </button>
@@ -437,7 +437,7 @@ export function Header() {
       {/* ═══ Mobile Search Bar (expandable) ═══ */}
       {isMobileSearchOpen && (
         <div className="md:hidden border-t border-slate-100 px-3 py-3 bg-white">
-          <form onSubmit={handleSearch} className="flex items-center h-11 rounded-full border border-slate-200 bg-[#f8fafc] overflow-hidden focus-within:border-slate-300 focus-within:bg-white focus-within:shadow-sm">
+          <form onSubmit={handleSearch} className="flex items-center h-11 rounded-full border-2 border-primary bg-[#f8fafc] overflow-hidden focus-within:bg-white focus-within:shadow-sm">
             <button type="submit" className="shrink-0 pl-4 pr-2 h-full flex items-center bg-transparent border-none outline-none">
               <Search size={18} className="text-slate-400" strokeWidth={2} />
             </button>
@@ -451,8 +451,8 @@ export function Header() {
             />
             <button
               type="submit"
-              className="shrink-0 h-[calc(100%-6px)] mr-[3px] px-4 rounded-full text-xs font-bold text-white"
-              style={{ background: '#1e293b' }}
+              className="shrink-0 h-[calc(100%-6px)] mr-[3px] px-4 rounded-full text-xs font-bold text-white transition-colors"
+              style={{ background: 'var(--color-footer-bg, #043365)' }}
             >
               {t('search_btn', 'Tìm kiếm')}
             </button>
