@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { formatProductPrice } from '../../../utils/formatters';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 export function SupplierProducts() {
   const { t } = useTranslation();
@@ -113,16 +114,19 @@ export function SupplierProducts() {
         </div>
         <div className="flex items-center gap-2">
           <Filter size={14} className="text-slate-400 shrink-0" />
-          <select
+          <CustomSelect
+            options={[
+              { value: '', label: t('supplier_status_all') },
+              { value: 'ACTIVE', label: t('supplier_status_active') },
+              { value: 'PENDING', label: t('supplier_status_pending') },
+              { value: 'REJECTED', label: t('supplier_status_rejected') },
+            ]}
             value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            className="bg-white border border-slate-300 text-sm text-slate-800 px-3 py-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium shadow-2xs transition-all"
-          >
-            <option value="">{t('supplier_status_all')}</option>
-            <option value="ACTIVE">{t('supplier_status_active')}</option>
-            <option value="PENDING">{t('supplier_status_pending')}</option>
-            <option value="REJECTED">{t('supplier_status_rejected')}</option>
-          </select>
+            onChange={(val) => setStatusFilter(val)}
+            placeholder={t('supplier_status_all')}
+            searchable={false}
+            className="w-48"
+          />
         </div>
       </div>
 

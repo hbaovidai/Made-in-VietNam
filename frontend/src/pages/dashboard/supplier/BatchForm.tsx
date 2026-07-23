@@ -4,6 +4,7 @@ import { useToast } from '../../../components/ui/Toast';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 interface BatchFormProps {
   isOpen: boolean;
@@ -93,16 +94,13 @@ export function BatchForm({ isOpen, onClose, batch, onSave }: BatchFormProps) {
       <div className="space-y-4">
         <div>
           <label className="input-label">{t('batch_product_label')}</label>
-          <select
-            name="productId"
-            className="input"
+          <CustomSelect
+            options={supplierProducts.map(p => ({ value: p.id, label: p.name }))}
             value={formData.productId}
-            onChange={handleChange}
-          >
-            {supplierProducts.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+            onChange={(val) => setFormData(prev => ({ ...prev, productId: val }))}
+            placeholder={t('batch_product_label')}
+            searchable={true}
+          />
         </div>
 
         <div>

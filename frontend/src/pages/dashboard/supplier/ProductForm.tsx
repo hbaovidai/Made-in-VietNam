@@ -5,6 +5,7 @@ import { useToast } from '../../../components/ui/Toast';
 import { UploadCloud, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../lib/api';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 interface CategoryOption {
   id: string;
@@ -151,18 +152,13 @@ export function ProductForm({ isOpen, onClose, product, onSave }: ProductFormPro
                   </div>
                   <div>
                     <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block mb-2" style={{ letterSpacing: '0.32px' }}>{t('category')}</label>
-                    <select
-                      name="category"
-                      className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary"
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                    <CustomSelect
+                      options={categoryOptions.map(cat => ({ value: cat.name, label: cat.name }))}
                       value={formData.category}
-                      onChange={handleChange}
-                    >
-                      <option value="">{t('select_category', 'Chọn danh mục')}</option>
-                      {categoryOptions.map((cat) => (
-                        <option key={cat.id} value={cat.name}>{cat.name}</option>
-                      ))}
-                    </select>
+                      onChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
+                      placeholder={t('select_category', 'Chọn danh mục')}
+                      searchable={true}
+                    />
                   </div>
                 </div>
 

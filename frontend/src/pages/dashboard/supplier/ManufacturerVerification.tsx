@@ -6,6 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../components/ui/Toast';
 import { api } from '../../../lib/api';
 import { SupplierStatus } from '@/src/lib/enums';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 // Enum options for selectors
 const PRODUCTION_FORMS = [
@@ -449,17 +450,13 @@ export function ManufacturerVerification() {
           <div className="space-y-2">
             <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('dia_chi_nha_xuong')}</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <select
+              <CustomSelect
+                options={VIETNAM_PROVINCES.map(p => ({ value: p, label: p }))}
                 value={form.province}
-                onChange={e => setForm(prev => ({ ...prev, province: e.target.value }))}
-                className="w-full px-3 py-2 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-              >
-                <option value="">{t('chon_tinhthanh_pho')}</option>
-                {VIETNAM_PROVINCES.map(p => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
+                onChange={val => setForm(prev => ({ ...prev, province: val }))}
+                placeholder={t('chon_tinhthanh_pho')}
+                searchable={true}
+              />
               
               <input
                 type="text"
@@ -496,34 +493,26 @@ export function ManufacturerVerification() {
             {/* Scale */}
             <div className="space-y-1">
               <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('quy_mo_nha_xuong')}</label>
-              <select
+              <CustomSelect
+                options={FACTORY_SCALES.map(s => ({ value: s.value, label: s.label }))}
                 value={form.factoryScale}
-                onChange={e => setForm(prev => ({ ...prev, factoryScale: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-              >
-                <option value="">{t('chon_quy_mo')}</option>
-                {FACTORY_SCALES.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
+                onChange={val => setForm(prev => ({ ...prev, factoryScale: val }))}
+                placeholder={t('chon_quy_mo')}
+                searchable={false}
+              />
               {errors.factoryScale && <p className="text-xs text-red-500 mt-1">{errors.factoryScale}</p>}
             </div>
 
             {/* Workers count */}
             <div className="space-y-1">
               <label className="text-[11px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('so_luong_nhan_su_san_xuat')}</label>
-              <select
+              <CustomSelect
+                options={WORKER_COUNTS.map(w => ({ value: w.value, label: w.label }))}
                 value={form.workerCount}
-                onChange={e => setForm(prev => ({ ...prev, workerCount: e.target.value }))}
-                className="w-full px-3 py-2.5 bg-surface-1 border border-hairline text-xs font-normal focus:outline-none focus:border-b-2 focus:border-b-primary"
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-              >
-                <option value="">{t('chon_so_luong')}</option>
-                {WORKER_COUNTS.map(w => (
-                  <option key={w.value} value={w.value}>{w.label}</option>
-                ))}
-              </select>
+                onChange={val => setForm(prev => ({ ...prev, workerCount: val }))}
+                placeholder={t('chon_so_luong')}
+                searchable={false}
+              />
               {errors.workerCount && <p className="text-xs text-red-500 mt-1">{errors.workerCount}</p>}
             </div>
           </div>

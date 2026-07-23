@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 import { SupplierStatus } from '@/src/lib/enums';
+import { CustomSelect } from '../../../components/CustomSelect';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -287,16 +288,16 @@ export function SupplierProfile() {
                     <label className="text-xs font-normal text-ink-subtle uppercase tracking-widest flex items-center gap-2" style={{ letterSpacing: '0.32px' }}>
                       <Globe size={14} className="text-primary" /> Lĩnh vực hoạt động
                     </label>
-                    <select 
-                      className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal focus:outline-none focus:border-b-2 focus:border-b-primary transition-all appearance-none" 
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                    <CustomSelect 
+                      options={[
+                        { value: "Manufacturer & Trading", label: t('biz_type_manufacturer_trading') },
+                        { value: "E-Commerce", label: t('biz_type_ecommerce') },
+                        { value: "Agriculture", label: t('biz_type_agriculture') },
+                      ]}
                       value={createForm.businessType} 
-                      onChange={e => setCreateForm({...createForm, businessType: e.target.value})}
-                    >
-                      <option value="Manufacturer & Trading">{t('biz_type_manufacturer_trading')}</option>
-                      <option value="E-Commerce">{t('biz_type_ecommerce')}</option>
-                      <option value="Agriculture">{t('biz_type_agriculture')}</option>
-                    </select>
+                      onChange={val => setCreateForm({...createForm, businessType: val})}
+                      searchable={false}
+                    />
                   </div>
                   
                   <div className="space-y-2">
@@ -734,17 +735,17 @@ export function SupplierProfile() {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('biz_type_label')}</label>
-              <select 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.businessType} 
-                onChange={(e) => setEditForm({...editForm, businessType: e.target.value})}
-              >
-                <option value="">-- Chọn loại hình --</option>
-                <option value="PRIVATE">Tư nhân</option>
-                <option value="LIMITED_LIABILITY">TNHH</option>
-                <option value="JOINT_STOCK">Cổ phần</option>
-              </select>
+              <CustomSelect
+                options={[
+                  { value: 'PRIVATE', label: 'Tư nhân' },
+                  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
+                  { value: 'JOINT_STOCK', label: 'Cổ phần' },
+                ]}
+                value={editForm.businessType}
+                onChange={(val) => setEditForm({...editForm, businessType: val})}
+                placeholder="-- Chọn loại hình --"
+                searchable={false}
+              />
             </div>
 
             <div className="space-y-2">
@@ -792,20 +793,20 @@ export function SupplierProfile() {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Tổng nhân sự</label>
-              <select 
-                className="w-full px-4 py-3 bg-surface-1 border border-hairline text-sm outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.employee_count} 
-                onChange={(e) => setEditForm({...editForm, employee_count: e.target.value})}
-              >
-                <option value="">-- Chọn --</option>
-                <option value="1-10">1 - 10 người</option>
-                <option value="11-50">11 - 50 người</option>
-                <option value="51-200">51 - 200 người</option>
-                <option value="201-500">201 - 500 người</option>
-                <option value="501-1000">501 - 1,000 người</option>
-                <option value="1000+">Trên 1,000 người</option>
-              </select>
+              <CustomSelect
+                options={[
+                  { value: '1-10', label: '1 - 10 người' },
+                  { value: '11-50', label: '11 - 50 người' },
+                  { value: '51-200', label: '51 - 200 người' },
+                  { value: '201-500', label: '201 - 500 người' },
+                  { value: '501-1000', label: '501 - 1,000 người' },
+                  { value: '1000+', label: 'Trên 1,000 người' },
+                ]}
+                value={editForm.employee_count}
+                onChange={(val) => setEditForm({...editForm, employee_count: val})}
+                placeholder="-- Chọn --"
+                searchable={false}
+              />
             </div>
             <div className="space-y-2 col-span-2">
               <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>
