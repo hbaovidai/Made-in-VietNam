@@ -12,7 +12,7 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto, SupplierFindManyDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -35,6 +35,12 @@ export class SuppliersController {
     // Only return verified suppliers to the public;
     query.status = SupplierStatus.VERIFIED;
     return this.suppliersService.findAll(query);
+  }
+
+  @Get('/experimental')
+  async findAllExperimental(@Query() dto: SupplierFindManyDto) {
+    dto.status = SupplierStatus.VERIFIED;
+    return this.suppliersService.findAllExperimental(dto);
   }
 
   // PUBLIC

@@ -54,7 +54,6 @@ model Supplier {
   legalRepName String? @map("legal_rep_name")
   legalRepGovId String? @map("legal_rep_gov_id")
 
-  addresses SupplierAddressMap[]
   businessLicenseUrl   String[]                     @map("business_license_url")
   legalRepGovIdUrl String[] @map("legal_rep_gov_id_url")
 
@@ -84,6 +83,7 @@ model Supplier {
   quotes         Quote[]
   orders         Order[]
 
+  addresses SupplierAddressMap[]
   documents SupplierDocumentMediaMap[]
   categories SupplierCategoryMap[]
   channels SupplierChannelMap[]

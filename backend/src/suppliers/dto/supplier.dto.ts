@@ -1,6 +1,65 @@
-import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested, IsBoolean, IsIn, isArray } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { BusinessType, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
+import { BusinessType, Prisma, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
+
+type SupplierNonRelField = Prisma.SupplierScalarFieldEnum;
+type SupplierRelField = keyof Prisma.SupplierInclude;
+
+const ALLOWED_NON_REL_FIELDS_SUPPLIER: SupplierNonRelField[] = [ 
+  // no relation fields
+  'businessType', 'status', 'companyName', 'id',
+
+]
+
+const ALLOW_REL_FIELDS_SUPPLIER: SupplierRelField[] = [
+  // relations
+  'user', 'categories', 'channels',
+  'addresses', 'products', 'documents',
+
+  'manufacturerProfile', 'exporterProfile',
+
+  'industries', 'markets', 'batches', 'orders',
+];
+
+class BaseFindManyDto {
+  @IsOptional() @Type(() => Number) @Min(1) page?: number = 1;
+  @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
+}
+
+class SupplierDtoFindOne {
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
+  @IsArray()
+  @IsIn(ALLOWED_NON_REL_FIELDS_SUPPLIER, { each: true })
+  fields?: SupplierNonRelField[];
+
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
+  @IsArray()
+  @IsIn(ALLOW_REL_FIELDS_SUPPLIER, { each: true })
+  include?: SupplierRelField[];
+
+  @IsOptional() @IsBoolean() getPrimaryAddress?: boolean = true;
+}
+
+export class SupplierFindManyDto extends BaseFindManyDto {
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
+  @IsArray()
+  @IsIn(ALLOWED_NON_REL_FIELDS_SUPPLIER, { each: true })
+  fields?: SupplierNonRelField[];
+
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
+  @IsArray()
+  @IsIn(ALLOW_REL_FIELDS_SUPPLIER, { each: true })
+  include?: SupplierRelField[];
+
+  @IsOptional() @IsBoolean() findPrimaryAddress?: boolean = true;
+  @IsOptional() @IsString() search?: string;
+  @IsOptional() @IsString() categorySlug?: string;
+  @IsOptional() @IsEnum(SupplierStatus) status?: SupplierStatus;
+}
 
 export class UpdateSupplierDto {
   @IsString() @IsOptional() companyName?: string;
