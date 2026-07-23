@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption, SupplierFindManyDto } from './dto/supplier.dto';
 import { Prisma, Role, SaleChannelType, SupplierStatus } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
@@ -75,6 +75,68 @@ export class SuppliersService {
       data: suppliers,
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
     };
+  }
+
+  private fieldsToSelectMap<T extends string>(fields?: string[]): Record<T, boolean> | undefined {
+    if (!fields || fields.length == 0) return undefined;
+    return fields.reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as Record<string, boolean>)
+  }
+
+  async findAllExperimental(dto: SupplierFindManyDto) {
+    const { search, page = 1, limit = 20, fields, include } = dto;
+    console.log(dto);
+
+    const where: Prisma.SupplierWhereInput = {};
+    if (search) {
+      // we will have to content ourselves with this until a better solution is found
+      const companyNameCond: Prisma.SupplierWhereInput =
+        { companyName: { contains: search, mode: 'insensitive' } };
+      const categoryNameCond: Prisma.SupplierWhereInput = { categories: { some: { 
+        category: { name: { contains: search, mode: 'insensitive' }
+      }}}};
+      const productNamecond: Prisma.SupplierWhereInput = { products: { some: {
+        name: { contains: search, mode: 'insensitive' }
+      }}};
+
+      where.OR = [ companyNameCond, categoryNameCond, productNamecond, ];
+    }
+
+    if (dto.categorySlug) where.categories = { some: { categorySlug: dto.categorySlug } };
+    if (dto.status) where.status = dto.status;
+
+    const selectedFields = this.fieldsToSelectMap<Prisma.SupplierScalarFieldEnum>(fields);
+    const includedRelations = this.fieldsToSelectMap<keyof Prisma.SupplierInclude>(include);
+    const relationSelects: Partial<Prisma.SupplierSelect> = {
+      categories: { select: { categorySlug: true, categoryLevel: true } },
+      addresses: {
+        where: { isPrimary: dto.findPrimaryAddress },
+        select: { isPrimary: true, address: true }
+      },
+      channels: { select: { type: true, url: true } },
+      documents: { select: { type: true, url: true } },
+      industries: { select: { industry: true }},
+      markets: { select: { market: true } },
+    };
+
+    let select: any = {};
+    if (selectedFields) select = {...selectedFields};
+    if (includedRelations) {
+      const keys = Object.keys(includedRelations) as (keyof Prisma.SupplierInclude)[];
+      for (const key of keys) select[key] = relationSelects[key] ?? true;
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.supplier.findMany({
+        skip: (page - 1) * limit, take: limit,
+        where, ...(select && { select }),
+      }),
+      this.prisma.supplier.count({ where }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit), }, };
   }
 
   // this one is for the public, we should limit the information we're giving them
