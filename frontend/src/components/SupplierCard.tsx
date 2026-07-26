@@ -22,6 +22,22 @@ interface Supplier {
   website: string;
 }
 
+interface SuppliercategoryRelation {
+  category: {name: string, nameEn: string, id: string};
+}
+
+interface Supplier {
+  id: string;
+  logo: string;
+  companyName: string;
+  status: SupplierStatus;
+  addresses?: {isPrimary: boolean, address: string}[];
+  channels?: { url: string, type: SaleChannels }[];
+  categories?: SuppliercategoryRelation[];
+  supplierType: SupplierType;
+  website: string;
+}
+
 interface SupplierCardProps {
   key?: string;
   supplier: Supplier;
