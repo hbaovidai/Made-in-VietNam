@@ -8,7 +8,9 @@ type SupplierRelField = keyof Prisma.SupplierInclude;
 const ALLOWED_NON_REL_FIELDS_SUPPLIER: SupplierNonRelField[] = [ 
   // no relation fields
   'businessType', 'status', 'companyName', 'id',
-
+  'logo', 'banner', 'id', 'taxCode', 'description',
+  'contactEmail', 'contactPhone',
+  'website', 'supplierType'
 ]
 
 const ALLOW_REL_FIELDS_SUPPLIER: SupplierRelField[] = [
