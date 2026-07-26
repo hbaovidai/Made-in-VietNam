@@ -107,10 +107,14 @@ export class SuppliersService {
     if (dto.categorySlug) where.categories = { some: { categorySlug: dto.categorySlug } };
     if (dto.status) where.status = dto.status;
 
+    console.log(where);
+
     const selectedFields = this.fieldsToSelectMap<Prisma.SupplierScalarFieldEnum>(fields);
     const includedRelations = this.fieldsToSelectMap<keyof Prisma.SupplierInclude>(include);
     const relationSelects: Partial<Prisma.SupplierSelect> = {
-      categories: { select: { categorySlug: true, categoryLevel: true } },
+      categories: { select: {
+        category: { select: { name: true, nameEn: true }}
+      } },
       addresses: {
         where: { isPrimary: dto.findPrimaryAddress },
         select: { isPrimary: true, address: true }
