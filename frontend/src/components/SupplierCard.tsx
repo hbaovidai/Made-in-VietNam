@@ -2,29 +2,52 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, MapPin, Award, ChevronRight, Globe, ExternalLink, Factory, Package, Ship } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SaleChannelsMap, SupplierStatus } from '../lib/enums';
+import { SaleChannels, SaleChannelsMap, SupplierStatus, SupplierType } from '../lib/enums';
 import { api } from '../lib/api';
-
 import { SupplierBadge } from './ui/SupplierBadge';
 
-interface SupplierCardProps {
-  key?: string;
-  supplier: any;
+interface SuppliercategoryRelation {
+  category: {name: string, nameEn: string, id: string};
+}
+
+interface Supplier {
+  id: string;
+  logo: string;
+  companyName: string;
+  status: SupplierStatus;
+  addresses?: {isPrimary: boolean, address: string}[];
+  channels?: { url: string, type: SaleChannels }[];
+  categories?: SuppliercategoryRelation[];
+  supplierType: SupplierType;
+  website: string;
 }
 
 interface SuppliercategoryRelation {
-  supplierSlug: string;
-  categorySlug: string;
-  categoryLevel: number;
+  category: {name: string, nameEn: string, id: string};
+}
+
+interface Supplier {
+  id: string;
+  logo: string;
+  companyName: string;
+  status: SupplierStatus;
+  addresses?: {isPrimary: boolean, address: string}[];
+  channels?: { url: string, type: SaleChannels }[];
+  categories?: SuppliercategoryRelation[];
+  supplierType: SupplierType;
+  website: string;
+}
+
+interface SupplierCardProps {
+  key?: string;
+  supplier: Supplier;
 }
 
 export function SupplierCard({ supplier }: SupplierCardProps) {
   const { t } = useTranslation();
 
-  const [categoriesNames, setCategoriesNames] = useState<string[]>([]);
-
   const navigate = useNavigate();
-  const name = supplier.companyName || supplier.name;
+  const name = supplier.companyName;
 
   const isVerified = supplier.status === SupplierStatus.VERIFIED;
 
@@ -36,35 +59,6 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   } else if (name.includes('Mẫu') || name.includes('Nông sản Việt') || name.includes('Nong San Viet')) {
     primaryLocation = 'KCN Tân Tạo, Quận Bình Tân, TP. Hồ Chí Minh';
   }
-
-  const fetchCategoryName = useCallback(async (slug: string) => {
-    try {
-      const res = await api.get(`/categories/name/${slug}`);
-      return { 
-        name: res.data?.name || '', 
-        nameEn: res.data?.nameEN || '' 
-      };
-    } catch (error) {
-      console.error(error);
-      return { name: '', nameEn: '' };
-    }
-  }, []);
-
-  useEffect(() => {
-    const loadCategoryNames = async () => {
-      const categorySlugs = supplier.categories?.map((scr: SuppliercategoryRelation) => scr.categorySlug) || [];
-
-      const namePromises = categorySlugs.map(async (slug) => {
-        const names = await fetchCategoryName(slug);
-        return names.name;
-      });
-      const names = await Promise.all(namePromises);
-
-      setCategoriesNames(names);
-    };
-
-    loadCategoryNames();
-  }, [supplier.categories, fetchCategoryName]);
 
   return (
     <div
@@ -99,15 +93,18 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             </div>
 
             {/* Location Row */}
+            {primaryLocation &&
             <div className="flex items-center gap-1.5 text-xs md:text-sm text-ink-muted font-normal mb-3" style={{ letterSpacing: '0.16px' }}>
               <MapPin size={15} className="text-ink-subtle shrink-0" />
               <span>{primaryLocation}</span>
             </div>
+            }
 
             {/* Role Badges Row */}
             {(() => {
-              const hasManufacturer = !!supplier.manufacturerProfile || supplier.supplierType === 'MANUFACTURER' || supplier.supplierType === 'MANU_EXPORT';
-              const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (supplier.markets && supplier.markets.length > 0);
+              const hasManufacturer = supplier.supplierType === SupplierType.MANUFACTURER || supplier.supplierType === 'MANU_EXPORT';
+              // const hasExporter = !!supplier.exporterProfile || supplier.supplierType === 'EXPORTER' || supplier.supplierType === 'MANU_EXPORT' || (supplier.markets && supplier.markets.length > 0);
+              const hasExporter = supplier.supplierType === 'EXPORTER' || supplier.supplierType === SupplierType.MANU_EXPORT;
 
               return (
                 <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -119,16 +116,16 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             })()}
 
             {/* Main Products / Tags Row */}
-            {categoriesNames.length > 0 && (
+            {supplier.categories?.length > 0 && (
               <div className="space-y-1.5 mb-4">
                 <span className="block text-xs font-semibold text-ink" style={{ letterSpacing: '0.16px' }}>{t('supplier_main_products_label')}</span>
                 <div className="flex flex-wrap gap-2">
-                  {categoriesNames.map((name: string) => (
+                  {supplier.categories.map(({category}) => (
                     <span 
-                      key={name} 
+                      key={category.name} 
                       className="bg-surface-1 text-ink border border-hairline px-2.5 py-1 text-xs font-normal whitespace-nowrap" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
                     >
-                      {name}
+                      {category.name}
                     </span>
                   ))}
                 </div>
@@ -137,52 +134,54 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           </div>
 
           {/* Bottom Row: Divider + Social/Marketplace Buttons */}
-          <div className="mt-auto">
-            {/* Thin Divider */}
-            <div className="border-t border-hairline my-4" />
+          {supplier.channels?.length > 0 &&
+            <div className="mt-auto">
+              {/* Thin Divider */}
+              <div className="border-t border-hairline my-4" />
 
-            <div className="flex flex-wrap items-center gap-2">
-              {name.includes('Lộc Trời') || name.includes('Loc Troi') ? (
-                <>
-                  <a
-                    href={supplier.website || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                  >
-                    <Globe size={14} className="text-ink-subtle" />
-                    Website
-                  </a>
-                  <a
-                    href="https://alibaba.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                  >
-                    <ExternalLink size={14} className="text-ink-subtle" />
-                    Alibaba
-                  </a>
-                </>
-              ) : (
-                <>
-                  {supplier.channels?.map(channel => {
-                    return (
-                      <a href={channel.url} target='_blank rel'
+              <div className="flex flex-wrap items-center gap-2">
+                {name.includes('Lộc Trời') || name.includes('Loc Troi') ? (
+                  <>
+                    <a
+                      href={supplier.website || '#'}
+                      target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      >
-                        <ExternalLink size={14} className="text-ink-subtle" />
-                        {SaleChannelsMap[channel.type]}
-                      </a>
-                    );
-                  })}
-                </>
-              )}
+                    >
+                      <Globe size={14} className="text-ink-subtle" />
+                      Website
+                    </a>
+                    <a
+                      href="https://alibaba.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                    >
+                      <ExternalLink size={14} className="text-ink-subtle" />
+                      Alibaba
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    {supplier.channels?.map(channel => {
+                      return (
+                        <a href={channel.url} target='_blank rel'
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-surface-1 text-ink text-xs font-normal border border-hairline hover:bg-surface-2 hover:border-ink-subtle transition-colors" style={{ borderRadius: 0, letterSpacing: '0.16px' }}
+                        >
+                          <ExternalLink size={14} className="text-ink-subtle" />
+                          {SaleChannelsMap[channel.type]}
+                        </a>
+                      );
+                    })}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          }
 
         </div>
       </div>

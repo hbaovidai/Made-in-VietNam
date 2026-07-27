@@ -25,7 +25,8 @@ import { SEOHead } from '../components/SEOHead';
 import { useLocalized } from '../hooks/useLocalized';
 import { SearchHeader } from '../components/SearchHeader';
 import { CustomSelect } from '../components/CustomSelect';
-import { PricingMode } from '../lib/enums';
+import { PricingMode, SupplierStatus } from '../lib/enums';
+import { SupplierCard } from '../components/SupplierCard';
 
 
 const SIDEBAR_ICONS: Record<number, React.ReactNode> = {
@@ -53,6 +54,7 @@ export function SearchResults() {
 
   // Products and pagination states
   const [products, setProducts] = useState<any[]>([]);
+  const [suppliers, setSupplier] = useState<any[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -60,8 +62,6 @@ export function SearchResults() {
   
   // Favorites local toggle state
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
-
-
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
@@ -99,24 +99,9 @@ export function SearchResults() {
         setProducts([]);
       }
       try {
-        const queryParams = new URLSearchParams();
-        
-        const search = searchParams.get('search') || '';
-        if (search) queryParams.set('search', search);
+        const params = new URLSearchParams(searchParams);
+        const res = await api.get('/products', {params});
 
-        const category = searchParams.get('category') || '';
-        if (category) queryParams.set('category', category);
-
-        const sortBy = searchParams.get('sortBy') || '';
-        if (sortBy) queryParams.set('sortBy', sortBy);
-
-        const sortOrder = searchParams.get('sortOrder') || '';
-        if (sortOrder) queryParams.set('sortOrder', sortOrder);
-
-        queryParams.set('page', currentPage.toString());
-        queryParams.set('limit', ITEMS_PER_PAGE.toString());
-
-        const res = await api.get(`/products?${queryParams.toString()}`);
         const newProducts = res.data.data || [];
         if (isLoadMore) {
           setProducts(prev => [...prev, ...newProducts]);
@@ -125,6 +110,7 @@ export function SearchResults() {
         }
         setTotalProducts(res.data.meta?.total || res.data.total || 0);
         setTotalPages(res.data.meta?.totalPages || res.data.totalPages || Math.ceil((res.data.meta?.total || res.data.total || 0) / ITEMS_PER_PAGE) || 1);
+
       } catch (err) {
         console.error('Failed to fetch products', err);
       } finally {
@@ -134,6 +120,39 @@ export function SearchResults() {
     }
     fetchProducts();
   }, [searchParams, currentPage]);
+
+  // Fetch suppliers
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      const fields = [
+        'id', 'logo', 'companyName',
+        'status', 'supplierType', 'website'
+      ];
+      const relations = [
+        'categories',
+      ];
+
+      try {
+        const params = new URLSearchParams();
+        params.set('limit', '4');
+        params.set('status', SupplierStatus.VERIFIED);
+        params.set('fields', fields.join(','))
+        params.set('include', relations.join(','))
+
+        params.set('search', searchQuery);
+        params.set('categorySlug', searchParams.get('category') || '');
+
+        const res = await api.get( '/suppliers/experimental', { params });
+
+        setSupplier(res.data.data);
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchSuppliers();
+  }, [searchParams]);
 
   // Handler for search box submit
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -321,6 +340,42 @@ export function SearchResults() {
               ))}
             </div>
           </div>
+
+          {/* Suppliers Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="animate-spin text-primary" size={48} />
+              </div>
+            ) : suppliers.length > 0 ? (
+              <div className="grid grid-cols-2 gap-6">
+                {suppliers.map((supplier, index) => {
+                  const logo = supplier.logo || 'https://via.placeholder.com/300';
+
+                  return (
+                    <SupplierCard key={supplier.id} supplier={supplier}/>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-24">
+                <div className="w-16 h-16 bg-surface-1 border border-hairline flex items-center justify-center mx-auto mb-4" style={{ borderRadius: 0 }}>
+                  <Search size={28} className="text-ink-subtle" />
+                </div>
+                <h3 className="text-lg font-normal text-ink mb-1" style={{ letterSpacing: '0.16px' }}>Không tìm thấy NCC</h3>
+                <p className="text-ink-muted text-sm max-w-xs mx-auto mb-4" style={{ letterSpacing: '0.16px' }}>{t('thu_nhap_tu_khoa_khac_hoac_xoa_bo_loc')}</p>
+                <button
+                  onClick={() => setSearchParams({})}
+                  className="text-primary font-normal text-sm hover:text-primary-hover"
+                  style={{ letterSpacing: '0.16px' }}
+                >
+                  Xóa tất cả bộ lọc
+                </button>
+              </div>
+            )}
+          </div>
+
+          {(products.length > 0 && suppliers.length > 0) && <hr className='my-8'/>}
 
           {/* Product Grid */}
           <div className="flex-1">

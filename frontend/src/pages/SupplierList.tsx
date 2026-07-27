@@ -68,6 +68,14 @@ export function SupplierList() {
   useEffect(() => {
     async function fetchSuppliers() {
       setLoading(true);
+      const fields = [
+        'id', 'logo', 'companyName',
+        'status', 'supplierType', 'website'
+      ];
+      const relations = [
+        'categories', 'addresses', 'channels'
+      ];
+
       try {
         const queryParams = new URLSearchParams();
         if (selectedCategorySlug) {
@@ -78,7 +86,11 @@ export function SupplierList() {
         }
         queryParams.append('page', String(currentPage));
         queryParams.append('limit', String(ITEMS_PER_PAGE));
-        const res = await api.get(`/suppliers?${queryParams.toString()}`);
+
+        queryParams.set('fields', fields.join(','))
+        queryParams.set('include', relations.join(','))
+
+        const res = await api.get(`/suppliers/experimental?${queryParams.toString()}`);
         setSuppliers(res.data.data || []);
         const meta = res.data.meta;
         if (meta) {
