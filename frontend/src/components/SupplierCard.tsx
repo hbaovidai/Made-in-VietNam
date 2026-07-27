@@ -70,14 +70,15 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
         {/* LEFT — Square Logo Container */}
         <div className="w-full md:w-[180px] h-[180px] shrink-0 border border-hairline p-4 flex items-center justify-center bg-canvas mx-auto md:mx-0">
           <img
-            src={supplier.logo || 'https://via.placeholder.com/150'}
+            // src={supplier.logo || 'https://via.placeholder.com/150'}
+            src={supplier.logo}
             alt={name}
             className="max-w-full max-h-full object-contain"
             referrerPolicy="no-referrer"
             loading="lazy"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150';
-            }}
+            // onError={(e) => {
+            //   (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150';
+            // }}
           />
         </div>
 
