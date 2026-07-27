@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye, ExternalLink, Package } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
@@ -18,8 +18,13 @@ const activeTabOptionTextStyle = 'py-2.5 text-xs tracking-wide border-b-2 transi
 const activeTabOptionSelected = 'border-primary text-primary font-semibold';
 const activeTabOptionNotSelected = 'border-transparent text-ink-subtle hover:text-ink font-medium';
 
-interface ChannelEntry { type: SaleChannels; url: string; }
+const businessTypeOptions = [
+  { value: 'PRIVATE', label: 'Tư nhân' },
+  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
+  { value: 'JOINT_STOCK', label: 'Cổ phần' },
+];
 
+// we don't use these anymore btw. but it's refactor time so yeah, fix later
 interface InfoFieldProps { label: string; val: string | number; isLast?: boolean; }
 function InfoField(props: InfoFieldProps) {
   const { isLast = false } = props;
@@ -45,7 +50,6 @@ export function SupplierProfile() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', yearEstablished: '', employee_count: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -85,18 +89,6 @@ export function SupplierProfile() {
         }
         
         setCertifications(s.certifications || []);
-        setEditForm({
-          companyName: s.companyName || '',
-          businessType: s.businessType || '',
-          description: s.description || '',
-          companyEmail: s.companyEmail || '',
-          companyPhone: s.companyPhone || '',
-          legalRepName: s.legalRepName || '',
-          yearEstablished: s.yearEstablished ? String(s.yearEstablished) : '',
-          employee_count: s.employee_count || '',
-          industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
-          markets: s.markets ? s.markets.map((m: any) => m.market) : [],
-        });
         setSupplierProducts(prodRes.data.data || []);
       } catch (err) {
         console.error('Failed to load supplier profile', err);
@@ -195,6 +187,7 @@ export function SupplierProfile() {
       setUploading(false);
     }
   };
+
   const handleDeleteCert = async (certId: string) => {
     try {
       await api.delete(`/suppliers/${supplierId}/certifications/${certId}`);
@@ -234,31 +227,6 @@ export function SupplierProfile() {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm chứng nhận' });
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Filter out empty string fields to avoid DTO validation errors
-      const payload: Record<string, any> = {};
-      for (const [key, value] of Object.entries(editForm)) {
-        if (Array.isArray(value)) {
-          payload[key] = value; // always send arrays (industries, markets)
-        } else if (value !== '') {
-          payload[key] = value;
-        }
-      }
-      // Convert yearEstablished to number for backend validation
-      if (payload.yearEstablished) {
-        payload.yearEstablished = parseInt(payload.yearEstablished, 10);
-      }
-      const res = await api.put(`/suppliers/${supplierId}`, payload);
-      setSupplier(res.data);
-      setIsEditModalOpen(false);
-      addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
-    } catch (e) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
     }
   };
 
@@ -311,11 +279,7 @@ export function SupplierProfile() {
                       <Globe size={14} className="text-primary" /> Lĩnh vực hoạt động
                     </label>
                     <CustomSelect 
-                      options={[
-                        { value: "Manufacturer & Trading", label: t('biz_type_manufacturer_trading') },
-                        { value: "E-Commerce", label: t('biz_type_ecommerce') },
-                        { value: "Agriculture", label: t('biz_type_agriculture') },
-                      ]}
+                      options={businessTypeOptions}
                       value={createForm.businessType} 
                       onChange={val => setCreateForm({...createForm, businessType: val})}
                       searchable={false}
@@ -723,177 +687,7 @@ export function SupplierProfile() {
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')} size="xl">
-        <form onSubmit={handleUpdateProfile} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('company_name_en_label')}</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyName} 
-                onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('biz_type_label')}</label>
-              <CustomSelect
-                options={[
-                  { value: 'PRIVATE', label: 'Tư nhân' },
-                  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
-                  { value: 'JOINT_STOCK', label: 'Cổ phần' },
-                ]}
-                value={editForm.businessType}
-                onChange={(val) => setEditForm({...editForm, businessType: val})}
-                placeholder="-- Chọn loại hình --"
-                searchable={false}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.legalRepName} 
-                onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Email công ty</label>
-              <input 
-                type="email" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyEmail} 
-                onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Số điện thoại</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyPhone} 
-                onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Năm thành lập</label>
-              <input 
-                type="number" 
-                min="1900"
-                max={new Date().getFullYear()}
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                placeholder="VD: 2010"
-                value={editForm.yearEstablished} 
-                onChange={(e) => setEditForm({...editForm, yearEstablished: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Tổng nhân sự</label>
-              <CustomSelect
-                options={[
-                  { value: '1-10', label: '1 - 10 người' },
-                  { value: '11-50', label: '11 - 50 người' },
-                  { value: '51-200', label: '51 - 200 người' },
-                  { value: '201-500', label: '201 - 500 người' },
-                  { value: '501-1000', label: '501 - 1,000 người' },
-                  { value: '1000+', label: 'Trên 1,000 người' },
-                ]}
-                value={editForm.employee_count}
-                onChange={(val) => setEditForm({...editForm, employee_count: val})}
-                placeholder="-- Chọn --"
-                searchable={false}
-              />
-            </div>
-            <div className="space-y-2 col-span-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
-                {['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'].map((ind) => {
-                  const isSelected = editForm.industries.includes(ind);
-                  return (
-                    <button
-                      type="button"
-                      key={ind}
-                      onClick={() => {
-                        const next = isSelected
-                          ? editForm.industries.filter((i) => i !== ind)
-                          : [...editForm.industries, ind];
-                        setEditForm({ ...editForm, industries: next });
-                      }}
-                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
-                        isSelected
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
-                      }`}
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                    >
-                      {ind}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="space-y-2 col-span-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Thị trường xuất khẩu</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
-                {['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'].map((mkt) => {
-                  const isSelected = editForm.markets.includes(mkt);
-                  return (
-                    <button
-                      type="button"
-                      key={mkt}
-                      onClick={() => {
-                        const next = isSelected
-                          ? editForm.markets.filter((m) => m !== mkt)
-                          : [...editForm.markets, mkt];
-                        setEditForm({ ...editForm, markets: next });
-                      }}
-                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
-                        isSelected
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
-                      }`}
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                    >
-                      {mkt}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('short_desc_label')}</label>
-            <textarea 
-              className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary min-h-[90px]" 
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-              value={editForm.description} 
-              onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-            />
-          </div>
-          <div className="flex justify-end gap-3 pt-6 border-t border-hairline">
-            <button 
-              type="button" 
-              onClick={() => setIsEditModalOpen(false)} 
-              className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-            >
-              {t('cancel_btn')}
-            </button>
-            <button 
-              type="submit" 
-              className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2"
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-            >
-              {t('save_changes_btn')}
-            </button>
-          </div>
-        </form>
+        currently unavailable
       </Modal>
 
       {/* Add Certification Modal */}
