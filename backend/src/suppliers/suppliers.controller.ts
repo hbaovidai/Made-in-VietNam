@@ -165,7 +165,7 @@ export class SuppliersController {
 
   // PROTECTED: Chỉ supplier chủ sở hữu mới sửa được, hoặc ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'ADMIN')
+  @Roles(Role.SUPPLIER, Role.ADMIN)
   @Put(':id')
   async update(
     @Param('id') id: string,

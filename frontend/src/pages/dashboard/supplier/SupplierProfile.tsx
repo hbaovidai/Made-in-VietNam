@@ -7,8 +7,31 @@ import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
-import { SupplierStatus } from '@/src/lib/enums';
+import { SaleChannels, SupplierStatus } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
+import { BusinessTypeMap } from '@/src/lib/enums';
+
+const boxStyle = 'bg-canvas border border-hairline p-6 rounded-xl shadow-sm';
+const infoBoxTitleStyle = 'text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline'
+
+const activeTabOptionTextStyle = 'py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap';
+const activeTabOptionSelected = 'border-primary text-primary font-semibold';
+const activeTabOptionNotSelected = 'border-transparent text-ink-subtle hover:text-ink font-medium';
+
+interface ChannelEntry { type: SaleChannels; url: string; }
+
+interface InfoFieldProps { label: string; val: string | number; isLast?: boolean; }
+function InfoField(props: InfoFieldProps) {
+  const { isLast = false } = props;
+  return (
+    <div className={
+      `flex justify-between py-2 ${isLast ? '' : 'border-b border-hairline/60'}`
+    }>
+    <span className="text-ink-subtle">{props.label}</span>
+    <span className="font-semibold text-ink">{props.val || 'N/A'}</span>
+    </div>
+  )
+}
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -22,7 +45,6 @@ export function SupplierProfile() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
   const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', yearEstablished: '', employee_count: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
@@ -475,30 +497,30 @@ export function SupplierProfile() {
         <div className="flex items-center gap-6 px-4">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'overview'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Thông tin chung
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'products'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Sản phẩm tiêu biểu ({supplierProducts.length})
           </button>
           <button
             onClick={() => setActiveTab('certs')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'certs'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Chứng nhận & Giải thưởng ({certifications.length})
@@ -510,8 +532,8 @@ export function SupplierProfile() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Khối Mô tả công ty */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} pace-y-3`}>
+            <h3 className={infoBoxTitleStyle}>
               Giới thiệu công ty
             </h3>
             <p className="text-xs sm:text-sm text-ink-muted leading-relaxed whitespace-pre-line">
@@ -521,45 +543,25 @@ export function SupplierProfile() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Thông tin kinh doanh */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} space-y-5`}>
+            <h3 className={infoBoxTitleStyle}>
               Thông tin kinh doanh
             </h3>
             <div className="space-y-3.5 text-xs sm:text-sm">
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Mã số thuế</span>
-                <span className="font-semibold text-ink">{supplier?.taxCode || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Người đại diện pháp luật</span>
-                <span className="font-semibold text-ink">{supplier?.legalRepresentative || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Email công ty</span>
-                <span className="font-semibold text-ink">{supplier?.companyEmail || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Số điện thoại</span>
-                <span className="font-semibold text-ink">{supplier?.companyPhone || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Năm thành lập</span>
-                <span className="font-semibold text-ink">{supplier?.yearEstablished || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Quy mô nhân sự</span>
-                <span className="font-semibold text-ink">{supplier?.employeeCount || supplier?.employee_count || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-ink-subtle">Loại hình doanh nghiệp</span>
-                <span className="font-semibold text-ink">{supplier?.businessType || 'N/A'}</span>
-              </div>
+              <InfoField label='Mã số thuế' val={supplier?.taxCode}/>
+              <InfoField label='Người đại diện pháp luật' val={supplier?.legalRepresentative}/>
+              <InfoField label='Email công ty' val={supplier?.companyEmail}/>
+              <InfoField label='Số điện thoại' val={supplier?.companyPhone}/>
+              <InfoField label='Năm thành lập' val={supplier?.yearEstablished}/>
+              <InfoField label='Quy mô nhân sự' val={supplier?.employeeCount || supplier?.employee_count}/>
+              <InfoField label='Loại hình doanh nghiệp' val={BusinessTypeMap[supplier?.businessType]}
+              isLast={true}/>
             </div>
           </div>
 
           {/* Quy mô & Năng lực */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} space-y-5`}>
+            <h3 className={infoBoxTitleStyle}>
               Quy mô & Năng lực
             </h3>
             <div className="space-y-4 text-xs sm:text-sm">
@@ -607,7 +609,7 @@ export function SupplierProfile() {
 
       {/* Tab 2: Sản phẩm tiêu biểu */}
       {activeTab === 'products' && (
-        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+        <div className={`${boxStyle} space-y-6`}>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
               Sản phẩm tiêu biểu ({supplierProducts.length})
@@ -660,7 +662,7 @@ export function SupplierProfile() {
 
       {/* Tab 3: Chứng nhận & Giải thưởng */}
       {activeTab === 'certs' && (
-        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+        <div className={`${boxStyle} space-y-6`}>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
               Chứng nhận & Giải thưởng ({certifications.length})
