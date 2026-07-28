@@ -7,10 +7,11 @@ type SupplierRelField = keyof Prisma.SupplierInclude;
 
 const ALLOWED_NON_REL_FIELDS_SUPPLIER: SupplierNonRelField[] = [ 
   // no relation fields
-  'businessType', 'status', 'companyName', 'id',
-  'logo', 'banner', 'id', 'taxCode', 'description',
-  'contactEmail', 'contactPhone',
-  'website', 'supplierType'
+  'id', 'status', 'businessLicenseUrl', 'banner',
+  'logo', 'companyName', 'contactEmail', 'contactPhone',
+  'description', 'taxCode', 'yearEstablished', 'employee_count',
+  'businessType', 'businessLicenseUrl', 'authorizationLetterUrl',
+  'supplierType', 'website'
 ]
 
 const ALLOW_REL_FIELDS_SUPPLIER: SupplierRelField[] = [
@@ -28,7 +29,7 @@ class BaseFindManyDto {
   @IsOptional() @Type(() => Number) @Min(1) limit?: number = 20;
 }
 
-class SupplierDtoFindOne {
+export class SupplierFindOneDto {
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
   @IsArray()
@@ -41,7 +42,8 @@ class SupplierDtoFindOne {
   @IsIn(ALLOW_REL_FIELDS_SUPPLIER, { each: true })
   include?: SupplierRelField[];
 
-  @IsOptional() @IsBoolean() getPrimaryAddress?: boolean = true;
+  @IsOptional() @IsBoolean() findPrimaryAddress?: boolean = true;
+  @IsOptional() @IsBoolean() status?: SupplierStatus;
 }
 
 export class SupplierFindManyDto extends BaseFindManyDto {
@@ -81,7 +83,12 @@ export class UpdateSupplierDto {
   @IsString({ each: true }) @IsOptional() businessLicenseUrl?: string[];
   @IsString() @IsOptional() identityCardUrl?: string;
   @IsEnum(SupplierStatus) @IsOptional() status?: SupplierStatus;
+
+  // industries will be phased out in favor of categories
   @IsArray() @IsString({ each: true }) @IsOptional() industries?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => CategoryOption) categoryOptions: CategoryOption[];
+
   @IsArray() @IsString({ each: true }) @IsOptional() markets?: string[];
 }
 

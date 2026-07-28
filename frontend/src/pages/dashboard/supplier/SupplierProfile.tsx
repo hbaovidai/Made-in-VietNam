@@ -7,7 +7,7 @@ import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
-import { SaleChannels, SupplierStatus } from '@/src/lib/enums';
+import { SaleChannels, SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
 import { BusinessTypeMap } from '@/src/lib/enums';
 
@@ -22,6 +22,17 @@ const businessTypeOptions = [
   { value: 'PRIVATE', label: 'Tư nhân' },
   { value: 'LIMITED_LIABILITY', label: 'TNHH' },
   { value: 'JOINT_STOCK', label: 'Cổ phần' },
+];
+
+const supplierFields = [
+  'id', 'status', 'businessLicenseUrl',
+  'logo', 'banner', 'companyName', 'contactEmail', 'contactPhone',
+  'description', 'taxCode', 'yearEstablished', 'employee_count',
+  'businessType',
+];
+
+const supplierIncludes = [
+  'channels', 'categories', 'addresses',
 ];
 
 // we don't use these anymore btw. but it's refactor time so yeah, fix later
@@ -71,10 +82,21 @@ export function SupplierProfile() {
     async function loadData() {
       setLoading(true);
       try {
+        const supplierFetchParms = new URLSearchParams();
+        supplierFetchParms.set('fields', supplierFields.join(','));
+        supplierFetchParms.set('include', supplierIncludes.join(','));
+        const supplierFetchPromise = api.get(
+          `/suppliers/${supplierId}/experimental`,
+          { params: supplierFetchParms}
+        );
+
+        const supplierProductFetchPromise = api.get( `/products?supplierId=${supplierId}&limit=4`);
+
         const [suppRes, prodRes] = await Promise.all([
-          api.get(`/suppliers/${supplierId}`),
-          api.get(`/products?supplierId=${supplierId}&limit=4`),
+          supplierFetchPromise,
+          supplierProductFetchPromise,
         ]);
+
         const s = suppRes.data;
         setSupplier(s);
         
@@ -418,8 +440,8 @@ export function SupplierProfile() {
             <div className="flex flex-wrap items-center gap-2">
               {(() => {
                 const isVerified = supplier?.status === SupplierStatus.VERIFIED;
-                const hasManufacturer = !!supplier?.manufacturerProfile || supplier?.supplierType === 'MANUFACTURER' || supplier?.supplierType === 'MANU_EXPORT' || supplier?.businessType?.toLowerCase().includes('manufacturer');
-                const hasExporter = !!supplier?.exporterProfile || supplier?.supplierType === 'EXPORTER' || supplier?.supplierType === 'MANU_EXPORT' || (supplier?.markets && supplier.markets.length > 0);
+                const hasManufacturer = supplier?.supplierType === SupplierType.MANUFACTURER || supplier?.supplierType === SupplierType.MANU_EXPORT;
+                const hasExporter = supplier?.supplierType === SupplierType.EXPORTER || supplier?.supplierType === SupplierType.MANU_EXPORT;
 
                 return (
                   <>
@@ -517,7 +539,7 @@ export function SupplierProfile() {
               <InfoField label='Email công ty' val={supplier?.companyEmail}/>
               <InfoField label='Số điện thoại' val={supplier?.companyPhone}/>
               <InfoField label='Năm thành lập' val={supplier?.yearEstablished}/>
-              <InfoField label='Quy mô nhân sự' val={supplier?.employeeCount || supplier?.employee_count}/>
+              <InfoField label='Quy mô nhân sự' val={supplier?.employee_count}/>
               <InfoField label='Loại hình doanh nghiệp' val={BusinessTypeMap[supplier?.businessType]}
               isLast={true}/>
             </div>
@@ -544,6 +566,7 @@ export function SupplierProfile() {
                 </div>
               </div>
 
+              {/*
               <div className="pt-3 border-t border-hairline/60">
                 <span className="text-ink-subtle block mb-2 font-medium">Thị trường xuất khẩu</span>
                 <div className="flex flex-wrap gap-1.5">
@@ -565,6 +588,8 @@ export function SupplierProfile() {
                   {supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật'}
                 </p>
               </div>
+              */}
+
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption, SupplierFindManyDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, AdminQueryDto, CreateFakeSuppDto, CategoryOption, SupplierFindManyDto, SupplierFindOneDto } from './dto/supplier.dto';
 import { Prisma, Role, SaleChannelType, SupplierStatus } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
@@ -8,6 +8,40 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class SuppliersService {
   constructor(private prisma: PrismaService) {}
+
+  private fieldsToSelectMap<T extends string>(fields?: string[]): Record<T, boolean> | undefined {
+    if (!fields || fields.length == 0) return undefined;
+    return fields.reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as Record<string, boolean>)
+  }
+
+  private makeSelectObject<
+    ScalarEnum extends string,
+    Relations extends Record<string, any>,
+    Select extends Record<string, any>
+  >(
+    fields: any, include: any, relationSelects: Partial<Select> = {}
+  ) {
+    const selectedFields = this.fieldsToSelectMap<ScalarEnum>(fields);
+    const includedRelations = this.fieldsToSelectMap<keyof Relations & string>(include);
+
+    const select: Record<string, any> = {};
+
+    if (selectedFields) {
+      Object.assign(select, selectedFields);
+    }
+
+    if (includedRelations) {
+      const keys = Object.keys(includedRelations) as (keyof Relations & string)[];
+      for (const key of keys) {
+        select[key] = relationSelects[key as keyof Select] ?? true;
+      }
+    }
+
+    return select as Select;
+  }
 
   async findAll(query: SupplierQueryDto) {
     const { search, industry, page = 1, limit = 20 } = query;
@@ -77,14 +111,6 @@ export class SuppliersService {
     };
   }
 
-  private fieldsToSelectMap<T extends string>(fields?: string[]): Record<T, boolean> | undefined {
-    if (!fields || fields.length == 0) return undefined;
-    return fields.reduce((acc, key) => {
-      acc[key] = true;
-      return acc;
-    }, {} as Record<string, boolean>)
-  }
-
   async findAllExperimental(dto: SupplierFindManyDto) {
     const { search, page = 1, limit = 20, fields, include } = dto;
     console.log(dto);
@@ -109,8 +135,6 @@ export class SuppliersService {
 
     console.log(where);
 
-    const selectedFields = this.fieldsToSelectMap<Prisma.SupplierScalarFieldEnum>(fields);
-    const includedRelations = this.fieldsToSelectMap<keyof Prisma.SupplierInclude>(include);
     const relationSelects: Partial<Prisma.SupplierSelect> = {
       categories: { select: {
         category: { select: { name: true, nameEn: true }}
@@ -125,12 +149,9 @@ export class SuppliersService {
       markets: { select: { market: true } },
     };
 
-    let select: any = {};
-    if (selectedFields) select = {...selectedFields};
-    if (includedRelations) {
-      const keys = Object.keys(includedRelations) as (keyof Prisma.SupplierInclude)[];
-      for (const key of keys) select[key] = relationSelects[key] ?? true;
-    }
+    let select: any = this.makeSelectObject<
+      Prisma.SupplierScalarFieldEnum, Prisma.SupplierInclude, Prisma.SupplierSelect
+    >(fields, include, relationSelects);
 
     const [data, total] = await Promise.all([
       this.prisma.supplier.findMany({
@@ -185,6 +206,46 @@ export class SuppliersService {
 
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
     return supplier;
+  }
+
+  async findBySlugExperimental(slugOrId: string, dto: SupplierFindOneDto) {
+    console.log(dto);
+    
+    try {
+      const { fields, include } = dto;
+
+      const where: Prisma.SupplierWhereInput = {};
+      const isUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+          slugOrId,
+      );
+
+      where.status = dto.status ?? SupplierStatus.VERIFIED;
+      (isUUID) ? where.id = slugOrId : where.slug = slugOrId;
+
+      const relationSelects: Partial<Prisma.SupplierSelect> = {
+        categories: { select: {
+          category: { select: { name: true, nameEn: true }}
+        } },
+        addresses: {
+          where: { isPrimary: dto.findPrimaryAddress },
+          select: { isPrimary: true, address: true }
+        },
+        channels: { select: { type: true, url: true } },
+        documents: { select: { type: true, url: true } },
+        industries: { select: { industry: true }},
+        markets: { select: { market: true } },
+      };
+
+      let select: any = this.makeSelectObject<
+        Prisma.SupplierScalarFieldEnum, Prisma.SupplierInclude, Prisma.SupplierSelect
+        >(fields, include, relationSelects);
+
+      return this.prisma.supplier.findFirst({ where, ...(select && {select}), });
+
+    } catch (error) { console.error(error); }
+
+    return {};
   }
 
   async findBySlugAdmin(slugOrId: string) {
@@ -357,31 +418,40 @@ export class SuppliersService {
     });
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
 
-    const { industries, markets, ...data } = dto;
+    const { markets, categoryOptions, ...data } = dto;
 
-    // Update supplier basic info
-    const updated = await this.prisma.supplier.update({
-      where: { id: supplierId },
-      data,
-    });
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        // Update supplier basic info
+        // const updated = await tx.supplier.update({
+        //   where: { id: supplierId },
+        //   data,
+        // });
 
-    // Update industries if provided
-    if (industries) {
-      await this.prisma.supplierIndustry.deleteMany({ where: { supplierId } });
-      await this.prisma.supplierIndustry.createMany({
-        data: industries.map((industry) => ({ supplierId, industry })),
-      });
+        // Update industries if provided
+        if (categoryOptions) {
+          // await tx.supplierIndustry.deleteMany({ where: { supplierId } });
+          // await tx.supplierIndustry.createMany({
+          //   data: industries.map((industry) => ({ supplierId, industry })),
+          // });
+        }
+
+        // Update markets if provided
+        if (markets) {
+          await tx.supplierMarket.deleteMany({ where: { supplierId } });
+          await tx.supplierMarket.createMany({
+            data: markets.map((market) => ({ supplierId, market })),
+          });
+        }
+
+        // return this.findBySlug(updated.slug);
+        return {};
+      })
+
+    } catch (error) {
+      console.error(error);
     }
 
-    // Update markets if provided
-    if (markets) {
-      await this.prisma.supplierMarket.deleteMany({ where: { supplierId } });
-      await this.prisma.supplierMarket.createMany({
-        data: markets.map((market) => ({ supplierId, market })),
-      });
-    }
-
-    return this.findBySlug(updated.slug);
   }
 
   async addCertification(
