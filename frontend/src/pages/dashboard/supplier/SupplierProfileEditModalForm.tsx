@@ -1,8 +1,9 @@
 import { CustomSelect } from "@/src/components/CustomSelect";
-import { SaleChannels } from "@/src/lib/enums";
+import { BusinessType, SaleChannels, SupplierStatus } from "@/src/lib/enums";
 import { useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { useTranslation } from "react-i18next";
+import { api } from "@/src/lib/api";
 
 const aVeryComprehensiveListOfCategories = ['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'];
 
@@ -42,8 +43,23 @@ function EditModalTextField(props: EditModalTextFieldProps) {
   )
 }
 
+interface SupplierFields {
+  id: string;
+
+  companyName: string; description: string;
+  taxCode: string; yearEstablished: number; employee_count: string;
+  businessType: BusinessType;
+
+  contactEmail: string; contactPhone: string;
+
+  logo: string; banner: string;
+  status: SupplierStatus;
+};
+
 interface EditModalformProps {
-  setIsEditModalOpen: (boolean) => void;
+  handleCloseModal: () => void;
+  initialSupplier: SupplierFields;
+  handleSupplierUpdate: (s: SupplierFields) => void;
 }
 
 export function EditModalform(props: EditModalformProps) {
@@ -86,12 +102,11 @@ export function EditModalform(props: EditModalformProps) {
       }
 
       console.log(payload); return;
-      
 
-      // const res = await api.put(`/suppliers/${supplierId}`, payload);
-      // setSupplier(res.data);
-      // setIsEditModalOpen(false);
-      // addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
+      const res = await api.put(`/suppliers/${props.initialSupplier.id}`, payload);
+      props.handleSupplierUpdate(res.data);
+      props.handleCloseModal();
+      addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
     }
@@ -203,7 +218,7 @@ export function EditModalform(props: EditModalformProps) {
       </div>
 
       <div className="flex justify-end gap-3 pt-6 border-t border-hairline">
-        <button type="button" onClick={() => props.setIsEditModalOpen(false)} 
+        <button type="button" onClick={props.handleCloseModal} 
           className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
           style={{ borderRadius: 0, letterSpacing: '0.16px' }}
         > {t('cancel_btn')} </button>

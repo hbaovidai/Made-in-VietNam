@@ -10,6 +10,7 @@ import { api } from '../../../lib/api';
 import { SaleChannels, SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
 import { BusinessTypeMap } from '@/src/lib/enums';
+import { EditModalform } from './SupplierProfileEditModalForm';
 
 const boxStyle = 'bg-canvas border border-hairline p-6 rounded-xl shadow-sm';
 const infoBoxTitleStyle = 'text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline'
@@ -712,7 +713,12 @@ export function SupplierProfile() {
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')} size="xl">
-        currently unavailable
+        { supplier &&
+          <EditModalform initialSupplier={supplier}
+            handleCloseModal={() => setIsEditModalOpen(false)}
+            handleSupplierUpdate={(s) => setSupplier(s)}
+          /> 
+        }
       </Modal>
 
       {/* Add Certification Modal */}
