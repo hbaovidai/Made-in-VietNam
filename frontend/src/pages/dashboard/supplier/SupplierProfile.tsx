@@ -29,7 +29,7 @@ const supplierFields = [
   'id', 'status', 'businessLicenseUrl',
   'logo', 'banner', 'companyName', 'contactEmail', 'contactPhone',
   'description', 'taxCode', 'yearEstablished', 'employee_count',
-  'businessType',
+  'businessType', 'legalRepName'
 ];
 
 const supplierIncludes = [
@@ -66,7 +66,7 @@ export function SupplierProfile() {
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '' });
+  const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', contactEmail: '', contactPhone: '', legalRepName: '' });
   const [isCreating, setIsCreating] = useState(false);
 
   const [bizLicenseFile, setBizLicenseFile] = useState<File | null>(null);
@@ -331,8 +331,8 @@ export function SupplierProfile() {
                       type="text" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.legalRepresentative} 
-                      onChange={e => setCreateForm({...createForm, legalRepresentative: e.target.value})} 
+                      value={createForm.legalRepName} 
+                      onChange={e => setCreateForm({...createForm, legalRepName: e.target.value})} 
                       placeholder="Người đại diện pháp luật" 
                     />
                   </div>
@@ -345,8 +345,8 @@ export function SupplierProfile() {
                       type="email" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.companyEmail} 
-                      onChange={e => setCreateForm({...createForm, companyEmail: e.target.value})} 
+                      value={createForm.contactEmail} 
+                      onChange={e => setCreateForm({...createForm, contactEmail: e.target.value})} 
                       placeholder="Email liên hệ chính thức" 
                     />
                   </div>
@@ -359,8 +359,8 @@ export function SupplierProfile() {
                       type="text" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.companyPhone} 
-                      onChange={e => setCreateForm({...createForm, companyPhone: e.target.value})} 
+                      value={createForm.contactPhone} 
+                      onChange={e => setCreateForm({...createForm, contactPhone: e.target.value})} 
                       placeholder="Hotline / SĐT công ty" 
                     />
                   </div>
@@ -536,9 +536,9 @@ export function SupplierProfile() {
             </h3>
             <div className="space-y-3.5 text-xs sm:text-sm">
               <InfoField label='Mã số thuế' val={supplier?.taxCode}/>
-              <InfoField label='Người đại diện pháp luật' val={supplier?.legalRepresentative}/>
-              <InfoField label='Email công ty' val={supplier?.companyEmail}/>
-              <InfoField label='Số điện thoại' val={supplier?.companyPhone}/>
+              <InfoField label='Người đại diện pháp luật' val={supplier?.legalRepName}/>
+              <InfoField label='Email công ty' val={supplier?.contactEmail}/>
+              <InfoField label='Số điện thoại' val={supplier?.contactPhone}/>
               <InfoField label='Năm thành lập' val={supplier?.yearEstablished}/>
               <InfoField label='Quy mô nhân sự' val={supplier?.employee_count}/>
               <InfoField label='Loại hình doanh nghiệp' val={BusinessTypeMap[supplier?.businessType]}
@@ -713,7 +713,7 @@ export function SupplierProfile() {
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')} size="xl">
-        { supplier &&
+        { (supplier && isEditModalOpen) &&
           <EditModalform initialSupplier={supplier}
             handleCloseModal={() => setIsEditModalOpen(false)}
             handleSupplierUpdate={(s) => setSupplier(s)}

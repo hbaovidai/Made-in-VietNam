@@ -11,7 +11,7 @@ const ALLOWED_NON_REL_FIELDS_SUPPLIER: SupplierNonRelField[] = [
   'logo', 'companyName', 'contactEmail', 'contactPhone',
   'description', 'taxCode', 'yearEstablished', 'employee_count',
   'businessType', 'businessLicenseUrl', 'authorizationLetterUrl',
-  'supplierType', 'website'
+  'supplierType', 'website', 'legalRepName', 'legalRepGovId', 'legalRepGovIdUrl',
 ]
 
 const ALLOW_REL_FIELDS_SUPPLIER: SupplierRelField[] = [

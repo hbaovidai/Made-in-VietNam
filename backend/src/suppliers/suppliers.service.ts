@@ -137,7 +137,7 @@ export class SuppliersService {
 
     const relationSelects: Partial<Prisma.SupplierSelect> = {
       categories: { select: {
-        category: { select: { name: true, nameEn: true }}
+        category: { select: { name: true, nameEn: true, id: true, }}
       } },
       addresses: {
         where: { isPrimary: dto.findPrimaryAddress },
@@ -225,7 +225,7 @@ export class SuppliersService {
 
       const relationSelects: Partial<Prisma.SupplierSelect> = {
         categories: { select: {
-          category: { select: { name: true, nameEn: true }}
+          category: { select: { name: true, nameEn: true, id: true, }}
         } },
         addresses: {
           where: { isPrimary: dto.findPrimaryAddress },

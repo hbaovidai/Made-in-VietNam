@@ -1,18 +1,21 @@
 import { CustomSelect } from "@/src/components/CustomSelect";
 import { BusinessType, SaleChannels, SupplierStatus } from "@/src/lib/enums";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { useTranslation } from "react-i18next";
 import { api } from "@/src/lib/api";
 
-const aVeryComprehensiveListOfCategories = ['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'];
+// const aVeryComprehensiveListOfCategories = ['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'];
+interface l1Category { slug: string; id: string; name: string; }
+interface SuppCategory { name: string; nameEn: string; id: string; }
+type CategoryOption = Record<string, {slug: string; name: string; included: boolean}>;
 
 const aVeryComprehensiveListOfMarkets = ['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'];
 
 const businessTypeOptions = [
-  { value: 'PRIVATE', label: 'Tư nhân' },
-  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
-  { value: 'JOINT_STOCK', label: 'Cổ phần' },
+  { value: BusinessType.PRIVATE, label: 'Tư nhân' },
+  { value: BusinessType.LIMITED_LIABILITY, label: 'TNHH' },
+  { value: BusinessType.JOINT_STOCK, label: 'Cổ phần' },
 ];
 
 const employeeCountOptions = [
@@ -28,7 +31,6 @@ interface EditModalTextFieldProps {
   label: string; value: string | number;
 }
 function EditModalTextField(props: EditModalTextFieldProps) {
-  console.log(props.value);
   return (
     <div className="space-y-2">
     <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{props.label}</label>
@@ -44,16 +46,19 @@ function EditModalTextField(props: EditModalTextFieldProps) {
 }
 
 interface SupplierFields {
-  id: string;
+  id?: string;
 
-  companyName: string; description: string;
-  taxCode: string; yearEstablished: number; employee_count: string;
-  businessType: BusinessType;
+  companyName?: string; description?: string;
+  taxCode?: string; yearEstablished?: string; employee_count?: string;
+  businessType?: string;
 
-  contactEmail: string; contactPhone: string;
+  contactEmail?: string; contactPhone?: string;
+  legalRepName?: string;
 
-  logo: string; banner: string;
-  status: SupplierStatus;
+  logo?: string; banner?: string;
+  status?: SupplierStatus;
+
+  categories?: {category: SuppCategory}[];
 };
 
 interface EditModalformProps {
@@ -63,23 +68,51 @@ interface EditModalformProps {
 }
 
 export function EditModalform(props: EditModalformProps) {
+  
   const { addToast } = useToast();
   const { t } = useTranslation();
 
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', yearEstablished: '', employee_count: '', industries: [] as string[], markets: [] as string[] });
+  const [editForm, setEditForm] = useState<SupplierFields>({ 
+    companyName: '', businessType: '', description: '',
+    contactEmail: '', contactPhone: '', legalRepName: '',
+    yearEstablished: '', employee_count: '',
+    categories: [],
+  });
+  
 
-  // setEditForm({
-  //   companyName: s.companyName || '',
-  //   businessType: s.businessType || '',
-  //   description: s.description || '',
-  //   companyEmail: s.companyEmail || '',
-  //   companyPhone: s.companyPhone || '',
-  //   legalRepName: s.legalRepName || '',
-  //   yearEstablished: s.yearEstablished ? String(s.yearEstablished) : '',
-  //   employee_count: s.employee_count || '',
-  //   industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
-  //     markets: s.markets ? s.markets.map((m: any) => m.market) : [],
-  // });
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption>({});
+  const [l1Categories, setL1Categories] = useState<l1Category[]>([]);
+
+  useEffect(() => {
+    const doStuff = async () => {
+      setEditForm(props.initialSupplier);
+      try {
+        const res = await api.get('/categories/cats/l1');
+        if (res.data) { setL1Categories(res.data); }
+      } catch (error) { console.error(error); }
+    }
+
+    doStuff();
+  }, []);
+
+  useEffect(() => {
+    const setCategoryList = () => {
+      if (!l1Categories?.length) return;
+
+      const opts: CategoryOption = {};
+      l1Categories.forEach((cat) => {
+        const opt = { name: cat.name, slug: cat.slug, included: false };
+        props.initialSupplier.categories.forEach(({category}) => {
+          if (category.id == cat.id) opt.included = true;
+        });
+        opts[cat.id] = opt;
+      });
+
+      setCategoryOptions(opts);
+    };
+
+    setCategoryList();
+  }, [l1Categories]);
 
   const handleUpdateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,12 +145,20 @@ export function EditModalform(props: EditModalformProps) {
     }
   };
 
+  const handleCatToggle = (id: string, prev: boolean) => {
+    setCategoryOptions({ 
+      ...categoryOptions,
+      [id]: { ...categoryOptions[id], included: !prev }
+    })
+  };
+
   return (
     <form onSubmit={handleUpdateProfile} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <EditModalTextField label={t('company_name_en_label')} value={editForm.companyName}
           onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} />
 
+        {/* business type selection */}
         <div className="space-y-2">
           <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('biz_type_label')}</label>
           <CustomSelect
@@ -131,13 +172,14 @@ export function EditModalform(props: EditModalformProps) {
 
         <EditModalTextField label={t('nguoi_dai_dien')} value={editForm.legalRepName}
           onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} />
-        <EditModalTextField label='Email công ty' value={editForm.companyEmail}
-          onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} />
-        <EditModalTextField label='Số điện thoại' value={editForm.companyPhone}
-          onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} />
+        <EditModalTextField label='Email công ty' value={editForm.contactEmail}
+          onChange={(e) => setEditForm({...editForm, contactEmail: e.target.value})} />
+        <EditModalTextField label='Số điện thoại' value={editForm.contactPhone}
+          onChange={(e) => setEditForm({...editForm, contactPhone: e.target.value})} />
         <EditModalTextField label='Năm thành lập' value={editForm.yearEstablished}
           onChange={(e) => setEditForm({...editForm, yearEstablished: e.target.value})}/>
 
+        {/* employee count selection */}
         <div className="space-y-2">
           <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Tổng nhân sự</label>
           <CustomSelect
@@ -152,31 +194,27 @@ export function EditModalform(props: EditModalformProps) {
         <div className="space-y-2 col-span-2">
           <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>
           <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
-            {aVeryComprehensiveListOfCategories.map((ind) => {
-              const isSelected = editForm.industries.includes(ind);
+
+            { Object.values(categoryOptions).length > 0 ?
+              Object.entries(categoryOptions).map(([id, opt]) => {
               return (
-                <button
-                  type="button"
-                  key={ind}
-                  onClick={() => {
-                    const next = isSelected
-                      ? editForm.industries.filter((i) => i !== ind)
-                      : [...editForm.industries, ind];
-                    setEditForm({ ...editForm, industries: next });
-                  }}
+                <button type="button" key={opt.name}
+                  onClick={()=> handleCatToggle(id, opt.included)}
                   className={`px-3 py-1.5 text-xs font-normal border transition-all ${
-                    isSelected
+                    opt.included
                       ? 'bg-primary text-white border-primary'
                       : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
                   }`}
                   style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                >
-                  {ind}
-                </button>
+                > {opt.name} </button>
               );
-            })}
+            }) : 'lỗi lấy categories'}
+
           </div>
         </div>
+
+        {/* market selection (market is reserved for exporters, so we'll just have to hide it for now) */}
+        {/*
         <div className="space-y-2 col-span-2">
           <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Thị trường xuất khẩu</label>
           <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
@@ -205,6 +243,8 @@ export function EditModalform(props: EditModalformProps) {
             })}
           </div>
         </div>
+        */}
+
       </div>
 
       <div className="space-y-2">
