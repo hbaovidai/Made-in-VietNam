@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye, ExternalLink, Package } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
@@ -7,8 +7,48 @@ import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
-import { SupplierStatus } from '@/src/lib/enums';
+import { SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
+import { BusinessTypeMap } from '@/src/lib/enums';
+import { EditModalform } from './SupplierProfileEditModalForm';
+
+const boxStyle = 'bg-canvas border border-hairline p-6 rounded-xl shadow-sm';
+const infoBoxTitleStyle = 'text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline'
+
+const activeTabOptionTextStyle = 'py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap';
+const activeTabOptionSelected = 'border-primary text-primary font-semibold';
+const activeTabOptionNotSelected = 'border-transparent text-ink-subtle hover:text-ink font-medium';
+
+const businessTypeOptions = [
+  { value: 'PRIVATE', label: 'Tư nhân' },
+  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
+  { value: 'JOINT_STOCK', label: 'Cổ phần' },
+];
+
+const supplierFields = [
+  'id', 'status', 'businessLicenseUrl',
+  'logo', 'banner', 'companyName', 'contactEmail', 'contactPhone',
+  'description', 'taxCode', 'yearEstablished', 'employee_count',
+  'businessType', 'legalRepName'
+];
+
+const supplierIncludes = [
+  'channels', 'categories', 'addresses',
+];
+
+// we don't use these anymore btw. but it's refactor time so yeah, fix later
+interface InfoFieldProps { label: string; val: string | number; isLast?: boolean; }
+function InfoField(props: InfoFieldProps) {
+  const { isLast = false } = props;
+  return (
+    <div className={
+      `flex justify-between py-2 ${isLast ? '' : 'border-b border-hairline/60'}`
+    }>
+    <span className="text-ink-subtle">{props.label}</span>
+    <span className="font-semibold text-ink">{props.val || 'N/A'}</span>
+    </div>
+  )
+}
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -22,13 +62,11 @@ export function SupplierProfile() {
   const [certifications, setCertifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '', address: '' });
-  const [editForm, setEditForm] = useState({ companyName: '', businessType: '', description: '', companyEmail: '', companyPhone: '', legalRepName: '', yearEstablished: '', employee_count: '', industries: [] as string[], markets: [] as string[] });
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
   const [certFile, setCertFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', companyEmail: '', companyPhone: '', legalRepresentative: '' });
+  const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', contactEmail: '', contactPhone: '', legalRepName: '' });
   const [isCreating, setIsCreating] = useState(false);
 
   const [bizLicenseFile, setBizLicenseFile] = useState<File | null>(null);
@@ -45,10 +83,21 @@ export function SupplierProfile() {
     async function loadData() {
       setLoading(true);
       try {
+        const supplierFetchParms = new URLSearchParams();
+        supplierFetchParms.set('fields', supplierFields.join(','));
+        supplierFetchParms.set('include', supplierIncludes.join(','));
+        const supplierFetchPromise = api.get(
+          `/suppliers/${supplierId}/experimental`,
+          { params: supplierFetchParms}
+        );
+
+        const supplierProductFetchPromise = api.get( `/products?supplierId=${supplierId}&limit=4`);
+
         const [suppRes, prodRes] = await Promise.all([
-          api.get(`/suppliers/${supplierId}`),
-          api.get(`/products?supplierId=${supplierId}&limit=4`),
+          supplierFetchPromise,
+          supplierProductFetchPromise,
         ]);
+
         const s = suppRes.data;
         setSupplier(s);
         
@@ -63,18 +112,6 @@ export function SupplierProfile() {
         }
         
         setCertifications(s.certifications || []);
-        setEditForm({
-          companyName: s.companyName || '',
-          businessType: s.businessType || '',
-          description: s.description || '',
-          companyEmail: s.companyEmail || '',
-          companyPhone: s.companyPhone || '',
-          legalRepName: s.legalRepName || '',
-          yearEstablished: s.yearEstablished ? String(s.yearEstablished) : '',
-          employee_count: s.employee_count || '',
-          industries: s.industries ? s.industries.map((i: any) => i.industry) : [],
-          markets: s.markets ? s.markets.map((m: any) => m.market) : [],
-        });
         setSupplierProducts(prodRes.data.data || []);
       } catch (err) {
         console.error('Failed to load supplier profile', err);
@@ -173,6 +210,7 @@ export function SupplierProfile() {
       setUploading(false);
     }
   };
+
   const handleDeleteCert = async (certId: string) => {
     try {
       await api.delete(`/suppliers/${supplierId}/certifications/${certId}`);
@@ -212,31 +250,6 @@ export function SupplierProfile() {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể thêm chứng nhận' });
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Filter out empty string fields to avoid DTO validation errors
-      const payload: Record<string, any> = {};
-      for (const [key, value] of Object.entries(editForm)) {
-        if (Array.isArray(value)) {
-          payload[key] = value; // always send arrays (industries, markets)
-        } else if (value !== '') {
-          payload[key] = value;
-        }
-      }
-      // Convert yearEstablished to number for backend validation
-      if (payload.yearEstablished) {
-        payload.yearEstablished = parseInt(payload.yearEstablished, 10);
-      }
-      const res = await api.put(`/suppliers/${supplierId}`, payload);
-      setSupplier(res.data);
-      setIsEditModalOpen(false);
-      addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
-    } catch (e) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
     }
   };
 
@@ -289,11 +302,7 @@ export function SupplierProfile() {
                       <Globe size={14} className="text-primary" /> Lĩnh vực hoạt động
                     </label>
                     <CustomSelect 
-                      options={[
-                        { value: "Manufacturer & Trading", label: t('biz_type_manufacturer_trading') },
-                        { value: "E-Commerce", label: t('biz_type_ecommerce') },
-                        { value: "Agriculture", label: t('biz_type_agriculture') },
-                      ]}
+                      options={businessTypeOptions}
                       value={createForm.businessType} 
                       onChange={val => setCreateForm({...createForm, businessType: val})}
                       searchable={false}
@@ -322,8 +331,8 @@ export function SupplierProfile() {
                       type="text" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.legalRepresentative} 
-                      onChange={e => setCreateForm({...createForm, legalRepresentative: e.target.value})} 
+                      value={createForm.legalRepName} 
+                      onChange={e => setCreateForm({...createForm, legalRepName: e.target.value})} 
                       placeholder="Người đại diện pháp luật" 
                     />
                   </div>
@@ -336,8 +345,8 @@ export function SupplierProfile() {
                       type="email" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.companyEmail} 
-                      onChange={e => setCreateForm({...createForm, companyEmail: e.target.value})} 
+                      value={createForm.contactEmail} 
+                      onChange={e => setCreateForm({...createForm, contactEmail: e.target.value})} 
                       placeholder="Email liên hệ chính thức" 
                     />
                   </div>
@@ -350,8 +359,8 @@ export function SupplierProfile() {
                       type="text" 
                       className="w-full px-4 py-3.5 bg-surface-1 border border-hairline text-ink font-normal placeholder:text-ink-subtle focus:outline-none focus:border-b-2 focus:border-b-primary transition-all" 
                       style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                      value={createForm.companyPhone} 
-                      onChange={e => setCreateForm({...createForm, companyPhone: e.target.value})} 
+                      value={createForm.contactPhone} 
+                      onChange={e => setCreateForm({...createForm, contactPhone: e.target.value})} 
                       placeholder="Hotline / SĐT công ty" 
                     />
                   </div>
@@ -432,8 +441,8 @@ export function SupplierProfile() {
             <div className="flex flex-wrap items-center gap-2">
               {(() => {
                 const isVerified = supplier?.status === SupplierStatus.VERIFIED;
-                const hasManufacturer = !!supplier?.manufacturerProfile || supplier?.supplierType === 'MANUFACTURER' || supplier?.supplierType === 'MANU_EXPORT' || supplier?.businessType?.toLowerCase().includes('manufacturer');
-                const hasExporter = !!supplier?.exporterProfile || supplier?.supplierType === 'EXPORTER' || supplier?.supplierType === 'MANU_EXPORT' || (supplier?.markets && supplier.markets.length > 0);
+                const hasManufacturer = supplier?.supplierType === SupplierType.MANUFACTURER || supplier?.supplierType === SupplierType.MANU_EXPORT;
+                const hasExporter = supplier?.supplierType === SupplierType.EXPORTER || supplier?.supplierType === SupplierType.MANU_EXPORT;
 
                 return (
                   <>
@@ -475,30 +484,30 @@ export function SupplierProfile() {
         <div className="flex items-center gap-6 px-4">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'overview'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Thông tin chung
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'products'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Sản phẩm tiêu biểu ({supplierProducts.length})
           </button>
           <button
             onClick={() => setActiveTab('certs')}
-            className={`py-2.5 text-xs tracking-wide border-b-2 transition-all whitespace-nowrap ${
+            className={`${activeTabOptionTextStyle} ${
               activeTab === 'certs'
-                ? 'border-primary text-primary font-semibold'
-                : 'border-transparent text-ink-subtle hover:text-ink font-medium'
+                ? activeTabOptionSelected
+                : activeTabOptionNotSelected
             }`}
           >
             Chứng nhận & Giải thưởng ({certifications.length})
@@ -510,8 +519,8 @@ export function SupplierProfile() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Khối Mô tả công ty */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} pace-y-3`}>
+            <h3 className={infoBoxTitleStyle}>
               Giới thiệu công ty
             </h3>
             <p className="text-xs sm:text-sm text-ink-muted leading-relaxed whitespace-pre-line">
@@ -521,45 +530,25 @@ export function SupplierProfile() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Thông tin kinh doanh */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} space-y-5`}>
+            <h3 className={infoBoxTitleStyle}>
               Thông tin kinh doanh
             </h3>
             <div className="space-y-3.5 text-xs sm:text-sm">
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Mã số thuế</span>
-                <span className="font-semibold text-ink">{supplier?.taxCode || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Người đại diện pháp luật</span>
-                <span className="font-semibold text-ink">{supplier?.legalRepresentative || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Email công ty</span>
-                <span className="font-semibold text-ink">{supplier?.companyEmail || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Số điện thoại</span>
-                <span className="font-semibold text-ink">{supplier?.companyPhone || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Năm thành lập</span>
-                <span className="font-semibold text-ink">{supplier?.yearEstablished || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-hairline/60">
-                <span className="text-ink-subtle">Quy mô nhân sự</span>
-                <span className="font-semibold text-ink">{supplier?.employeeCount || supplier?.employee_count || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-ink-subtle">Loại hình doanh nghiệp</span>
-                <span className="font-semibold text-ink">{supplier?.businessType || 'N/A'}</span>
-              </div>
+              <InfoField label='Mã số thuế' val={supplier?.taxCode}/>
+              <InfoField label='Người đại diện pháp luật' val={supplier?.legalRepName}/>
+              <InfoField label='Email công ty' val={supplier?.contactEmail}/>
+              <InfoField label='Số điện thoại' val={supplier?.contactPhone}/>
+              <InfoField label='Năm thành lập' val={supplier?.yearEstablished}/>
+              <InfoField label='Quy mô nhân sự' val={supplier?.employee_count}/>
+              <InfoField label='Loại hình doanh nghiệp' val={BusinessTypeMap[supplier?.businessType]}
+              isLast={true}/>
             </div>
           </div>
 
           {/* Quy mô & Năng lực */}
-          <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-5">
-            <h3 className="text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline">
+          <div className={`${boxStyle} space-y-5`}>
+            <h3 className={infoBoxTitleStyle}>
               Quy mô & Năng lực
             </h3>
             <div className="space-y-4 text-xs sm:text-sm">
@@ -578,6 +567,7 @@ export function SupplierProfile() {
                 </div>
               </div>
 
+              {/*
               <div className="pt-3 border-t border-hairline/60">
                 <span className="text-ink-subtle block mb-2 font-medium">Thị trường xuất khẩu</span>
                 <div className="flex flex-wrap gap-1.5">
@@ -599,6 +589,8 @@ export function SupplierProfile() {
                   {supplier?.address || supplier?.city ? `${supplier?.address || ''}${supplier?.address && supplier?.city ? ', ' : ''}${supplier?.city || ''}${supplier?.province ? `, ${supplier.province}` : ''}` : 'Chưa cập nhật'}
                 </p>
               </div>
+              */}
+
             </div>
           </div>
         </div>
@@ -607,7 +599,7 @@ export function SupplierProfile() {
 
       {/* Tab 2: Sản phẩm tiêu biểu */}
       {activeTab === 'products' && (
-        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+        <div className={`${boxStyle} space-y-6`}>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
               Sản phẩm tiêu biểu ({supplierProducts.length})
@@ -660,7 +652,7 @@ export function SupplierProfile() {
 
       {/* Tab 3: Chứng nhận & Giải thưởng */}
       {activeTab === 'certs' && (
-        <div className="bg-canvas border border-hairline p-6 rounded-xl shadow-sm space-y-6">
+        <div className={`${boxStyle} space-y-6`}>
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
               Chứng nhận & Giải thưởng ({certifications.length})
@@ -721,177 +713,12 @@ export function SupplierProfile() {
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={t('edit_profile_modal_title')} size="xl">
-        <form onSubmit={handleUpdateProfile} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('company_name_en_label')}</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyName} 
-                onChange={(e) => setEditForm({...editForm, companyName: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('biz_type_label')}</label>
-              <CustomSelect
-                options={[
-                  { value: 'PRIVATE', label: 'Tư nhân' },
-                  { value: 'LIMITED_LIABILITY', label: 'TNHH' },
-                  { value: 'JOINT_STOCK', label: 'Cổ phần' },
-                ]}
-                value={editForm.businessType}
-                onChange={(val) => setEditForm({...editForm, businessType: val})}
-                placeholder="-- Chọn loại hình --"
-                searchable={false}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('nguoi_dai_dien')}</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.legalRepName} 
-                onChange={(e) => setEditForm({...editForm, legalRepName: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Email công ty</label>
-              <input 
-                type="email" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyEmail} 
-                onChange={(e) => setEditForm({...editForm, companyEmail: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Số điện thoại</label>
-              <input 
-                type="text" 
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                value={editForm.companyPhone} 
-                onChange={(e) => setEditForm({...editForm, companyPhone: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Năm thành lập</label>
-              <input 
-                type="number" 
-                min="1900"
-                max={new Date().getFullYear()}
-                className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
-                style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                placeholder="VD: 2010"
-                value={editForm.yearEstablished} 
-                onChange={(e) => setEditForm({...editForm, yearEstablished: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Tổng nhân sự</label>
-              <CustomSelect
-                options={[
-                  { value: '1-10', label: '1 - 10 người' },
-                  { value: '11-50', label: '11 - 50 người' },
-                  { value: '51-200', label: '51 - 200 người' },
-                  { value: '201-500', label: '201 - 500 người' },
-                  { value: '501-1000', label: '501 - 1,000 người' },
-                  { value: '1000+', label: 'Trên 1,000 người' },
-                ]}
-                value={editForm.employee_count}
-                onChange={(val) => setEditForm({...editForm, employee_count: val})}
-                placeholder="-- Chọn --"
-                searchable={false}
-              />
-            </div>
-            <div className="space-y-2 col-span-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Ngành hàng</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
-                {['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'].map((ind) => {
-                  const isSelected = editForm.industries.includes(ind);
-                  return (
-                    <button
-                      type="button"
-                      key={ind}
-                      onClick={() => {
-                        const next = isSelected
-                          ? editForm.industries.filter((i) => i !== ind)
-                          : [...editForm.industries, ind];
-                        setEditForm({ ...editForm, industries: next });
-                      }}
-                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
-                        isSelected
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
-                      }`}
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                    >
-                      {ind}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="space-y-2 col-span-2">
-              <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>Thị trường xuất khẩu</label>
-              <div className="flex flex-wrap gap-2 p-3 bg-surface-1 border border-hairline min-h-[44px]" style={{ borderRadius: 0 }}>
-                {['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'].map((mkt) => {
-                  const isSelected = editForm.markets.includes(mkt);
-                  return (
-                    <button
-                      type="button"
-                      key={mkt}
-                      onClick={() => {
-                        const next = isSelected
-                          ? editForm.markets.filter((m) => m !== mkt)
-                          : [...editForm.markets, mkt];
-                        setEditForm({ ...editForm, markets: next });
-                      }}
-                      className={`px-3 py-1.5 text-xs font-normal border transition-all ${
-                        isSelected
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface-1 text-ink border-hairline hover:bg-surface-2'
-                      }`}
-                      style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-                    >
-                      {mkt}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{t('short_desc_label')}</label>
-            <textarea 
-              className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary min-h-[90px]" 
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-              value={editForm.description} 
-              onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-            />
-          </div>
-          <div className="flex justify-end gap-3 pt-6 border-t border-hairline">
-            <button 
-              type="button" 
-              onClick={() => setIsEditModalOpen(false)} 
-              className="bg-surface-2 hover:bg-surface-3 text-ink text-xs font-normal px-4 py-2"
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-            >
-              {t('cancel_btn')}
-            </button>
-            <button 
-              type="submit" 
-              className="bg-primary hover:bg-primary-hover text-white text-xs font-normal px-4 py-2"
-              style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-            >
-              {t('save_changes_btn')}
-            </button>
-          </div>
-        </form>
+        { (supplier && isEditModalOpen) &&
+          <EditModalform initialSupplier={supplier}
+            handleCloseModal={() => setIsEditModalOpen(false)}
+            handleSupplierUpdate={(s) => setSupplier(s)}
+          /> 
+        }
       </Modal>
 
       {/* Add Certification Modal */}

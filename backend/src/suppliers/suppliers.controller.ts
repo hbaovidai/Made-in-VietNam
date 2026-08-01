@@ -12,7 +12,7 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto, SupplierFindManyDto } from './dto/supplier.dto';
+import { UpdateSupplierDto, SupplierQueryDto, CreateFakeSuppDto, SupplierFindManyDto, SupplierFindOneDto } from './dto/supplier.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -47,6 +47,13 @@ export class SuppliersController {
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.suppliersService.findBySlug(slug);
+  }
+
+  @Get(':slug/experimental')
+  findBySlugExperimental(@Param('slug') slug: string, @Query() dto: SupplierFindOneDto) {
+    // only verified suppliers are visible to the public
+    dto.status = SupplierStatus.VERIFIED;
+    return this.suppliersService.findBySlugExperimental(slug, dto);
   }
 
   @Get(':slug/address')
@@ -165,7 +172,7 @@ export class SuppliersController {
 
   // PROTECTED: Chỉ supplier chủ sở hữu mới sửa được, hoặc ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'ADMIN')
+  @Roles(Role.SUPPLIER, Role.ADMIN)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -182,6 +189,8 @@ export class SuppliersController {
         );
       }
     }
+    console.log(dto);
+    // return { message: 'uuhh, gay, input type correct' };
     return this.suppliersService.update(id, dto);
   }
 

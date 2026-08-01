@@ -131,6 +131,7 @@ export const SaleChannelsMap = {
   [SaleChannels.FACEBOOK]: 'Facebook',
   [SaleChannels.SHOPEE]: 'Shopee',
   [SaleChannels.LAZADA]: 'Lazada',
+  [SaleChannels.TIKTOK_SHOP]: 'Tiktok Shop',
   [SaleChannels.SHOPIFY]: 'Shopify',
   [SaleChannels.ZALO]: 'Zalo',
   [SaleChannels.CUSTOM_WEBSITE]: 'Website',
