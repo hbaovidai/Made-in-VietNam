@@ -1,6 +1,16 @@
 import { IsOptional, IsString, IsInt, IsArray, Min, IsEnum, IsObject, ValidateNested, IsBoolean, IsIn, isArray } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { BusinessType, Prisma, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
+import { BusinessType, Prisma, SaleChannelType, SupplierAccountHolderRole, SupplierStatus, SupplierType } from '@prisma/client';
+
+class ChannelEntry {
+  @IsEnum(SaleChannelType) type: SaleChannelType;
+  @IsString() url: string;
+};
+
+class AddressEntry {
+  @IsBoolean() isPrimary: boolean;
+  @IsString() address: string;
+}
 
 type SupplierNonRelField = Prisma.SupplierScalarFieldEnum;
 type SupplierRelField = keyof Prisma.SupplierInclude;
@@ -76,8 +86,8 @@ export class UpdateSupplierDto {
   @IsString() @IsOptional() primaryLocation?: string;
   @IsString() @IsOptional() website?: string;
   @IsString() @IsOptional() taxCode?: string;
-  @IsString() @IsOptional() companyEmail?: string;
-  @IsString() @IsOptional() companyPhone?: string;
+  @IsString() @IsOptional() contactEmail?: string;
+  @IsString() @IsOptional() contactPhone?: string;
   @IsString() @IsOptional() legalRepName?: string;
   @IsString() @IsOptional() legalRepPhone?: string;
   @IsString({ each: true }) @IsOptional() businessLicenseUrl?: string[];
@@ -87,7 +97,13 @@ export class UpdateSupplierDto {
   // industries will be phased out in favor of categories
   @IsArray() @IsString({ each: true }) @IsOptional() industries?: string[];
   @ValidateNested({ each: true })
-  @Type(() => CategoryOption) categoryOptions: CategoryOption[];
+  @Type(() => CategoryOption) categoryOptions?: CategoryOption[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ChannelEntry) channels?: ChannelEntry[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AddressEntry) addresses?: AddressEntry[];
 
   @IsArray() @IsString({ each: true }) @IsOptional() markets?: string[];
 }

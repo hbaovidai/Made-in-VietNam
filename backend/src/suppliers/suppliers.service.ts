@@ -418,40 +418,65 @@ export class SuppliersService {
     });
     if (!supplier) throw new NotFoundException('Nhà cung cấp không tồn tại');
 
-    const { markets, categoryOptions, ...data } = dto;
+    const {
+      channels, industries, markets, addresses, categoryOptions, ...data
+    } = dto;
 
     try {
-      await this.prisma.$transaction(async (tx) => {
+      // return { message: 'gay gay gay' };
+      const newSupp = await this.prisma.$transaction(async (tx) => {
+        // console.log('in transaction');
+        
         // Update supplier basic info
-        // const updated = await tx.supplier.update({
-        //   where: { id: supplierId },
-        //   data,
-        // });
+        const updated = await tx.supplier.update({
+          where: { id: supplierId },
+          data,
+        });
+        // console.log(updated);
 
         // Update industries if provided
         if (categoryOptions) {
-          // await tx.supplierIndustry.deleteMany({ where: { supplierId } });
-          // await tx.supplierIndustry.createMany({
-          //   data: industries.map((industry) => ({ supplierId, industry })),
-          // });
-        }
-
-        // Update markets if provided
-        if (markets) {
-          await tx.supplierMarket.deleteMany({ where: { supplierId } });
-          await tx.supplierMarket.createMany({
-            data: markets.map((market) => ({ supplierId, market })),
+          await tx.supplierCategoryMap.deleteMany({
+            where: { supplier: { id: supplierId } }
           });
+          const cats = await tx.supplierCategoryMap.createManyAndReturn({
+            data: categoryOptions
+              .filter((opt) => opt.included)
+              .map((opt) => ({
+                supplierSlug: updated.slug,
+                categorySlug: opt.slug,
+              }))
+          })
+          // console.log(cats);
         }
 
-        // return this.findBySlug(updated.slug);
-        return {};
+        // Market is for exporters, we're simply hiding this for now
+        // if (markets) {
+        //   await tx.supplierMarket.deleteMany({ where: { supplierId } });
+        //   await tx.supplierMarket.createMany({
+        //     data: markets.map((market) => ({ supplierId, market })),
+        //   });
+        // }
+
+        if (channels) {
+          await tx.supplierChannelMap.deleteMany({
+            where: { supplier: { id: supplierId } }
+          })
+          const chans = await tx.supplierChannelMap.createManyAndReturn({
+            data: channels.map((channel) => ({
+              supplierId, url: channel.url, type: channel.type
+            }))
+          });
+          // console.log(chans);
+        }
+
+        // throw new Error('dry run, rolling back');
+
+        return this.findBySlug(updated.slug);
       })
+      return newSupp;
 
-    } catch (error) {
-      console.error(error);
-    }
-
+    } catch (error) { console.error(error); }
   }
 
   async addCertification(

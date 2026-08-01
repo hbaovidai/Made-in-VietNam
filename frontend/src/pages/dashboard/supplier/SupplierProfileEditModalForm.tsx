@@ -1,5 +1,5 @@
 import { CustomSelect } from "@/src/components/CustomSelect";
-import { BusinessType, SaleChannels, SupplierStatus } from "@/src/lib/enums";
+import { BusinessType, SaleChannels, SaleChannelsMap, SupplierStatus } from "@/src/lib/enums";
 import { useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,8 @@ import { api } from "@/src/lib/api";
 interface l1Category { slug: string; id: string; name: string; }
 interface SuppCategory { name: string; nameEn: string; id: string; }
 type CategoryOption = Record<string, {slug: string; name: string; included: boolean}>;
+
+type ChannelOption = Record<SaleChannels, string>;
 
 const aVeryComprehensiveListOfMarkets = ['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'];
 
@@ -59,6 +61,9 @@ interface SupplierFields {
   status?: SupplierStatus;
 
   categories?: {category: SuppCategory}[];
+  categoryOptions?: {id: string; name: string; slug: string; included: boolean}[];
+
+  channels?: ChannelEntry[];
 };
 
 interface EditModalformProps {
@@ -68,7 +73,6 @@ interface EditModalformProps {
 }
 
 export function EditModalform(props: EditModalformProps) {
-  
   const { addToast } = useToast();
   const { t } = useTranslation();
 
@@ -83,16 +87,29 @@ export function EditModalform(props: EditModalformProps) {
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption>({});
   const [l1Categories, setL1Categories] = useState<l1Category[]>([]);
 
+  const [channelOptions, setChannelOptions] =
+    useState<ChannelOption>( {} as Record<SaleChannels, string> );
+
   useEffect(() => {
-    const doStuff = async () => {
+    const init = async () => {
       setEditForm(props.initialSupplier);
       try {
         const res = await api.get('/categories/cats/l1');
         if (res.data) { setL1Categories(res.data); }
+
+        const chanOpt = Object.values(SaleChannels).reduce((acc, channel) => {
+          acc[channel] = ''; return acc;
+        }, {} as Record<SaleChannels, string>);
+        props.initialSupplier.channels.forEach((channel) => {
+          chanOpt[channel.type] = channel.url;
+        });
+        setChannelOptions(chanOpt);
+
+      // } catch (error) { console.error(error); }
       } catch (error) { console.error(error); }
     }
 
-    doStuff();
+    init();
   }, []);
 
   useEffect(() => {
@@ -116,12 +133,14 @@ export function EditModalform(props: EditModalformProps) {
 
   const handleUpdateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('handleUpdateProfile triggered');
     
     try {
       // Filter out empty string fields to avoid DTO validation errors
-      const payload: Record<string, any> = {};
+      const payload: Partial<Record<keyof SupplierFields, any>> = {};
       for (const [key, value] of Object.entries(editForm)) {
+        const bannedKeys = ['id', 'addresses', 'categories'];
+        if (bannedKeys.includes(key)) continue;
+
         if (Array.isArray(value)) {
           payload[key] = value; // always send arrays (industries, markets)
         } else if (value !== '') {
@@ -134,14 +153,31 @@ export function EditModalform(props: EditModalformProps) {
         payload.yearEstablished = parseInt(payload.yearEstablished, 10);
       }
 
-      console.log(payload); return;
+      const channels: {type: string; url: string}[] = [];
+      Object.keys(channelOptions).forEach((type) => {
+        if (channelOptions[type] !== '') 
+          channels.push({type, url: channelOptions[type]});
+      });
+      payload.channels = channels;
 
+      const categories:
+        {id: string; slug: string; name: string; included: boolean}[] = [];
+      Object.keys(categoryOptions).forEach((id) => {
+        const rest = categoryOptions[id];
+        categories.push({ id, ...rest })
+      });
+      payload.categoryOptions = categories;
+
+      addToast({ type: 'info', title: 'Vui lòng đợi', message: 'Hệ thông đang cập nhật hồ sơ.' });
       const res = await api.put(`/suppliers/${props.initialSupplier.id}`, payload);
+
+      console.log(res.data);
       props.handleSupplierUpdate(res.data);
       props.handleCloseModal();
       addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
+      // console.error(e);
     }
   };
 
@@ -244,7 +280,19 @@ export function EditModalform(props: EditModalformProps) {
           </div>
         </div>
         */}
+      </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        {Object.entries(channelOptions).map(([type, url]) => {
+          return (
+            <EditModalTextField label={SaleChannelsMap[type]} value={url} key={type}
+              onChange={
+                (e) => setChannelOptions({
+                  ...channelOptions, [type]: e.target.value
+                })}
+            />
+          );
+        })}
       </div>
 
       <div className="space-y-2">
@@ -267,7 +315,6 @@ export function EditModalform(props: EditModalformProps) {
           style={{ borderRadius: 0, letterSpacing: '0.16px' }}
         > {t('save_changes_btn')} </button>
       </div>
-
     </form>
   )
 }

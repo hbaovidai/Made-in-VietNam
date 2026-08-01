@@ -189,6 +189,8 @@ export class SuppliersController {
         );
       }
     }
+    console.log(dto);
+    // return { message: 'uuhh, gay, input type correct' };
     return this.suppliersService.update(id, dto);
   }
 

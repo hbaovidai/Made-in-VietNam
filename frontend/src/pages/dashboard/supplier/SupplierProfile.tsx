@@ -7,7 +7,7 @@ import { SupplierBadge } from '../../../components/ui/SupplierBadge';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
-import { SaleChannels, SupplierStatus, SupplierType } from '@/src/lib/enums';
+import { SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
 import { BusinessTypeMap } from '@/src/lib/enums';
 import { EditModalform } from './SupplierProfileEditModalForm';
