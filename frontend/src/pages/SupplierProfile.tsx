@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, Loader2, Factory, Users, Package, Clock, Star, Building2, CheckCircle2, Play, TrendingUp, Ship, Target, FileText } from 'lucide-react';
+import { 
+  MapPin, Globe, Award,
+  MessageSquare, ChevronRight, Phone,
+  Mail, ExternalLink, Loader2,
+  Building2, FileText
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ProductCard } from '../components/ProductCard';
-import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
@@ -11,8 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { SupplierBadge } from '../components/ui/SupplierBadge';
 import { useToast } from '../components/ui/Toast';
-
-type CertEntry = {name: string; issuedBy: string; documentUrl: string};
+import { CertEntry, SaleChanEntry, AddressRecord } from '../lib/types';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -46,13 +48,13 @@ export function SupplierProfile() {
 
   useEffect(() => {
     if (supplier === null) return;
-    supplier.channels?.forEach(( channel ) => {
+    supplier.channels?.forEach(( channel: SaleChanEntry ) => {
       if (channel.type === SaleChannels.CUSTOM_WEBSITE) {
         setWebsiteUrl(channel.url);
       }
     });
 
-    const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
+    const primaryRecord: AddressRecord = supplier.addresses?.find((record: AddressRecord) => record.isPrimary);
     setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
   }, [supplier])
 
@@ -96,9 +98,7 @@ export function SupplierProfile() {
   const isVerified = supplier.status === SupplierStatus.VERIFIED ;
 
   const memberSince = supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024;
-  const certNames = supplier.certifications?.map((c: any) => c.name) || [];
   const markets = supplier.markets?.map((m: any) => m.market) || [];
-  const industries = supplier.industries?.map((i: any) => i.industry) || [];
 
   // Fallback certifications for display
   const displayCerts: CertEntry[] = supplier.certifications?.length ?

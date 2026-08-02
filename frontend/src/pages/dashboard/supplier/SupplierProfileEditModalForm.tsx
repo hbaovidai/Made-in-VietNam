@@ -1,23 +1,18 @@
 import { CustomSelect } from "@/src/components/CustomSelect";
-import { BusinessType, SaleChannels, SaleChannelsMap, SupplierStatus } from "@/src/lib/enums";
+import { BusinessType, BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from "@/src/lib/enums";
 import { useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { useTranslation } from "react-i18next";
 import { api } from "@/src/lib/api";
+import { l1Category, PayloadCategoryOption, SaleChanEntry, SuppCategory } from "@/src/lib/types";
 
-// const aVeryComprehensiveListOfCategories = ['Nông sản', 'Thực phẩm & Đồ uống', 'Cà phê & Trà', 'Thủy hải sản', 'Dệt may & May mặc', 'Nội thất & Trang trí', 'Thủ công mỹ nghệ', 'Vật tư công nghiệp', 'Mỹ phẩm & Chăm sóc cá nhân', 'Điện tử', 'Sữa & Sản phẩm từ sữa', 'Gỗ & Lâm sản', 'Da giày', 'Cơ khí & Kim loại'];
-interface l1Category { slug: string; id: string; name: string; }
-interface SuppCategory { name: string; nameEn: string; id: string; }
-type CategoryOption = Record<string, {slug: string; name: string; included: boolean}>;
-
-type ChannelOption = Record<SaleChannels, string>;
-
-const aVeryComprehensiveListOfMarkets = ['Việt Nam', 'Hoa Kỳ', 'Châu Âu', 'Nhật Bản', 'Hàn Quốc', 'Trung Quốc', 'Đông Nam Á', 'Úc & New Zealand', 'Trung Đông', 'Châu Phi'];
+type CategoryOption = Record<string, {slug: string; name: string; included: boolean}>
+type ChannelOption = Record<SaleChannels, string>
 
 const businessTypeOptions = [
-  { value: BusinessType.PRIVATE, label: 'Tư nhân' },
-  { value: BusinessType.LIMITED_LIABILITY, label: 'TNHH' },
-  { value: BusinessType.JOINT_STOCK, label: 'Cổ phần' },
+  { value: BusinessType.PRIVATE, label: BusinessTypeMap[BusinessType.PRIVATE] },
+  { value: BusinessType.LIMITED_LIABILITY, label: BusinessTypeMap[BusinessType.LIMITED_LIABILITY]},
+  { value: BusinessType.JOINT_STOCK, label: BusinessTypeMap[BusinessType.JOINT_STOCK]},
 ];
 
 const employeeCountOptions = [
@@ -25,8 +20,6 @@ const employeeCountOptions = [
   { value: '51-200', label: '51 - 200 người' }, { value: '201-500', label: '201 - 500 người' },
   { value: '501-1000', label: '501 - 1,000 người' }, { value: '1000+', label: 'Trên 1,000 người' },
 ]
-
-interface ChannelEntry { type: SaleChannels; url: string; }
 
 interface EditModalTextFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -36,18 +29,15 @@ function EditModalTextField(props: EditModalTextFieldProps) {
   return (
     <div className="space-y-2">
     <label className="text-[10px] font-normal text-ink-subtle uppercase tracking-widest block" style={{ letterSpacing: '0.32px' }}>{props.label}</label>
-    <input 
-    type="text" 
+    <input type="text" value={props.value} onChange={props.onChange}
     className="w-full px-3.5 py-2 bg-surface-1 border border-hairline text-xs outline-none focus:border-b-2 focus:border-b-primary" 
     style={{ borderRadius: 0, letterSpacing: '0.16px' }}
-    value={props.value} 
-    onChange={props.onChange}
     />
     </div>
   )
 }
 
-interface SupplierFields {
+type SupplierFields = {
   id?: string;
 
   companyName?: string; description?: string;
@@ -61,12 +51,12 @@ interface SupplierFields {
   status?: SupplierStatus;
 
   categories?: {category: SuppCategory}[];
-  categoryOptions?: {id: string; name: string; slug: string; included: boolean}[];
+  categoryOptions?: PayloadCategoryOption[];
 
-  channels?: ChannelEntry[];
+  channels?: SaleChanEntry[];
 };
 
-interface EditModalformProps {
+type EditModalformProps = {
   handleCloseModal: () => void;
   initialSupplier: SupplierFields;
   handleSupplierUpdate: (s: SupplierFields) => void;
@@ -83,12 +73,11 @@ export function EditModalform(props: EditModalformProps) {
     categories: [],
   });
   
-
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption>({});
   const [l1Categories, setL1Categories] = useState<l1Category[]>([]);
 
   const [channelOptions, setChannelOptions] =
-    useState<ChannelOption>( {} as Record<SaleChannels, string> );
+    useState<ChannelOption>( {} as ChannelOption );
 
   useEffect(() => {
     const init = async () => {
@@ -97,15 +86,14 @@ export function EditModalform(props: EditModalformProps) {
         const res = await api.get('/categories/cats/l1');
         if (res.data) { setL1Categories(res.data); }
 
-        const chanOpt = Object.values(SaleChannels).reduce((acc, channel) => {
+        const chanOpt: ChannelOption = Object.values(SaleChannels).reduce((acc, channel) => {
           acc[channel] = ''; return acc;
-        }, {} as Record<SaleChannels, string>);
+        }, {} as ChannelOption);
         props.initialSupplier.channels.forEach((channel) => {
           chanOpt[channel.type] = channel.url;
         });
         setChannelOptions(chanOpt);
 
-      // } catch (error) { console.error(error); }
       } catch (error) { console.error(error); }
     }
 
@@ -149,35 +137,28 @@ export function EditModalform(props: EditModalformProps) {
       }
 
       // Convert yearEstablished to number for backend validation
-      if (payload.yearEstablished) {
-        payload.yearEstablished = parseInt(payload.yearEstablished, 10);
-      }
+      if (payload.yearEstablished) payload.yearEstablished = parseInt(payload.yearEstablished, 10);
 
       const channels: {type: string; url: string}[] = [];
       Object.keys(channelOptions).forEach((type) => {
-        if (channelOptions[type] !== '') 
-          channels.push({type, url: channelOptions[type]});
+        if (channelOptions[type] !== '') channels.push({type, url: channelOptions[type]});
       });
       payload.channels = channels;
 
-      const categories:
-        {id: string; slug: string; name: string; included: boolean}[] = [];
+      const categories: PayloadCategoryOption[] = [];
       Object.keys(categoryOptions).forEach((id) => {
-        const rest = categoryOptions[id];
-        categories.push({ id, ...rest })
+        const opt = { id, ...categoryOptions[id] }; categories.push(opt);
       });
       payload.categoryOptions = categories;
 
       addToast({ type: 'info', title: 'Vui lòng đợi', message: 'Hệ thông đang cập nhật hồ sơ.' });
       const res = await api.put(`/suppliers/${props.initialSupplier.id}`, payload);
 
-      console.log(res.data);
       props.handleSupplierUpdate(res.data);
       props.handleCloseModal();
       addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
-      // console.error(e);
     }
   };
 
