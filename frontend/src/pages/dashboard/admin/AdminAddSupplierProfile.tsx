@@ -1,18 +1,11 @@
-import { FormContainer, FormFieldTextInput, Label, OptionButton, Select, TextInput, UploadField } from "@/src/components/supplier_profile_submit_form/components";
+import { FormContainer, FormFieldTextInput, Label, OptionButton, Select, UploadField } from "@/src/components/supplier_profile_submit_form/components";
 import { api } from "@/src/lib/api";
 import { FontSizes } from "@/src/lib/constants";
 import { BusinessType, SupplierAccountHolderRole, SupplierType } from "@/src/lib/enums";
-import React, { SubmitEvent, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { FIVE_MEG } from "@/src/lib/constants";
-import { Loader2 } from "lucide-react";
-
-interface CategoryOption {
-  id: string;
-  slug: string;
-  name: string;
-  included: boolean;
-}
+import { PayloadCategoryOption } from "@/src/lib/types";
 
 export function AdminAppSupplier() {
   const { addToast } = useToast();
@@ -24,13 +17,13 @@ export function AdminAppSupplier() {
   const [logoFile, setLogoFile] = useState<File>(null);
   const [bannerFile, setBannerFile] = useState<File>(null);
 
-  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<PayloadCategoryOption[]>([]);
   useEffect(() => {
     let isMounted = true;
     const fetchCats = async () => {
       try {
         const res = await api.get('categories/cats/l1');
-        if (isMounted) setCategoryOptions(res.data as CategoryOption[]);
+        if (isMounted) setCategoryOptions(res.data as PayloadCategoryOption[]);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
@@ -172,7 +165,7 @@ export function AdminAppSupplier() {
             ? JSON.stringify(categoryOptions.filter(opt => opt.included)) : ""
         }
       >
-        {categoryOptions && categoryOptions.map((catOpt: CategoryOption) => {
+        {categoryOptions && categoryOptions.map((catOpt: PayloadCategoryOption) => {
           return <OptionButton 
             label={catOpt.name} isSelected={catOpt.included} value={catOpt.slug}
             onClick={toggleCategoryInclusion} key={catOpt.slug}

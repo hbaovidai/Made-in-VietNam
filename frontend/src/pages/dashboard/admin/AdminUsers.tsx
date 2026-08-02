@@ -26,7 +26,8 @@ export function AdminUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+        // const res = await api.get('/users', { headers: { Authorization: `Bearer ${localStorage.getItem('mivn5_token')}` } });
+        const res = await api.get('/users');
         const data = res.data;
         setUsers(Array.isArray(data) ? data : (data?.users || data?.data || []));
       } catch { /* silent */ }

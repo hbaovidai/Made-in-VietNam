@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../../lib/api';
@@ -12,7 +12,8 @@ export function AdminUserProfile() {
   const { t } = useTranslation();
   const { user: me, loginUser, token } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const userId = searchParams.get('id') || me?.id;
+  // const userId = searchParams.get('id') || me?.id;
+  const userId = searchParams.get('id');
   const initialTab = (searchParams.get('tab') as TabKey) || 'profile';
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
 
@@ -66,11 +67,11 @@ export function AdminUserProfile() {
     if (t && ['profile', 'account', 'password', 'activity', 'settings'].includes(t)) setActiveTab(t);
   }, [searchParams]);
 
-  const switchTab = (tab: TabKey) => {
+  const switchTab = useCallback((tab: TabKey) => {
     setActiveTab(tab);
-    setSearchParams(tab === 'profile' ? {} : { tab });
+    setSearchParams(tab === 'profile' ? {} : { tab, id: userId });
     setMsg(null);
-  };
+  }, []);
 
   // Load activity when tab opens
   useEffect(() => {

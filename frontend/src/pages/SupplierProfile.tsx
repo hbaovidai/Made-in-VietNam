@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, MapPin, Globe, Award, Calendar, MessageSquare, ChevronRight, Phone, Mail, ExternalLink, Loader2, Factory, Users, Package, Clock, Star, Building2, CheckCircle2, Play, TrendingUp, Ship, Target, FileText } from 'lucide-react';
+import { 
+  MapPin, Globe, Award,
+  MessageSquare, ChevronRight, Phone,
+  Mail, ExternalLink, Loader2,
+  Building2, FileText
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ProductCard } from '../components/ProductCard';
-import { cn } from '../utils/cn';
 import { api } from '../lib/api';
 import { SEOHead } from '../components/SEOHead';
 import { AuthRequireModal } from '../components/ui/AuthRequireModal';
@@ -11,6 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { SupplierBadge } from '../components/ui/SupplierBadge';
 import { useToast } from '../components/ui/Toast';
+import { CertEntry, SaleChanEntry, AddressRecord } from '../lib/types';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -44,13 +48,13 @@ export function SupplierProfile() {
 
   useEffect(() => {
     if (supplier === null) return;
-    supplier.channels?.forEach(( channel ) => {
+    supplier.channels?.forEach(( channel: SaleChanEntry ) => {
       if (channel.type === SaleChannels.CUSTOM_WEBSITE) {
         setWebsiteUrl(channel.url);
       }
     });
 
-    const primaryRecord = supplier.addresses?.find(record => record.isPrimary);
+    const primaryRecord: AddressRecord = supplier.addresses?.find((record: AddressRecord) => record.isPrimary);
     setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
   }, [supplier])
 
@@ -94,18 +98,11 @@ export function SupplierProfile() {
   const isVerified = supplier.status === SupplierStatus.VERIFIED ;
 
   const memberSince = supplier.createdAt ? new Date(supplier.createdAt).getFullYear() : 2024;
-  const certNames = supplier.certifications?.map((c: any) => c.name) || [];
   const markets = supplier.markets?.map((m: any) => m.market) || [];
-  const industries = supplier.industries?.map((i: any) => i.industry) || [];
 
   // Fallback certifications for display
-  const displayCerts = supplier.certifications?.length > 0
-    ? supplier.certifications
-    : [
-        { name: 'ISO 9001:2015', issuedBy: 'Hệ thống quản lý chất lượng', expiryDate: '2026-12-31' },
-        { name: 'CE Marking', issuedBy: 'Tiêu chuẩn An toàn Châu Âu', expiryDate: '2027-06-30' },
-        { name: 'ISO 14001:2015', issuedBy: 'Hệ thống quản lý môi trường', expiryDate: '2026-12-31' },
-      ];
+  const displayCerts: CertEntry[] = supplier.certifications?.length ?
+    supplier.certifications : [];
 
   // Price display helper
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
@@ -344,7 +341,8 @@ export function SupplierProfile() {
               <h3 className="text-xs font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('chung_nhan_chung_chi')}</h3>
               <div className="border-t border-hairline mb-4" />
               <div className="space-y-2.5">
-                {displayCerts.map((cert: any, i: number) => {
+                {displayCerts.length > 0 ?
+                  displayCerts.map((cert, i: number) => {
                   const inner = (
                     <div className="flex items-center gap-3 px-4 py-3.5 bg-surface-1 border border-hairline hover:border-primary group/cert cursor-pointer transition-colors" style={{ borderRadius: 0 }}>
                       <Award size={18} className="text-primary shrink-0" />
@@ -358,7 +356,9 @@ export function SupplierProfile() {
                   return cert.documentUrl
                     ? <a key={i} href={cert.documentUrl} target="_blank" rel="noopener noreferrer">{inner}</a>
                     : <div key={i}>{inner}</div>;
-                })}
+                }) : (
+                  <p className='text-sm text-ink-subtle mt-0.5 text-center'>{t('supplier_no_certs')}</p>
+                ) }
               </div>
             </div>
 

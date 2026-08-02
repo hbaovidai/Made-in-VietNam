@@ -1,6 +1,6 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, X, Loader2, Eye, ExternalLink, Package } from 'lucide-react';
+import { Building2, MapPin, Globe, Award, Shield, CheckCircle2, Edit2, Camera, Plus, Trash2, Loader2, Eye, ExternalLink, Package } from 'lucide-react';
 import { useToast } from '../../../components/ui/Toast';
 import { Modal } from '../../../components/ui/Modal';
 import { SupplierBadge } from '../../../components/ui/SupplierBadge';
@@ -11,6 +11,7 @@ import { SupplierStatus, SupplierType } from '@/src/lib/enums';
 import { CustomSelect } from '../../../components/CustomSelect';
 import { BusinessTypeMap } from '@/src/lib/enums';
 import { EditModalform } from './SupplierProfileEditModalForm';
+import { CertEntry } from '@/src/lib/types';
 
 const boxStyle = 'bg-canvas border border-hairline p-6 rounded-xl shadow-sm';
 const infoBoxTitleStyle = 'text-sm font-bold text-ink uppercase tracking-wider pb-3 border-b border-hairline'
@@ -37,7 +38,7 @@ const supplierIncludes = [
 ];
 
 // we don't use these anymore btw. but it's refactor time so yeah, fix later
-interface InfoFieldProps { label: string; val: string | number; isLast?: boolean; }
+type InfoFieldProps = { label: string; val: string | number; isLast?: boolean; }
 function InfoField(props: InfoFieldProps) {
   const { isLast = false } = props;
   return (
@@ -59,7 +60,7 @@ export function SupplierProfile() {
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
   const [supplierProducts, setSupplierProducts] = useState<any[]>([]);
-  const [certifications, setCertifications] = useState<any[]>([]);
+  const [certifications, setCertifications] = useState<CertEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [certForm, setCertForm] = useState({ name: '', issuedBy: '' });
@@ -68,10 +69,6 @@ export function SupplierProfile() {
 
   const [createForm, setCreateForm] = useState({ companyName: '', businessType: 'Manufacturer & Trading', description: '', taxCode: '', contactEmail: '', contactPhone: '', legalRepName: '' });
   const [isCreating, setIsCreating] = useState(false);
-
-  const [bizLicenseFile, setBizLicenseFile] = useState<File | null>(null);
-  const [idCardFile, setIdCardFile] = useState<File | null>(null);
-  const [isSubmittingVerification, setIsSubmittingVerification] = useState(false);
 
   const supplierId = user?.supplier?.id;
 
@@ -122,7 +119,7 @@ export function SupplierProfile() {
     loadData();
   }, [supplierId]);
 
-  const handleCreateProfile = async (e: React.FormEvent) => {
+  const handleCreateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsCreating(true);
     try {
@@ -135,53 +132,6 @@ export function SupplierProfile() {
       addToast({ type: 'error', title: 'Lỗi', message: err.message || 'Không thể tạo hồ sơ' });
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const handleSubmitVerification = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!bizLicenseFile && !supplier?.businessLicenseUrl) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng tải lên Giấy ĐKKD' });
-      return;
-    }
-    if (!idCardFile && !supplier?.identityCardUrl) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Vui lòng tải lên CCCD' });
-      return;
-    }
-
-    setIsSubmittingVerification(true);
-    try {
-      let bizLicenseUrl = supplier?.businessLicenseUrl;
-      let idCardUrl = supplier?.identityCardUrl;
-
-      if (bizLicenseFile) {
-        const formData = new FormData();
-        formData.append('file', bizLicenseFile);
-        const res = await api.post('/uploads', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        bizLicenseUrl = res.data.url || res.data.path;
-      }
-
-      if (idCardFile) {
-        const formData = new FormData();
-        formData.append('file', idCardFile);
-        const res = await api.post('/uploads', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-        idCardUrl = res.data.url || res.data.path;
-      }
-
-      const res = await api.put(`/suppliers/${supplierId}`, {
-        businessLicenseUrl: bizLicenseUrl,
-        identityCardUrl: idCardUrl,
-        status: SupplierStatus.APPLICATION_PENDING
-      });
-
-      setSupplier(res.data);
-      addToast({ type: 'success', title: 'Thành công', message: 'Đã nộp hồ sơ xác thực. Vui lòng chờ Admin duyệt.' });
-      setBizLicenseFile(null);
-      setIdCardFile(null);
-    } catch (err: any) {
-      addToast({ type: 'error', title: 'Lỗi', message: 'Không thể nộp hồ sơ xác thực' });
-    } finally {
-      setIsSubmittingVerification(false);
     }
   };
 
@@ -221,7 +171,7 @@ export function SupplierProfile() {
     }
   };
 
-  const handleAddCert = async (e: React.FormEvent) => {
+  const handleAddCert = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUploading(true);
     try {
