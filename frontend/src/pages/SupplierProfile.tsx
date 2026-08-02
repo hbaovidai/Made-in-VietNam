@@ -12,6 +12,8 @@ import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '
 import { SupplierBadge } from '../components/ui/SupplierBadge';
 import { useToast } from '../components/ui/Toast';
 
+type CertEntry = {name: string; issuedBy: string; documentUrl: string};
+
 export function SupplierProfile() {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -99,13 +101,8 @@ export function SupplierProfile() {
   const industries = supplier.industries?.map((i: any) => i.industry) || [];
 
   // Fallback certifications for display
-  const displayCerts = supplier.certifications?.length > 0
-    ? supplier.certifications
-    : [
-        { name: 'ISO 9001:2015', issuedBy: 'Hệ thống quản lý chất lượng', expiryDate: '2026-12-31' },
-        { name: 'CE Marking', issuedBy: 'Tiêu chuẩn An toàn Châu Âu', expiryDate: '2027-06-30' },
-        { name: 'ISO 14001:2015', issuedBy: 'Hệ thống quản lý môi trường', expiryDate: '2026-12-31' },
-      ];
+  const displayCerts: CertEntry[] = supplier.certifications?.length ?
+    supplier.certifications : [];
 
   // Price display helper
   const formatVND = (n: number) => n.toLocaleString('vi-VN') + ' ₫';
@@ -344,7 +341,8 @@ export function SupplierProfile() {
               <h3 className="text-xs font-normal text-ink uppercase mb-3" style={{ letterSpacing: '0.32px' }}>{t('chung_nhan_chung_chi')}</h3>
               <div className="border-t border-hairline mb-4" />
               <div className="space-y-2.5">
-                {displayCerts.map((cert: any, i: number) => {
+                {displayCerts.length > 0 ?
+                  displayCerts.map((cert, i: number) => {
                   const inner = (
                     <div className="flex items-center gap-3 px-4 py-3.5 bg-surface-1 border border-hairline hover:border-primary group/cert cursor-pointer transition-colors" style={{ borderRadius: 0 }}>
                       <Award size={18} className="text-primary shrink-0" />
@@ -358,7 +356,9 @@ export function SupplierProfile() {
                   return cert.documentUrl
                     ? <a key={i} href={cert.documentUrl} target="_blank" rel="noopener noreferrer">{inner}</a>
                     : <div key={i}>{inner}</div>;
-                })}
+                }) : (
+                  <p className='text-sm text-ink-subtle mt-0.5 text-center'>{t('supplier_no_certs')}</p>
+                ) }
               </div>
             </div>
 
