@@ -14,7 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from '../lib/enums';
 import { SupplierBadge } from '../components/ui/SupplierBadge';
 import { useToast } from '../components/ui/Toast';
-import { CertEntry, SaleChanEntry, AddressRecord } from '../lib/types';
+import { CertEntry, SaleChanEntry, AddressEntry } from '../lib/types';
 
 export function SupplierProfile() {
   const { t } = useTranslation();
@@ -54,7 +54,7 @@ export function SupplierProfile() {
       }
     });
 
-    const primaryRecord: AddressRecord = supplier.addresses?.find((record: AddressRecord) => record.isPrimary);
+    const primaryRecord: AddressEntry = supplier.addresses?.find((record: AddressEntry) => record.isPrimary);
     setPrimaryLocation(primaryRecord ? primaryRecord.address : '');
   }, [supplier])
 

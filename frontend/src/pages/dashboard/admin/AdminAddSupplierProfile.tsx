@@ -5,7 +5,7 @@ import { BusinessType, SupplierAccountHolderRole, SupplierType } from "@/src/lib
 import React, { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { FIVE_MEG } from "@/src/lib/constants";
-import { PayloadCategoryOption } from "@/src/lib/types";
+import { CategoryOption } from "@/src/lib/types";
 
 export function AdminAppSupplier() {
   const { addToast } = useToast();
@@ -17,13 +17,13 @@ export function AdminAppSupplier() {
   const [logoFile, setLogoFile] = useState<File>(null);
   const [bannerFile, setBannerFile] = useState<File>(null);
 
-  const [categoryOptions, setCategoryOptions] = useState<PayloadCategoryOption[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
   useEffect(() => {
     let isMounted = true;
     const fetchCats = async () => {
       try {
         const res = await api.get('categories/cats/l1');
-        if (isMounted) setCategoryOptions(res.data as PayloadCategoryOption[]);
+        if (isMounted) setCategoryOptions(res.data as CategoryOption[]);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
@@ -165,7 +165,7 @@ export function AdminAppSupplier() {
             ? JSON.stringify(categoryOptions.filter(opt => opt.included)) : ""
         }
       >
-        {categoryOptions && categoryOptions.map((catOpt: PayloadCategoryOption) => {
+        {categoryOptions && categoryOptions.map((catOpt: CategoryOption) => {
           return <OptionButton 
             label={catOpt.name} isSelected={catOpt.included} value={catOpt.slug}
             onClick={toggleCategoryInclusion} key={catOpt.slug}

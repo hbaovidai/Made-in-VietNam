@@ -1,13 +1,10 @@
 import { CustomSelect } from "@/src/components/CustomSelect";
-import { BusinessType, BusinessTypeMap, SaleChannels, SaleChannelsMap, SupplierStatus } from "@/src/lib/enums";
+import { BusinessType, BusinessTypeMap, SaleChannels, SaleChannelsMap } from "@/src/lib/enums";
 import { useEffect, useState } from "react";
 import { useToast } from "@/src/components/ui/Toast";
 import { useTranslation } from "react-i18next";
 import { api } from "@/src/lib/api";
-import { l1Category, PayloadCategoryOption, SaleChanEntry, SuppCategory } from "@/src/lib/types";
-
-type CategoryOption = Record<string, {slug: string; name: string; included: boolean}>
-type ChannelOption = Record<SaleChannels, string>
+import { CategoryIdMap, CategoryOption, l1Category, SaleChannelTypeMap, Supplier, SupplierPayload } from "@/src/lib/types";
 
 const businessTypeOptions = [
   { value: BusinessType.PRIVATE, label: BusinessTypeMap[BusinessType.PRIVATE] },
@@ -21,7 +18,7 @@ const employeeCountOptions = [
   { value: '501-1000', label: '501 - 1,000 người' }, { value: '1000+', label: 'Trên 1,000 người' },
 ]
 
-interface EditModalTextFieldProps {
+type EditModalTextFieldProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string; value: string | number;
 }
@@ -37,47 +34,23 @@ function EditModalTextField(props: EditModalTextFieldProps) {
   )
 }
 
-type SupplierFields = {
-  id?: string;
-
-  companyName?: string; description?: string;
-  taxCode?: string; yearEstablished?: string; employee_count?: string;
-  businessType?: string;
-
-  contactEmail?: string; contactPhone?: string;
-  legalRepName?: string;
-
-  logo?: string; banner?: string;
-  status?: SupplierStatus;
-
-  categories?: {category: SuppCategory}[];
-  categoryOptions?: PayloadCategoryOption[];
-
-  channels?: SaleChanEntry[];
-};
-
 type EditModalformProps = {
   handleCloseModal: () => void;
-  initialSupplier: SupplierFields;
-  handleSupplierUpdate: (s: SupplierFields) => void;
+  initialSupplier: Supplier;
+  handleSupplierUpdate: (s: Supplier) => void;
 }
 
 export function EditModalform(props: EditModalformProps) {
   const { addToast } = useToast();
   const { t } = useTranslation();
 
-  const [editForm, setEditForm] = useState<SupplierFields>({ 
-    companyName: '', businessType: '', description: '',
-    contactEmail: '', contactPhone: '', legalRepName: '',
-    yearEstablished: '', employee_count: '',
-    categories: [],
-  });
+  const [editForm, setEditForm] = useState<Supplier>({ });
   
-  const [categoryOptions, setCategoryOptions] = useState<CategoryOption>({});
+  const [categoryOptions, setCategoryOptions] = useState<CategoryIdMap>({});
   const [l1Categories, setL1Categories] = useState<l1Category[]>([]);
 
   const [channelOptions, setChannelOptions] =
-    useState<ChannelOption>( {} as ChannelOption );
+    useState<SaleChannelTypeMap>( {} as SaleChannelTypeMap );
 
   useEffect(() => {
     const init = async () => {
@@ -86,9 +59,9 @@ export function EditModalform(props: EditModalformProps) {
         const res = await api.get('/categories/cats/l1');
         if (res.data) { setL1Categories(res.data); }
 
-        const chanOpt: ChannelOption = Object.values(SaleChannels).reduce((acc, channel) => {
+        const chanOpt: SaleChannelTypeMap = Object.values(SaleChannels).reduce((acc, channel) => {
           acc[channel] = ''; return acc;
-        }, {} as ChannelOption);
+        }, {} as SaleChannelTypeMap);
         props.initialSupplier.channels.forEach((channel) => {
           chanOpt[channel.type] = channel.url;
         });
@@ -104,7 +77,7 @@ export function EditModalform(props: EditModalformProps) {
     const setCategoryList = () => {
       if (!l1Categories?.length) return;
 
-      const opts: CategoryOption = {};
+      const opts: CategoryIdMap = {};
       l1Categories.forEach((cat) => {
         const opt = { name: cat.name, slug: cat.slug, included: false };
         props.initialSupplier.categories.forEach(({category}) => {
@@ -124,7 +97,7 @@ export function EditModalform(props: EditModalformProps) {
     
     try {
       // Filter out empty string fields to avoid DTO validation errors
-      const payload: Partial<Record<keyof SupplierFields, any>> = {};
+      const payload: Partial<Record<keyof SupplierPayload, any>> = {};
       for (const [key, value] of Object.entries(editForm)) {
         const bannedKeys = ['id', 'addresses', 'categories'];
         if (bannedKeys.includes(key)) continue;
@@ -145,17 +118,18 @@ export function EditModalform(props: EditModalformProps) {
       });
       payload.channels = channels;
 
-      const categories: PayloadCategoryOption[] = [];
+      const categories: CategoryOption[] = [];
       Object.keys(categoryOptions).forEach((id) => {
         const opt = { id, ...categoryOptions[id] }; categories.push(opt);
       });
       payload.categoryOptions = categories;
 
       addToast({ type: 'info', title: 'Vui lòng đợi', message: 'Hệ thông đang cập nhật hồ sơ.' });
-      const res = await api.put(`/suppliers/${props.initialSupplier.id}`, payload);
 
+      const res = await api.put(`/suppliers/${props.initialSupplier.id}`, payload);
       props.handleSupplierUpdate(res.data);
       props.handleCloseModal();
+
       addToast({ type: 'success', title: t('update_profile_success_title'), message: t('update_profile_success_desc') });
     } catch (e) {
       addToast({ type: 'error', title: 'Lỗi', message: 'Không thể cập nhật hồ sơ' });
