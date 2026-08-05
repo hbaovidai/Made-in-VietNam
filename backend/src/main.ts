@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   // Global prefix
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('/');
 
   // CORS - cho phép frontend gọi API
   app.enableCors({
@@ -43,6 +43,6 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(`🚀 VIEproduct API running on http://localhost:${port}/api/v1`);
+  console.log(`🚀 VIEproduct API running on ${port}`);
 }
 bootstrap();
