@@ -117,7 +117,7 @@ export class SuppliersController {
 
   // PROTECTED: Analytics sâu — chỉ supplier chủ sở hữu
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER')
+  @Roles(Role.SUPPLIER)
   @Get(':id/analytics')
   async getAnalytics(
     @Param('id') id: string,
@@ -136,7 +136,7 @@ export class SuppliersController {
 
   // PROTECTED: Lấy thông tin profile chi tiết của chính supplier đang đăng nhập
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'BUYER', 'ADMIN')
+  @Roles(Role.SUPPLIER, Role.BUYER, Role.ADMIN)
   @Get('me/detail')
   async getMyProfileDetail(@CurrentUser('id') userId: string) {
     return this.suppliersService.getMyProfile(userId);
@@ -144,7 +144,7 @@ export class SuppliersController {
 
   // PROTECTED: Tạo mới profile nếu chưa có
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER')
+  @Roles(Role.SUPPLIER)
   @Post('me')
   async createMyProfile(@Body() dto: any, @CurrentUser('id') userId: string) {
     return this.suppliersService.createProfile(userId, dto);
@@ -152,7 +152,7 @@ export class SuppliersController {
 
   // PROTECTED ADMIN: Verify/Unverify supplier
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles(Role.ADMIN)
   @Put(':id/verify')
   async verifySupplier(
     @Param('id') id: string,
@@ -196,7 +196,7 @@ export class SuppliersController {
 
   // PROTECTED: Chỉ supplier chủ sở hữu mới thêm chứng nhận
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'ADMIN')
+  @Roles(Role.SUPPLIER, Role.ADMIN)
   @Post(':id/certifications')
   async addCertification(
     @Param('id') id: string,
@@ -218,7 +218,7 @@ export class SuppliersController {
 
   // PROTECTED: Chỉ supplier chủ sở hữu mới xoá chứng nhận
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPPLIER', 'ADMIN')
+  @Roles(Role.SUPPLIER, Role.ADMIN)
   @Delete(':supplierId/certifications/:certId')
   async deleteCertification(
     @Param('supplierId') supplierId: string,
