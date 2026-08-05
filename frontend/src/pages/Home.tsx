@@ -75,33 +75,20 @@ export function Home() {
         setProducts(prodRes.data.data);
         setSuppliers(suppRes.data.data);
 
-        // Extract level 3 categories from the tree
-        const lvl3: any[] = [];
-        catRes.data.forEach((lvl1: any) => {
-          lvl1.children?.forEach((lvl2: any) => {
-            lvl2.children?.forEach((lvl3Cat: any) => {
-              lvl3.push(lvl3Cat);
-            });
-          });
-        });
+        const lvl1Cats: any[] = catRes.data || [];
+        if (lvl1Cats.length === 0) return;
 
-        let finalCategories = lvl3;
-        if (finalCategories.length === 0) {
-          // Fallback to level 2
-          const lvl2: any[] = [];
-          catRes.data.forEach((lvl1: any) => {
-            lvl1.children?.forEach((lvl2Cat: any) => {
-              lvl2.push(lvl2Cat);
-            });
-          });
-          finalCategories = lvl2;
-        }
-        if (finalCategories.length === 0) {
-          // Fallback to level 1
-          finalCategories = catRes.data;
+        const lvl2Cats: any[] = lvl1Cats.flatMap(c1 => c1.children || []);
+        const lvl3Cats: any[] = lvl2Cats.flatMap(c2 => c2.children || []);
+
+        if (lvl3Cats.length > 0) {
+          setCategories(lvl3Cats);
+        } else if (lvl2Cats.length > 0) {
+          setCategories(lvl2Cats);
+        } else {
+          setCategories(lvl1Cats);
         }
 
-        setCategories(finalCategories);
       } catch (error) {
         console.error('Home Loading Error:', error);
       } finally {
