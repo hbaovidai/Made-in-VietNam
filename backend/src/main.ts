@@ -26,9 +26,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
-      'https://vieproduct.com.vn',
-      'https://www.vieproduct.com.vn',
-      'https://made-in-viet-nam.vercel.app',
+      'https://fixweapon.meltedwind.com',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
